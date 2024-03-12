@@ -1,0 +1,32 @@
+ 
+.tabs {
+  display: flex;
+  flex-direction: column;  
+  align-items: flex-start; 
+  width: 200px;  
+}
+
+a {
+  color: gray;
+  text-decoration: none;
+  margin: 5px 0;  
+}
+
+a.activeTab {
+  font-weight: bold;
+  color: rgb(255, 255, 255);
+}
+
+a .line {
+  border-bottom: 2px solid transparent; 
+  margin-top: 5px;
+  width: 100%;
+  position: relative;
+}
+
+a.activeTab .line {
+  border-bottom: 2px solid #d4674a;
+  margin-top: 5px;
+  width: 100%;
+  position: relative;
+}
