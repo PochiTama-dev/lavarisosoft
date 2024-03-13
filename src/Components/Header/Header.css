@@ -1,0 +1,15 @@
+.bg-primary{
+    background-color: #8EA3BF !important;
+}
+.titles{
+    text-transform: uppercase; 
+    color:white
+}
+.titles h3{
+    background-color: #283959;
+    border-bottom-left-radius: 5px;
+    width: 4%;
+    margin: 0;
+    text-align: center;
+    padding-top: 5px;
+}
