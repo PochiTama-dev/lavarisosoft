@@ -34,6 +34,7 @@ import NuevoProveedor from "./Components/Mantenimiento/NuevoProveedor";
 import Agenda from "./Components/Agenda/Agenda";
 import Chat from "./Components/Chat/Chat";
 import Notificaciones from "./Components/Notificaciones/Notificaciones";
+import Feedback from "./Components/Feedback/Feedback";
 function App() {
   return (
     <>
@@ -42,6 +43,8 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login/>} />
             <Route path="/menu" element={<Menu/> } />
+               {/* Ruta Feedback */}
+            <Route path="/feedback" element={<Feedback/>} />
             {/* Rutas Clientes y Empleados */}
             <Route path="/clientes" element={<Clientes/>} />
             <Route path="/uploadEmpleado" element={<UploadEmpleado/>} />
