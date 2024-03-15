@@ -1,0 +1,82 @@
+.feedback-heading {
+  background-color: #69688c;
+  color: white;
+  padding: 20px;
+  padding-left: 60px;
+}
+
+.container-full-width {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.content-container {
+  display: flex;
+  flex-direction: row;
+  height: 80%;
+  width: 90%;
+  margin-top: 4%;
+  margin-left: 5%;
+  gap: 2%;
+}
+
+.left-containers {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 2.5%;
+}
+
+.left-container {
+  flex: 1;
+  width: 30vw;
+  background-color: #e6e6e6;
+}
+
+.right-container {
+  flex: 3;
+  width: 60%;
+  background-color: #e6e6e6;
+}
+.feedback-containers-heading {
+  color: #283959;
+  font-weight: bold;
+}
+.feedback-form {
+  display: flex;
+  flex-direction: row;
+  width: 90%;
+  margin-left: 5%;
+  margin-top: 5%;
+  color: #283959;
+}
+
+.feedback-form-charge {
+  color: #283959;
+}
+.feedback-textarea {
+  width: 70%;
+  height: 80%;
+  resize: none;
+  margin-left: 5%;
+  margin-top: 2%;
+  background-color: #c8cfda;
+  color: #283959;
+  border: none;
+}
+.feedback-form-button {
+  background-color: #69688c;
+  color: white;
+  border: none;
+  width: 60%;
+  border-radius: 10px;
+}
+.feedback-form-edit {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10%;
+  width: 30%;
+  margin-left: 35%;
+}
