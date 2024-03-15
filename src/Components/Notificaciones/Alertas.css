@@ -1,0 +1,19 @@
+.notification-badge {
+    background-color: #40A63D;
+    color: #fff;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  .container-notification {
+    width: 5%;
+    padding-right: 0;
+    display: flex;
+    align-items: center;
+  }
