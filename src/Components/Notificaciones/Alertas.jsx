@@ -3,40 +3,40 @@ import './Alertas.css';
 import alertasData from './alertas.json';
 
 const Alertas = () => {
-    const [isOpen, setIsOpen] = useState(false);
+    const [openIndex, setOpenIndex] = useState(-1);
     const [alertas, setAlertas] = useState([]);
 
     useEffect(() => {
       setAlertas(alertasData);
     }, []);
 
-    const toggleDropdown = () => {
-      setIsOpen(!isOpen);
+    const toggleDropdown = (index) => {
+      setOpenIndex(openIndex === index ? -1 : index);
     };
 
     return (
-      <div className='container'>
+      <div className='container p-5 alertas-container'>
         <h2>Alertas</h2>
         {alertas.map((alerta, index) => (
           <div key={index} className="row my-3">
-            <div className='col-1'>
+            <div className='col-1 d-flex justify-content-center'>
               <div className="notification-badge">
                 {alerta.descripciones.length}
               </div>
             </div>
-            <div key={index} className="col-6">
+            <div key={index} className="col-10 p-0">
               <div className="dropdown dropdown-alert-name">
                 <button 
-                  className="btn btn-secondary dropdown-toggle dropbtn" 
+                  className="btn btn-employe dropdown-toggle" 
                   type="button" 
-                  onClick={toggleDropdown} 
-                  aria-expanded={isOpen ? 'true' : 'false'}
+                  onClick={() => toggleDropdown(index)}
+                  aria-expanded={openIndex === index ? 'true' : 'false'}
                 >
-                  {alerta.nombre}
+                  <b>{alerta.nombre}</b>
                 </button>
-                <ul className={`dropdown-menu ${isOpen ? 'show' : ''}`}>
+                <ul className={`notification-alert ${openIndex === index ? 'show' : ''}`}>
                   {alerta.descripciones.map((descripcion, idx) => (
-                    <li key={idx}><a className="dropdown-item active" href="#">{descripcion}</a></li>
+                    <li key={idx}><a className="item" href="#"><b>{alerta.nombre}</b> {descripcion}</a></li>
                   ))}
                 </ul>
               </div>
