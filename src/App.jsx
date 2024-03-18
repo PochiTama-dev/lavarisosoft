@@ -1,3 +1,4 @@
+ 
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
@@ -36,6 +37,7 @@ import Agenda from './Components/Agenda/Agenda';
 import Chat from './Components/Chat/Chat';
 import Notificaciones from './Components/Notificaciones/Notificaciones';
 import Feedback from './Components/Feedback/Feedback';
+ 
 function App() {
   return (
     <>
@@ -47,9 +49,11 @@ function App() {
             {/* Ruta Feedback */}
             <Route path='/feedback' element={<Feedback />} />
             {/* Rutas Clientes y Empleados */}
+ 
             <Route path='/clientes' element={<Clientes />} />
             <Route path='/uploadEmpleado' element={<UploadEmpleado />} />
             <Route path='/uploadEmpleadoExcel' element={<UploadEmpleadoExcel />} />
+ 
             {/* Rutas Ubicaciones */}
             <Route path='/location' element={<Ubicaciones />} />
             <Route path='/locationOrder' element={<UbicacionesOrden />} />
