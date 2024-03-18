@@ -1,0 +1,35 @@
+.menu-heading {
+  background-color: #69688c;
+  color: white;
+  padding: 20px;
+  padding-left: 60px;
+}
+
+.menu-button {
+  background-color: #f2f6fc;
+  color: #283959;
+  border-bottom: 10px solid #8ea3bf;
+  font-size: 1.5rem;
+  padding: 45px 30px;
+}
+.menu-button:hover {
+  background-color: #f2f6fc;
+  color: #283959;
+  border-bottom: 10px solid #8ea3bf;
+}
+
+.button-container {
+  width: 80%;
+  margin: auto;
+  height: 90%;
+  align-content: center;
+}
+
+.btn-group-vertical {
+  width: 90%;
+  margin-left: 5%;
+}
+
+.container-full-width {
+  height: 100vh;
+}
