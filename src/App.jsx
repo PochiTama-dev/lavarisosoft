@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Login from "./Components/Login/Login";
 import Menu from "./Components/Menu/Menu";
-import Clientes from "./Components/Clientes/Clientes";
+import ClientesEmpleados from "./Components/Clientes/ClientesEmpleados";
 import UploadEmpleado from "./Components/Clientes/UploadEmpleado";
 import UploadEmpleadoExcel from "./Components/Clientes/UploadEmpleadoExcel";
 import Ubicaciones from "./Components/Ubicaciones/Ubicaciones";
@@ -43,7 +43,7 @@ function App() {
             <Route path="/login" element={<Login/>} />
             <Route path="/menu" element={<Menu/> } />
             {/* Rutas Clientes y Empleados */}
-            <Route path="/clientes" element={<Clientes/>} />
+            <Route path="/clientes" element={<ClientesEmpleados/>} />
             <Route path="/uploadEmpleado" element={<UploadEmpleado/>} />
             <Route path="/uploadEmpleadoExcel" element={<UploadEmpleadoExcel/>} />
             {/* Rutas Ubicaciones */}
