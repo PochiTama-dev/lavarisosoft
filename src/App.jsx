@@ -35,7 +35,7 @@ import NuevoProveedor from "./Components/Mantenimiento/NuevoProveedor";
 import Agenda from "./Components/Agenda/Agenda";
 import Chat from "./Components/Chat/Chat";
 import Notificaciones from "./Components/Notificaciones/Notificaciones";
-import Feedback from "./Components/Feedback/Feedback";
+import Feedback from "./pages/Feedback/Feedback";
 function App() {
   return (
     <>

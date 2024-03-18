@@ -16,7 +16,7 @@
   flex-direction: row;
   height: 80%;
   width: 90%;
-  margin-top: 4%;
+  margin-top: 2%;
   margin-left: 5%;
   gap: 2%;
 }
@@ -32,6 +32,7 @@
   flex: 1;
   width: 30vw;
   background-color: #e6e6e6;
+  max-height: 50%;
 }
 
 .right-container {
@@ -57,7 +58,7 @@
 }
 .feedback-textarea {
   width: 70%;
-  height: 80%;
+  height: 50vh;
   resize: none;
   margin-left: 5%;
   margin-top: 2%;
@@ -76,7 +77,14 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 10%;
+  margin-top: 5%;
   width: 30%;
   margin-left: 35%;
+}
+
+.scrollable-container {
+  overflow-y: auto;
+  height: 70%;
+  border: 1px solid #ccc;
+  padding: 10px;
 }
