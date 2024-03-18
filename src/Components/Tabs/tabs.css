@@ -6,6 +6,13 @@
   height: 80vh;
   margin-left: 2.5%;
   margin-top: 2.5%;
+  justify-content: space-around;
+  align-items: flex-start;
+}
+
+.tabs-vertical {
+  flex-direction: column;
+  border-bottom: none;
 }
 
 a {
@@ -22,10 +29,13 @@ a {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: 5px 0;
 }
 
 a.activeTab {
   border-bottom: 6px solid #40a63d;
+  font-weight: bold;
+  color: #283959;
 }
 
 /* a .line {
@@ -36,7 +46,8 @@ a.activeTab {
 } */
 /* 
 a.activeTab .line {
+  border-bottom: 2px solid #8EA3BF;
   margin-top: 5px;
-  width: 100%;
+  width: 200px;
   position: relative;
 } */
