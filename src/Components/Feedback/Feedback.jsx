@@ -24,6 +24,12 @@ const Feedback = () => {
               <li>Técnico 1</li>
               <li>Técnico 2</li>
               <li>Técnico 3</li>
+              <li>Técnico 1</li>
+              <li>Técnico 2</li>
+              <li>Técnico 3</li>
+              <li>Técnico 1</li>
+              <li>Técnico 2</li>
+              <li>Técnico 3</li>
             </ul>
           </div>
           <div className="left-container">
