@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import Login from "./pages/Login/Login";
 import Menu from "./Components/Menu/Menu";
-import Clientes from "./Components/Clientes/TabsClientesEmpleados/Clientes";
+import Clientes from "./Components/Clientes/ClientesEmpleados";
 import UploadEmpleado from "./Components/Clientes/UploadEmpleado";
 import UploadEmpleadoExcel from "./Components/Clientes/UploadEmpleadoExcel";
 import Ubicaciones from "./Components/Ubicaciones/Ubicaciones";
@@ -15,7 +15,7 @@ import OrdenGlobal from "./Components/Ordenes/OrdenGlobal";
 import LiquidacionOrden from "./Components/Ordenes/LiquidacionOrden";
 import Presupuestos from "./Components/Presupuestos/Presupuestos";
 import LiquidacionPresupuestos from "./Components/Presupuestos/LiquidacionPresupuestos";
-import Ventas from "./Components/Ventas/Ventas";
+import Ventas from "./pages/Ventas/Ventas";
 import StockRespuestos from "./Components/Ventas/StockRespuestos";
 import AddRespuestos from "./Components/Ventas/AddRespuestos";
 import AddLoteExcel from "./Components/Ventas/AddLoteExcel";
@@ -36,6 +36,7 @@ import Agenda from "./Components/Agenda/Agenda";
 import Chat from "./Components/Chat/Chat";
 import Notificaciones from "./Components/Notificaciones/Notificaciones";
 import Feedback from "./Components/Feedback/Feedback";
+
 function App() {
   return (
     <>

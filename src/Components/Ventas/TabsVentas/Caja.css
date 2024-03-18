@@ -1,0 +1,75 @@
+.caja-container {
+  margin-top: 7.5%;
+  width: 70vw;
+  color: #283959;
+}
+.caja-heading {
+  font-weight: bold;
+  color: #283959;
+  display: flex;
+  justify-content: left;
+  font-weight: bold;
+}
+
+.caja-input-top {
+  display: flex;
+  justify-content: left;
+}
+
+.caja-input-bottom {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  justify-content: left;
+  margin-top: 2%;
+}
+
+.caja-input-text {
+  max-width: 30vw;
+  font-size: medium;
+  display: flex;
+  justify-content: left;
+}
+
+.caja-input {
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+  padding-left: 5px;
+  max-width: 30vh;
+}
+.caja-button-search {
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  padding-right: 5px;
+  color: white;
+  background-color: #777777;
+  max-width: 5vh;
+}
+
+.caja-excel-heading {
+  color: #283959;
+  display: flex;
+  justify-content: left;
+  font-weight: bold;
+}
+
+.caja-excel {
+  display: flex;
+  justify-content: left;
+  margin-top: 3%;
+  flex-direction: column;
+}
+
+.row-even {
+  background-color: #8ea3bf !important;
+}
+.table {
+  overflow-y: auto;
+  overflow-x: auto;
+  color: #283959;
+  --bs-table-bg: var(--bs-table-bg);
+}
+.caja-excel-wrapper {
+  max-height: 40vh;
+  overflow-y: auto;
+}
