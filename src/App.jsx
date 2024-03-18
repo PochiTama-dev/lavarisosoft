@@ -1,4 +1,5 @@
  
+ 
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
@@ -37,64 +38,68 @@ import Agenda from './Components/Agenda/Agenda';
 import Chat from './Components/Chat/Chat';
 import Notificaciones from './Components/Notificaciones/Notificaciones';
 import Feedback from './Components/Feedback/Feedback';
- 
+
+
 function App() {
   return (
     <>
       <div>
         <Router>
           <Routes>
-            <Route path='/login' element={<Login />} />
-            <Route path='/menu' element={<Menu />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/menu" element={<Menu />} />
             {/* Ruta Feedback */}
-            <Route path='/feedback' element={<Feedback />} />
+            <Route path="/feedback" element={<Feedback />} />
             {/* Rutas Clientes y Empleados */}
- 
-            <Route path='/clientes' element={<Clientes />} />
-            <Route path='/uploadEmpleado' element={<UploadEmpleado />} />
-            <Route path='/uploadEmpleadoExcel' element={<UploadEmpleadoExcel />} />
- 
+            <Route path="/clientes" element={<Clientes />} />
+            <Route path="/uploadEmpleado" element={<UploadEmpleado />} />
+            <Route
+              path="/uploadEmpleadoExcel"
+              element={<UploadEmpleadoExcel />}
+            />
             {/* Rutas Ubicaciones */}
-            <Route path='/location' element={<Ubicaciones />} />
-            <Route path='/locationOrder' element={<UbicacionesOrden />} />
+            <Route path="/location" element={<Ubicaciones />} />
+            <Route path="/locationOrder" element={<UbicacionesOrden />} />
             {/* Rutas Ordenes */}
-            <Route path='/ordenes' element={<Ordenes />} />
-            <Route path='/nuevaOrden' element={<NuevaOrden />} />
-            <Route path='/ordenCaja' element={<OrdenCaja />} />
-            <Route path='/ordenGlobal' element={<OrdenGlobal />} />
-            <Route path='/ordenLiquidacion' element={<LiquidacionOrden />} />
+            <Route path="/ordenes" element={<Ordenes />} />
+            <Route path="/nuevaOrden" element={<NuevaOrden />} />
+            <Route path="/ordenCaja" element={<OrdenCaja />} />
+            <Route path="/ordenGlobal" element={<OrdenGlobal />} />
+            <Route path="/ordenLiquidacion" element={<LiquidacionOrden />} />
             {/* Rutas Presupuesto */}
-            <Route path='/presupuestos' element={<Presupuestos />} />
-            <Route path='/liquidacionPresupuestos' element={<LiquidacionPresupuestos />} />
+            <Route path="/presupuestos" element={<Presupuestos />} />
+            <Route
+              path="/liquidacionPresupuestos"
+              element={<LiquidacionPresupuestos />}
+            />
             {/* Rutas Ventas */}
-            <Route path='/ventas' element={<Ventas />} />
-            <Route path='/stockRespuestos' element={<StockRespuestos />} />
-            <Route path='/addRespuestos' element={<AddRespuestos />} />
-            <Route path='/addLoteExcel' element={<AddLoteExcel />} />
-            <Route path='/cargarFactura' element={<CargarFactura />} />
-            <Route path='/gastos' element={<Gastos />} />
-            <Route path='/VentasRemito' element={<RemitoVentas />} />
+            <Route path="/ventas" element={<Ventas />} />
+            <Route path="/stockRespuestos" element={<StockRespuestos />} />
+            <Route path="/addRespuestos" element={<AddRespuestos />} />
+            <Route path="/addLoteExcel" element={<AddLoteExcel />} />
+            <Route path="/cargarFactura" element={<CargarFactura />} />
+            <Route path="/gastos" element={<Gastos />} />
+            <Route path="/VentasRemito" element={<RemitoVentas />} />
             {/* Rutas Mantenimiento */}
-            <Route path='/mantRemito' element={<MantRemito />} />
-            <Route path='/mantEditRemito' element={<MantEditRemito />} />
-            <Route path='/mantFactura' element={<MantFacturas />} />
-            <Route path='/mantenimiento' element={<Mantenimiento />} />
-            <Route path='/liquidacion' element={<Liquidacion />} />
-            <Route path='/cargarCuenta' element={<CargarCuenta />} />
-            <Route path='/editarCuenta' element={<EditCuenta />} />
-            <Route path='/cajasBancos' element={<CajasBancos />} />
-            <Route path='/proveedor' element={<NuevoProveedor />} />
-            <Route path='/proveedorEdit' element={<EditProveedor />} />
+            <Route path="/mantRemito" element={<MantRemito />} />
+            <Route path="/mantEditRemito" element={<MantEditRemito />} />
+            <Route path="/mantFactura" element={<MantFacturas />} />
+            <Route path="/mantenimiento" element={<Mantenimiento />} />
+            <Route path="/liquidacion" element={<Liquidacion />} />
+            <Route path="/cargarCuenta" element={<CargarCuenta />} />
+            <Route path="/editarCuenta" element={<EditCuenta />} />
+            <Route path="/cajasBancos" element={<CajasBancos />} />
+            <Route path="/proveedor" element={<NuevoProveedor />} />
+            <Route path="/proveedorEdit" element={<EditProveedor />} />
             {/* Rutas Agenda */}
-            <Route path='/agenda' element={<Agenda />} />
+            <Route path="/agenda" element={<Agenda />} />
             {/* Rutas Chat Redes Sociales */}
-            <Route path='/chat' element={<Chat />} />
+            <Route path="/chat" element={<Chat />} />
             {/* Rutas Notificaciones */}
-            <Route path='/notificaciones' element={<Notificaciones />} />
+            <Route path="/notificaciones" element={<Notificaciones />} />
           </Routes>
         </Router>
       </div>
-      <p className='read-the-docs'>La Beriso App Desktop</p>
     </>
   );
 }
