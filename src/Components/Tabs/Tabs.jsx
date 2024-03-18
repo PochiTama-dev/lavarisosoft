@@ -1,10 +1,12 @@
 import React from "react";
 import "./tabs.css";
 
-const Tabs = ({ active, onChange, children }) => {
+const Tabs = ({ active, onChange, children, direction }) => {
+  const tabsClass = direction === "column" ? "tabs-vertical" : "tabs-horizontal";
+
   return (
     <>
-      <div className="tabs">
+      <div className={`tabs ${tabsClass}`}>
         {children.map((c, index) => (
           <a
             href={"javascript: void(0)"}

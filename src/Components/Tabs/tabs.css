@@ -1,20 +1,30 @@
  
 .tabs {
   display: flex;
-  flex-direction: column;  
+ justify-content: space-around;
   align-items: flex-start; 
-  width: 200px;  
+  
+  
 }
+
+ 
+.tabs-vertical {
+  flex-direction: column;
+  border-bottom: none;
+}
+
+
 
 a {
   color: gray;
   text-decoration: none;
-  margin: 5px 0;  
+  margin: 5px 0; 
+   
 }
 
 a.activeTab {
   font-weight: bold;
-  color: rgb(255, 255, 255);
+  color: #283959;
 }
 
 a .line {
@@ -25,8 +35,8 @@ a .line {
 }
 
 a.activeTab .line {
-  border-bottom: 2px solid #d4674a;
+  border-bottom: 2px solid #8EA3BF;
   margin-top: 5px;
-  width: 100%;
+  width: 200px;
   position: relative;
 }
