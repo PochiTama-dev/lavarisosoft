@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import Login from "./pages/Login/Login";
 import Menu from "./pages/Menu/Menu";
-import Clientes from "./Components/Clientes/Clientes";
+import Clientes from "./Components/Clientes/TabsClientesEmpleados/Clientes";
 import UploadEmpleado from "./Components/Clientes/UploadEmpleado";
 import UploadEmpleadoExcel from "./Components/Clientes/UploadEmpleadoExcel";
 import Ubicaciones from "./Components/Ubicaciones/Ubicaciones";
