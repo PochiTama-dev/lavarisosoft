@@ -1,4 +1,5 @@
-import {  useState } from "react";
+import { useState } from "react";
+import "./Ventas.css";
 import Tab from "../../Components/Tabs/Tab";
 import Tabs from "../../Components/Tabs/Tabs";
 import Caja from "./TabsVentas/Caja";
@@ -12,35 +13,33 @@ const Ventas = () => {
   const [active, setActive] = useState(0);
   const handleChange = (newActive) => setActive(newActive);
   return (
-    <div >
-      <div >
+    <div className="ventas-container">
+      <div>
         <h1>Ventas</h1>
       </div>
-
-      <div>
+      <div className="ventas-tabs">
         <Tabs active={active} onChange={handleChange}>
           <Tab title="Caja">
-         <Caja/>
+            <Caja />
           </Tab>
           <Tab title="OP/Ventas">
-          <OpVentas/>
+            <OpVentas />
           </Tab>
           <Tab title="Inventario">
-          <Inventario/>
-           </Tab>
-           <Tab title="Totalizador">
-           <Totalizador/>
-           </Tab>
-           <Tab title="Libro IVA">
-           <LibroIVA/>
-           </Tab>
-           <Tab title="Proveedores">
-           <Proveedores/>
-           </Tab>
-           <Tab title="Incumplimientos">
-           <Incumplimientos/>
-           </Tab>
-
+            <Inventario />
+          </Tab>
+          <Tab title="Totalizador">
+            <Totalizador />
+          </Tab>
+          <Tab title="Libro IVA">
+            <LibroIVA />
+          </Tab>
+          <Tab title="Proveedores">
+            <Proveedores />
+          </Tab>
+          <Tab title="Incumplimientos">
+            <Incumplimientos />
+          </Tab>
         </Tabs>
       </div>
     </div>

@@ -12,7 +12,6 @@ const Tabs = ({ active, onChange, children }) => {
             className={active === index ? "activeTab" : ""}
           >
             {c.props.title}
-            <div className="line"></div>
           </a>
         ))}
       </div>

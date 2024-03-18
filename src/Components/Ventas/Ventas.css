@@ -1,0 +1,10 @@
+.ventas-container {
+  height: 100vh;
+  width: 100%;
+}
+
+.ventas-tabs {
+  display: flex;
+  flex-direction: row;
+  gap: 5%;
+}
