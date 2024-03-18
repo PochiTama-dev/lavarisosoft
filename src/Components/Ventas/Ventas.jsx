@@ -14,7 +14,7 @@ const Ventas = () => {
   const handleChange = (newActive) => setActive(newActive);
   return (
     <div className="ventas-container">
-      <div>
+      <div className="ventas-heading">
         <h1>Ventas</h1>
       </div>
       <div className="ventas-tabs">
