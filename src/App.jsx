@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import Login from "./pages/Login/Login";
-import Menu from "./Components/Menu/Menu";
+import Menu from "./pages/Menu/Menu";
 import Clientes from "./Components/Clientes/Clientes";
 import UploadEmpleado from "./Components/Clientes/UploadEmpleado";
 import UploadEmpleadoExcel from "./Components/Clientes/UploadEmpleadoExcel";
