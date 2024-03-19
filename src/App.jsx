@@ -15,7 +15,7 @@ import OrdenGlobal from "./Components/Ordenes/OrdenGlobal";
 import LiquidacionOrden from "./Components/Ordenes/LiquidacionOrden";
 import Presupuestos from "./Components/Presupuestos/Presupuestos";
 import LiquidacionPresupuestos from "./Components/Presupuestos/LiquidacionPresupuestos";
-import Ventas from "./Components/Ventas/Ventas";
+import Ventas from "./pages/Ventas/Ventas";
 import StockRespuestos from "./Components/Ventas/StockRespuestos";
 import AddRespuestos from "./Components/Ventas/AddRespuestos";
 import AddLoteExcel from "./Components/Ventas/AddLoteExcel";
