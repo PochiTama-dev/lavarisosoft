@@ -8,10 +8,10 @@ import UploadEmpleado from './Components/Clientes/UploadEmpleado';
 import UploadEmpleadoExcel from './Components/Clientes/UploadEmpleadoExcel';
 import Ubicaciones from './Components/Ubicaciones/Ubicaciones';
 import UbicacionesOrden from './Components/Ubicaciones/UbicacionesOrden';
-import Ordenes from './Components/Ordenes/Ordenes';
-import NuevaOrden from './Components/Ordenes/NuevaOrden';
-import OrdenCaja from './Components/Ordenes/OrdenCaja';
-import OrdenGlobal from './Components/Ordenes/OrdenGlobal';
+import Ordenes from './pages/Orders/Orders';
+import NuevaOrden from './pages/Orders/NuevaOrden';
+import Cobrar from './pages/Orders/Cobrar';
+import AumentosGlobal from './pages/Orders/AumentosGlobal';
 import LiquidacionOrden from './Components/Ordenes/LiquidacionOrden';
 import Presupuestos from './Components/Presupuestos/Presupuestos';
 import LiquidacionPresupuestos from './Components/Presupuestos/LiquidacionPresupuestos';
@@ -36,6 +36,7 @@ import Agenda from './Components/Agenda/Agenda';
 import Chat from './Components/Chat/Chat';
 import Notificaciones from './Components/Notificaciones/Notificaciones';
 import Feedback from './Components/Feedback/Feedback';
+
 function App() {
   return (
     <>
@@ -55,10 +56,10 @@ function App() {
             <Route path='/locationOrder' element={<UbicacionesOrden />} />
             {/* Rutas Ordenes */}
             <Route path='/ordenes' element={<Ordenes />} />
-            <Route path='/nuevaOrden' element={<NuevaOrden />} />
-            <Route path='/ordenCaja' element={<OrdenCaja />} />
-            <Route path='/ordenGlobal' element={<OrdenGlobal />} />
-            <Route path='/ordenLiquidacion' element={<LiquidacionOrden />} />
+            <Route path='/ordenes/nuevaOrden' element={<NuevaOrden />} />
+            <Route path='/ordenes/cobrarCaja' element={<Cobrar />} />
+            <Route path='/ordenes/ordenGlobal' element={<AumentosGlobal />} />
+            <Route path='/ordenes/ordenLiquidacion' element={<LiquidacionOrden />} />
             {/* Rutas Presupuesto */}
             <Route path='/presupuestos' element={<Presupuestos />} />
             <Route path='/liquidacionPresupuestos' element={<LiquidacionPresupuestos />} />
