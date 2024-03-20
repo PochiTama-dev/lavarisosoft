@@ -1,0 +1,18 @@
+.mantenimiento-ctn {
+    display: flex;
+    flex-direction: row;
+    gap: 5%;
+    padding: 20px;
+    margin-top: 50px;
+    
+    }
+ 
+  .facturas-ctn{
+    margin-top: 50px;
+  
+  }
+  .tabs-ctn{
+    width:70vw;
+    margin-left: -50px;
+    margin-top: 10px;
+  }
