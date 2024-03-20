@@ -1,4 +1,22 @@
+.bg-primary{
+    background-color: #8EA3BF !important;
+}
+
+.bg-secondary{
+    background-color: #F2F6FC !important;
+}
+.bg-info{
+    background-color: #69688C !important;
+}
+.subtitle{
+    color:#283959
+}
+
+li{
+    list-style: none;
+}
  
+/* 
 #root {
  
   margin: 0 auto;
@@ -40,5 +58,5 @@
 
 .read-the-docs {
   color: #888;
-}
+} */
  

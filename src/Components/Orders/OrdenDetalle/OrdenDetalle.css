@@ -1,0 +1,39 @@
+.d-flex .justify-content-around button{
+    width:20%;
+}
+.agregarRepuesto{
+    cursor:pointer;
+    width:35px;
+    height:35px;
+}
+.imageContainer{
+    width:35px;
+    height:35px;
+    margin:.5px 0;
+    top:-5px;
+}
+.imageContainer span{
+    position:absolute;
+    font-size:11px;
+    width:130px;
+    top:15px;
+}
+.iconsOptions{
+    width:25px;
+    height:25px;
+}
+.asideButtons{
+  position: absolute;
+  right:  120px;
+  top: -120px;
+}
+
+.iconDolar{
+    top:5px;
+    right:5px;
+}
+.positionButton{
+    position:absolute;
+    right: 120px;
+    bottom:0px;
+  }

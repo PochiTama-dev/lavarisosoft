@@ -1,0 +1,7 @@
+.ordenTecnico li{
+    list-style: disclosure-open;
+}
+
+.ordenes li{
+    list-style: disc;
+}
