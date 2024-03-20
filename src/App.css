@@ -1,12 +1,17 @@
 .bg-primary{
     background-color: #8EA3BF !important;
 }
-
 .bg-secondary{
     background-color: #F2F6FC !important;
 }
 .bg-info{
     background-color: #69688C !important;
+}
+.bg-light{
+  background-color: #c8cfda !important;
+}
+.bg-body{
+  background-color:#FE9568 !important;
 }
 .subtitle{
     color:#283959

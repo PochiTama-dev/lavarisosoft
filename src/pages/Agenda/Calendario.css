@@ -1,0 +1,12 @@
+.dias{
+    width:100%;
+}
+.circuloSpan{
+    width:20px;
+    height:20px;
+    border-radius: 50%;
+}
+.diaSpan{
+    display:block;
+    width:100px;
+}
