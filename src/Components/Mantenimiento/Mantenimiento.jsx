@@ -1,26 +1,42 @@
 import {  useState } from "react";
 import Tab from "../../Components/Tabs/Tab";
 import Tabs from "../../Components/Tabs/Tabs";
+import Tabs2 from "../../Components/Tabs/Tabs2";
  import Facturas from "./TabsMantenimiento/Facturas";
+ import FacturasAFIP from "./TabsMantenimiento/FacturasAFIP";
  import CuentaCorriente from "./TabsMantenimiento/CuentaCorriente";
  import Liquidaciones from "./TabsMantenimiento/Liquidaciones";
  import Proveedor from "./TabsMantenimiento/Proveedor";
  import SaldosPendiente from "./TabsMantenimiento/SaldosPendientes";
  import Taller from "./TabsMantenimiento/Taller";
  import PlanCuentas from "./TabsMantenimiento/PlanCuentas";
+ import './mantenimiento.css'
+ import Header from "../Header/Header";
+ import 'bootstrap/dist/css/bootstrap.min.css';
 const Mantenimiento = () => {
   const [active, setActive] = useState(0);
+  const [active2, setActive2] = useState(0);
   const handleChange = (newActive) => setActive(newActive);
+  const handleChange2= (newActive2) => setActive2(newActive2);
   return (
-    <div >
-      <div >
-        <h1>Mantenimiento</h1>
-      </div>
+    <div className="ventas-container">
+     <Header text='Mantenimiento'></Header>
 
-      <div>
+      <div className="mantenimiento-ctn">
         <Tabs active={active} onChange={handleChange}>
           <Tab title="Facturas">
-      <Facturas/>
+          <div className="p-5 tabs-ctn">
+        <Tabs2 active={active2} onChange={handleChange2} className="client-tabs"  >
+          <Tab title="Facturas">
+         <Facturas/>
+          </Tab>
+          <Tab title="Facturas AFIP">
+          <FacturasAFIP/>
+          </Tab>
+        </Tabs2>
+      </div>
+
+
           </Tab>
           <Tab title="Liquidaciones">
           <Liquidaciones/>
