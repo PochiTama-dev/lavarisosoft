@@ -1,0 +1,20 @@
+.ventas-container {
+  height: 100vh;
+  width: 100%;
+}
+
+.ventas-tabs {
+  display: flex;
+  flex-direction: row;
+  gap: 5%;
+  padding: 20px;
+}
+
+.ventas-heading {
+  background-color: #69688c;
+  color: white;
+  padding: 20px;
+  padding-left: 60px;
+  display: flex;
+  justify-content: left;
+}

@@ -1,0 +1,58 @@
+ 
+  .custom-dropdown-btn.dropdown-toggle::after {
+    content: none !important; /* Elimina la flecha indicadora */
+  }
+ 
+  .rounded-circle {
+    background-color: #69688C;
+    color: #fff;
+
+  }
+ .cye-ctn{
+  margin-top: 50px;
+ }
+  .custom-dropdown-toggle {
+    width: 50px;
+    height: 50px; 
+    border-radius: 50% !important;
+    
+  }
+  .guardarEmpleado-btn{
+    display: flex;
+    margin-top: 30px;
+
+  }
+  .custom-dropdown-toggle .dots {
+    display: block;
+     margin-top: -5px;
+  }
+  .label-left {
+    text-align: left !important;
+  }
+
+  .label-input-margin {
+    margin-bottom: 20px;
+  }
+  
+  .required-field::after {
+    content: '*';
+    color: red;
+  }
+ 
+  .text-left {
+    text-align: left !important;
+  }
+  .clientes-ctn{
+    height: 600px;
+    width: 95%;
+    margin: 0 auto;
+  }
+  .btn-cye{
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 1%;
+  }
+  .uploadEmpleado-c2{
+    margin-top: 90px;
+    margin-left: -20%;
+  }
