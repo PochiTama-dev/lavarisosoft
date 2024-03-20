@@ -7,3 +7,12 @@
 .confirmButton{
     width:100px;
 }
+
+.datosRepuesto{
+    width:300px;
+}
+.agregarH1{
+    cursor:pointer;
+    width: 50px;
+    text-align: center;
+}

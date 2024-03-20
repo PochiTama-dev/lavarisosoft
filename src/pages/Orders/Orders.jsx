@@ -12,7 +12,7 @@ const Orders = () => {
   return (
     <div>
       <Header text={'Ordenes'} />
-      <div className='d-flex m-3'>
+      <div className='d-flex m-5'>
         <aside>
           <div className='tecnico'>
             <Tecnicos tecnicos={tecnicos} />

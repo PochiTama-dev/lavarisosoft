@@ -1,23 +1,25 @@
 import { useState } from 'react';
 import papelito from '../../../images/papelito.webp';
 import './DatosDelRepuesto.css';
+import Repuestos from './Repuestos';
 const DatosDelRepuesto = () => {
   const [precio, setPrecio] = useState('$');
+  const [repuesto, setrepuesto] = useState(1);
 
+  const handleAddRepuesto = () => {
+    return setrepuesto(repuesto + 1);
+  };
   return (
-    <div>
+    <div className='mx-5'>
       <h1>Datos del repuesto</h1>
-      <div>
-        <span>Descripción</span>
-        <input type='text' name='' id='' />
-        <span>ID</span>
-        <input type='text' name='' id='' />
-        <span>Precio</span>
-        <input type='text' name='' id='' />
-        <span>Cantidad</span>
-        <input type='text' name='' id='' />
+      <div className='d-flex justify-content-between flex-wrap'>
+        {[...Array(repuesto)].map((_, index) => (
+          <Repuestos key={index} />
+        ))}
       </div>
-      <h1>+</h1>
+      <h1 className='agregarH1' onClick={handleAddRepuesto}>
+        +
+      </h1>
       <hr />
       <div>
         <span>Total: </span>
