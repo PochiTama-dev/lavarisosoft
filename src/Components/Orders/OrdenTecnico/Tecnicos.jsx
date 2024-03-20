@@ -2,11 +2,11 @@ import PropTypes from 'prop-types';
 import OrdenesTecnico from './OrdenesTecnico';
 const Tecnicos = ({ tecnicos }) => {
   return (
-    <div>
+    <div className='bg-secondary'>
       <h2>Por técnico</h2>
-      {tecnicos.map((nombreTecnico, id) => (
+      {tecnicos.map((personalTecnico, index) => (
         <>
-          <OrdenesTecnico key={id} tecnico={nombreTecnico} />
+          <OrdenesTecnico key={index} tecnico={personalTecnico.nombre} />
         </>
       ))}
     </div>
@@ -15,5 +15,5 @@ const Tecnicos = ({ tecnicos }) => {
 export default Tecnicos;
 
 Tecnicos.propTypes = {
-  tecnicos: PropTypes.object.isRequired,
+  tecnicos: PropTypes.array.isRequired,
 };
