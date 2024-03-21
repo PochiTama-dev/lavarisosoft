@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "./Alertas.css";
+import "./Notificaciones.css";
 import alertasData from "./alertas.json";
 
 const Alertas = () => {
@@ -15,7 +15,7 @@ const Alertas = () => {
   };
 
   return (
-    <div className="container p-5 alertas-container">
+    <div className="container p-5 notificaciones-container">
       <h2>Alertas</h2>
       {alertas.map((alerta, index) => (
         <div key={index}>

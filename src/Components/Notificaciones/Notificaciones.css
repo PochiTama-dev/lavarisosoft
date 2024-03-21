@@ -1,8 +1,12 @@
-.container.alertas-container {
+.notificaciones-container{
+  text-align: start;
+}
+
+.container.notificaciones-container {
   background-color: #E6E6E6;
 }
 
-.container.alertas-container h2 {
+.container.notificaciones-container h2 {
   color: #283959;
   font-weight: 600;
 }
@@ -62,7 +66,8 @@
     position: relative;
   }
 
-  .notification-alert .item {
+  .notification-alert .item,
+  .item-notification {
     padding: 0.25rem;
     color: #283959;
   }
