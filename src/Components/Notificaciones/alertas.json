@@ -1,0 +1,26 @@
+[
+    {
+      "nombre": "Alan Almendra",
+      "descripciones": [
+        "se encuentra realizando la reparación",
+        "ha podido realizar un diagnóstico.",
+        "ha terminado su trabajo."
+      ]
+    },
+    {
+      "nombre": "José Lopez",
+      "descripciones": [
+        "descripción 1",
+        "descripción 2",
+        "descripción 3",
+        "descripción 4"
+      ]
+    },
+    {
+      "nombre": "Matias Diaz",
+      "descripciones": [
+        "descripción 1",
+        "descripción 2"
+      ]
+    }
+]
