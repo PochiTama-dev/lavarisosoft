@@ -1,7 +1,36 @@
 import "./Feedback.css";
 import Header from "../Header/Header";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { Dropdown } from "react-bootstrap";
+import { useState } from "react";
 
 const Feedback = () => {
+  const [showOrders, setShowOrders] = useState({});
+
+  const handleShowOrder = (nombre) => {
+    setShowOrders({
+      ...showOrders,
+      [nombre]: !showOrders[nombre],
+    });
+  };
+
+  const tecnicos = [
+    { nombre: "Alan Almendra" },
+    { nombre: "Mariela Paz" },
+    { nombre: "Leandro Suero" },
+  ];
+
+  const orders = [
+    { number: 1, status: "Aprobada" },
+    { number: 2, status: "Aprobada" },
+    { number: 3, status: "Pendiente" },
+    { number: 4, status: "Pendiente" },
+    { number: 5, status: "Aprobada" },
+    { number: 6, status: "Pendiente" },
+    { number: 7, status: "Pendiente" },
+    { number: 8, status: "Aprobada" },
+    { number: 9, status: "Aprobada" },
+  ];
   return (
     <div className="container-full-width">
       {/* <Header
@@ -13,50 +42,55 @@ const Feedback = () => {
           <div className="left-container">
             {/* Contenedor izquierdo superior */}
             <h2 className="p-3 feedback-containers-heading">Por técnico</h2>
-            <ul className="scrollable-container">
-              {/* Lista de elementos por técnico */}
-              <li>Técnico 1</li>
-              <li>Técnico 2</li>
-              <li>Técnico 3</li>
-              <li>Técnico 1</li>
-              <li>Técnico 2</li>
-              <li>Técnico 3</li>
-              <li>Técnico 1</li>
-              <li>Técnico 2</li>
-              <li>Técnico 3</li>
-              <li>Técnico 1</li>
-              <li>Técnico 2</li>
-              <li>Técnico 3</li>
-              <li>Técnico 1</li>
-              <li>Técnico 2</li>
-              <li>Técnico 3</li>
-            </ul>
+            {/* Lista de elementos por número técnico */}
+            <div className="scrollable-container-top">
+              {tecnicos?.map((t, i) => (
+                <>
+                  <div className="feedback-tecnicos-container" key={i}>
+                    <h3 className="feedback-tecnicos-heading">{t.nombre}</h3>
+                    <ul
+                      onClick={() => handleShowOrder(t.nombre)}
+                      className="feedback-tecnico"
+                    >
+                      <li></li>
+                    </ul>
+                  </div>
+                  {showOrders[t.nombre] && (
+                    <ul className="feedback-ordenes">
+                      <li>
+                        Orden #25645 <a href="#">ver detalles</a>
+                      </li>
+                      <li>
+                        Orden #25646 <a href="#">ver detalles</a>
+                      </li>
+                    </ul>
+                  )}
+                </>
+              ))}
+            </div>
           </div>
           <div className="left-container">
             {/* Contenedor izquierdo inferior */}
             <h2 className="p-3 feedback-containers-heading">
               Por número de orden
             </h2>
-            <ul className="scrollable-container">
-              {/* Lista de elementos por número de orden */}
-              <li>#1</li>
-              <li>#2</li>
-              <li>#3</li>
-              <li>#4</li>
-              <li>#5</li>
-              <li>#6</li>
-              <li>#1</li>
-              <li>#2</li>
-              <li>#3</li>
-              <li>#4</li>
-              <li>#5</li>
-              <li>#6</li>
-              <li>#1</li>
-              <li>#2</li>
-              <li>#3</li>
-              <li>#4</li>
-              <li>#5</li>
-              <li>#6</li>
+            {/* Lista de elementos por número de orden */}
+            <ul className="scrollable-container-bottom">
+              {orders.map((order) => (
+                <li
+                  key={order.number}
+                  className="scrollable-container-bottom-item"
+                >
+                  <h5>#{order.number}</h5>
+                  <h5
+                    className={
+                      order.status === "Aprobada" ? "green-text" : "orange-text"
+                    }
+                  >
+                    {order.status}
+                  </h5>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
