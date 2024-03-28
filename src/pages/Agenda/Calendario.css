@@ -10,3 +10,29 @@
     display:block;
     width:100px;
 }
+.flechaIzq{
+    position: relative;
+    width: 0;
+    height: 0;
+    border-top: 10px solid white;
+    border-bottom: 10px solid white;
+    border-right: 20px solid black;
+    display: inline-block;
+    margin-right: 10px;
+    cursor:pointer;
+}
+.flechaDer{
+    position: relative;
+    width: 0;
+    height: 0;
+    border-top: 10px solid white;
+    border-bottom: 10px solid white;
+    border-left: 20px solid black;
+    display: inline-block;
+    margin-left: 10px;
+    cursor:pointer;
+}
+
+.Concluido{ background-color: #40A63D;}
+.Visitado{ background-color: #FE9568;}
+.Agendado{ background-color: #69688C;}

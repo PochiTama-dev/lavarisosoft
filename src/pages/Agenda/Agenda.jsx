@@ -1,10 +1,12 @@
 import Header from '../../Components/Header/Header.jsx';
 import Calendario from './Calendario.jsx';
 const Agenda = () => {
+  const fechaActual = new Date();
+  console.log(fechaActual.getMonth());
   return (
     <div>
       <Header text={'Agenda'} />
-      <Calendario dia={11} mes={12} />
+      <Calendario dia={fechaActual.getDate()} mes={fechaActual.getMonth() + 1} />
     </div>
   );
 };
