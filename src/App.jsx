@@ -12,7 +12,6 @@ import Orders from './pages/Orders/Orders';
 import NuevaOrden from './pages/Orders/NuevaOrden';
 import Cobrar from './pages/Orders/Cobrar';
 import AumentosGlobal from './pages/Orders/AumentosGlobal';
-import LiquidacionOrden from './Components/Ordenes/LiquidacionOrden';
 import Presupuestos from './Components/Presupuestos/Presupuestos';
 import LiquidacionPresupuestos from './Components/Presupuestos/LiquidacionPresupuestos';
 import Ventas from './pages/Ventas/Ventas';
@@ -32,7 +31,7 @@ import MantEditRemito from './Components/Mantenimiento/MantEditRemito';
 import MantFacturas from './Components/Mantenimiento/MantFacturas';
 import MantRemito from './Components/Mantenimiento/MantRemito';
 import NuevoProveedor from './Components/Mantenimiento/NuevoProveedor';
-import Agenda from './Components/Agenda/Agenda';
+import Agenda from './pages/Agenda/Agenda.jsx';
 import Chat from './Components/Chat/Chat';
 import Notificaciones from './Components/Notificaciones/Notificaciones';
 import Feedback from './Components/Feedback/Feedback';
@@ -59,7 +58,7 @@ function App() {
             <Route path='/ordenes/nuevaOrden' element={<NuevaOrden />} />
             <Route path='/ordenes/cobrarCaja' element={<Cobrar />} />
             <Route path='/ordenes/ordenGlobal' element={<AumentosGlobal />} />
-            <Route path='/ordenes/ordenLiquidacion' element={<LiquidacionOrden />} />
+            {/* <Route path='/ordenes/ordenLiquidacion' element={<LiquidacionOrden />} /> */}
             {/* Rutas Presupuesto */}
             <Route path='/presupuestos' element={<Presupuestos />} />
             <Route path='/liquidacionPresupuestos' element={<LiquidacionPresupuestos />} />
