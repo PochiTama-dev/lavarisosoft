@@ -1,9 +1,13 @@
 import { useState } from 'react';
 import Grilla from '../../Grilla/Grilla';
 import './Inventario.css';
+import cargar from '../../../images/cargarExcel.webp';
+import descargar from '../../../images/descargarExcel.webp';
+import editar from '../../../images/editar.webp';
 
 const Inventario = () => {
   const [pestaña, setPestaña] = useState('Stock');
+  const [show, setShow] = useState(false);
 
   const columnasStock = ['Nombre', 'ID', 'Precio', 'Disponibles'];
   const itemsStock = [
@@ -151,6 +155,10 @@ const Inventario = () => {
       nOrden: 30000,
     },
   ];
+
+  const handleShow = () => {
+    setShow(!show);
+  };
   return (
     <div className='bg-secondary'>
       <h1 className='text-primary'>Inventario</h1>
@@ -200,25 +208,33 @@ const Inventario = () => {
       ) : (
         <Grilla columnas={columnasReporteVentas} elementos={itemsReporteVentas} />
       )}
-      <button>
-        <h1>...</h1>
-      </button>
-      <ul>
-        <li>
-          <img src='' alt='Descargar el excel' /> <span>Descargar el excel</span>
-        </li>
-        <li>
-          <img src='' alt='editar' /> <span>Editar</span>
-        </li>
-        <li>
-          <img src='' alt='Carga de excel' /> <span>Carga de excel</span>
-        </li>
-        <li>
-          <img src='' alt='Agregar repuestos' /> <span>Agregar repuestos</span>
-        </li>
-        <button>
-          <h1>...</h1>
-        </button>
+      <ul className='d-flex justify-content-between imagenes'>
+        <div className='text-end'>
+          <button className='boton3Puntos' onClick={handleShow}>
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+        {show && (
+          <>
+            <li>
+              <img src={descargar} alt='Descargar el excel' /> <span>Descargar Excel</span>
+            </li>
+            <li>
+              <img src={editar} alt='editar' /> <span>Editar</span>
+            </li>
+            <li>
+              <img src={cargar} alt='Carga de excel' /> <span>Carga Excel</span>
+            </li>
+            <li className='d-flex'>
+              <div className='divMas'>
+                <span className='spanMas'>+</span>
+              </div>
+              <span>Agregar repuestos</span>
+            </li>
+          </>
+        )}
       </ul>
     </div>
   );
