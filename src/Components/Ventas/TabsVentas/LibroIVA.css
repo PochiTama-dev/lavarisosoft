@@ -1,0 +1,104 @@
+.libro-container {
+  background-color: #f2f6fc;
+  width: 70vw;
+  height: 80vh;
+  margin-top: 2.5%;
+}
+
+.libro-header-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.libro-header-left {
+  width: 50%;
+}
+
+.libro-header-right {
+  width: 50%;
+}
+
+.libro-heading {
+  font-weight: bold;
+  color: #283959;
+  display: flex;
+  justify-content: left;
+  font-weight: bold;
+  padding-left: 40px;
+  padding-top: 40px;
+}
+
+.libro-heading-button-container {
+  width: 40%;
+  margin-left: 5%;
+  height: 5vh;
+}
+
+.libro-heading-button {
+  background-color: #40a63d;
+  width: 80%;
+  min-height: 90%;
+  color: white;
+  border: none;
+  font-size: large;
+}
+
+.libro-input-container {
+  display: flex;
+  padding-top: 10%;
+}
+
+.libro-input-text {
+  max-width: 30vw;
+  font-size: large;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  margin-bottom: 0;
+  margin-right: 2%;
+  color: #283959;
+}
+
+.libro-input {
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+  padding-left: 10px;
+  max-width: 30vh;
+}
+.libro-button-search {
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  padding-right: 5px;
+  color: white;
+  background-color: #777777;
+  max-width: 5vh;
+}
+
+.table {
+  overflow-y: auto;
+  overflow-x: auto;
+  color: #283959;
+  --bs-table-bg: var(--bs-table-bg);
+}
+.libro-excel-wrapper {
+  max-height: 40vh;
+  overflow-y: auto;
+  margin-top: 2.5%;
+}
+.libro-excel-wrapper th {
+  text-align: center !important;
+  color: #283959;
+  font-weight: bold;
+}
+
+.libro-excel-wrapper tbody {
+  text-align: center !important;
+}
+
+.libro-excel-wrapper td {
+  color: #283959;
+}
+
+.row-even {
+  background-color: #c8cfda;
+}

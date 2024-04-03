@@ -51,7 +51,7 @@ const Caja = () => {
                 </tr>
               </thead>
               <tbody>
-                <tr className="row-even">
+                <tr className="caja-row-even">
                   <td>Ingreso</td>
                   <td>$5000</td>
                   <td>#3366</td>
@@ -65,7 +65,7 @@ const Caja = () => {
                   <td>14:24:00</td>
                   <td>"Presupuesto..."</td>
                 </tr>
-                <tr className="row-even">
+                <tr className="caja-row-even">
                   <td>Egreso</td>
                   <td>$480000</td>
                   <td>#3364</td>
