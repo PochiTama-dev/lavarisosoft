@@ -1,0 +1,23 @@
+.grilla{
+    padding:13px;
+    min-width:650px;
+}
+
+.itemInventario{
+    border-left: 6px solid #40a63d;;
+}
+.ulFlecha{
+    position:relative
+}
+.flechaAbajo{
+    border-top: 15px solid black;
+    border-right: 10px solid transparent;
+    border-left:  10px solid transparent;
+    position: absolute;
+    right: 10px;
+    top:5px;
+}
+
+ul .valorItem{
+    text-align: center;
+}
