@@ -15,7 +15,7 @@ import AumentosGlobal from './pages/Orders/AumentosGlobal';
 import Presupuestos from './Components/Presupuestos/Presupuestos';
 import LiquidacionPresupuestos from './Components/Presupuestos/LiquidacionPresupuestos';
 import Ventas from './pages/Ventas/Ventas';
-import StockRespuestos from './Components/Ventas/StockRespuestos';
+import EditarStockRespuestos from './Components/Ventas/EditarStockRepuestos/EditarStockRepuestos.jsx';
 import AddRespuestos from './Components/Ventas/AddRespuestos';
 import AddLoteExcel from './Components/Ventas/AddLoteExcel';
 import CargarFactura from './Components/Ventas/CargarFactura';
@@ -64,7 +64,7 @@ function App() {
             <Route path='/liquidacionPresupuestos' element={<LiquidacionPresupuestos />} />
             {/* Rutas Ventas */}
             <Route path='/ventas' element={<Ventas />} />
-            <Route path='/stockRespuestos' element={<StockRespuestos />} />
+            <Route path='/editarStockRepuestos' element={<EditarStockRespuestos />} />
             <Route path='/addRespuestos' element={<AddRespuestos />} />
             <Route path='/addLoteExcel' element={<AddLoteExcel />} />
             <Route path='/cargarFactura' element={<CargarFactura />} />
