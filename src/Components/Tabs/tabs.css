@@ -1,4 +1,3 @@
-
 /* tabs2*/
 .tabs2 {
   display: flex;
@@ -10,7 +9,7 @@
   flex-direction: column;
   border-bottom: none;
 }
-/* /////////// */ 
+/* /////////// */
 .tabs {
   display: flex;
   justify-content: space-around;
@@ -56,7 +55,7 @@ a.activeTab .line {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  width: 20%;
+  width: 20vw !important;
   height: 80vh;
   margin-left: 2.5%;
   margin-top: 2.5%;
