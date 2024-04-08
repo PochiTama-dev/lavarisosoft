@@ -10,7 +10,7 @@ const Grilla = ({ columnas, elementos }) => {
 
   return (
     <div>
-      <ul className="row p-0">
+      <ul className="row p-0 text-center">
         {columnas.map((columna, index) => (
           <li key={index} className="col columna-li">
             {columna} <span></span>

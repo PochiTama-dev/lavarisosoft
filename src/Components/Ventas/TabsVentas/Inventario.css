@@ -34,6 +34,7 @@ ul .pestañasInventarioActive{
 .imagenes li img{
     width: 35px;
     height: 35px;
+    cursor:pointer;
 }
 .divMas{
     position: relative;
@@ -51,4 +52,6 @@ ul .pestañasInventarioActive{
   position: absolute;
   bottom: -33px;
   right: 2px;
+  cursor:pointer;
 }
+
