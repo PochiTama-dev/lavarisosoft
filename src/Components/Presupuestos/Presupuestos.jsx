@@ -32,7 +32,8 @@ const Presupuestos = () => {
   ];
 
   return (
-    <div className="vw-100 p-3">
+    
+    <div className="vw-100 p-3 presupuestos">
       <Header text="Gestion de presupuestos" />
       <div className="row p-5 mt-5">
         {/* Listas */}
