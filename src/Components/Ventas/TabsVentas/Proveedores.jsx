@@ -117,7 +117,7 @@ const Proveedores = () => {
           <div>
             <input
               className="proveedores-input"
-              type="text"
+              type="date"
               placeholder="dd/mm/aaaa"
             />
             <button className="proveedores-button-search">🔍︎</button>

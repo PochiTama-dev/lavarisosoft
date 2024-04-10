@@ -37,6 +37,12 @@
   min-height: 28px;
 }
 
+.proveedores-input {
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+  padding-left: 3%;
+}
+
 .proveedores-button-search {
   border-top-right-radius: 20px;
   border-bottom-right-radius: 20px;
