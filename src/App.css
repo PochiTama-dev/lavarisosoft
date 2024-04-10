@@ -1,14 +1,14 @@
-<<<<<<< HEAD
-=======
 /* @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap'); */
 
 body {
   font-family: 'Raleway', sans-serif;
 }
->>>>>>> e4753b40df3e595ac93c0b4dadc3d4f29fd81297
 
 .bg-primary{
     background-color: #8EA3BF !important;
+}
+.bg-primary-subtle{
+  background-color:  #B2C1D7 !important;
 }
 .bg-secondary{
     background-color: #F2F6FC !important;
@@ -21,6 +21,10 @@ body {
 }
 .bg-body{
   background-color:#FE9568 !important;
+}
+
+.text-primary{
+  color:#283959 !important;
 }
 .subtitle{
     color:#283959
