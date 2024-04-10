@@ -60,7 +60,7 @@
   flex-direction: column;
 }
 
-.row-even {
+.caja-row-even {
   background-color: #8ea3bf !important;
 }
 .table {
@@ -72,4 +72,12 @@
 .caja-excel-wrapper {
   max-height: 40vh;
   overflow-y: auto;
+}
+
+.caja-excel-wrapper th {
+  color: #283959;
+}
+
+.caja-excel-wrapper td {
+  color: #283959;
 }
