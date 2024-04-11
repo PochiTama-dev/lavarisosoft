@@ -8,6 +8,22 @@ const Grilla = ({ columnas, elementos }) => {
     setitemInventario(index === itemInventario ? -1 : index); // Si el mismo ítem ya está seleccionado, lo deselecciona
   };
 
+  const renderLotes = (lotes) => {
+    return (
+      <div>
+        <ul>
+          {lotes.map((lote, index) => (
+            <li key={index} className="bg-primary-subtle col mb-1">
+              {Object.values(lote).map((value, index) => (
+                <span key={index}> {value} </span>
+              ))}
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  };
+
   return (
     <div>
       <ul className="row p-0 text-center">
@@ -48,7 +64,7 @@ const Grilla = ({ columnas, elementos }) => {
                 </li>
               )}
             </ul>
-            {itemInventario === index && item.lotes && (
+            {/* {itemInventario === index && item.lotes && (
               <div>
                 <ul>
                   {item.lotes.map((lote, index) => (
@@ -59,7 +75,8 @@ const Grilla = ({ columnas, elementos }) => {
                   ))}
                 </ul>
               </div>
-            )}
+            )} */}
+            {itemInventario === index && item.lotes && renderLotes(item.lotes)}
           </div>
         ))}
       </ul>

@@ -5,6 +5,8 @@
   overflow-x: hidden;
   color: #283959;
   background-color: #f2f6fc;
+  scrollbar-width: thin; /* Ancho del scrollbar */
+  scrollbar-color: #69688c #c8cfda; /* Color de la barra de desplazamiento */
 }
 .proveedores-heading {
   color: #283959;
@@ -84,10 +86,11 @@
   height: 100%;
   font-weight: bold;
   text-align: start;
+  padding-left: 10%;
 }
 
 .proveedores-excel-wrapper {
-  margin-top: 5%;
+  margin-top: 2%;
   text-align: center;
 }
 

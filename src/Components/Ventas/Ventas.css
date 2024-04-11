@@ -17,4 +17,5 @@
   padding-left: 60px;
   display: flex;
   justify-content: left;
+  text-transform: uppercase;
 }

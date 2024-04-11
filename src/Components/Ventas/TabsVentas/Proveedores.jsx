@@ -21,32 +21,20 @@ const Proveedores = () => {
       op: "SALAZAR1234",
       lotes: [
         {
-          proveedor: "SALAZAR",
-          lote: "17/1/2-SALAZAR1234",
-          orden: "N/A",
-          unidadRestante: 1,
+          entrego: "Entregó",
+          numero: <strong>2</strong>,
+          unidades: "unidades de",
+          repuesto: <strong>Repuesto A</strong>,
+          precio: "Precio por unidad:",
+          unidad: <strong>$2000</strong>,
         },
         {
-          proveedor: "SALAZAR",
-          lote: "17/1/2-SALAZAR1234",
-          orden: "N/A",
-          unidadRestante: 1,
-        },
-      ],
-    },
-    {
-      estado: <strong style={{ color: "#40A63D" }}>Pago</strong>,
-      proveedor: "SALAZAR",
-      fecha: "27/01/2024",
-      importe: "$4325",
-      caja: 1,
-      op: "SALAZAR1234",
-      lotes: [
-        {
-          proveedor: "SALAZAR",
-          lote: "17/1/2-SALAZAR1234",
-          orden: "N/A",
-          unidadRestante: 1,
+          entrego: "Entregó",
+          numero: <strong>5</strong>,
+          unidades: "unidades de",
+          repuesto: <strong>Repuesto B</strong>,
+          precio: "Precio por unidad:",
+          unidad: <strong>$465</strong>,
         },
       ],
     },
@@ -59,10 +47,46 @@ const Proveedores = () => {
       op: "SALAZAR1234",
       lotes: [
         {
-          proveedor: "SALAZAR",
-          lote: "17/1/2-SALAZAR1234",
-          orden: "N/A",
-          unidadRestante: 1,
+          entrego: "Entregó",
+          numero: <strong>2</strong>,
+          unidades: "unidades de",
+          repuesto: <strong>Repuesto A</strong>,
+          precio: "Precio por unidad:",
+          unidad: <strong>$2000</strong>,
+        },
+        {
+          entrego: "Entregó",
+          numero: <strong>5</strong>,
+          unidades: "unidades de",
+          repuesto: <strong>Repuesto B</strong>,
+          precio: "Precio por unidad:",
+          unidad: <strong>$465</strong>,
+        },
+      ],
+    },
+    {
+      estado: <strong style={{ color: "#40A63D" }}>Pago</strong>,
+      proveedor: "SALAZAR",
+      fecha: "27/01/2024",
+      importe: "$4325",
+      caja: 1,
+      op: "SALAZAR1234",
+      lotes: [
+        {
+          entrego: "Entregó",
+          numero: <strong>2</strong>,
+          unidades: "unidades de",
+          repuesto: <strong>Repuesto A</strong>,
+          precio: "Precio por unidad:",
+          unidad: <strong>$2000</strong>,
+        },
+        {
+          entrego: "Entregó",
+          numero: <strong>5</strong>,
+          unidades: "unidades de",
+          repuesto: <strong>Repuesto B</strong>,
+          precio: "Precio por unidad:",
+          unidad: <strong>$465</strong>,
         },
       ],
     },
@@ -75,10 +99,20 @@ const Proveedores = () => {
       op: "SALAZAR1234",
       lotes: [
         {
-          proveedor: "SALAZAR",
-          lote: "17/1/2-SALAZAR1234",
-          orden: "N/A",
-          unidadRestante: 1,
+          entrego: "Entregó",
+          numero: <strong>2</strong>,
+          unidades: "unidades de",
+          repuesto: <strong>Repuesto A</strong>,
+          precio: "Precio por unidad:",
+          unidad: <strong>$2000</strong>,
+        },
+        {
+          entrego: "Entregó",
+          numero: <strong>5</strong>,
+          unidades: "unidades de",
+          repuesto: <strong>Repuesto B</strong>,
+          precio: "Precio por unidad:",
+          unidad: <strong>$465</strong>,
         },
       ],
     },
@@ -91,10 +125,20 @@ const Proveedores = () => {
       op: "SALAZAR1234",
       lotes: [
         {
-          proveedor: "SALAZAR",
-          lote: "17/1/2-SALAZAR1234",
-          orden: "N/A",
-          unidadRestante: 1,
+          entrego: "Entregó",
+          numero: <strong>2</strong>,
+          unidades: "unidades de",
+          repuesto: <strong>Repuesto A</strong>,
+          precio: "Precio por unidad:",
+          unidad: <strong>$2000</strong>,
+        },
+        {
+          entrego: "Entregó",
+          numero: <strong>5</strong>,
+          unidades: "unidades de",
+          repuesto: <strong>Repuesto B</strong>,
+          precio: "Precio por unidad:",
+          unidad: <strong>$465</strong>,
         },
       ],
     },
@@ -110,8 +154,6 @@ const Proveedores = () => {
           <div>
             <select className="proveedores-select">
               <option value="">Proveedores</option>
-              {/* 
-            <button className="proveedores-button-arrow">▼</button> */}
             </select>
           </div>
           <div>
@@ -124,7 +166,12 @@ const Proveedores = () => {
           </div>
 
           <div>
-            <h4>Saldo pendiente a la fecha: -$6565</h4>
+            <h4>
+              Saldo pendiente a la fecha:
+              <span style={{ color: "#D4674A", marginLeft: "15px" }}>
+                -$6565
+              </span>
+            </h4>
           </div>
         </div>
         <div className="proveedores-button-box">
@@ -134,7 +181,7 @@ const Proveedores = () => {
           <Link to="/gastos">
             <button>Cargar gasto</button>
           </Link>
-          <Link to="/addLoteExcel">
+          <Link to="/VentasRemito">
             <button>Recibir lote</button>
           </Link>
         </div>
