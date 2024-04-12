@@ -1,12 +1,12 @@
-import Header from '../Header/Header';
+import Header from '../../Header/Header';
 
-const AgregarRepuesto = () => {
+const EditarProducto = () => {
   return (
     <div>
       <Header text='Agregar un repuesto' />
 
       <div className='stockContainer'>
-        <h1>Agregar un producto</h1>
+        <h1>Editar un producto</h1>
         <div className='formulario d-flex justify-content-evenly'>
           <ul className='d-flex flex-column'>
             <label htmlFor='nombre'>Nombre</label>
@@ -61,4 +61,4 @@ const AgregarRepuesto = () => {
     </div>
   );
 };
-export default AgregarRepuesto;
+export default EditarProducto;

@@ -4,8 +4,10 @@ import './Inventario.css';
 import cargar from '../../../images/cargarExcel.webp';
 import descargar from '../../../images/descargarExcel.webp';
 import editar from '../../../images/editar.webp';
+import { useCustomContext } from '../../../hooks/context.jsx';
 
 const Inventario = () => {
+  const { handleNavigate } = useCustomContext();
   const [pestaña, setPestaña] = useState('Stock');
   const [show, setShow] = useState(false);
 
@@ -222,12 +224,17 @@ const Inventario = () => {
               <img src={descargar} alt='Descargar el excel' /> <span>Descargar Excel</span>
             </li>
             <li>
-              <img src={editar} alt='editar' /> <span>Editar</span>
+              <img
+                src={editar}
+                alt='editar'
+                onClick={() => handleNavigate('editarStockRepuestos')}
+              />
+              <span>Editar</span>
             </li>
-            <li>
+            <li onClick={() => handleNavigate('addLoteExcel')}>
               <img src={cargar} alt='Carga de excel' /> <span>Carga Excel</span>
             </li>
-            <li className='d-flex'>
+            <li className='d-flex' onClick={() => handleNavigate('addRespuestos')}>
               <div className='divMas'>
                 <span className='spanMas'>+</span>
               </div>
