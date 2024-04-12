@@ -1,6 +1,57 @@
-import "./Caja.css";
+import React, { useState } from "react";
+import "./Caja.css"; // Asegúrate de importar el archivo CSS correctamente
 
 const Caja = () => {
+  const [orderBy, setOrderBy] = useState(null);
+  const [orderAsc, setOrderAsc] = useState(true);
+
+  const handleSort = (columnName) => {
+    if (orderBy === columnName) {
+      setOrderAsc((prevOrderAsc) => !prevOrderAsc);
+    } else {
+      setOrderBy(columnName);
+      setOrderAsc(true);
+    }
+  };
+
+  // Datos para la tabla de movimientos
+  const movimientosData = [
+    {
+      tipo: "Ingreso",
+      importe: "$5000",
+      numeroOrden: "#3366",
+      hora: "15:06:32",
+      comentarios: '"Recibo arreglo..."',
+    },
+    {
+      tipo: "Ingreso",
+      importe: "$25000",
+      numeroOrden: "#3365",
+      hora: "14:24:00",
+      comentarios: '"Presupuesto..."',
+    },
+    {
+      tipo: "Egreso",
+      importe: "$480000",
+      numeroOrden: "#3364",
+      hora: "12:27:00",
+      comentarios: "Viático",
+    },
+  ];
+
+  // Ordenar datos según la columna seleccionada
+  const sortedData = orderBy
+    ? [...movimientosData].sort((a, b) => {
+        const valA = a[orderBy];
+        const valB = b[orderBy];
+        if (orderAsc) {
+          return valA < valB ? -1 : valA > valB ? 1 : 0;
+        } else {
+          return valA > valB ? -1 : valA < valB ? 1 : 0;
+        }
+      })
+    : movimientosData;
+
   return (
     <div className="caja-container">
       <div>
@@ -43,35 +94,62 @@ const Caja = () => {
             <table className="table">
               <thead>
                 <tr>
-                  <th>Movimiento</th>
-                  <th>Importe</th>
-                  <th>No. de orden</th>
-                  <th>Hora</th>
-                  <th>Comentarios</th>
+                  <th onClick={() => handleSort("tipo")}>
+                    Movimiento{" "}
+                    {orderBy === "tipo" ? orderAsc ? "▲" : "▼" : <span>▼</span>}
+                  </th>
+                  <th onClick={() => handleSort("importe")}>
+                    Importe{" "}
+                    {orderBy === "importe" ? (
+                      orderAsc ? (
+                        "▲"
+                      ) : (
+                        "▼"
+                      )
+                    ) : (
+                      <span>▼</span>
+                    )}
+                  </th>
+                  <th onClick={() => handleSort("numeroOrden")}>
+                    No. de orden{" "}
+                    {orderBy === "numeroOrden" ? (
+                      orderAsc ? (
+                        "▲"
+                      ) : (
+                        "▼"
+                      )
+                    ) : (
+                      <span>▼</span>
+                    )}
+                  </th>
+                  <th onClick={() => handleSort("hora")}>
+                    Hora{" "}
+                    {orderBy === "hora" ? orderAsc ? "▲" : "▼" : <span>▼</span>}
+                  </th>
+                  <th onClick={() => handleSort("comentarios")}>
+                    Comentarios{" "}
+                    {orderBy === "comentarios" ? (
+                      orderAsc ? (
+                        "▲"
+                      ) : (
+                        "▼"
+                      )
+                    ) : (
+                      <span>▼</span>
+                    )}
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                <tr className="row-even">
-                  <td>Ingreso</td>
-                  <td>$5000</td>
-                  <td>#3366</td>
-                  <td>15:06:32</td>
-                  <td>"Recibo arreglo..."</td>
-                </tr>
-                <tr>
-                  <td>Ingreso</td>
-                  <td>$25000</td>
-                  <td>#3365</td>
-                  <td>14:24:00</td>
-                  <td>"Presupuesto..."</td>
-                </tr>
-                <tr className="row-even">
-                  <td>Egreso</td>
-                  <td>$480000</td>
-                  <td>#3364</td>
-                  <td>12:27:00</td>
-                  <td>Viático</td>
-                </tr>
+                {sortedData.map((item, index) => (
+                  <tr key={index} className={index % 2 === 0 ? "" : "row-even"}>
+                    <td>{item.tipo}</td>
+                    <td>{item.importe}</td>
+                    <td>{item.numeroOrden}</td>
+                    <td>{item.hora}</td>
+                    <td>{item.comentarios}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

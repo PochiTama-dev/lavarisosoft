@@ -1,0 +1,24 @@
+.view-order {
+    color: #69688C;
+    cursor: pointer;
+}
+
+.container-lists {
+    width: 25vw;
+    min-width: 375px;
+}
+
+.grey-text {
+    color: #283959;
+}
+
+.custom-hr {
+    border: 0;
+    height: 5px;
+    background-color: #283959;
+    margin: 20px 0;
+}
+
+.presupuestos .ventas-container .tabs {
+    width: 100%;
+}
