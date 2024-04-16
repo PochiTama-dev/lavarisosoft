@@ -23,3 +23,17 @@
     width:150px;
     height:40px;
 }
+
+/* EditarProducto.jsx */
+.liForm label{
+    width: 80px;
+}
+.liForm select, .liForm input[type="date"]{
+    width:220px;
+    border-radius:50px;
+    background-color: transparent;
+}
+.editForm{
+    height:24px;
+    max-width: 295px;
+}

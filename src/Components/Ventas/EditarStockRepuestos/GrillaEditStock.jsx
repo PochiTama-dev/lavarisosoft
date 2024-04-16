@@ -2,8 +2,9 @@ import '../../Grilla/Grilla.css';
 import PropTypes from 'prop-types';
 import editar from '../../../images/editar2.webp';
 import { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { useCustomContext } from '../../../hooks/context.jsx';
 const GrillaEditStock = ({ columnas, elementos }) => {
+  const { handleEdit } = useCustomContext();
   const [checkboxStates, setCheckboxStates] = useState(elementos.map(() => false));
   const [items, setItems] = useState(elementos);
 
@@ -24,9 +25,6 @@ const GrillaEditStock = ({ columnas, elementos }) => {
     setCheckboxStates(newCheckboxStates);
   };
 
-  const handleEdit = () => {
-    Navigate('/editarProducto');
-  };
   return (
     <div>
       <ul className='row p-0 text-center'>
@@ -47,13 +45,16 @@ const GrillaEditStock = ({ columnas, elementos }) => {
               ))}
               <li className='col'>
                 <div className='d-flex'>
-                  <img src={editar} alt='editar' className='imgEditar' />
+                  <img
+                    src={editar}
+                    alt='editar'
+                    className='imgEditar'
+                    onClick={() => handleEdit(item)}
+                  />
                   <h1 className='borrar signo' onClick={() => handleDelete(index)}>
                     +
                   </h1>
-                  <h1 className='signo' onClick={() => handleEdit(index)}>
-                    +
-                  </h1>
+                  <h1 className='signo'>+</h1>
                   <input
                     type='checkbox'
                     name=''
