@@ -1,0 +1,91 @@
+.proveedor-container {
+  margin-top: 5%;
+  width: 70vw;
+  height: 75vh;
+  overflow-x: hidden;
+  color: #283959;
+  scrollbar-width: thin; /* Ancho del scrollbar */
+  scrollbar-color: #69688c #c8cfda; /* Color de la barra de desplazamiento */
+}
+
+.proveedor-heading {
+  color: #283959;
+  display: flex;
+  justify-content: left;
+  margin-left: 2%;
+}
+
+.proveedor-heading h1 {
+  font-weight: bold;
+}
+
+.proveedor-table-container li {
+  text-align: left !important;
+  padding-left: 2% !important;
+  max-width: 20%;
+  color: #283959;
+}
+
+.proveedor-table-container .grilla {
+  padding: 0;
+}
+
+.proveedor-table-container .ulFlecha {
+  min-height: 5vh;
+  display: flex;
+  align-items: center;
+}
+
+.proveedor-table-container .columna-li {
+  text-align: left !important;
+  font-weight: bold;
+  font-size: large;
+  margin-top: 5%;
+}
+
+.proveedor-button-container {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  gap: 2%;
+}
+
+.proveedor-add-container {
+  background-color: #69688c;
+  border-radius: 50%;
+  width: 64px;
+  height: 64px;
+}
+
+.proveedor-add-container button {
+  background-color: #69688c;
+  color: white;
+  border-radius: 50%;
+  width: 64px;
+  height: 64px;
+  border: none;
+  font-size: xxx-large;
+  font-weight: bold;
+  font-family: auto !important;
+  line-height: normal;
+}
+
+.proveedor-export-button {
+  background-color: #69688c;
+  border: none;
+  border-radius: 50%;
+  width: 64px;
+  height: 64px;
+}
+
+.proveedor-export-button svg {
+  width: 50%;
+}
+
+svg {
+  vertical-align: initial !important;
+}
+
+.proveedor-table-container svg {
+  margin-left: 70%;
+}
