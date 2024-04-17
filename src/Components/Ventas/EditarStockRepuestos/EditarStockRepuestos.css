@@ -37,3 +37,10 @@
     height:24px;
     max-width: 295px;
 }
+
+
+/* AddLoteExcel */
+.itemsExcel{
+    position:relative;
+    top:25px
+}
