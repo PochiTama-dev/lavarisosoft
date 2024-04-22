@@ -16,3 +16,57 @@
     margin-left: -50px;
     margin-top: 10px;
   }
+  .liquidaciones-ctn{
+    width: 65vw;
+    margin-top: 50px;
+  }  
+  .liquidaciones-ctn h1{
+ 
+    margin-bottom: 50px;
+  }
+
+  .liquidaciones-ctn button,  .liquidacion button{
+    border-radius: 15px;
+    background-color: #69688C;
+    color: aliceblue;
+    width: 150px;
+    display: flex;
+    justify-content: center;
+    margin: 50px auto 0 auto;
+  }
+  .liquidacion{
+    width: 800px;
+    background-color: #E6E6E6;
+ 
+    margin-top: 2%;
+    margin-left: 2%;
+    padding: 50px;
+  }
+  .liquidacion input{
+    margin-top: 25px;
+    margin-left: 40%;
+    border-radius: 5px;
+    background-color: transparent;
+    border: solid 1px black;
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+  }
+  .liquidacion span{
+    margin-top: 29px;
+    display: flex;
+    flex-direction: column;
+  }
+ .liq-table{
+  margin-top: 5%;
+  display: flex;
+  flex-direction: row;
+ }
+ .table-striped tbody > tr:nth-of-type(odd) {
+  background-color: rgba(0, 0, 0, 0.05); /* Color rayado */
+}
+
+/* Estilo para los elementos dentro de las filas */
+.table-striped tbody > tr td {
+  background-color: transparent; /* Fondo transparente para los elementos */
+}
