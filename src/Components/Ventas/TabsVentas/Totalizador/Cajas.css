@@ -1,0 +1,30 @@
+.cajas{
+    height: 80vh;
+}
+.cajas ul {
+    padding:0
+}
+.cajas .cajaItem{
+    width: 200px;
+    margin-top:5px;
+    cursor:pointer;
+}
+
+.cajas ul li div img{
+    width:22px;
+
+}
+
+/* Caja Seleccionada .jsx */
+.codImp{
+    width:154px
+}
+.inputsItems{
+    width:25rem;
+}
+.items{
+    width:300px
+}
+.pestañasFont{
+    font-size:20px;
+}
