@@ -1,4 +1,5 @@
 .mantenimiento-ctn {
+ 
     display: flex;
     flex-direction: row;
     gap: 5%;
@@ -70,3 +71,4 @@
 .table-striped tbody > tr td {
   background-color: transparent; /* Fondo transparente para los elementos */
 }
+ 

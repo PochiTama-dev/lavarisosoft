@@ -1,7 +1,6 @@
 .ventas-container {
   height: 100vh;
   width: 100%;
- 
 }
 
 .ventas-tabs {
@@ -18,4 +17,5 @@
   padding-left: 60px;
   display: flex;
   justify-content: left;
+  text-transform: uppercase;
 }
