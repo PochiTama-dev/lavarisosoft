@@ -28,4 +28,50 @@ const datosFacturasAFIP = [
  
 ];
 
+
+
+export const datosTaller = [
+  {
+    prod: 'Lavavajilla',
+    marca: 'Candy',
+    modelo: 'EvoX2N',
+    fecha: '20/12/20',
+    tecD: 'TC-1234',  
+    tecT: 'TC-1124', 
+    orden: '#5525', 
+    cliente: '026554', 
+    icon: eye,
+  
+  },
+  {
+    prod: 'Lavavajilla',
+    marca: 'Candy',
+    modelo: 'EvoX2N',
+    fecha: '20/12/20',
+    tecD: 'TC-1234',  
+    tecT: 'TC-1124', 
+    orden: '#5525', 
+    cliente: '026554', 
+    icon: eye,
+    
+  },
+  {
+    prod: 'Lavavajilla',
+    marca: 'Candy',
+    modelo: 'EvoX2N',
+    fecha: '20/12/20',
+    tecD: 'TC-1234',  
+    tecT: 'TC-1124', 
+    orden: '#5525', 
+    cliente: '026554', 
+    icon: eye,
+  
+  },
+ 
+];
+
+
+
+
+
 export default datosFacturasAFIP;
