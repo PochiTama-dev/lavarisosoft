@@ -15,7 +15,7 @@ import AumentosGlobal from './pages/Orders/AumentosGlobal';
 import Presupuestos from './Components/Presupuestos/Presupuestos';
 import LiquidacionPresupuestos from './Components/Presupuestos/LiquidacionPresupuestos';
 /* Ventas */
-import Ventas from './pages/Ventas/Ventas';
+import Ventas from './pages/Ventas/Ventas.jsx';
 import EditarStockRespuestos from './Components/Ventas/EditarStockRepuestos/EditarStockRepuestos.jsx';
 import EditarProducto from './Components/Ventas/EditarStockRepuestos/EditarProducto.jsx';
 import AddRespuestos from './Components/Ventas/AddRespuestos';
