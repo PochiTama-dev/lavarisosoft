@@ -68,12 +68,14 @@ const AddLoteExcel = ({ columnas, elementos }) => {
             {items.map((item, index) => (
               <div key={index} className='itemContainer'>
                 <ul className={`ulItem row mb-1 p-0 ${index % 2 === 0 ? 'bg-light' : ''}`}>
-                  {Object.entries(item).map(([, valor], index) => (
-                    <li key={index} className={`col text-center`}>
-                      {valor}
-                    </li>
-                  ))}
-                  <li className='d-flex justify-content-end position-relative '>
+                  <div className='d-flex itemsExcel'>
+                    {Object.entries(item).map(([, valor], index) => (
+                      <li key={index} className={`col text-center`}>
+                        {valor}
+                      </li>
+                    ))}
+                  </div>
+                  <li className='d-flex justify-content-end position-relative trash '>
                     <div className='d-flex'>
                       <h1 className='borrar signo' onClick={() => handleDelete(index)}>
                         +

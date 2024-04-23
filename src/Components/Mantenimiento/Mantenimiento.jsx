@@ -7,9 +7,10 @@ import FacturasAFIP from './TabsMantenimiento/FacturasAFIP';
 import CuentaCorriente from './TabsMantenimiento/CuentaCorriente';
 import Liquidaciones from './TabsMantenimiento/Liquidaciones';
 import Proveedor from './TabsMantenimiento/Proveedor';
-import SaldosPendiente from './TabsMantenimiento/SaldosPendientes/SaldosPendientes';
+import SaldosPendiente from './TabsMantenimiento/SaldosPendientes';
 import Taller from './TabsMantenimiento/Taller';
 import PlanCuentas from './TabsMantenimiento/PlanCuentas';
+
 import './mantenimiento.css';
 import Header from '../Header/Header';
 import 'bootstrap/dist/css/bootstrap.min.css';
