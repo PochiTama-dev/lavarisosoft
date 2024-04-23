@@ -18,3 +18,26 @@
   margin-left: -50px;
   margin-top: 10px;
 }
+
+
+/* Saldos pendientes */
+.saldosPendientes{
+  width:70vw;
+}
+.saldosItems{
+  margin-left:20px;
+}
+.saldoItem{
+  height:75px;
+  text-align: center;
+}
+
+.borde-verde{
+  border-left: 8px solid #40A63D;
+}
+.borde-amarillo{
+  border-left: 8px solid #FACA50;
+}
+.borde-rojo{
+  border-left: 8px solid #E58769;
+}

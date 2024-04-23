@@ -13,6 +13,9 @@ body {
 .bg-secondary{
     background-color: #F2F6FC !important;
 }
+.bg-secondary-subtle{
+    background-color: #E6E6e6 !important;
+}
 .bg-info{
     background-color: #69688C !important;
 }
