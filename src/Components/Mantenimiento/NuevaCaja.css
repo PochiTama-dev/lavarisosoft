@@ -1,0 +1,59 @@
+.nuevaCaja-heading {
+    background-color: #69688c;
+    color: white;
+    padding: 20px;
+    padding-left: 60px;
+    display: flex;
+    justify-content: left;
+    text-transform: uppercase;
+  }
+  
+  .nuevaCaja-formulario {
+    margin-left: 5%;
+    margin-top: 5%;
+    color: #283959;
+  }
+  .nuevaCaja-formulario form {
+    margin-left: 7.5%;
+    margin-top: 2%;
+  }
+  
+  .nuevaCaja-formulario h2 {
+    font-weight: bold;
+    font-size: 40px;
+  }
+  
+  .nuevaCaja-formulario h3 {
+    font-weight: 400;
+    font-size: larger;
+    width: 15%;
+  }
+  
+  .nuevaCaja-formulario div {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+  }
+  
+  .nuevaCaja-formulario input {
+    padding-left: 50px;
+    border-radius: 5px;
+    border-color: #777777;
+  }
+  
+  .nuevaCaja-formulario button {
+    background-color: #69688c;
+    color: white;
+    border-radius: 20px;
+    border: none;
+    width: 12.5%;
+    height: 3vh;
+    margin-left: 10%;
+    margin-top: 2%;
+  }
+  
+  .required {
+    color: red;
+    font-size: 2rem;
+    margin-left: 5px;
+  }

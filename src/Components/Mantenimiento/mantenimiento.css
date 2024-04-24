@@ -8,7 +8,9 @@
     
     }
  
-  .facturas-ctn{
+  .facturas-ctn, 
+  .empleados-ctn,
+  .cajas-ctn {
     margin-top: 50px;
   
   }
@@ -84,5 +86,8 @@
   margin: 50px;
 }
 
- 
+.mantenimiento-ctn th,
+.mantenimiento-ctn td {
+  color: #283959;
+} 
  

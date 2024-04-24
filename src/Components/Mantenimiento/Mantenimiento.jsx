@@ -2,8 +2,10 @@ import { useState } from "react";
 import Tab from "../../Components/Tabs/Tab";
 import Tabs from "../../Components/Tabs/Tabs";
 import Tabs2 from "../../Components/Tabs/Tabs2";
+import Empleados from "./TabsMantenimiento/Empleados";
 import Facturas from "./TabsMantenimiento/Facturas";
 import FacturasAFIP from "./TabsMantenimiento/FacturasAFIP";
+import Cajas from "./TabsMantenimiento/Cajas";
 import CuentaCorriente from "./TabsMantenimiento/CuentaCorriente";
 import Liquidaciones from "./TabsMantenimiento/Liquidaciones";
 import Proveedor from "./TabsMantenimiento/Proveedor";
@@ -55,10 +57,10 @@ const Mantenimiento = () => {
                 className="client-tabs"
               >
                 <Tab title="Empleados">
-                  <Facturas />
+                  <Empleados />
                 </Tab>
                 <Tab title="Cajas">
-                  <FacturasAFIP />
+                  <Cajas />
                 </Tab>
               </Tabs2>
             </div>
