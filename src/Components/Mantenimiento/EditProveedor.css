@@ -1,0 +1,53 @@
+.editProveedor-heading {
+  background-color: #69688c;
+  color: white;
+  padding: 20px;
+  padding-left: 60px;
+  display: flex;
+  justify-content: left;
+  text-transform: uppercase;
+}
+
+.editProveedor-formulario {
+  margin-left: 5%;
+  margin-top: 5%;
+  color: #283959;
+}
+.editProveedor-formulario form {
+  margin-left: 7.5%;
+  margin-top: 2%;
+}
+
+.editProveedor-formulario h2 {
+  font-weight: bold;
+  font-size: 40px;
+}
+
+.editProveedor-formulario h3 {
+  font-weight: 400;
+  font-size: larger;
+  width: 15%;
+}
+
+.editProveedor-formulario div {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+
+.editProveedor-formulario input {
+  padding-left: 10px;
+  border-radius: 5px;
+  border-color: #777777;
+}
+
+.editProveedor-formulario button {
+  background-color: #69688c;
+  color: white;
+  border-radius: 20px;
+  border: none;
+  width: 12.5%;
+  height: 3vh;
+  margin-left: 10%;
+  margin-top: 2%;
+}
