@@ -43,21 +43,24 @@
   margin-top: 5%;
 }
 
-.proveedor-button-container {
+.proveedor-button-container,
+.button-container {
   display: flex;
   justify-content: end;
   align-items: center;
   gap: 2%;
 }
 
-.proveedor-add-container {
+.proveedor-add-container,
+.add-container {
   background-color: #69688c;
   border-radius: 50%;
   width: 64px;
   height: 64px;
 }
 
-.proveedor-add-container button {
+.proveedor-add-container button,
+.add-container button {
   background-color: #69688c;
   color: white;
   border-radius: 50%;
@@ -70,7 +73,8 @@
   line-height: normal;
 }
 
-.proveedor-export-button {
+.proveedor-export-button,
+.export-button {
   background-color: #69688c;
   border: none;
   border-radius: 50%;
@@ -78,7 +82,8 @@
   height: 64px;
 }
 
-.proveedor-export-button svg {
+.proveedor-export-button svg,
+.export-button svg {
   width: 50%;
 }
 

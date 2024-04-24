@@ -33,6 +33,7 @@ import Liquidacion from './Components/Mantenimiento/Liquidacion';
 import MantEditRemito from './Components/Mantenimiento/MantEditRemito';
 import MantFacturas from './Components/Mantenimiento/MantFacturas';
 import MantRemito from './Components/Mantenimiento/MantRemito';
+import NuevaCaja from './Components/Mantenimiento/NuevaCaja';
 import NuevoProveedor from './Components/Mantenimiento/NuevoProveedor';
 import Agenda from './pages/Agenda/Agenda.jsx';
 import Chat from './Components/Chat/Chat';
@@ -84,6 +85,7 @@ function App() {
               <Route path='/liquidacion' element={<Liquidacion />} />
               <Route path='/cargarCuenta' element={<CargarCuenta />} />
               <Route path='/editarCuenta' element={<EditCuenta />} />
+              <Route path='/caja' element={<NuevaCaja />} />
               <Route path='/cajasBancos' element={<CajasBancos />} />
               <Route path='/proveedor' element={<NuevoProveedor />} />
               <Route path='/proveedorEdit' element={<EditProveedor />} />
