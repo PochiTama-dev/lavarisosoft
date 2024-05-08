@@ -4,7 +4,7 @@ import './Calendario.css';
 const Calendario = () => {
   const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
   const dias = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'];
-  const horario = [
+  /* const horario = [
     '8:00',
     '9:00',
     '10:00',
@@ -22,7 +22,7 @@ const Calendario = () => {
     '22:00',
     '23:00',
     '00:00',
-  ];
+  ]; */
   const clientes = [
     { nombre: 'Josué Paz', estado: 'Concluido', dia: 'Lunes', horario: '9:00 - 10:00' },
     { nombre: 'Joan Cortés', estado: 'Visitado', dia: 'Lunes', horario: '15:00 - 16:00' },
@@ -32,7 +32,7 @@ const Calendario = () => {
     { nombre: 'Carmen Lopresti', estado: 'Agendado', dia: 'Viernes', horario: '9:00 - 10:00' },
     { nombre: 'Daniela Lopez', estado: 'Agendado', dia: 'Viernes', horario: '11:00 - 12:30' },
     { nombre: 'Joan Cortés', estado: 'Agendado', dia: 'Viernes', horario: '14:00 - 15:00' },
-    { nombre: 'Josué Paz', estado: 'Agendado', dia: 'Sabadoo', horario: '10:30 - 11:30' },
+    { nombre: 'Josué Paz', estado: 'Agendado', dia: 'Sabado', horario: '10:30 - 11:30' },
     { nombre: 'Elena Alvarado', estado: 'Agendado', dia: 'Sabado', horario: '16:00 - 18:00' },
     { nombre: 'Agustin Perez', estado: 'Agendado', dia: 'Domingo', horario: '12:30 - 13:30' },
   ];
@@ -80,6 +80,7 @@ const Calendario = () => {
     }
   };
   const ultimoDiaDePrimerSemana = ultimoDiaMes(fechaActual.getFullYear(), primerDiaSemana.getMonth() + 1);
+
   return (
     <div className='m-5'>
       <div className='d-flex flex-column justify-content-center align-items-center calendario'>
@@ -93,31 +94,30 @@ const Calendario = () => {
         </h3>
       </div>
       <div className='d-flex'>
-        <ul className='d-flex flex-column mt-4'>
+        {/* <ul className='d-flex flex-column mt-4'>
           {horario.map((hora, index) => (
             <li className='my-3' key={index}>
               {hora}
             </li>
           ))}
-        </ul>
+        </ul> */}
         <ul className='d-flex justify-content-evenly dias p-0'>
           {dias.map((diaSemana, index) => (
             <li key={index} className={'dias bg-light mx-2 text-center'}>
               <span className={`${fechaActual.getDate() === index - 1 ? 'bg-info text-white text-center mx-3 rounded-pill diaSpan' : ''}`}>
                 {diaSemana} {comienzoSemana.getDate() + index > ultimoDiaDePrimerSemana ? index - 1 : comienzoSemana.getDate() + index}
               </span>
+              {clientes
+                .filter((cliente) => cliente.dia === diaSemana)
+                .map((cliente, i) => (
+                  <div key={i} className='my-2 text-white'>
+                    <li className={`${cliente.estado}`}>
+                      <li>{cliente.nombre}</li>
+                      <li>{cliente.horario}</li>
+                    </li>
+                  </div>
+                ))}
             </li>
-          ))}
-        </ul>
-        <ul>
-          {clientes.map((cliente, index) => (
-            <div key={index}>
-              <li className={`${cliente.estado}`}>
-                {cliente.nombre}
-                {cliente.dia}
-                {cliente.horario}
-              </li>
-            </div>
           ))}
         </ul>
       </div>
