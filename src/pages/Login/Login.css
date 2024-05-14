@@ -2,6 +2,9 @@
 body{
     font-family: "Raleway", sans-serif;
 }
+.loginContainer{
+    height: 100vh;
+}
 .bg-primary{
     background-color: #8EA3BF !important;
 }
@@ -20,9 +23,15 @@ body{
 .container-sm{
     width:750px;
 }
+.asideImg{
+    width: 100%;
+}
+.imgLogin{
+    width: 100%;
+  height: 100%;
+  -o-object-fit: fill;
+     object-fit: fill;
 
-.img-fluid{
-    height:100%;
 }
 .btn:hover{
     background-color: #7a77d8;
