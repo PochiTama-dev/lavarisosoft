@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import OrdenesTecnico from './OrdenesTecnico';
 const Tecnicos = ({ tecnicos }) => {
   return (
-    <div className='bg-secondary'>
+    <div className='bg-secondary tecnico'>
       <h2>Por técnico</h2>
       {tecnicos.map((personalTecnico, index) => (
         <>

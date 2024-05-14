@@ -15,34 +15,18 @@ const OrdenDetalle = () => {
   const [show, setShow] = useState(false);
 
   return (
-    <div className='bg-secondary'>
+    <div className='contentDetail'>
       <div>
         <h1>Orden #25645</h1>
         <span>Estado: Pendiente de aprobacion</span>
       </div>
       <DatosTecnico nombre={tecnico.nombre} apellido={tecnico.apellido} legajo={tecnico.legajo} />
-      <DatosCliente
-        nombre='Martin'
-        apellido='Inchiausti'
-        legajo='CL-0123456'
-        telefono='112345678'
-        direccion='Corrientes 654'
-        localidad='CABA'
-      />
-      <DatosIncidente
-        equipo='lavarropa'
-        modelo='1234'
-        antiguedad='4 años'
-        diagnostico='jabonitis aguda'
-      />
+      <DatosCliente nombre='Martin' apellido='Inchiausti' legajo='CL-0123456' telefono='112345678' direccion='Corrientes 654' localidad='CABA' />
+      <DatosIncidente equipo='lavarropa' modelo='1234' antiguedad='4 años' diagnostico='jabonitis aguda' />
       <div className='d-flex justify-content-evenly position-relative'>
         <button className='bg-primary rounded-pill text-white'>Declinar</button>
         <button className='bg-primary rounded-pill text-white'>Aprobar</button>
-        <aside
-          className={`d-flex flex-column ${
-            show ? 'asideButtons' : 'positionButton'
-          } justify-content-end`}
-        >
+        <aside className={`d-flex flex-column ${show ? 'asideButtons' : 'positionButton'} justify-content-end`}>
           {show && (
             <>
               <center className='imageContainer bg-info rounded-circle position-relative'>
@@ -59,10 +43,7 @@ const OrdenDetalle = () => {
               </center>
             </>
           )}
-          <h2
-            className='bg-info  text-white text-center rounded-pill agregarRepuesto'
-            onClick={() => setShow(!show)}
-          >
+          <h2 className='bg-info  text-white text-center rounded-pill agregarRepuesto' onClick={() => setShow(!show)}>
             +
           </h2>
         </aside>
