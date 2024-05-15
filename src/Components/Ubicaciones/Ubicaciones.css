@@ -1,0 +1,38 @@
+.notification-badge-tecnico {
+  color: #fff;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 14px;
+  font-weight: bold;
+}
+.notification-badge-tecnico.active {
+  background-color: #40a63d;
+}
+.notification-badge-tecnico.pending {
+  background-color: #e58769;
+}
+
+.notification-badge-tarea {
+  border-radius: 50%;
+  width: 15px;
+  height: 15px;
+}
+.notification-badge-tarea.active {
+  background-color: #40a63d;
+}
+.notification-badge-tarea.ending {
+  background-color: #b2b2b2;
+}
+.feedback-ordenes li,
+.feedback-ordenes .li-tarea {
+  list-style: none;
+  margin-left: 1rem;
+  color: #777777;
+}
+
+.searchMap {
+  width: 90%;
+  height: 80%; /* Altura relativa al contenedor padre */
+  border-radius: 10px;
+}

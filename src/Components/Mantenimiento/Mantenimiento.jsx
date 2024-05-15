@@ -9,7 +9,7 @@ import Cajas from "./TabsMantenimiento/Cajas";
 import CuentaCorriente from "./TabsMantenimiento/CuentaCorriente";
 import Liquidaciones from "./TabsMantenimiento/Liquidaciones";
 import Proveedor from "./TabsMantenimiento/Proveedor";
-import SaldosPendiente from "./TabsMantenimiento/SaldosPendientes";
+import SaldosPendiente from "./TabsMantenimiento/SaldosPendientes/SaldosPendientes";
 import Taller from "./TabsMantenimiento/Taller";
 import PlanCuentas from "./TabsMantenimiento/PlanCuentas";
 import "./mantenimiento.css";
