@@ -44,18 +44,14 @@ const Mantenimiento = () => {
           <Tab title='Plan de Cuentas'>
             <PlanCuentas />
           </Tab>
-          <Tab title="Cuentas Corrientes">
-            <div className="p-5 tabs-ctn">
+          <Tab title='Cuentas Corrientes'>
+            <div className='p-5 tabs-ctn'>
               <CuentaCorriente />
-              <Tabs2
-                active={active2}
-                onChange={handleChange2}
-                className="client-tabs"
-              >
-                <Tab title="Empleados">
+              <Tabs2 active={active2} onChange={handleChange2} className='client-tabs'>
+                <Tab title='Empleados'>
                   <Empleados />
                 </Tab>
-                <Tab title="Cajas">
+                <Tab title='Cajas'>
                   <Cajas />
                 </Tab>
               </Tabs2>

@@ -1,5 +1,11 @@
+.calendario{
+    margin-top:15vh;
+}
 .dias{
     width:100%;
+}
+.grillaCalendario{
+    height:50vh;
 }
 .circuloSpan{
     width:20px;
