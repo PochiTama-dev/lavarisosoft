@@ -4,25 +4,6 @@ import './Calendario.css';
 const Calendario = () => {
   const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
   const dias = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'];
-  /* const horario = [
-    '8:00',
-    '9:00',
-    '10:00',
-    '11:00',
-    '12:00',
-    '13:00',
-    '14:00',
-    '15:00',
-    '16:00',
-    '17:00',
-    '18:00',
-    '19:00',
-    '20:00',
-    '21:00',
-    '22:00',
-    '23:00',
-    '00:00',
-  ]; */
   const clientes = [
     { nombre: 'Josué Paz', estado: 'Concluido', dia: 'Lunes', horario: '9:00 - 10:00' },
     { nombre: 'Joan Cortés', estado: 'Visitado', dia: 'Lunes', horario: '15:00 - 16:00' },
@@ -93,14 +74,7 @@ const Calendario = () => {
           <span className='bg-info flechaDer' onClick={semanaSiguiente}></span>
         </h3>
       </div>
-      <div className='d-flex'>
-        {/* <ul className='d-flex flex-column mt-4'>
-          {horario.map((hora, index) => (
-            <li className='my-3' key={index}>
-              {hora}
-            </li>
-          ))}
-        </ul> */}
+      <div className='d-flex grillaCalendario'>
         <ul className='d-flex justify-content-evenly dias p-0'>
           {dias.map((diaSemana, index) => (
             <li key={index} className={'dias bg-light mx-2 text-center'}>

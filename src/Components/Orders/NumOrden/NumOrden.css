@@ -1,3 +1,6 @@
+.orderNum{
+    height: 80vh;
+}
 .numOrden li{
     list-style: none;
 }
