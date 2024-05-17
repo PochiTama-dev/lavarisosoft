@@ -7,7 +7,7 @@ const Menu = () => {
       <h1 className="text-left mb-4 menu-heading text-uppercase">
         Menú Principal
       </h1>
-      <div className="row button-container">
+      <div className="row menu-button-container">
         <div className="col-md-4">
           <div className="btn-group-vertical ">
             <Link
