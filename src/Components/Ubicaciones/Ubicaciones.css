@@ -32,7 +32,28 @@
 }
 
 .searchMap {
-  width: 90%;
-  height: 80%; /* Altura relativa al contenedor padre */
+  width: 95%;
+  height: 85%;
   border-radius: 10px;
+}
+
+.list-clientes-container {
+  height: 350px;
+}
+.list-tecnicos-container {
+  height: 360px;
+}
+
+.feedback-tecnicos-heading-button {
+  color: #283959;
+  display: flex;
+  justify-content: left;
+  margin-left: 2.5%;
+  margin-top: 2.5%;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: 1.5rem;
+  font-weight: 500;
 }
