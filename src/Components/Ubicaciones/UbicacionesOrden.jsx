@@ -1,8 +1,12 @@
 import Header from "../Header/Header";
+import { useLocation } from "react-router-dom";
 
 import "./Ubicaciones.css";
 
 const UbicacionesOrden = () => {
+  const location = useLocation();
+  const { selectedTechnician, selectedClient } = location.state || {};
+
   return (
     <div className="ventas-container">
       <Header text="Ubicaciones"></Header>
@@ -15,11 +19,11 @@ const UbicacionesOrden = () => {
             <h2 className="px-3 pt-3 feedback-containers-heading">Cliente</h2>
             <div className="scrollable-container-top">
               <div className="feedback-tecnicos-container align-items-center">
-                <h4 className="feedback-tecnicos-heading">Martín Inchiausti</h4>
+                <h4 className="feedback-tecnicos-heading">{selectedClient.nombre}</h4>
               </div>
               <div className="feedback-tecnicos-container align-items-center">
                 <h4 className="feedback-tecnicos-heading">
-                  Teléfono: 11 2345678{" "}
+                  Teléfono: {selectedClient.telefono}
                 </h4>
               </div>
               <div className="feedback-tecnicos-container align-items-center">
@@ -46,7 +50,7 @@ const UbicacionesOrden = () => {
                 <table className="table">
                   <tbody>
                     <tr className="row-even">
-                      <td>Alan Almendra</td>
+                      <td>{selectedTechnician.nombre}</td>
                       <td>Legajo: TC-987654</td>
                       <td>Técnico a domicilio</td>
                     </tr>
