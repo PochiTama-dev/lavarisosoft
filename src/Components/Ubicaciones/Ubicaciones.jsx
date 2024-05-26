@@ -266,6 +266,8 @@ const Ubicaciones = () => {
     cliente.nombre.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const activeTecnicos = tecnicos.filter(t => t.estado === 'activo');
+
   return (
     <div className="ventas-container">
       <Header text="Ubicaciones"></Header>
@@ -512,7 +514,7 @@ const Ubicaciones = () => {
                   Buscar técnico
                 </h2>
                 <div className="scrollable-container-top">
-                  {(showAllTecnicos ? tecnicos : tecnicos.slice(0, 3)).map((t, i) => (
+                  {(showAllTecnicos ? activeTecnicos : activeTecnicos.slice(0, 3)).map((t, i) => (
                     <div key={t.id}>
                       <div className="feedback-tecnicos-container align-items-center">
                         <button
@@ -526,7 +528,7 @@ const Ubicaciones = () => {
                     </div>
                   ))}
                 </div>
-                {!showAllTecnicos && tecnicos.length > 3 && (
+                {!showAllTecnicos && activeTecnicos.length > 3 && (
                   <div className="d-flex justify-content-center mt-4">
                     <button className="bg-info rounded-pill py-1 px-4 text-white" onClick={handleShowAllTecnicos}>
                       Mostrar todos
@@ -538,7 +540,7 @@ const Ubicaciones = () => {
           )}
         </div>
         <div className="col-8">
-          <Map position={position} zoom={8} tecnicos={tecnicos} selectedClient={selectedClient} selectedTechnician={selectedTecnico} setSelectedTechnician={setSelectedTecnico} />
+          <Map position={position} zoom={8} activeTechnicians={activeTecnicos} selectedClient={selectedClient} selectedTechnician={selectedTecnico} setSelectedTechnician={setSelectedTecnico} />
           <div className="d-flex justify-content-end mt-4">
             <button
               className="bg-info rounded-pill py-1 px-2 text-white"
