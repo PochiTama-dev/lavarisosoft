@@ -1,7 +1,5 @@
 import { useState } from "react";
-import Tab from "../../Components/Tabs/Tab";
-import Tabs from "../../Components/Tabs/Tabs";
-import Servicios from "./TabsPresupuestos/Servicios";
+import { useNavigate } from 'react-router-dom';
 import Header from "../Header/Header";
 import DetalleOrden from "./DetalleOrden";
 
@@ -9,8 +7,22 @@ import "./Presupuestos.css";
 
 const Presupuestos = () => {
   const [showOrders, setShowOrders] = useState({});
-  const [active, setActive] = useState(0);
-  const handleChange = (newActive) => setActive(newActive);
+  const [comisiones, setComisiones] = useState({
+    Servicio: true,
+    Repuestos: true,
+    Viáticos: true,
+    "Descuento referidos": false,
+    "Comisión visita": false,
+    "Comisión reparación": false,
+    "Comisión entrega": false,
+    "Comisión rep. domicilio": false,
+    "Gasto impositivo": false,
+  });
+  const [cajas, setCajas] = useState({
+    "Caja 1": true,
+    "Caja 2": false,
+    "Caja 3": false,
+  });
 
   const handleShowOrder = (nombre) => {
     setShowOrders({
@@ -31,9 +43,27 @@ const Presupuestos = () => {
     { number: 25423, status: "Aprobada" },
   ];
 
+  const toggleComision = (comision) => {
+    setComisiones({
+      ...comisiones,
+      [comision]: !comisiones[comision],
+    });
+  };
+
+  const toggleCaja = (caja) => {
+    setCajas({
+      ...cajas,
+      [caja]: !cajas[caja],
+    });
+  };
+
+  const navigate = useNavigate();
+  const handleClickLiquidacion = () => {
+    navigate('/liquidacionPresupuestos');
+  };
+
   return (
-    
-    <div className="vw-100 p-3 presupuestos">
+    <div className="p-3 presupuestos">
       <Header text="Gestion de presupuestos" />
       <div className="row p-5 mt-5">
         {/* Listas */}
@@ -105,47 +135,48 @@ const Presupuestos = () => {
             </div>
           </div>
           <div className="row">
-            <DetalleOrden />
+            <DetalleOrden comisiones={comisiones} cajas={cajas} />
           </div>
-          <div className="d-flex justify-content-between">
-            <button className="bg-primary rounded-pill py-1 px-4 text-white">
+          <div className="d-flex justify-content-between div-botones">
+            <button className="bg-info rounded-pill py-1 px-4 text-white">
               Consolidar
             </button>
-            <button className="bg-primary rounded-pill py-1 px-4 text-white">
+            <button onClick={handleClickLiquidacion} className="bg-info rounded-pill py-1 px-4 text-white">
               Liq.Inmediata
             </button>
-            <button className="bg-primary rounded-pill py-1 px-4 text-white">
+            <button className="bg-info rounded-pill py-1 px-4 text-white">
               Imprimir factura
             </button>
           </div>
         </div>
         {/* End Form */}
-        {/* Tabs */}
+        {/* Desplegables */}
         <div className="col-3">
           <div className="ventas-container">
-            <Tabs active={active} onChange={handleChange}>
-              <Tab title="Servicio">
-              </Tab>
-              <Tab title="Repuestos">
-              </Tab>
-              <Tab title="Viáticos">
-              </Tab>
-              <Tab title="Descuento referidos">
-              </Tab>
-              <Tab title="Comisión visita">
-              </Tab>
-              <Tab title="Comisión reparación">
-              </Tab>
-              <Tab title="Comisión entrega">
-              </Tab>
-              <Tab title="Comisión rep. domicilio">
-              </Tab>
-              <Tab title="Gasto impositivo">
-              </Tab>
-            </Tabs>
+            <h3>Comisiones</h3>
+            {Object.keys(comisiones).map((comision) => (
+              <div
+                key={comision}
+                className={`item ${comisiones[comision] ? "active" : ""}`}
+              >
+                <span>{comision}</span>
+                <button onClick={() => toggleComision(comision)}>
+                  {comisiones[comision] ? "-" : "+"}
+                </button>
+              </div>
+            ))}
+            <h3>Cajas</h3>
+            {Object.keys(cajas).map((caja) => (
+              <div key={caja} className={`item ${cajas[caja] ? "active" : ""}`}>
+                <span>{caja}</span>
+                <button onClick={() => toggleCaja(caja)}>
+                  {cajas[caja] ? "-" : "+"}
+                </button>
+              </div>
+            ))}
           </div>
         </div>
-        {/* End Tabs */}
+        {/* End Desplegables */}
       </div>
     </div>
   );

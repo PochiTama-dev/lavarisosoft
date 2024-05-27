@@ -1,24 +1,163 @@
 .view-order {
-    color: #69688C;
-    cursor: pointer;
+  color: #69688c;
+  cursor: pointer;
 }
 
 .container-lists {
-    width: 25vw;
-    min-width: 375px;
+  width: 25vw;
+  min-width: 375px;
 }
 
 .grey-text {
-    color: #283959;
+  color: #283959;
 }
 
 .custom-hr {
-    border: 0;
-    height: 5px;
-    background-color: #283959;
-    margin: 20px 0;
+  border: 0;
+  height: 5px;
+  background-color: #283959;
+  margin: 20px 0;
 }
 
-.presupuestos .ventas-container .tabs {
-    width: 100%;
+.div-botones {
+  width: 90%;
+}
+
+.ventas-container .item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 10px 5px 25px;
+  border: none;
+  margin-bottom: 5px;
+  cursor: pointer;
+  background-color: #c8cfda;
+  position: relative;
+}
+
+.ventas-container .item::before {
+  content: "";
+  width: 5px;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: #69688c;
+}
+
+.ventas-container .item.active::before {
+  background-color: #40a63d;
+}
+
+.ventas-container .item button {
+  background: none;
+  border: none;
+  font-size: 1.2em;
+  cursor: pointer;
+}
+
+/* Liquidacion */
+.liquidacion-presupuestos {
+  width: 800px;
+  margin-top: 2%;
+  margin-left: 2%;
+  padding: 50px;
+}
+.liquidacion-presupuestos input {
+  margin-top: 25px;
+  margin-left: 40%;
+  border-radius: 5px;
+  background-color: transparent;
+  border: solid 1px black;
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+}
+.liquidacion-presupuestos span {
+  margin-top: 29px;
+  display: flex;
+  flex-direction: column;
+}
+.liquidacion-presupuestos button {
+  border-radius: 15px;
+  background-color: #69688c;
+  color: aliceblue;
+  width: 150px;
+  display: flex;
+  justify-content: center;
+  margin: 50px auto 0 auto;
+}
+.liquidacion-presupuestos .liquidacion-presupuestos-form {
+  display: flex;
+}
+.liquidacion-presupuestos .liquidacion-presupuestos-form .span-form-liquida {
+  width: 20%;
+}
+.liquidacion-presupuestos .liquidacion-presupuestos-form .inputs-form-liquida {
+  width: 42%;
+  margin-left: 5%;
+}
+.liquidacion-presupuestos .liquidacion-presupuestos-form input {
+  margin-left: 0;
+}
+.liquidacion-presupuestos .container-buttons-form-liquida {
+  width: 15%;
+}
+.container-buttons-form-liquida .buttons-form-liquida {
+  margin-top: 25px;
+}
+.container-buttons-form-liquida .buttons-form-liquida img {
+  padding: 0 5%;
+}
+
+/* Modal */
+.liquidacion-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensures it is above other content */
+}
+
+.liquidacion-modal {
+  display: block;
+  top: 20%;
+  left: 30%;
+  background-color: #c8cfda;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  width: 40%;
+  height: 45%;
+}
+
+.liquidacion-modal p,
+.liquidacion-modal h3 {
+  margin: 20px 0;
+}
+
+.liquidacion-modal-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.liquidacion-modal-confirm-button,
+.liquidacion-modal-cancel-button {
+  background-color: #5a5a8c;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.liquidacion-modal-confirm-button:hover,
+.liquidacion-modal-cancel-button:hover {
+  background-color: #4a4a7a;
 }
