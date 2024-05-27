@@ -1,30 +1,30 @@
  
-  .custom-dropdown-btn.dropdown-toggle::after {
-    content: none !important; /* Elimina la flecha indicadora */
-  }
  
   .rounded-circle {
     background-color: #69688C;
     color: #fff;
-
+    
   }
- .cye-ctn{
-  margin-top: 50px;
- }
+  .cye-ctn{
+    margin-top: 80px;
+  }
+  .custom-dropdown-btn.dropdown-toggle::after {
+    content: none !important; /* Elimina la flecha indicadora */
+  }
   .custom-dropdown-toggle {
     width: 50px;
     height: 50px; 
     border-radius: 50% !important;
     
   }
+  .custom-dropdown-toggle .dots {
+    display: block;
+     margin-top: -5px;
+  }
   .guardarEmpleado-btn{
     display: flex;
     margin-top: 30px;
 
-  }
-  .custom-dropdown-toggle .dots {
-    display: block;
-     margin-top: -5px;
   }
   .label-left {
     text-align: left !important;
@@ -45,7 +45,7 @@
   .clientes-ctn{
     height: 600px;
     width: 95%;
-    margin: 0 auto;
+    margin: 25px auto;
   }
   .btn-cye{
     display: flex;

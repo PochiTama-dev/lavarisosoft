@@ -25,6 +25,7 @@ a {
   color: gray;
   text-decoration: none;
   margin: 5px 0;
+  text-align: center  ;
 }
 
 a.activeTab {
