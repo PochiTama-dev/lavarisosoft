@@ -14,15 +14,15 @@ import "leaflet/dist/leaflet.css";
 
 const myIcon = new Icon({
   iconUrl: markerIcon,
-  iconSize: [25, 41],
+  iconSize: [30, 30],
   iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
+  popupAnchor: [1, -35],
 });
 
 const Map = ({
   position,
   zoom,
-  tecnicos,
+  activeTechnicians,
   selectedClient,
   selectedTechnician,
   setSelectedTechnician,
@@ -30,27 +30,13 @@ const Map = ({
   const { latitude, longitude } = position;
   const navigate = useNavigate();
 
-  // Filtrar técnicos activos y asignar coordenadas aleatorias
-  const activeTechnicians = tecnicos.filter((tec) => tec.estado === "activo");
-
   const handleTechnicianSelect = (tecnico) => {
-    setSelectedTechnician(tecnico);
-    navigate("/locationOrder", {
-      state: { selectedTechnician: tecnico, selectedClient: selectedClient },
-    });
-  };
-
-  const createCustomMarker = (user) => {
-    return divIcon({
-      className: "custom-marker",
-      html: `<div class="change-status" style="background-color: ${
-        user.estado === "Disponible"
-          ? "green"
-          : user.estado === "Ocupado"
-          ? "red"
-          : "gray"
-      };"></div>`,
-    });
+    if (selectedClient) {
+      setSelectedTechnician(tecnico);
+      navigate("/locationOrder", {
+        state: { selectedTechnician: tecnico, selectedClient: selectedClient },
+      });
+    }
   };
 
   return (
