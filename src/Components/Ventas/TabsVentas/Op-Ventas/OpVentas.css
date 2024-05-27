@@ -1,0 +1,58 @@
+.opventas-tab-container {
+  height: auto;
+  color: #283959;
+  background-color: #f2f6fc;
+}
+
+.opventas-excel {
+  display: flex;
+  justify-content: left;
+  margin-top: 3%;
+  flex-direction: column;
+}
+
+.opventas-excel-heading {
+  color: #283959;
+  display: flex;
+  justify-content: left;
+  padding-left: 5%;
+  font-weight: bold;
+}
+
+.opventas-container .table {
+  overflow-y: auto;
+  overflow-x: auto;
+  color: #283959;
+  --bs-table-bg: var(--bs-table-bg);
+}
+
+.opventas-excel-wrapper {
+  max-height: 40vh;
+  overflow-y: auto;
+}
+
+.opventas-excel-wrapper th {
+  color: #283959;
+}
+
+.opventas-excel-wrapper td {
+  color: #283959;
+}
+
+.opventas-export-button-container {
+  display: flex;
+  justify-content: end;
+  margin-right: 2%;
+  margin-top: 1%;
+}
+
+.opventas-export-button {
+  background-color: #69688c;
+  border-radius: 60%;
+  border: none;
+}
+
+.opventas-export-button svg {
+  width: 50%;
+  margin-top: 5%;
+}
