@@ -1,46 +1,98 @@
-.stockContainer{
-    margin-top:4rem;
+.stockContainer {
+  width: 100%;
+  padding: 1%;
+  overflow: hidden;
+  color: #283959;
 }
-.borrar{
-    color:#E58769;
-    transform:rotate(45deg);
+
+.stockContainer h1 {
+  margin-top: 7.5%;
+  color: #283959;
+  font-weight: bolder;
+}
+.borrar {
+  color: #e58769;
+  transform: rotate(45deg);
 }
 
 /* Grilla Edit Stock */
-.imgEditar{
-    width: 30px;
-    height: 30px;
-    position:relative;
-    top:10px;
+.imgEditar {
+  width: 30px;
+  height: 30px;
+  position: relative;
 }
-.signo{
-    font-size: 50px;
-    margin:0 auto;
-    cursor:pointer;
+.signo {
+  font-size: 50px;
+  margin: 0 auto;
+  cursor: pointer;
 }
 
-.botonEliminar{
-    width:150px;
-    height:40px;
+.botonEliminar {
+  width: 150px;
+  height: 40px;
 }
 
 /* EditarProducto.jsx */
-.liForm label{
-    width: 80px;
+.liForm label {
+  width: 80px;
 }
-.liForm select, .liForm input[type="date"]{
-    width:220px;
-    border-radius:50px;
-    background-color: transparent;
+.liForm select,
+.liForm input[type="date"] {
+  width: 220px;
+  border-radius: 50px;
+  background-color: transparent;
 }
-.editForm{
-    height:24px;
-    max-width: 295px;
+.editForm {
+  height: 24px;
+  max-width: 295px;
 }
-
 
 /* AddLoteExcel */
-.itemsExcel{
-    position:relative;
-    top:25px
+.itemsExcel {
+  position: relative;
+  top: 25px;
+}
+
+.editar-producto-formulario {
+  margin-left: 5%;
+  margin-top: 2.5%;
+  color: #283959;
+}
+.editar-producto-formulario form {
+  margin-left: 7.5%;
+}
+
+.editar-producto-formulario h3 {
+  font-weight: 400;
+  font-size: larger;
+  width: 15%;
+}
+
+.editar-producto-formulario div {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+
+.editar-producto-formulario input {
+  padding-left: 10px;
+  border-radius: 5px;
+  border-color: #777777;
+}
+
+.editar-producto-formulario select {
+  border-radius: 10px;
+  height: 3vh;
+}
+
+.editar-producto-formulario button {
+  background-color: #69688c;
+  color: white;
+  border-radius: 20px;
+  border: none;
+  min-width: 90px;
+  width: 10%;
+  height: 3vh;
+  margin-left: 10%;
+  margin-top: 2%;
 }

@@ -1,61 +1,54 @@
-import Header from '../Header/Header';
+import Header from "../Header/Header";
+import "./AddRepuestos.css";
 
 const AgregarRepuesto = () => {
   return (
     <div>
-      <Header text='Agregar un repuesto' />
+      <Header text="Agregar un repuesto" />
 
-      <div className='stockContainer'>
+      <div className="stockContainer">
         <h1>Agregar un producto</h1>
-        <div className='formulario d-flex justify-content-evenly'>
-          <ul className='d-flex flex-column'>
-            <label htmlFor='nombre'>Nombre</label>
-
-            <label htmlFor='id'>ID</label>
-
-            <label htmlFor='proveedor'>Proveedor</label>
-
-            <label htmlFor='precio'>Precio</label>
-
-            <label htmlFor='cantidad'>Cantidad</label>
-
-            <label htmlFor='orden'>Orden</label>
-
-            <label htmlFor='fecha'>Fecha lote</label>
-          </ul>
-          <ul>
-            <li className='d-flex justify-content-around liForm'>
-              <input type='text' name='' id='' className='rounded-pill editForm' required />
-            </li>
-            <li className='d-flex justify-content-around liForm'>
-              <input type='text' name='' id='' className='rounded-pill editForm' required />
-            </li>
-            <li className='d-flex justify-content-around liForm'>
-              <select value={'proovedores'}>
-                <option disabled readOnly>
-                  Proovedores
-                </option>
-                <option>a</option>
-                <option>b</option>
-                <option>c</option>
+        <div className="agregar-repuesto-formulario">
+          <form action="">
+            <div>
+              <h3>Nombre:</h3>
+              <input type="text" required />
+            </div>
+            <div>
+              <h3>ID:</h3>
+              <input type="text" required />
+            </div>
+            <div>
+              <h3>Proveedor</h3>
+              <select required>
+                <option readOnly>Proovedores</option>
+                <option>Proovedor a</option>
+                <option>Proovedor b</option>
+                <option>Proovedor c</option>
               </select>
-            </li>
-            <li className='d-flex justify-content-around liForm'>
-              <input type='text' name='' id='' className='rounded-pill editForm' required />
-            </li>
-            <li className='d-flex justify-content-around liForm'>
-              <input type='text' name='' id='' className='rounded-pill editForm' required />
-            </li>
-            <li className='d-flex justify-content-around liForm'>
-              <input type='text' name='' id='' className='rounded-pill editForm' required />
-            </li>
-            <li className='d-flex justify-content-around liForm'>
-              <input type='date' name='' id='' className='rounded-pill editForm' required />
-            </li>
-          </ul>
-        </div>
-        <div className='d-flex justify-content-center'>
-          <button className='rounded-pill bg-info text-white botonEliminar'>Guardar</button>
+            </div>
+            <div>
+              <h3>Precio:</h3>
+              <input type="number" placeholder="0" required />
+            </div>
+
+            <div>
+              <h3>Cantidad:</h3>
+              <input type="text" required />
+            </div>
+
+            <div>
+              <h3>Orden:</h3>
+              <input type="text" />
+            </div>
+            <div>
+              <h3>Lote:</h3>
+              <input type="text" required />
+            </div>
+            <div>
+              <button type="submit">Guardar</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>

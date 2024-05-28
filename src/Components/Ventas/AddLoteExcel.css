@@ -1,0 +1,41 @@
+.agregar-lote-excel-container {
+  padding: 1%;
+  overflow: hidden;
+  width: 95%;
+  margin-left: 2.5%;
+  color: #283959;
+}
+
+.agregar-lote-excel-container h1 {
+  margin-top: 5%;
+  font-weight: bolder;
+}
+
+.agregar-lote-excel-container h2 {
+  font-weight: bold;
+  margin-bottom: 1%;
+}
+
+.agregar-lote-heading {
+  border-bottom: 5px solid #8ea3bf;
+  margin-bottom: 1.5%;
+}
+.agregar-lote-heading input {
+  margin-bottom: 2.5%;
+}
+
+.boton-lote-guardar {
+  width: 10%;
+  min-width: 80px;
+}
+
+@media screen and (min-width: 720px) and (max-width: 1100px) {
+  .agregar-lote-excel-container h1 {
+    margin-top: 10%;
+  }
+}
+@media screen and (min-width: 1100px) and (max-width: 1300px) {
+  .agregar-lote-excel-container h1 {
+    margin-top: 7.5%;
+  }
+}
