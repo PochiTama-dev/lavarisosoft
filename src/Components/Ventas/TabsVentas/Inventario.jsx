@@ -180,36 +180,24 @@ const Inventario = () => {
     setShow(!show);
   };
   return (
-    <div className='bg-secondary'>
+    <div className='bg-secondary inventarioContainer'>
       <h1 className='text-primary'>Inventario</h1>
       <ul className='d-flex justify-content-between'>
-        <li
-          onClick={() => setPestaña('Stock')}
-          className={`pestañasInventario ${pestaña === 'Stock' ? 'pestañasInventarioActive' : ''}`}
-        >
+        <li onClick={() => setPestaña('Stock')} className={`pestañasInventario ${pestaña === 'Stock' ? 'pestañasInventarioActive' : ''}`}>
           Stock
         </li>
         <li
           onClick={() => setPestaña('Stock Camionetas')}
-          className={`pestañasInventario ${
-            pestaña === 'Stock Camionetas' ? 'pestañasInventarioActive' : ''
-          }`}
+          className={`pestañasInventario ${pestaña === 'Stock Camionetas' ? 'pestañasInventarioActive' : ''}`}
         >
           Stock Camionetas
         </li>
-        <li
-          onClick={() => setPestaña('Reserva')}
-          className={`pestañasInventario ${
-            pestaña === 'Reserva' ? 'pestañasInventarioActive' : ''
-          }`}
-        >
+        <li onClick={() => setPestaña('Reserva')} className={`pestañasInventario ${pestaña === 'Reserva' ? 'pestañasInventarioActive' : ''}`}>
           Reserva
         </li>
         <li
           onClick={() => setPestaña('Reporte de ventas')}
-          className={`pestañasInventario ${
-            pestaña === 'Reporte de ventas' ? 'pestañasInventarioActive' : ''
-          }`}
+          className={`pestañasInventario ${pestaña === 'Reporte de ventas' ? 'pestañasInventarioActive' : ''}`}
         >
           Reporte de ventas
         </li>
@@ -242,11 +230,7 @@ const Inventario = () => {
               <img src={descargar} alt='Descargar el excel' /> <span>Descargar Excel</span>
             </li>
             <li>
-              <img
-                src={editar}
-                alt='editar'
-                onClick={() => handleNavigate('editarStockRepuestos')}
-              />
+              <img src={editar} alt='editar' onClick={() => handleNavigate('editarStockRepuestos')} />
               <span>Editar</span>
             </li>
             <li onClick={() => handleNavigate('addLoteExcel')}>

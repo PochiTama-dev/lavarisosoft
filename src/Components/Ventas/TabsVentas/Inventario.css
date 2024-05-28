@@ -1,3 +1,6 @@
+.inventarioContainer{
+    width: 70vw;
+}
 ul li {
     color:--text-primary;
 }

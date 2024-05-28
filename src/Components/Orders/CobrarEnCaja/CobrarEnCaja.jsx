@@ -6,8 +6,10 @@ const CobrarEnCaja = () => {
   return (
     <div className='cobrarCaja-ctn'>
       <Header text='Cobrar en caja' />
-      <NuevosDatosCliente />
-      <DatosDelRepuesto />
+      <div className='mt-5 pt-5'>
+        <NuevosDatosCliente />
+        <DatosDelRepuesto />
+      </div>
     </div>
   );
 };

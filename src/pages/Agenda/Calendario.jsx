@@ -22,7 +22,7 @@ const Calendario = () => {
   const primerDiaSemana = new Date(fechaActual);
   const ultimoDiaSemana = new Date(fechaActual);
   primerDiaSemana.setDate(fechaActual.getDate() - fechaActual.getDay() + (fechaActual.getDay() === 0 ? -6 : 1));
-  ultimoDiaSemana.setDate(fechaActual.getDate() - fechaActual.getDay());
+  ultimoDiaSemana.setDate(primerDiaSemana.getDate() + 6);
 
   const [comienzoSemana, setComienzoSemana] = useState(primerDiaSemana);
   const [finSemana, setFinSemana] = useState(ultimoDiaSemana);
@@ -41,11 +41,10 @@ const Calendario = () => {
   const semanaSiguiente = () => {
     let nuevaSemana = new Date(comienzoSemana);
     nuevaSemana.setDate(nuevaSemana.getDate() + 7);
+    setComienzoSemana(nuevaSemana);
 
     let nuevoFinde = new Date(finSemana);
     nuevoFinde.setDate(nuevoFinde.getDate() + 7);
-
-    setComienzoSemana(nuevaSemana);
     setFinSemana(nuevoFinde);
   };
   const ultimoDiaMes = (anio, mes) => {
