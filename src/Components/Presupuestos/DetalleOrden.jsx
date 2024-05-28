@@ -1,19 +1,18 @@
-const DetalleOrden = () => {
+const DetalleOrden = ({ comisiones, cajas }) => {
+  console.log('comisiones:', comisiones);
+  console.log('cajas:', cajas);
+
   return (
     <div className="col-10">
       <ul>
-        <li className="d-flex justify-content-between py-2 grey-text">
-          <span>Servicio:</span>
-          <input type="text" value='$85790' disabled className="rounded text-center grey-text" />
-        </li>
-        <li className="d-flex justify-content-between py-2 grey-text">
-          <span>Repuestos:</span>
-          <input type="text" value='$20000' disabled className="rounded text-center grey-text" />
-        </li>
-        <li className="d-flex justify-content-between py-2 grey-text">
-          <span>Viaticos:</span>
-          <input type="text" value='$400' disabled className="rounded text-center grey-text" />
-        </li>
+        {Object.keys(comisiones).map((key) =>
+          comisiones[key] ? (
+            <li key={key} className="d-flex justify-content-between py-2 grey-text">
+              <span>{key}:</span>
+              <input type="text" value="$85790" disabled className="rounded text-center grey-text" />
+            </li>
+          ) : null
+        )}
       </ul>
       <hr className="custom-hr" />
       <ul>
@@ -21,10 +20,14 @@ const DetalleOrden = () => {
           <span>Total:</span>
           <input type="text" value='$105790' disabled className="rounded text-center grey-text" />
         </li>
-        <li className="d-flex justify-content-between py-2 grey-text">
-          <span>Caja 1:</span>
-          <input type="text" value='$84632' disabled className="rounded text-center grey-text" />
-        </li>
+        {Object.keys(cajas).map((key) =>
+          cajas[key] ? (
+            <li key={key} className="d-flex justify-content-between py-2 grey-text">
+              <span>{key}:</span>
+              <input type="text" value="$85790" disabled className="rounded text-center grey-text" />
+            </li>
+          ) : null
+        )}
         <li className="d-flex justify-content-between py-2 grey-text">
           <span>Codigo de imp.:</span>
           <input type="text" value='$1.111.111' disabled className="rounded text-center grey-text" />
