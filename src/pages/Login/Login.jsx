@@ -6,7 +6,7 @@ const Login = () => {
   const { handleNavigate } = useCustomContext();
   return (
     <div className='d-flex bg-primary loginContainer'>
-      <aside className='container-sm row align-items-center my-5'>
+      <aside className='container-sm row align-items-center my-5 leftContainer'>
         <div>
           <h1 className='text-white titleLogin'>LavaRiso</h1>
           <h5 className='text-white subtitleLogin'>Servicio técnico de lavarropas a domicilio</h5>
