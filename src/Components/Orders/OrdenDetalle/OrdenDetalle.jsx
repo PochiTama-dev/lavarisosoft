@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import DatosCliente from './DatosCliente';
 import DatosIncidente from './DatosIncidente';
 import DatosTecnico from './DatosTecnico';
