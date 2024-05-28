@@ -1,5 +1,6 @@
 .cajas{
-    height: 80vh;
+width: 300px;
+margin: 40px 0 30px 30px;
 }
 .cajas ul {
     padding:0
@@ -9,7 +10,12 @@
     margin-top:5px;
     cursor:pointer;
 }
-
+.datosCaja{
+height: 40px;
+}
+.datosCaja li{
+   margin-top: 5px;
+    }
 .cajas ul li div img{
     width:22px;
 
@@ -23,7 +29,7 @@
     width:25rem;
 }
 .items{
-    width:300px
+    width:200px
 }
 .pestañasFont{
     font-size:20px;

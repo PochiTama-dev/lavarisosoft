@@ -1,6 +1,13 @@
 .orderNum{
-    height: 80vh;
+    height: 500px;
+    padding: 20px;
 }
 .numOrden li{
     list-style: none;
+   display: flex;
+ margin-left: -80px;
+}
+
+.orderNum h3{
+   font-weight: bold;
 }

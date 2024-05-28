@@ -2,7 +2,7 @@ import Header from '../../Header/Header';
 import './GestionGlobal.css';
 const GestionGlobal = () => {
   return (
-    <div>
+    <div className='gestionGlobal-ctn'>
       <Header text='Gestion Global' />
       <div className='m-5'>
         <h1>Porcentaje de aumentos</h1>
