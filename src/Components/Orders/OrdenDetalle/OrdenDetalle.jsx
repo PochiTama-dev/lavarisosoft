@@ -6,7 +6,9 @@ import caja from '../../../images/caja.webp';
 import nuevaOrden from '../../../images/nuevaOrdenTrabajo.webp';
 import dolar from '../../../images/signoDolar.webp';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 const OrdenDetalle = () => {
+  const navigate = useNavigate();
   const tecnico = {
     nombre: 'Alan',
     apellido: 'Almendra',
@@ -14,6 +16,9 @@ const OrdenDetalle = () => {
   };
   const [show, setShow] = useState(false);
 
+  const handleNavigate = (text) => {
+    navigate(text);
+  };
   return (
     <div className='contentDetail'>
       <div>
@@ -29,17 +34,17 @@ const OrdenDetalle = () => {
         <aside className={`d-flex flex-column ${show ? 'asideButtons' : 'positionButton'} justify-content-end`}>
           {show && (
             <>
-              <center className='imageContainer bg-info rounded-circle position-relative'>
+              <center className='imageContainer bg-info rounded-circle position-relative' onClick={() => handleNavigate('/ordenes/ordenGlobal')}>
                 <img className='iconsOptions position-absolute iconDolar' src={dolar} alt='' />
-                <span>Aumento Global</span>
+                <span className='text-black'>Aumento Global</span>
               </center>
-              <center className='imageContainer bg-info rounded-circle position-relative'>
+              <center className='imageContainer bg-info rounded-circle position-relative' onClick={() => handleNavigate('/ordenes/cobrarCaja')}>
                 <img className='iconsOptions' src={caja} alt='' />
-                <span>Cobrar en caja</span>
+                <span className='text-black'>Cobrar en caja</span>
               </center>
-              <center className='imageContainer bg-info rounded-circle position-relative'>
+              <center className='imageContainer bg-info rounded-circle position-relative' onClick={() => handleNavigate('/ordenes/nuevaOrden')}>
                 <img className='iconsOptions' src={nuevaOrden} alt='' />
-                <span>Nueva orden de trabajo</span>
+                <span className='text-black'>Nueva orden de trabajo</span>
               </center>
             </>
           )}

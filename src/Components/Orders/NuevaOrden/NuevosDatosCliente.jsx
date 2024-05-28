@@ -1,7 +1,7 @@
 const NuevosDatosCliente = () => {
   return (
-    <div>
-      <h3 className='m-5'>Datos del cliente</h3>
+    <div className='mx-3'>
+      <h1 className=''>Datos del cliente</h1>
       <div>
         <ul className='d-flex'>
           <div className='d-flex flex-column'>

@@ -6,7 +6,7 @@ const NuevaOrden = () => {
   return (
     <div>
       <Header text='Nueva Orden' />
-      <div className='m-5'>
+      <div className='mt-5 pt-5'>
         <h1>Orden #25647</h1>
         <span>Estado: Borrador</span>
       </div>
