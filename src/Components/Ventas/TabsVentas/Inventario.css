@@ -1,57 +1,102 @@
+.inventario-container {
+  width: 70vw;
+  height: 80vh;
+  margin-top: 2.5%;
+  padding: 1%;
+  color: #283959;
+}
+
+.inventario-container h1 {
+  padding-top: 1%;
+  padding-left: 2.5%;
+  font-weight: bold;
+}
+
 ul li {
-    color:--text-primary;
+  color: #283959;
 }
-ul .pestañasInventario{
-    height:30px;
-    cursor:pointer;
+ul .pestañasInventario {
+  height: 30px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 2%;
+  font-size: larger;
+  width: 20%;
+  display: flex;
+  justify-content: center;
 }
-ul .pestañasInventarioActive{
-    border-bottom: 6px solid #8ea3bf;;
-    border-radius: 3px;
-}
-
-.boton3Puntos{
-    list-style: none;
-    border: none;
-    width: 35px;
-    height: 35px;
-    background-color: #69688C;
-    border-radius: 50%;
-    color:white;
-    display: block;
+ul .pestañasInventarioActive {
+  border-bottom: 6px solid #8ea3bf;
+  border-radius: 3px;
 }
 
-.boton3Puntos span{
-    display: inline-block;
-    width:7px;
-    height: 7px;
-    background-color: white;
-    border-radius: 50%;
-    margin-right:1px;
-    margin-left:1px;
+.inventario-container .caja-button-search {
+  margin-bottom: 2.5%;
 }
 
-.imagenes li img{
-    width: 35px;
-    height: 35px;
-    cursor:pointer;
+.inventario-container .caja-input-text {
+  font-size: large;
 }
-.divMas{
-    position: relative;
+
+.inventario-container .columna-li {
+  color: #283959;
+  font-weight: bold;
+}
+
+.inventario-container .ulFlecha {
+  position: relative;
+  height: 5vh;
+  display: flex;
+  align-items: center;
+  margin: 0 !important;
+}
+
+.inventario-container .grilla {
+  color: #283959;
+  font-weight: 600;
+}
+
+.boton3Puntos {
   list-style: none;
   border: none;
-  width: 30px;
-  height: 30px;
-  background-color: #69688C;
+  width: 40px;
+  height: 40px;
+  background-color: #69688c;
   border-radius: 50%;
   color: white;
   display: block;
 }
-.spanMas{
+
+.boton3Puntos span {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background-color: white;
+  border-radius: 50%;
+  margin-right: 1px;
+  margin-left: 1px;
+}
+
+.imagenes li img {
+  width: 35px;
+  height: 35px;
+  cursor: pointer;
+}
+.divMas {
+  position: relative;
+  list-style: none;
+  border: none;
+  width: 30px;
+  height: 30px;
+  background-color: #69688c;
+  border-radius: 50%;
+  color: white;
+  display: block;
+}
+.spanMas {
   font-size: 65px;
   position: absolute;
   bottom: -33px;
   right: 2px;
-  cursor:pointer;
+  cursor: pointer;
 }
-
