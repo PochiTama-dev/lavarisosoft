@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import '../OrdenDetalle/OrdenDetalle.css';
+import './nuevaOrden.css';
+
 const NuevosDatosIncidente = () => {
   const [repuesto, setRepuesto] = useState([]);
   const [nuevoRepuesto, setNuevoRepuesto] = useState('');
@@ -12,59 +13,69 @@ const NuevosDatosIncidente = () => {
       handleShow();
     }
   };
+
   const handleShow = () => {
     setShowInput(!showInput);
   };
+
   return (
-    <div className='d-flex m-5 justify-content-between'>
-      <div className='d-flex flex-column'>
-        <h3>Datos del incidente</h3>
-        <ul className='d-flex flex-column justify-content-start p-0'>
-          <li className='m-1'>
-            <span className='pe-2'>Equipo: </span>
-            <input type='text' className='rounded mx-2' />
-          </li>
-          <li className='m-1'>
-            <span className='pe-1'>Modelo: </span>
-            <input type='text' className='rounded mx-2' />
-          </li>
-          <li className='m-1'>
-            <span>Antiguedad: </span>
-            <input type='text' className='rounded' />
-          </li>
-          <li className='m-1 d-flex align-items-center'>
-            <span>Diagnostico: </span>
-            <textarea></textarea>
-          </li>
-        </ul>
-      </div>
-      <div className='mx-auto'>
-        <h3>Repuestos</h3>
-        <div className='d-flex flex-column'>
-          {repuesto.map((repuesto, index) => (
-            <>
-              <span className='mx-3 ' key={index}>
-                {repuesto}
-              </span>
-            </>
-          ))}
+    <div  >
+      <div className='row'>
+        <div className='col-md-6'>
+          <h3 className='m-4'>Datos del incidente</h3>
+          <div className='mb-3 row align-items-center'>
+            <label htmlFor='equipo' className='col-sm-2 col-form-label'>Equipo:</label>
+            <div className='col-sm-8'>
+              <input type='text' id='equipo' className='form-control input-small' />
+            </div>
+          </div>
+          <div className='mb-3 row align-items-center'>
+            <label htmlFor='modelo' className='col-sm-2 col-form-label'>Modelo:</label>
+            <div className='col-sm-8'>
+              <input type='text' id='modelo' className='form-control input-small' />
+            </div>
+          </div>
+          <div className='mb-3 row align-items-center'>
+            <label htmlFor='antiguedad' className='col-sm-2 col-form-label'>Antiguedad:</label>
+            <div className='col-sm-8'>
+              <input type='text' id='antiguedad' className='form-control input-small' />
+            </div>
+          </div>
+          <div className='mb-3 row align-items-center'>
+            <label htmlFor='diagnostico' className='col-sm-2 col-form-label'>Diagnostico:</label>
+            <div className='col-sm-8'>
+              <textarea id='diagnostico' className='form-control input-small'></textarea>
+            </div>
+          </div>
         </div>
-        {showInput && (
-          <>
-            <input
-              type='text'
-              value={nuevoRepuesto}
-              onChange={(e) => setNuevoRepuesto(e.target.value)}
-              placeholder='Nuevo repuesto'
-            />
-            <button onClick={handleAdd}>Agregar</button>
-          </>
-        )}
-        <h2 onClick={handleShow} className='agregarRepuesto'>
-          +
-        </h2>
+        <div className='col-md-6 agregar-repuesto'>
+          <h3>Repuestos</h3>
+          <div className='d-flex flex-column'>
+            {repuesto.map((item, index) => (
+              <span className='mx-3 ' key={index}>
+                {item}
+              </span>
+            ))}
+          </div>
+          {showInput && (
+            <>
+              <input
+                type='text'
+                value={nuevoRepuesto}
+                onChange={(e) => setNuevoRepuesto(e.target.value)}
+                placeholder='Nuevo repuesto'
+                className='form-control input-small'
+              />
+              <button onClick={handleAdd} className='btn btn-primary mt-2'>Agregar</button>
+            </>
+          )}
+          <h2 onClick={handleShow} className='agregarRepuesto mt-3'>
+            +
+          </h2>
+        </div>
       </div>
     </div>
   );
 };
+
 export default NuevosDatosIncidente;

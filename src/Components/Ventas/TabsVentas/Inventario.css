@@ -5,12 +5,16 @@ ul li {
     color:--text-primary;
 }
 ul .pestañasInventario{
-    height:30px;
+    height:40px;
     cursor:pointer;
+   margin: 30px 0 ;
+    
 }
+ 
 ul .pestañasInventarioActive{
     border-bottom: 6px solid #8ea3bf;;
     border-radius: 3px;
+
 }
 
 .boton3Puntos{
