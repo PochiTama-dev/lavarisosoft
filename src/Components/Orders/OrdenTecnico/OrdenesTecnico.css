@@ -5,3 +5,19 @@
 .ordenes li{
     list-style: disc;
 }
+.tecnico h2{
+    font-weight: bold;
+    margin-bottom: 25px;
+  
+}
+.tecnico{
+  
+ 
+    width: 350px;
+    padding: 20px;
+}
+.ordenes-tecnico h3{
+    font-size: 1.3rem;
+    font-weight: 400;
+}
+ 

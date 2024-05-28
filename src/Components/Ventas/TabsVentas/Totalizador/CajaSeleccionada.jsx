@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import DatosCaja from './DatosCaja';
 import { useEffect, useState } from 'react';
 import '../Inventario.css';
+import Cajas from './Cajas';
 const CajaSeleccionada = ({ cajaSelected }) => {
   const [pestaña, setPestaña] = useState('Efectivo');
   const [caja, setCaja] = useState(cajaSelected.efectivo);

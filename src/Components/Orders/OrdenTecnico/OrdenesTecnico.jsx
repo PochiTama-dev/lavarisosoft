@@ -8,7 +8,7 @@ const OrdenesTecnico = ({ tecnico }) => {
     setShow(!show);
   };
   return (
-    <div className='bg-secondary'>
+    <div className='bg-secondary ordenes-tecnico'>
       <div className='d-flex'>
         <h3 className='subtitle'>{tecnico}</h3>
         <ul onClick={handleShowOrder} className='ordenTecnico'>

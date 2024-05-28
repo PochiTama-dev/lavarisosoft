@@ -1,24 +1,33 @@
+import React from 'react';
+
 const NuevosDatosTecnico = () => {
   return (
-    <div>
-      <h3 className='ms-5 mt-3'>Datos del ténico</h3>
-      <div>
-        <ul className='d-flex'>
-          <li>
-            <span>Nombre:</span>
-            <input type='text' className='rounded' required />
-          </li>
-          <li>
-            <span>Apellido:</span>
-            <input type='text' className='rounded' required />
-          </li>
-          <li>
-            <span>Legajo:</span>
-            <input type='text' className='rounded' required />
-          </li>
-        </ul>
+    <div >
+      <h3 className='m-4'>Datos del técnico</h3>
+      <div className='row'>
+        <div className='col-md-6'>
+          <div className='mb-3 row align-items-center'>
+            <label htmlFor='nombre' className='col-sm-2 col-form-label'>Nombre:</label>
+            <div className='col-sm-8'>
+              <input type='text' id='nombre' className='form-control input-small' required />
+            </div>
+          </div>
+          <div className='mb-3 row align-items-center'>
+            <label htmlFor='apellido' className='col-sm-2 col-form-label'>Apellido:</label>
+            <div className='col-sm-8'>
+              <input type='text' id='apellido' className='form-control input-small' required />
+            </div>
+          </div>
+          <div className='mb-3 row align-items-center'>
+            <label htmlFor='legajo' className='col-sm-2 col-form-label'>Legajo:</label>
+            <div className='col-sm-8'>
+              <input type='text' id='legajo' className='form-control input-small' required />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
+
 export default NuevosDatosTecnico;
