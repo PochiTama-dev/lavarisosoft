@@ -10,8 +10,9 @@
   
 
   .input-small {
-  width: 80%; /* Ajusta este valor para hacer los inputs más pequeños */
-}
+  width: 80%; 
+ 
+  }
 
  .agregar-repuesto{
     margin-top: 50px;
@@ -19,4 +20,9 @@
 
 
  
- 
+ @media screen and (max-width: 1200px){
+  .input-small {
+   margin-left: 10%;
+   
+    }
+ }

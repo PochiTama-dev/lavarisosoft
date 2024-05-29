@@ -1,5 +1,6 @@
 .tagpapelitoButton{
     cursor:pointer;
+    margin-top: -30px;
 }
 .papelito{
     width:40px;
@@ -18,4 +19,16 @@
 }
 .cobrarCaja-ctn{
     margin-top: 100px;
+}
+
+@media screen and (max-width: 1200px){
+    .confirmButton{
+        margin-top:20px;
+     
+    }
+    .tagpapelitoButton{
+ 
+        margin-top: -35px;
+        margin-bottom: 30px;
+    }
 }

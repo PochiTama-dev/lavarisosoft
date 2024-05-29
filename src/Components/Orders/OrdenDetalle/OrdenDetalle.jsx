@@ -30,32 +30,28 @@ const OrdenDetalle = () => {
         </div>
         <aside className={`d-flex flex-column ${show ? 'asideButtons' : 'positionButton'} justify-content-end`}>
           {show && (
-            <>
-              <Link to='/ordenes/ordenGlobal' className='text-decoration-none'>
-                <center className='imageContainer bg-info rounded-circle position-relative'>
-                  <img className='iconsOptions position-absolute iconDolar' src={dolar} alt='' />
-                  <span className='black-text' style={{ fontSize: '14px' }}>
-                    Aumento Global
-                  </span>
-                </center>
-              </Link>
-              <Link to='/ordenes/cobrarCaja' className='text-decoration-none'>
-                <center className='imageContainer bg-info rounded-circle position-relative'>
-                  <img className='iconsOptions' src={caja} alt='' />
-                  <span className='black-text' style={{ fontSize: '14px' }}>
-                    Cobrar en caja
-                  </span>
-                </center>
-              </Link>
-              <Link to='/ordenes/nuevaOrden' className='text-decoration-none'>
-                <center className='imageContainer bg-info rounded-circle position-relative'>
-                  <img className='iconsOptions' src={nuevaOrden} alt='' />
-                  <span className='black-text' style={{ fontSize: '14px' }}>
-                    Nueva orden de trabajo
-                  </span>
-                </center>
-              </Link>
-            </>
+ 
+          <div>
+          <Link to="/ordenes/ordenGlobal" className="text-decoration-none">
+            <center className='imageContainer bg-info rounded-circle position-relative'>
+              <img className='iconsOptions position-absolute iconDolar' src={dolar} alt='' />
+              <span className='black-text' style={{ fontSize: '14px' }}>Aumento Global</span>
+            </center>
+          </Link>
+          <Link to="/ordenes/cobrarCaja" className="text-decoration-none">
+            <center className='imageContainer bg-info rounded-circle position-relative'>
+              <img className='iconsOptions' src={caja} alt='' />
+              <span className='black-text' style={{ fontSize: '14px' }}>Cobrar en caja</span>
+            </center>
+          </Link>
+          <Link to="/ordenes/nuevaOrden" className="text-decoration-none">
+            <center className='imageContainer bg-info rounded-circle position-relative'>
+              <img className='iconsOptions' src={nuevaOrden} alt='' />
+              <span className='black-text' style={{ fontSize: '14px' }}>Nueva orden de trabajo</span>
+            </center>
+          </Link>
+        </div>
+ 
           )}
           <h2 className='bg-info text-white text-center rounded-pill agregarRepuesto' onClick={() => setShow(!show)}>
             +

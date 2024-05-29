@@ -12,7 +12,7 @@ const DatosDelRepuesto = () => {
   return (
     <div className='mx-3'>
       <h1>Datos del repuesto</h1>
-      <div className='d-flex justify-content-between flex-wrap'>
+      <div className='d-flex   flex-wrap'>
         {[...Array(repuesto)].map((_, index) => (
           <Repuestos key={index} />
         ))}
