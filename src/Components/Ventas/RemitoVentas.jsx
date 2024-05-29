@@ -1,11 +1,10 @@
+import Header from "../Header/Header";
 import "./RemitoVentas.css";
 
 const RemitoVentas = () => {
   return (
     <div className="remito-container">
-      <div className="ventas-heading">
-        <h1>Remito</h1>
-      </div>
+      <Header text="Remito" />
       <div className="remito-container-content">
         <div className="remito-container-top">
           <div>

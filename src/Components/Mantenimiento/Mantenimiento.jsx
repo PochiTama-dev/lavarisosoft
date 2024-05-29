@@ -21,49 +21,56 @@ const Mantenimiento = () => {
   const handleChange = (newActive) => setActive(newActive);
   const handleChange2 = (newActive2) => setActive2(newActive2);
   return (
-    <div className='ventas-container'>
-      <Header text='Mantenimiento'></Header>
-
-      <div className='mantenimiento-ctn'>
+    <div className="ventas-container">
+      <Header text="Mantenimiento"></Header>
+      <div className="mantenimiento-ctn">
         <Tabs active={active} onChange={handleChange}>
-          <Tab title='Facturas'>
-            <div className='p-5 tabs-ctn'>
-              <Tabs2 active={active2} onChange={handleChange2} className='client-tabs'>
-                <Tab title='Facturas'>
+          <Tab title="Facturas">
+            <div className="p-5 tabs-ctn">
+              <Tabs2
+                active={active2}
+                onChange={handleChange2}
+                className="client-tabs"
+              >
+                <Tab title="Facturas">
                   <Facturas />
                 </Tab>
-                <Tab title='Facturas AFIP'>
+                <Tab title="Facturas AFIP">
                   <FacturasAFIP />
                 </Tab>
               </Tabs2>
             </div>
           </Tab>
-          <Tab title='Liquidaciones'>
+          <Tab title="Liquidaciones">
             <Liquidaciones />
           </Tab>
-          <Tab title='Plan de Cuentas'>
+          <Tab title="Plan de Cuentas">
             <PlanCuentas />
           </Tab>
-          <Tab title='Cuentas Corrientes'>
-            <div className='p-5 tabs-ctn'>
+          <Tab title="Cuentas Corrientes">
+            <div className="p-5 tabs-ctn">
               <CuentaCorriente />
-              <Tabs2 active={active2} onChange={handleChange2} className='client-tabs'>
-                <Tab title='Empleados'>
+              <Tabs2
+                active={active2}
+                onChange={handleChange2}
+                className="client-tabs"
+              >
+                <Tab title="Empleados">
                   <Empleados />
                 </Tab>
-                <Tab title='Cajas'>
+                <Tab title="Cajas">
                   <Cajas />
                 </Tab>
               </Tabs2>
             </div>
           </Tab>
-          <Tab title='Proveedores'>
+          <Tab title="Proveedores">
             <Proveedor />
           </Tab>
-          <Tab title='Saldos Pendientes'>
+          <Tab title="Saldos Pendientes">
             <SaldosPendiente />
           </Tab>
-          <Tab title='Taller'>
+          <Tab title="Taller">
             <Taller />
           </Tab>
         </Tabs>

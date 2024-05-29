@@ -33,10 +33,7 @@ const Feedback = () => {
   ];
   return (
     <div className="container-full-width">
-      {/* <Header
-        text="Feedback"
-      /> */}
-      <h1 className="text-left feedback-heading text-uppercase">Feedback</h1>
+      <Header text="Feedback" />
       <div className="content-container">
         <div className="left-containers">
           <div className="left-container">

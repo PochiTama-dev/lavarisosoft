@@ -43,6 +43,7 @@
 
 .factura-formulario select {
   border-radius: 10px;
+  height: 3vh;
 }
 
 .factura-formulario button {

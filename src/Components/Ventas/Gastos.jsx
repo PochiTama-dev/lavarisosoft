@@ -1,20 +1,20 @@
+import Header from "../Header/Header";
 import "./Gastos.css";
 
 const Gastos = () => {
   return (
     <div>
-      <div className="gastos-heading">
-        <h1>Declarar gasto</h1>
-      </div>
+      <Header text="Declarar gasto" />
       <div className="gastos-formulario">
         <h2>Declarar gasto</h2>
         <form action="">
           <div>
             <h3>Proveedor:</h3>
-            <select name="" id="">
-              <option value=""></option>
-              <option value=""></option>
-              <option value=""></option>
+            <select required>
+              <option readOnly>Proveedor</option>
+              <option value="">Proveedor A</option>
+              <option value="">Proveedor B</option>
+              <option value="">Proveedor C</option>
             </select>
           </div>
           <div>
