@@ -1,7 +1,5 @@
 .ventas-container {
- 
   width: 100%;
-  
 }
 
 .ventas-tabs {
@@ -9,7 +7,7 @@
   flex-direction: row;
   gap: 5%;
   padding: 20px;
- 
+  margin-top: 5%;
 }
 
 .ventas-heading {
