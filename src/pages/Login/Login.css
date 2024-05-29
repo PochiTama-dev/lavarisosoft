@@ -2,6 +2,19 @@
 body{
     font-family: "Raleway", sans-serif;
 }
+.titleLogin{
+    font-size:112px
+}
+.subtitleLogin{
+    font-size:24px
+}
+.messageTitle{
+    color:#283959;
+    text-align: center;
+}
+.inputsLogin{
+    width:400px;
+}
 .loginContainer{
     height: 100vh;
 }
@@ -35,4 +48,62 @@ body{
 }
 .btn:hover{
     background-color: #7a77d8;
+}
+
+@media( max-width:600px){
+    .leftContainer{
+        width:51vw;
+    }
+    .leftContainer .titleLogin{
+        font-size:10vw;
+    }
+    .leftContainer .subtitleLogin{
+        font-size: 5vw;
+    }
+    .leftContainer .messageTitle{
+        font-size: 6vw;
+    }
+    .leftContainer .inputsLogin{
+        width:auto;
+    }
+    .leftContainer .loginButton{
+        width:80%;
+    }
+    .asideImg{
+        width: 54vw;
+    }
+}
+@media (min-width:601px){
+    
+    .leftContainer{
+        width:51vw;
+    }
+    .leftContainer .titleLogin{
+        font-size:11vw;
+    }
+    .leftContainer .subtitleLogin{
+        font-size: 4vw;
+    }
+    .leftContainer .messageTitle{
+        font-size: 4vw;
+    }
+    .leftContainer .inputsLogin{
+        width: 70%;
+        margin: 0 auto;
+    }
+    .leftContainer .loginButton{
+        width:60%;
+    }
+    .asideImg{
+        width: 54vw;
+    }
+}
+
+@media(min-width:1200px){
+    .leftContainer .inputsLogin{
+        font-size: 2vw;
+    }
+    .leftContainer .loginButton{
+        font-size: 2vw;
+    }
 }

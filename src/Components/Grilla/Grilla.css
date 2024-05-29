@@ -8,14 +8,15 @@
 }
 .ulFlecha {
   position: relative;
+  align-items: center;
 }
 .flechaAbajo {
   border-top: 15px solid black;
   border-right: 10px solid transparent;
   border-left: 10px solid transparent;
   position: absolute;
-  right: 10px;
-  top: 5px;
+  right: 20px;
+  top: 15px;
 }
 
 ul .valorItem {
@@ -23,5 +24,5 @@ ul .valorItem {
 }
 
 .ulItem {
-  height:84px;
+  height: 84px;
 }

@@ -1,175 +1,181 @@
-import { useState } from 'react';
-import Grilla from '../../Grilla/Grilla';
-import './Inventario.css';
-import cargar from '../../../images/cargarExcel.webp';
-import descargar from '../../../images/descargarExcel.webp';
-import editar from '../../../images/editar.webp';
-import { useCustomContext } from '../../../hooks/context.jsx';
+import { useState } from "react";
+import Grilla from "../../Grilla/Grilla";
+import "./Inventario.css";
+import cargar from "../../../images/cargarExcel.webp";
+import descargar from "../../../images/descargarExcel.webp";
+import editar from "../../../images/editar.webp";
+import { useCustomContext } from "../../../hooks/context.jsx";
 
 const Inventario = () => {
   const { handleNavigate } = useCustomContext();
-  const [pestaña, setPestaña] = useState('Stock');
+  const [pestaña, setPestaña] = useState("Stock");
   const [show, setShow] = useState(false);
 
-  const columnasStock = ['Nombre', 'ID', 'Precio', 'Disponibles'];
+  const columnasStock = ["Nombre", "ID", "Precio", "Disponibles"];
   const itemsStock = [
     {
-      nombre: 'NombreAbc123',
+      nombre: "NombreAbc123",
       id: 4366,
       precio: 2330,
       disponibles: 2,
       lotes: [
         {
-          proveedor: 'Proveedor',
+          proveedor: "Proveedor",
           nombre: <strong>SALAZAR</strong>,
-          lote: '| Lote:',
+          lote: "| Lote:",
           loteNum: <strong>17/1/2-SALAZAR1234</strong>,
-          orden: '| Orden N/A | ',
+          orden: "| Orden N/A | ",
           unidadRestante: <strong>1</strong>,
-          unidad: 'unidad restante',
+          unidad: "unidad restante",
         },
         {
-          proveedor: 'Proveedor',
+          proveedor: "Proveedor",
           nombre: <strong>SALAZAR</strong>,
-          lote: '| Lote:',
+          lote: "| Lote:",
           loteNum: <strong>17/1/2-SALAZAR1234</strong>,
-          orden: '| Orden N/A | ',
+          orden: "| Orden N/A | ",
           unidadRestante: <strong>1</strong>,
-          unidad: 'unidad restante',
+          unidad: "unidad restante",
         },
       ],
     },
     {
-      nombre: 'NombreAbc456',
+      nombre: "NombreAbc456",
       id: 43365,
       precio: 2330,
       disponibles: 2,
       lotes: [
         {
-          proveedor: 'Proveedor',
+          proveedor: "Proveedor",
           nombre: <strong>SALAZAR</strong>,
-          lote: '| Lote:',
+          lote: "| Lote:",
           loteNum: <strong>17/1/2-SALAZAR1234</strong>,
-          orden: '| Orden N/A | ',
+          orden: "| Orden N/A | ",
           unidadRestante: <strong>1</strong>,
-          unidad: 'unidad restante',
+          unidad: "unidad restante",
         },
       ],
     },
     {
-      nombre: 'NombreAbc789',
+      nombre: "NombreAbc789",
       id: 435,
       precio: 2330,
       disponibles: 2,
       lotes: [
         {
-          proveedor: 'Proveedor',
+          proveedor: "Proveedor",
           nombre: <strong>SALAZAR</strong>,
-          lote: '| Lote:',
+          lote: "| Lote:",
           loteNum: <strong>17/1/2-SALAZAR1234</strong>,
-          orden: '| Orden N/A | ',
+          orden: "| Orden N/A | ",
           unidadRestante: <strong>1</strong>,
-          unidad: 'unidad restante',
+          unidad: "unidad restante",
         },
       ],
     },
     {
-      nombre: 'NombreAbc159',
+      nombre: "NombreAbc159",
       id: 3165,
       precio: 2330,
       disponibles: 2,
       lotes: [
         {
-          proveedor: 'Proveedor',
+          proveedor: "Proveedor",
           nombre: <strong>SALAZAR</strong>,
-          lote: '| Lote:',
+          lote: "| Lote:",
           loteNum: <strong>17/1/2-SALAZAR1234</strong>,
-          orden: '| Orden N/A | ',
+          orden: "| Orden N/A | ",
           unidadRestante: <strong>1</strong>,
-          unidad: 'unidad restante',
+          unidad: "unidad restante",
         },
       ],
     },
     {
-      nombre: 'NombreAbc987',
+      nombre: "NombreAbc987",
       id: 9894,
       precio: 2330,
       disponibles: 2,
       lotes: [
         {
-          proveedor: 'Proveedor',
+          proveedor: "Proveedor",
           nombre: <strong>SALAZAR</strong>,
-          lote: '| Lote:',
+          lote: "| Lote:",
           loteNum: <strong>17/1/2-SALAZAR1234</strong>,
-          orden: '| Orden N/A | ',
+          orden: "| Orden N/A | ",
           unidadRestante: <strong>1</strong>,
-          unidad: 'unidad restante',
+          unidad: "unidad restante",
         },
       ],
     },
   ];
-  const columnasStockCamionetas = ['Nombre', 'Técnico', 'ID', 'Precio', 'Disponibles'];
+  const columnasStockCamionetas = [
+    "Nombre",
+    "Técnico",
+    "ID",
+    "Precio",
+    "Disponibles",
+  ];
   const itemsStockCamionetas = [
     {
-      nombre: 'camioneta 1',
-      tecnico: 'tecnico1',
-      ID: 1,
+      nombre: "camioneta 1",
+      tecnico: "tecnico1",
+      id: 1,
       precio: 1234,
       disponibles: 2,
     },
     {
-      nombre: 'camioneta 2',
-      tecnico: 'tecnico2',
-      ID: 2,
+      nombre: "camioneta 2",
+      tecnico: "tecnico2",
+      id: 2,
       precio: 2234,
       disponibles: 1,
     },
     {
-      nombre: 'camioneta 3',
-      tecnico: 'tecnico3',
-      ID: 3,
+      nombre: "camioneta 3",
+      tecnico: "tecnico3",
+      id: 3,
       precio: 3234,
       disponibles: 0,
     },
   ];
-  const columnasReserva = ['Nombre', 'ID', 'Precio', 'No.Orden'];
+  const columnasReserva = ["Nombre", "ID", "Precio", "No.Orden"];
   const itemsReserva = [
     {
-      nombre: 'reserva 1',
-      ID: 1,
+      nombre: "reserva 1",
+      id: 1,
       precio: 1234,
       nOrden: 1234,
     },
     {
-      nombre: 'reserva 2',
-      ID: 2,
+      nombre: "reserva 2",
+      id: 2,
       precio: 2234,
       nOrden: 1234,
     },
     {
-      nombre: 'reserva 3',
-      ID: 3,
+      nombre: "reserva 3",
+      id: 3,
       precio: 3234,
       nOrden: 1234,
     },
   ];
 
-  const columnasReporteVentas = ['Nombre', 'ID', 'Precio', 'No.Orden'];
+  const columnasReporteVentas = ["Nombre", "ID", "Precio", "No.Orden"];
   const itemsReporteVentas = [
     {
-      nombre: 'Reporte 1',
+      nombre: "Reporte 1",
       id: 1,
       precio: 1000,
       nOrden: 10000,
     },
     {
-      nombre: 'Reporte 2',
+      nombre: "Reporte 2",
       id: 2,
       precio: 2000,
       nOrden: 20000,
     },
     {
-      nombre: 'Reporte 3',
+      nombre: "Reporte 3",
       id: 3,
       precio: 3000,
       nOrden: 30000,
@@ -180,57 +186,65 @@ const Inventario = () => {
     setShow(!show);
   };
   return (
-    <div className='bg-secondary'>
-      <h1 className='text-primary'>Inventario</h1>
-      <ul className='d-flex justify-content-between'>
+    <div className="bg-secondary inventario-container">
+      <h1 className="text-primary">Inventario</h1>
+      <ul className="d-flex justify-content-around">
         <li
-          onClick={() => setPestaña('Stock')}
-          className={`pestañasInventario ${pestaña === 'Stock' ? 'pestañasInventarioActive' : ''}`}
+          onClick={() => setPestaña("Stock")}
+          className={`pestañasInventario ${
+            pestaña === "Stock" ? "pestañasInventarioActive" : ""
+          }`}
         >
           Stock
         </li>
         <li
-          onClick={() => setPestaña('Stock Camionetas')}
+          onClick={() => setPestaña("Stock Camionetas")}
           className={`pestañasInventario ${
-            pestaña === 'Stock Camionetas' ? 'pestañasInventarioActive' : ''
+            pestaña === "Stock Camionetas" ? "pestañasInventarioActive" : ""
           }`}
         >
           Stock Camionetas
         </li>
         <li
-          onClick={() => setPestaña('Reserva')}
+          onClick={() => setPestaña("Reserva")}
           className={`pestañasInventario ${
-            pestaña === 'Reserva' ? 'pestañasInventarioActive' : ''
+            pestaña === "Reserva" ? "pestañasInventarioActive" : ""
           }`}
         >
           Reserva
         </li>
         <li
-          onClick={() => setPestaña('Reporte de ventas')}
+          onClick={() => setPestaña("Reporte de ventas")}
           className={`pestañasInventario ${
-            pestaña === 'Reporte de ventas' ? 'pestañasInventarioActive' : ''
+            pestaña === "Reporte de ventas" ? "pestañasInventarioActive" : ""
           }`}
         >
           Reporte de ventas
         </li>
       </ul>
       <div>
-        <h2 className='caja-input-text'>Buscar piezas</h2>
-        <input className='caja-input' type='text' placeholder='Buscar' />
-        <button className='caja-button-search'>🔍︎</button>
+        <h2 className="caja-input-text">Buscar piezas</h2>
+        <input className="caja-input" type="text" placeholder="Buscar" />
+        <button className="caja-button-search">🔍︎</button>
       </div>
-      {pestaña === 'Stock' ? (
+      {pestaña === "Stock" ? (
         <Grilla columnas={columnasStock} elementos={itemsStock} />
-      ) : pestaña === 'Stock Camionetas' ? (
-        <Grilla columnas={columnasStockCamionetas} elementos={itemsStockCamionetas} />
-      ) : pestaña === 'Reserva' ? (
+      ) : pestaña === "Stock Camionetas" ? (
+        <Grilla
+          columnas={columnasStockCamionetas}
+          elementos={itemsStockCamionetas}
+        />
+      ) : pestaña === "Reserva" ? (
         <Grilla columnas={columnasReserva} elementos={itemsReserva} />
       ) : (
-        <Grilla columnas={columnasReporteVentas} elementos={itemsReporteVentas} />
+        <Grilla
+          columnas={columnasReporteVentas}
+          elementos={itemsReporteVentas}
+        />
       )}
-      <ul className='d-flex justify-content-between imagenes'>
-        <div className='text-end'>
-          <button className='boton3Puntos' onClick={handleShow}>
+      <ul className="d-flex justify-content-between imagenes">
+        <div className="text-end">
+          <button className="boton3Puntos" onClick={handleShow}>
             <span></span>
             <span></span>
             <span></span>
@@ -239,22 +253,26 @@ const Inventario = () => {
         {show && (
           <>
             <li>
-              <img src={descargar} alt='Descargar el excel' /> <span>Descargar Excel</span>
+              <img src={descargar} alt="Descargar el excel" />{" "}
+              <span>Descargar Excel</span>
             </li>
             <li>
               <img
                 src={editar}
-                alt='editar'
-                onClick={() => handleNavigate('editarStockRepuestos')}
+                alt="editar"
+                onClick={() => handleNavigate("editarStockRepuestos")}
               />
               <span>Editar</span>
             </li>
-            <li onClick={() => handleNavigate('addLoteExcel')}>
-              <img src={cargar} alt='Carga de excel' /> <span>Carga Excel</span>
+            <li onClick={() => handleNavigate("addLoteExcel")}>
+              <img src={cargar} alt="Carga de excel" /> <span>Carga Excel</span>
             </li>
-            <li className='d-flex' onClick={() => handleNavigate('addRespuestos')}>
-              <div className='divMas'>
-                <span className='spanMas'>+</span>
+            <li
+              className="d-flex"
+              onClick={() => handleNavigate("addRespuestos")}
+            >
+              <div className="divMas">
+                <span className="spanMas">+</span>
               </div>
               <span>Agregar repuestos</span>
             </li>

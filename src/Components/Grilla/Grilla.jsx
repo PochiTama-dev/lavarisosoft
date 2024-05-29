@@ -1,12 +1,33 @@
 import { useState } from "react";
 import "./Grilla.css";
 import PropTypes from "prop-types";
+
 const Grilla = ({ columnas, elementos }) => {
   const [itemInventario, setitemInventario] = useState(-1);
+  const [orderBy, setOrderBy] = useState(null);
+  const [orderAsc, setOrderAsc] = useState(true);
 
   const toggleItemInventario = (index) => {
-    setitemInventario(index === itemInventario ? -1 : index); // Si el mismo ítem ya está seleccionado, lo deselecciona
+    setitemInventario(index === itemInventario ? -1 : index);
   };
+
+  const handleSort = (columnName) => {
+    if (orderBy === columnName) {
+      setOrderAsc((prevOrderAsc) => !prevOrderAsc);
+    } else {
+      setOrderBy(columnName);
+      setOrderAsc(true);
+    }
+  };
+
+  const sortedItems = [...elementos].sort((a, b) => {
+    if (!orderBy) return 0;
+    if (orderAsc) {
+      return a[orderBy] > b[orderBy] ? 1 : -1;
+    } else {
+      return a[orderBy] < b[orderBy] ? 1 : -1;
+    }
+  });
 
   const renderLotes = (lotes) => {
     return (
@@ -28,13 +49,19 @@ const Grilla = ({ columnas, elementos }) => {
     <div>
       <ul className="row p-0 text-center">
         {columnas.map((columna, index) => (
-          <li key={index} className="col columna-li">
-            {columna} <span></span>
+          <li
+            key={index}
+            className="col columna-li"
+            onClick={() => handleSort(columna.toLowerCase())}
+            style={{ cursor: "pointer" }}
+          >
+            {columna}{" "}
+            {orderBy === columna.toLowerCase() && (orderAsc ? "▲" : "▼")}
           </li>
         ))}
       </ul>
       <ul className="grilla">
-        {elementos.map((item, index) => (
+        {sortedItems.map((item, index) => (
           <div key={index} className="itemContainer">
             <ul
               className={`ulFlecha row mb-1 p-0 ${
@@ -64,18 +91,6 @@ const Grilla = ({ columnas, elementos }) => {
                 </li>
               )}
             </ul>
-            {/* {itemInventario === index && item.lotes && (
-              <div>
-                <ul>
-                  {item.lotes.map((lote, index) => (
-                    <li key={index} className="bg-primary-subtle col mb-1">
-                      Proveedor {lote.proveedor} |Lote {lote.lote} | Orden{" "}
-                      {lote.orden} | {lote.unidadRestante} unidad restante
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )} */}
             {itemInventario === index && item.lotes && renderLotes(item.lotes)}
           </div>
         ))}
@@ -83,9 +98,10 @@ const Grilla = ({ columnas, elementos }) => {
     </div>
   );
 };
-export default Grilla;
 
 Grilla.propTypes = {
   columnas: PropTypes.array.isRequired,
   elementos: PropTypes.array.isRequired,
 };
+
+export default Grilla;

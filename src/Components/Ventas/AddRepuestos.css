@@ -1,0 +1,43 @@
+.agregar-repuesto-formulario {
+  margin-left: 5%;
+  margin-top: 2.5%;
+  color: #283959;
+}
+.agregar-repuesto-formulario form {
+  margin-left: 7.5%;
+}
+
+.agregar-repuesto-formulario h3 {
+  font-weight: 400;
+  font-size: larger;
+  width: 15%;
+}
+
+.agregar-repuesto-formulario div {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+
+.agregar-repuesto-formulario input {
+  padding-left: 10px;
+  border-radius: 5px;
+  border-color: #777777;
+}
+
+.agregar-repuesto-formulario select {
+  border-radius: 10px;
+  height: 3vh;
+}
+
+.agregar-repuesto-formulario button {
+  background-color: #69688c;
+  color: white;
+  border-radius: 20px;
+  border: none;
+  min-width: 90px;
+  width: 10%;
+  height: 3vh;
+  margin-left: 10%;
+  margin-top: 2%;
+}

@@ -3,7 +3,7 @@ const NumOrden = () => {
   const resultadoOrden = ['text-success', 'text-danger', 'text-secondary'];
 
   return (
-    <div className='bg-secondary orderNum'>
+    <div className='bg-secondary orderNum overflow-scroll'>
       <h3>Por número de orden</h3>
       <ul className='numOrden'>
         <li className='d-flex justify-content-around'>
