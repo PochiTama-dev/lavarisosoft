@@ -83,7 +83,8 @@ body{
         font-size:9vw;
     }
     .leftContainer .subtitleLogin{
-        font-size: 3vw;
+        font-size: 2vw;
+        text-align: center;
     }
     .leftContainer .messageTitle{
         font-size: 2vw;
