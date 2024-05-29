@@ -1,11 +1,10 @@
+import Header from "../Header/Header";
 import "./NuevoProveedor.css";
 
 const NuevoProveedor = () => {
   return (
     <div>
-      <div className="nuevoProveedor-heading">
-        <h1>Nuevo proveedor</h1>
-      </div>
+      <Header text="Nuevo proveedor" />
       <div className="nuevoProveedor-formulario">
         <h2>Nuevo proveedor</h2>
         <form action="">
