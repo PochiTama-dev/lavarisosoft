@@ -26,7 +26,7 @@ const DatosIncidente = ({ equipo, modelo, antiguedad, diagnostico }) => {
             <label className='col-sm-3 col-form-label'>Equipo:</label>
             <div className='col-sm-8 d-flex align-items-center'>
             
-              <input type='text' value={equipo} disabled className='form-control rounded mx-2' />
+              <input type='text' value={equipo} disabled className='form-control rounded mx-2 ' />
             </div>
           </div>
           <div className='row mb-3'>
