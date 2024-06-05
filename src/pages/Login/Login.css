@@ -3,7 +3,7 @@ body{
     font-family: "Raleway", sans-serif;
 }
 .titleLogin{
-    font-size:112px;
+    font-size:80px;
     text-align: center;
 }
 .subtitleLogin{
@@ -80,7 +80,7 @@ body{
         width:51vw;
     }
     .leftContainer .titleLogin{
-        font-size:9vw;
+        font-size:7vw;
     }
     .leftContainer .subtitleLogin{
         font-size: 2vw;
