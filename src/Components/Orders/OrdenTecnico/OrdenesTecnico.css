@@ -20,4 +20,16 @@
     font-size: 1.3rem;
     font-weight: 400;
 }
+.badge-aprobada{
+    background-color: #40A63D;
+}
+.badge-cancelada{
+    background-color: #A6A6A6;
+}
+.badge-cerrada{
+    background-color: #A6A6A6;
+}
+.badge-pendiente{
+    background-color: #E58769;
+}
  
