@@ -96,14 +96,14 @@ const UploadEmpleado = () => {
   };
 
   const postEmpleado = async (empleadoForm) => {
-    const { id_rol, nombre, apellido, cuil, cuenta, legajo, telefono, email, direccion, ubicacion, longitud, latitud, estado } = await empleadoForm;
+    const { id_rol, nombre, apellido, cuil, cuenta, legajo, telefono, email, direccion, ubicacion, longitud, latitud } = await empleadoForm;
     const fetchEmpleado = await fetch('https://lv-back.online/empleados/guardar', {
       method: 'post',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ id_rol, nombre, apellido, cuil, cuenta, legajo, telefono, email, direccion, ubicacion, longitud, latitud, estado }),
+      body: JSON.stringify({ id_rol, nombre, apellido, cuil, cuenta, legajo, telefono, email, direccion, ubicacion, longitud, latitud, estado: 0 }),
     });
     console.log('status empleado: ', fetchEmpleado.status);
   };
@@ -307,7 +307,7 @@ const UploadEmpleado = () => {
                 style={{ textAlign: 'left', borderRadius: '5px', width: '350px' }}
               />
             </Form.Group>
-            <Form.Group controlId='formEstado' className='label-input-margin'>
+            {/* <Form.Group controlId='formEstado' className='label-input-margin'>
               <Form.Label className={camposVacios.includes('estado') ? 'required-field' : ''} style={{ textAlign: 'left', display: 'block' }}>
                 Estado
               </Form.Label>
@@ -319,7 +319,7 @@ const UploadEmpleado = () => {
                 placeholder='Ingrese su Estado'
                 style={{ textAlign: 'left', borderRadius: '5px', width: '350px' }}
               />
-            </Form.Group>
+            </Form.Group> */}
           </Col>
           <Col className='uploadEmpleado-c2' style={{ textAlign: 'left' }}>
             <Form.Group controlId='formAutomovil' className='label-input-margin'>
