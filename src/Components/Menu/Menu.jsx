@@ -12,7 +12,61 @@ const Menu = () => {
   return (
     <div className='container-full-width'>
       <Header text='Menú Principal' />
-      {user?.tipoRol === 'Jefe de taller' || user?.tipoRol === 'Super administrador' ? (
+      {user?.tipoRol === 'Super administrador' ? (
+        <div className='row menu-button-container'>
+          <div className='col-md-4'>
+            <div className='btn-group-vertical '>
+              <Link to='/agenda' className='btn btn-lg btn-block menu-button'>
+                Agenda
+              </Link>
+            </div>
+            <div className='btn-group-vertical '>
+              <Link to='/notificaciones' className='btn btn-lg btn-block menu-button'>
+                Notificaciones
+              </Link>
+            </div>
+            <div className='btn-group-vertical '>
+              <Link to='/presupuestos' className='btn btn-lg btn-block menu-button'>
+                Presupuestos
+              </Link>
+            </div>
+          </div>
+          <div className='col-md-4'>
+            <div className='btn-group-vertical '>
+              <Link to='/ventas' className='btn btn-lg btn-block menu-button'>
+                Ventas
+              </Link>
+            </div>
+            <div className='btn-group-vertical '>
+              <Link to='/mantenimiento' className='btn btn-lg btn-block menu-button'>
+                Mantenimiento
+              </Link>
+            </div>
+            <div className='btn-group-vertical '>
+              <Link to='/clientes' className='btn btn-lg btn-block menu-button'>
+                Clientes y empleados
+              </Link>
+            </div>
+          </div>
+          <div className='col-md-4'>
+            <div className='btn-group-vertical '>
+              <Link to='/chat' className='btn btn-lg btn-block menu-button'>
+                Chat
+              </Link>
+            </div>
+            <div className='btn-group-vertical '>
+              <Link to='/location' className='btn btn-lg btn-block menu-button'>
+                Ubicaciones tiempo real
+              </Link>
+            </div>
+            <div className='btn-group-vertical'>
+              <Link to='/ordenes' className='btn btn-lg btn-block menu-button'>
+                Ordenes
+              </Link>
+            </div>
+          </div>
+        </div>
+      ) : user?.tipoRol === 'Jefe de taller' ? (
         <div className='row menu-button-container'>
           <div className='col-md-4'>
             <div className='btn-group-vertical '>
@@ -29,7 +83,7 @@ const Menu = () => {
             </div>
           </div>
         </div>
-      ) : user?.tipoRol === 'Contable administrativo' || user?.tipoRol === 'Super administrador' ? (
+      ) : user?.tipoRol === 'Contable administrativo' ? (
         <div className='row menu-button-container'>
           <div className='col-md-4'>
             <div className='btn-group-vertical '>
@@ -53,7 +107,7 @@ const Menu = () => {
             </div>
           </div>
         </div>
-      ) : user?.tipoRol === 'Atención al cliente' || user?.tipoRol === 'Super administrador' ? (
+      ) : user?.tipoRol === 'Atención al cliente' ? (
         <div className='row menu-button-container'>
           <div className='col-md-4'>
             <div className='btn-group-vertical '>
