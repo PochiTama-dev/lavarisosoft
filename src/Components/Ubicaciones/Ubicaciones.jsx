@@ -236,8 +236,7 @@ const Ubicaciones = () => {
 
   const handleAddClient = () => {
     if (validateForm()) {
-      setClientes([...clientes, { ...newClient, distancia: '0 km' }]);
-      setSelectedClient(newClient);
+      setClientes([...clientes, { ...newClient, distancia: '0 km', position: { latitude: 0, longitude: 0 } }]);
       setNewClient({ nombre: '', direccion: '', telefono: '', cuilCuit: '' });
       setErrors({});
       setView('clientesTecnicos');
