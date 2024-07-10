@@ -7,7 +7,6 @@ const PrivateRoute = ({ roles }) => {
   const { handleNavigate } = useCustomContext();
   const usuario = JSON.parse(localStorage.getItem('usuario'));
   useEffect(() => {
-    console.log(usuario.tipoRol);
     if (!usuario) {
       console.log('No hay usuario');
       return handleNavigate('/');
