@@ -1,6 +1,9 @@
-import React from 'react';
 
-const NuevosDatosTecnico = () => {
+import { useState } from "react";
+
+const NuevosDatosTecnico = ({setOrden}) => {
+  const [nuevoTecnico, setNuevoTecnico] = useState('');
+
   return (
     <div >
       <h3 className='m-4'>Datos del técnico</h3>

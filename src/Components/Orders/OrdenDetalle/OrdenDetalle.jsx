@@ -44,6 +44,21 @@ const OrdenDetalle = ({ orden, onUpdateOrden }) => {
     }
   };
 
+  const handlePreliminar = async () => {
+    try {
+      const ordenActualizada = { ...orden, id_tipo_estado: 4 };
+      const resultado = await modificarOrden(orden.id, ordenActualizada);
+      if (resultado) {
+        console.log("Orden preliminar con éxito.");
+        onUpdateOrden();
+      } else {
+        console.log("Error al cambiar estado de la orden.");
+      }
+    } catch (error) {
+      console.error("Error al cambiar estado de la orden:", error);
+    }
+  };
+
   const handleDeclinar = async () => {
     try {
       const ordenActualizada = { ...orden, id_tipo_estado: 2 };
@@ -96,7 +111,7 @@ const OrdenDetalle = ({ orden, onUpdateOrden }) => {
         )}
         {TiposEstado.tipo_estado === "Cancelada" && (
           <div className="orders-btn">
-            <button className="bg-info rounded-pill text-white" onClick={handleAprobar}>Aprobar</button>
+            <button className="bg-info rounded-pill text-white" onClick={handlePreliminar}>Preliminar</button>
           </div>
         )}
         {TiposEstado.tipo_estado === "Aprobada" && (
@@ -160,6 +175,7 @@ const OrdenDetalle = ({ orden, onUpdateOrden }) => {
 OrdenDetalle.propTypes = {
   orden: PropTypes.shape({
     numero_orden: PropTypes.number.isRequired,
+    id: PropTypes.number.isRequired,
     id_tipo_estado: PropTypes.number.isRequired,
     equipo: PropTypes.string.isRequired,
     modelo: PropTypes.string.isRequired,
@@ -182,6 +198,7 @@ OrdenDetalle.propTypes = {
       tipo_estado: PropTypes.string.isRequired,
     }).isRequired,
   }),
+  onUpdateOrden: PropTypes.func
 };
 
 export default OrdenDetalle;

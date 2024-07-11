@@ -27,7 +27,7 @@ const clienteIcono = new Icon({
   popupAnchor: [1, -35],
 });
 
-const Map = ({ position, zoom, activeTechnicians, selectedClient, selectedTechnician, setSelectedTechnician, clientes }) => {
+const Map = ({ position, zoom, activeTechnicians, selectedClient, selectedTechnician, setSelectedTechnician, clientes, numOrden }) => {
   const { latitude, longitude } = position;
   const navigate = useNavigate();
   const refClient = useRef({});
@@ -37,7 +37,7 @@ const Map = ({ position, zoom, activeTechnicians, selectedClient, selectedTechni
     if (selectedClient) {
       setSelectedTechnician(tecnico);
       navigate('/locationOrder', {
-        state: { selectedTechnician: tecnico, selectedClient: selectedClient },
+        state: { selectedTechnician: tecnico, selectedClient: selectedClient, numOrden: numOrden },
       });
     }
   };

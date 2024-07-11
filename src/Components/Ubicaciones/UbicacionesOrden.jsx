@@ -5,14 +5,42 @@ import "./Ubicaciones.css";
 
 const UbicacionesOrden = () => {
   const location = useLocation();
-  const { selectedTechnician, selectedClient } = location.state || {};
+  const { selectedTechnician, selectedClient, numOrden } = location.state || {};
+
+  console.log(selectedTechnician);
+  console.log(selectedClient);
+
+  const handleConfirm = async () => {
+    const orden = {
+      numero_orden: numOrden,
+      id_cliente: selectedClient.id,
+      id_empleado: selectedTechnician.id,
+      id_tipo_estado: 4,
+      id_tipo_cierre_extendido: null,
+      equipo: 'Lavarropas automatico',
+      modelo: 'Drean Next',
+      antiguedad: 2,
+      diagnostico: 'el equipo presenta fallas',
+      motivo: 'cualquiera'
+    };
+
+    console.log(orden);
+
+    /* const success = await guardarOrden(orden);
+    if (success) {
+      console.log("Orden guardada con éxito");
+      history.push('/ordenes'); // Redirige a la página de órdenes (ajusta la ruta según sea necesario)
+    } else {
+      console.log("Se produjo un error al guardar la orden");
+    } */
+  };
 
   return (
     <div className="ventas-container">
       <Header text="Ubicaciones"></Header>
       <div className="row w-100 p-5 mt-5">
         <h2 className="pt-3 mb-5 mx-4 feedback-containers-heading">
-          Confirmar orden no. #25647
+          Confirmar orden no. #{numOrden}
         </h2>
         <div className="col-5">
           <div className="container-lists">
@@ -59,6 +87,11 @@ const UbicacionesOrden = () => {
               </div>
             </div>
           </div>
+        </div>
+        <div className="d-flex justify-content-center mt-5">
+          <button className="bg-info rounded-pill text-white papelitoButton" onClick={handleConfirm}>
+            Confirmar
+          </button>
         </div>
       </div>
     </div>

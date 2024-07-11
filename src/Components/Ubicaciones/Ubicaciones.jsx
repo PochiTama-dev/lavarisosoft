@@ -8,51 +8,64 @@ import { haversine } from './calcularDistancia';
 const Ubicaciones = () => {
   const [showTareas, setShowTareas] = useState({});
   const [view, setView] = useState('clientesTecnicos'); // Estado para controlar la vista inicial
+  const [clientes, setClientes] = useState({})
   const [selectedClient, setSelectedClient] = useState({ position: { latitude: 0, longitude: 0 } });
   const [selectedTecnico, setSelectedTecnico] = useState(null);
+  const [numOrden, setNumOrden] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchTec, setSearchTec] = useState('');
 
   const [showAllClientes, setShowAllClientes] = useState(false);
   const [showAllTecnicos, setShowAllTecnicos] = useState(false);
+
+  const [position, setPosition] = useState({
+    latitude: '',
+    longitude: '',
+  });
+  const [filterTec, setFilterTec] = useState(tecnicos);
+
   const ref = useRef();
   /*   const distancia = haversine(position.latitude, position.longitude, -33.936255, -64.370465);
   console.log(`La distancia es de ${distancia} KM`); */
 
-  const [clientes, setClientes] = useState([
-    {
-      nombre: 'Francisco Padilla',
-      distancia: '8 km',
-      telefono: '1155246987',
-      direccion: 'Calle prueba 123',
-      cuilCuit: '00-12345678-9',
-      position: { latitude: -31.422528, longitude: -64.1517 },
-    },
-    {
-      nombre: 'Alejandra Korn',
-      distancia: '2.4 km',
-      telefono: '1155246987',
-      direccion: 'Calle prueba 123',
-      cuilCuit: '00-12345678-9',
-      position: { latitude: -32.179905, longitude: -64.102136 },
-    },
-    {
-      nombre: 'Susana Gimenez',
-      distancia: '3.9 km',
-      telefono: '1155246987',
-      direccion: 'Calle prueba 123',
-      cuilCuit: '00-12345678-9',
-      position: { latitude: -30.957952, longitude: -62.336641 },
-    },
-    {
-      nombre: 'Juan Perez',
-      distancia: '1.2 km',
-      telefono: '1155246987',
-      direccion: 'Calle prueba 123',
-      cuilCuit: '00-12345678-9',
-      position: { latitude: -30.156461, longitude: -64.502303 },
-    },
-  ]);
+  useEffect(() => {
+    async function initialize() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            setPosition({ latitude, longitude });
+          },
+          (error) => {
+            console.error('Error al obtener la posición:', error.message);
+          }
+        );
+      } else {
+        console.error('El navegador no soporta geolocalización.');
+      }
+    }
+
+    initialize();
+    fetchOrdenes();
+    listaClientes();
+  }, [position]);
+
+  const listaClientes = async () => {
+    try {
+      const response = await fetch("https://lv-back.online/clientes/lista");
+      const clientes = await response.json();
+      if (clientes[0] !== undefined) {
+        console.log(`Se encontró una lista con ${clientes.length} clientes!!`);
+        console.log(clientes);
+        setClientes(clientes);
+      } else {
+        console.log('Aún no se registra ningún cliente...');
+        return false;
+      }
+    } catch (error) {
+      console.error("Error, no se encontraron clientes en la base de datos....", error);
+    }
+  };
 
   const [newClient, setNewClient] = useState({
     nombre: '',
@@ -60,71 +73,28 @@ const Ubicaciones = () => {
     telefono: '',
     cuilCuit: '',
   });
+
+  const fetchOrdenes = async () => {
+    try {
+      const response = await fetch("https://lv-back.online/ordenes");
+      if (!response.ok) {
+        throw new Error("Error al obtener las ordenes");
+      }
+      const data = await response.json();
+      const numeroDeOrdenes = data.length;
+      const nuevoNumOrden = numeroDeOrdenes + 1;
+      setNumOrden(nuevoNumOrden);
+    } catch (error) {
+      setErrors(error.message);
+    }
+  };
+
   const [errors, setErrors] = useState({
     nombre: '',
     direccion: '',
     telefono: '',
     cuilCuit: '',
   });
-
-  const tecnicos = [
-    {
-      id: '1',
-      nombre: 'Alan Almendra',
-      estado: 'activo',
-      distancia: 'se encuentra a 2.4 km',
-      telefono: '1123658741',
-      position: { latitude: -31.4167, longitude: -64.1833 }, // Coordenadas de Córdoba capital
-    },
-    {
-      id: '2',
-      nombre: 'Mariela Paz',
-      estado: 'activo',
-      distancia: 'se encuentra a 3.9 km',
-      telefono: '1123658741',
-      position: { latitude: -30.4201, longitude: -65.1888 }, // Coordenadas cercanas a Córdoba capital
-    },
-    {
-      id: '3',
-      nombre: 'Leandro Sueyro',
-      estado: 'pendiente',
-      distancia: 'se encuentra a 8 km',
-      telefono: '1123658741',
-      position: { latitude: -31.1, longitude: -63.7 }, // Coordenadas cercanas a Córdoba capital
-    },
-    {
-      id: '4',
-      nombre: 'Laura Campos',
-      estado: 'activo',
-      distancia: 'se encuentra a 5.1 km',
-      telefono: '1123658741',
-      position: { latitude: -31.2, longitude: -62.5 }, // Coordenadas cercanas a Córdoba capital
-    },
-    {
-      id: '5',
-      nombre: 'Carlos Ramirez',
-      estado: 'pendiente',
-      distancia: 'se encuentra a 6.7 km',
-      telefono: '1123658741',
-      position: { latitude: -32.9, longitude: -64.195 }, // Coordenadas cercanas a Córdoba capital
-    },
-    {
-      id: '6',
-      nombre: 'Fernanda Silva',
-      estado: 'activo',
-      distancia: 'se encuentra a 1.3 km',
-      telefono: '1123658741',
-      position: { latitude: -30.413, longitude: -64.185 }, // Coordenadas cercanas a Córdoba capital
-    },
-    {
-      id: '7',
-      nombre: 'Fernando Perez',
-      estado: 'activo',
-      distancia: 'se encuentra a 1.5 km',
-      telefono: '1123658741',
-      position: { latitude: -32.41, longitude: -64.18 }, // Coordenadas cercanas a Córdoba capital
-    },
-  ];
 
   const tareas = [
     {
@@ -161,30 +131,6 @@ const Ubicaciones = () => {
     },
     { id_tecnico: '3', detalle: 'Está de regreso', estado: 'activo' },
   ];
-  const [position, setPosition] = useState({
-    latitude: clientes && clientes[0].position.latitude,
-    longitude: clientes && clientes[0].position.longitude,
-  });
-  const [filterTec, setFilterTec] = useState(tecnicos);
-  useEffect(() => {
-    async function initialize() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const { latitude, longitude } = position.coords;
-            setPosition({ latitude, longitude });
-          },
-          (error) => {
-            console.error('Error al obtener la posición:', error.message);
-          }
-        );
-      } else {
-        console.error('El navegador no soporta geolocalización.');
-      }
-    }
-
-    initialize();
-  }, [position]);
 
   const validateField = (name, value) => {
     let error = '';
@@ -244,6 +190,7 @@ const Ubicaciones = () => {
   };
 
   const handleSelectClient = (cliente) => {
+    console.log(cliente);
     setSelectedClient(cliente);
     setView('detalleClienteBuscarTecnico');
     handlePosition(cliente.position);
@@ -502,6 +449,7 @@ const Ubicaciones = () => {
             selectedTechnician={selectedTecnico}
             setSelectedTechnician={setSelectedTecnico}
             clientes={clientes}
+            numOrden={numOrden}
             refClient={ref}
           />
           <div className='d-flex justify-content-end mt-4'>
