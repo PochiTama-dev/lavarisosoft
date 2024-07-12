@@ -7,19 +7,28 @@ const UbicacionesOrden = () => {
   const location = useLocation();
   const { selectedTechnician, selectedClient } = location.state || {};
 
+  const separarDireccion = (direccion) => {
+    const partes = direccion.split(" ");
+    const altura = partes.pop();
+    const calle = partes.join(" ");
+    return { calle, altura };
+  };
+
+  const { calle, altura } = separarDireccion(selectedClient.direccion);
+
   return (
     <div className="ventas-container">
       <Header text="Ubicaciones"></Header>
       <div className="row w-100 p-5 mt-5">
         <h2 className="pt-3 mb-5 mx-4 feedback-containers-heading">
-          Confirmar orden no. #25647
+          Confirmar orden no. #{selectedClient.Ordenes[0]?.id}
         </h2>
         <div className="col-5">
           <div className="container-lists">
             <h2 className="px-3 pt-3 feedback-containers-heading">Cliente</h2>
             <div className="scrollable-container-top">
               <div className="feedback-tecnicos-container align-items-center">
-                <h4 className="feedback-tecnicos-heading">{selectedClient.nombre}</h4>
+                <h4 className="feedback-tecnicos-heading">{selectedClient.nombre} {selectedClient.apellido}</h4>
               </div>
               <div className="feedback-tecnicos-container align-items-center">
                 <h4 className="feedback-tecnicos-heading">
@@ -28,14 +37,14 @@ const UbicacionesOrden = () => {
               </div>
               <div className="feedback-tecnicos-container align-items-center">
                 <h4 className="feedback-tecnicos-heading">
-                  Calle: Corrientes{" "}
+                  Calle: {calle}
                 </h4>
               </div>
               <div className="feedback-tecnicos-container align-items-center">
-                <h4 className="feedback-tecnicos-heading">Altura: 654 </h4>
+                <h4 className="feedback-tecnicos-heading">Altura: {altura} </h4>
               </div>
               <div className="feedback-tecnicos-container align-items-center">
-                <h4 className="feedback-tecnicos-heading">Localidad: CABA</h4>
+                <h4 className="feedback-tecnicos-heading">Localidad: {selectedClient.ubicacion}</h4>
               </div>
             </div>
           </div>
@@ -50,8 +59,8 @@ const UbicacionesOrden = () => {
                 <table className="table">
                   <tbody>
                     <tr className="row-even">
-                      <td>{selectedTechnician.nombre}</td>
-                      <td>Legajo: TC-987654</td>
+                      <td>{selectedTechnician.nombre} {selectedTechnician.apellido}</td>
+                      <td>Legajo: {selectedTechnician.legajo}</td>
                       <td>Técnico a domicilio</td>
                     </tr>
                   </tbody>

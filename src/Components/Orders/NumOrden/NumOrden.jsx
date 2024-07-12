@@ -1,45 +1,40 @@
-import './NumOrden.css';
-const NumOrden = () => {
-  const resultadoOrden = ['text-success', 'text-danger', 'text-secondary'];
+import PropTypes from "prop-types";
+import "./NumOrden.css";
+
+const NumOrden = ({ ordenes, onSelectOrden }) => {
+  const resultadoOrden = ["text-aprobado", "text-pendiente", "text-secondary"];
+  
+  const estadoMap = {
+    "Aprobada": 0,
+    "Pendiente": 1,
+    "Cancelada": 2
+  };
 
   return (
-    <div className='bg-secondary orderNum overflow-scroll'>
+    <div className="bg-secondary orderNum overflow-scroll">
       <h3>Por número de orden</h3>
-      <ul className='numOrden'>
-        <li className='d-flex justify-content-around'>
-          <a href=''>#25000</a>
-          <span className={resultadoOrden[0]}>Aprobada</span>
-        </li>
-        <li className='d-flex justify-content-around'>
-          <a href=''>#25100</a>
-          <span className={resultadoOrden[0]}>Aprobada</span>
-        </li>
-        <li className='d-flex justify-content-around'>
-          <a href=''>#25111</a>
-          <span className={resultadoOrden[1]}>Pendiente</span>
-        </li>
-        <li className='d-flex justify-content-around'>
-          <a href=''>#25456</a>
-          <span className={resultadoOrden[2]}>Cerrada</span>
-        </li>
-        <li className='d-flex justify-content-around'>
-          <a href=''>#25245</a>
-          <span className={resultadoOrden[2]}>Cerrada</span>
-        </li>
-        <li className='d-flex justify-content-around'>
-          <a href=''>#25423</a>
-          <span className={resultadoOrden[0]}>Aprobada</span>
-        </li>
-        <li className='d-flex justify-content-around'>
-          <a href=''>#25453</a>
-          <span className={resultadoOrden[2]}>Cerrada</span>
-        </li>
-        <li className='d-flex justify-content-around'>
-          <a href=''>#25268</a>
-          <span className={resultadoOrden[2]}>Cerrada</span>
-        </li>
+      <ul className="numOrden">
+        {ordenes.map((orden, index) => {
+          const { numero_orden, TiposEstado } = orden;
+          const estadoClase = resultadoOrden[estadoMap[TiposEstado.tipo_estado]];
+
+          return (
+            <li key={index} className="d-flex justify-content-around">
+              <a href="#" onClick={() => onSelectOrden(orden.id)} className="text-orders">#{numero_orden}</a>
+              <span className={estadoClase}>
+                {TiposEstado.tipo_estado}
+              </span>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
 };
+
+NumOrden.propTypes = {
+  ordenes: PropTypes.array.isRequired,
+  onSelectOrden: PropTypes.func.isRequired
+};
+
 export default NumOrden;

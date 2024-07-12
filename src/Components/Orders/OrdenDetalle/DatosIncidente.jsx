@@ -47,7 +47,7 @@ const DatosIncidente = ({ equipo, modelo, antiguedad, diagnostico }) => {
             <label className='col-sm-3 col-form-label'>Diagnóstico:</label>
             <div className='col-sm-8 d-flex align-items-center'>
                
-              <textarea disabled className='form-control rounded mx-2'>{diagnostico}</textarea>
+              <textarea disabled className='form-control rounded mx-2' defaultValue={diagnostico}></textarea>
             </div>
           </div>
         </div>
