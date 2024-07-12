@@ -44,12 +44,8 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
             </div>
           </div>
           <div className='mb-3 row align-items-center'>
-            <label htmlFor='legajo' className='col-sm-2 col-form-label'>
-              Legajo:
-            </label>
-            <div className='col-sm-8'>
-              <input type='text' id='legajo' className='form-control input-small' onChange={handleInputChange} required />
-            </div>
+        
+        
           </div>
           <div className='mb-3 row align-items-center'>
             <label htmlFor='ubicacion' className='col-sm-2 col-form-label'>
