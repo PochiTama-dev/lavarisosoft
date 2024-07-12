@@ -1,4 +1,3 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 
 const DatosTecnico = ({ nombre, apellido, legajo }) => {
@@ -27,7 +26,7 @@ const DatosTecnico = ({ nombre, apellido, legajo }) => {
             <div className='mb-3 row align-items-center'>
               <label htmlFor='legajoTecnico' className='col-sm-3 col-form-label'>Legajo:</label>
               <div className='col-sm-8'>
-                <input type='text' id='legajoTecnico' value={legajo} disabled className='form-control input-ordenes' />
+                <input type='text' id='legajoTecnico' value={legajo || ''} disabled className='form-control input-ordenes' />
               </div>
             </div>
           </div>
@@ -40,7 +39,7 @@ const DatosTecnico = ({ nombre, apellido, legajo }) => {
 DatosTecnico.propTypes = {
   nombre: PropTypes.string.isRequired,
   apellido: PropTypes.string.isRequired,
-  legajo: PropTypes.string.isRequired,
+  legajo: PropTypes.string,
 };
 
 export default DatosTecnico;

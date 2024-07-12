@@ -11,3 +11,10 @@
 .orderNum h3{
    font-weight: bold;
 }
+
+.text-aprobado{
+    color: #40A63D;
+}
+.text-pendiente{
+    color: #E58769;
+}

@@ -45,8 +45,8 @@ const Map = ({ position, zoom, activeTechnicians, selectedClient, selectedTechni
     setFilter(e.target.value);
   };
   useEffect(() => {
-    if (selectedClient && selectedClient.position && refClient.current[`${selectedClient.position.latitude}-${selectedClient.position.longitude}`]) {
-      refClient.current[`${selectedClient.position.latitude}-${selectedClient.position.longitude}`].openPopup();
+    if (selectedClient && refClient.current[`${selectedClient.latitud}-${selectedClient.longitud}`]) {
+      refClient.current[`${selectedClient.latitud}-${selectedClient.longitud}`].openPopup();
     }
   }, [position]);
 
@@ -62,7 +62,7 @@ const Map = ({ position, zoom, activeTechnicians, selectedClient, selectedTechni
       <MapContainer
         className='searchMap'
         bounds={CORDOBA_BOUNDS}
-        center={selectedClient.nombre ? [selectedClient.position.latitude, selectedClient.position.longitude] : [latitude, longitude]}
+        center={selectedClient.nombre ? [selectedClient.latitud, selectedClient.longitud] : [latitude, longitude]}
         zoom={zoom}
       >
         <TileLayer url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' />
@@ -77,7 +77,7 @@ const Map = ({ position, zoom, activeTechnicians, selectedClient, selectedTechni
 
         {(filter === 'technicians' || filter === 'both') &&
           activeTechnicians.map((technician, index) => (
-            <Marker key={index} position={[technician.position.latitude, technician.position.longitude]} icon={myIcon}>
+            <Marker key={index} position={[technician.latitud, technician.longitud]} icon={myIcon}>
               <Popup>
                 <div className='popup-tecnico'>
                   <img src={`https://via.placeholder.com/50`} alt='Technician' />
@@ -109,8 +109,8 @@ const Map = ({ position, zoom, activeTechnicians, selectedClient, selectedTechni
         {/* End Marcador Tecnicos Activos */}
         {/* Marcador Tecnico Seleccionado Mapa */}
         {selectedTechnician &&
-          selectedTechnician.position && ( // Mostrar el popup solo si se ha seleccionado un técnico y tiene posición
-            <Popup position={[selectedTechnician.position.latitude, selectedTechnician.position.longitude]}>
+          selectedTechnician && ( // Mostrar el popup solo si se ha seleccionado un técnico y tiene posición
+            <Popup position={[selectedTechnician.latitud, selectedTechnician.longitud]}>
               <div className='popup-tecnico'>
                 <img src={`https://via.placeholder.com/50`} alt='Technician' />
                 <div className='popup-content'>
@@ -142,10 +142,10 @@ const Map = ({ position, zoom, activeTechnicians, selectedClient, selectedTechni
           clientes.map((cliente, index) => (
             <Marker
               key={index}
-              position={[cliente.position.latitude, cliente.position.longitude]}
+              position={[cliente.latitud, cliente.longitud]}
               icon={clienteIcono}
               ref={(ref) => {
-                refClient.current[`${cliente.position.latitude}-${cliente.position.longitude}`] = ref;
+                refClient.current[`${cliente.latitud}-${cliente.longitud}`] = ref;
               }}
             >
               <Popup>
