@@ -1,7 +1,7 @@
 import React from 'react';
 import './nuevaOrden.css';
 
-const NuevosDatosCliente = ({ setCliente }) => {
+const NuevosDatosCliente = ({ setCliente, cliente }) => {
   const handleInputChange = (e) => {
     const { id, value } = e.target;
     setCliente(prevState => ({ ...prevState, [id]: value }));
@@ -17,7 +17,14 @@ const NuevosDatosCliente = ({ setCliente }) => {
               Número de Cliente:
             </label>
             <div className='col-sm-8'>
-              <input type='text' id='numero_cliente' className='form-control input-small' onChange={handleInputChange} required />
+              <input
+                type='text'
+                id='numero_cliente'
+                className='form-control input-small'
+                value={cliente.numero_cliente}
+                onChange={handleInputChange}
+                required
+              />
             </div>
           </div>
           <div className='mb-3 row align-items-center'>
