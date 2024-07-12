@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-import React, { useState } from 'react';
 import Header from "../../Components/Header/Header.jsx";
 import NuevosDatosCliente from "../../Components/Orders/NuevaOrden/NuevosDatosCliente.jsx";
 import NuevosDatosIncidente from "../../Components/Orders/NuevaOrden/NuevosDatosIncidente.jsx";
@@ -49,26 +48,6 @@ const guardarCliente = async (cliente) => {
   }
 };
 
-const guardarOrden = async (orden) => {
-  try {
-    const response = await fetch("https://lv-back.online/ordenes/guardar", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(orden)
-    });
-    const result = await response.json();
-    if (result) {
-      console.log("Orden guardada con éxito!!!");
-      return true;
-    } else {
-      console.log("Se produjo un error, la orden no pudo ser guardada...");
-      return false;
-    }
-  } catch (error) {
-    console.error("Error al guardar la orden.", error);
-  }
-};
-
 const NuevaOrden = () => {
   const [cliente, setCliente] = useState({});
   const [incidente, setIncidente] = useState({});
@@ -76,8 +55,6 @@ const NuevaOrden = () => {
   const [idEmpleado, setIdEmpleado] = useState(""); // New state for id_empleado
 
   const handleSubmit = async () => {
-    
- 
 
     const clienteId = await guardarCliente(cliente);
     if (clienteId) {

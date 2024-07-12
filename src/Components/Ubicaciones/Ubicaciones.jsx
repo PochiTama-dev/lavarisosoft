@@ -4,14 +4,17 @@ import Map from './Map';
 
 import './Ubicaciones.css';
 import { haversine } from './calcularDistancia';
+import { ordenes } from "../../services/ordenesService";
+import { listaClientes } from "../../services/clienteService";
+import { listadoEmpleados } from "../../services/empleadoService";
 
 const Ubicaciones = () => {
   const [showTareas, setShowTareas] = useState({});
   const [view, setView] = useState('clientesTecnicos'); // Estado para controlar la vista inicial
-  const [clientes, setClientes] = useState({})
+  const [clientes, setClientes] = useState([])
+  const [tecnicos, setTecnicos] = useState([])
   const [selectedClient, setSelectedClient] = useState({ position: { latitude: 0, longitude: 0 } });
   const [selectedTecnico, setSelectedTecnico] = useState(null);
-  const [numOrden, setNumOrden] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchTec, setSearchTec] = useState('');
 
@@ -19,8 +22,8 @@ const Ubicaciones = () => {
   const [showAllTecnicos, setShowAllTecnicos] = useState(false);
 
   const [position, setPosition] = useState({
-    latitude: '',
-    longitude: '',
+    latitude: '-31.67750630032039',
+    longitude: '-65.4105635773489',
   });
   const [filterTec, setFilterTec] = useState(tecnicos);
 
@@ -46,24 +49,38 @@ const Ubicaciones = () => {
     }
 
     initialize();
-    fetchOrdenes();
-    listaClientes();
-  }, [position]);
+    fetchClientes();
+    fetchTecnicos();
+  }, [/* position */]);
 
-  const listaClientes = async () => {
+  const fetchClientes = async () => {
     try {
-      const response = await fetch("https://lv-back.online/clientes/lista");
-      const clientes = await response.json();
-      if (clientes[0] !== undefined) {
-        console.log(`Se encontró una lista con ${clientes.length} clientes!!`);
-        console.log(clientes);
-        setClientes(clientes);
+      const data = await listaClientes();
+      if (data.length > 0) {
+        console.log(`Se encontró una lista con ${data.length} clientes!!`);
+        console.log(data);
+        setClientes(data);
       } else {
         console.log('Aún no se registra ningún cliente...');
-        return false;
       }
     } catch (error) {
       console.error("Error, no se encontraron clientes en la base de datos....", error);
+    }
+  };
+
+  const fetchTecnicos = async () => {
+    try {
+      const data = await listadoEmpleados();
+      if (data.length > 0) {
+        console.log(`Se encontró una lista con ${data.length} técnicos!!`);
+        console.log(data);
+        setTecnicos(data);
+        setFilterTec(data);
+      } else {
+        console.log('Aún no se registra ningún técnico...');
+      }
+    } catch (error) {
+      console.error("Error, no se encontraron técnicos en la base de datos....", error);
     }
   };
 
@@ -73,21 +90,6 @@ const Ubicaciones = () => {
     telefono: '',
     cuilCuit: '',
   });
-
-  const fetchOrdenes = async () => {
-    try {
-      const response = await fetch("https://lv-back.online/ordenes");
-      if (!response.ok) {
-        throw new Error("Error al obtener las ordenes");
-      }
-      const data = await response.json();
-      const numeroDeOrdenes = data.length;
-      const nuevoNumOrden = numeroDeOrdenes + 1;
-      setNumOrden(nuevoNumOrden);
-    } catch (error) {
-      setErrors(error.message);
-    }
-  };
 
   const [errors, setErrors] = useState({
     nombre: '',
@@ -182,18 +184,19 @@ const Ubicaciones = () => {
 
   const handleAddClient = () => {
     if (validateForm()) {
-      setClientes([...clientes, { ...newClient, distancia: '0 km', position: { latitude: 0, longitude: 0 } }]);
-      setNewClient({ nombre: '', direccion: '', telefono: '', cuilCuit: '' });
+      setClientes([...clientes, { ...newClient, distancia: '0 km', latitud: 0, longitud: 0, Ordenes: [] }]);
+      setNewClient({ nombre: '', direccion: '', telefono: '', cuil: '' });
       setErrors({});
       setView('clientesTecnicos');
     }
   };
 
   const handleSelectClient = (cliente) => {
-    console.log(cliente);
     setSelectedClient(cliente);
     setView('detalleClienteBuscarTecnico');
-    handlePosition(cliente.position);
+    
+    const {latitud, longitud} = cliente;
+    handlePosition(latitud, longitud);
   };
 
   const handleSelectTecnico = (tecnico) => {
@@ -229,17 +232,17 @@ const Ubicaciones = () => {
 
   const filteredTecnicos = tecnicos.filter((tecnico) => tecnico.nombre.toLowerCase().includes(searchTec.toLowerCase()));
 
-  const activeTecnicos = tecnicos.filter((t) => t.estado === 'activo');
+  const activeTecnicos = tecnicos.filter((t) => t.estado == 1);
 
   const handleBack = () => {
     setView('clientesTecnicos');
     setSelectedTecnico(null);
   };
 
-  const handlePosition = (newPosition) => {
+  const handlePosition = (latitud, longitud) => {
     setPosition({
-      latitude: newPosition.latitude,
-      longitude: newPosition.longitude,
+      latitude: latitud,
+      longitude: longitud,
     });
   };
 
@@ -262,9 +265,13 @@ const Ubicaciones = () => {
                     <div key={i} className='my-2'>
                       <div className='feedback-tecnicos-container align-items-center'>
                         <button className='feedback-tecnicos-heading-button' onClick={() => handleSelectClient(t)}>
-                          {t.nombre}
+                          {t.nombre} {t.apellido}
                         </button>
-                        <span className='mx-2'>se encuentra a {t.distancia}</span>
+                        <span className='mx-2'>
+                          Se encuentra a{' '}
+                          {haversine(t.latitud, t.longitud, position.latitude, position.longitude)}
+                          km
+                        </span>
                       </div>
                     </div>
                   ))}
@@ -294,8 +301,8 @@ const Ubicaciones = () => {
                     filterTec.map((t, i) => (
                       <div key={i}>
                         <div className='feedback-tecnicos-container align-items-center'>
-                          <h3 className='feedback-tecnicos-heading mx-2'>{t.nombre}</h3>
-                          <div className={`notification-badge-tecnico ${t.estado === 'activo' ? 'active' : 'pending'}`}></div>
+                          <h3 className='feedback-tecnicos-heading mx-2'>{t.nombre} {t.apellido}</h3>
+                          <div className={`notification-badge-tecnico ${t.estado == '1' ? 'active' : 'pending'}`}></div>
                           <ul onClick={() => handleShowTareas(t.id)} className='feedback-tecnico'>
                             <li></li>
                           </ul>
@@ -404,7 +411,7 @@ const Ubicaciones = () => {
                     <h4 className='feedback-tecnicos-heading'>Calle: {selectedClient.direccion}</h4>
                   </div>
                   <div className='feedback-tecnicos-container align-items-center'>
-                    <h4 className='feedback-tecnicos-heading'>CUIL/CUIT: {selectedClient.cuilCuit}</h4>
+                    <h4 className='feedback-tecnicos-heading'>CUIL/CUIT: {selectedClient.cuil}</h4>
                   </div>
                   <button className='feedback-tecnicos-heading-button' onClick={handleBack}>
                     volver
@@ -422,8 +429,8 @@ const Ubicaciones = () => {
                         </button>
                         <span className='mx-2'>
                           Se encuentra a{' '}
-                          {haversine(t.position.latitude, t.position.longitude, selectedClient.position.latitude, selectedClient.position.longitude)}
-                          KM
+                          {haversine(t.latitud, t.longitud, selectedClient.latitud, selectedClient.longitud)}
+                          km
                         </span>
                       </div>
                     </div>
@@ -443,13 +450,12 @@ const Ubicaciones = () => {
         <div className='col-8'>
           <Map
             position={position}
-            zoom={9}
+            zoom={6}
             activeTechnicians={activeTecnicos}
             selectedClient={selectedClient}
             selectedTechnician={selectedTecnico}
             setSelectedTechnician={setSelectedTecnico}
             clientes={clientes}
-            numOrden={numOrden}
             refClient={ref}
           />
           <div className='d-flex justify-content-end mt-4'>
