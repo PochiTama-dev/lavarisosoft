@@ -28,10 +28,12 @@ const clienteIcono = new Icon({
 });
 
 const Map = ({ position, zoom, activeTechnicians, selectedClient, selectedTechnician, setSelectedTechnician, clientes }) => {
-  const { latitude, longitude } = position;
   const navigate = useNavigate();
   const refClient = useRef({});
   const [filter, setFilter] = useState('both');
+
+  // Safe destructuring of position
+  const { latitude = 0, longitude = 0 } = position || {};
 
   const handleTechnicianSelect = (tecnico) => {
     if (selectedClient) {
@@ -41,14 +43,16 @@ const Map = ({ position, zoom, activeTechnicians, selectedClient, selectedTechni
       });
     }
   };
+
   const handleFilterChange = (e) => {
     setFilter(e.target.value);
   };
+
   useEffect(() => {
     if (selectedClient && refClient.current[`${selectedClient.latitud}-${selectedClient.longitud}`]) {
       refClient.current[`${selectedClient.latitud}-${selectedClient.longitud}`].openPopup();
     }
-  }, [position]);
+  }, [selectedClient]);
 
   return (
     <>
@@ -62,18 +66,14 @@ const Map = ({ position, zoom, activeTechnicians, selectedClient, selectedTechni
       <MapContainer
         className='searchMap'
         bounds={CORDOBA_BOUNDS}
-        center={selectedClient.nombre ? [selectedClient.latitud, selectedClient.longitud] : [latitude, longitude]}
+        center={
+          selectedClient && selectedClient.nombre
+            ? [selectedClient.latitud, selectedClient.longitud]
+            : [latitude || 0, longitude || 0]
+        }
         zoom={zoom}
       >
         <TileLayer url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' />
-        {/* Marcador Usuario */}
-        {/* <Marker position={[latitude, longitude]}>
-        <Popup>
-          A pretty CSS3 popup. <br /> Easily customizable.
-        </Popup>
-      </Marker> */}
-        {/* End Marcador Usuario */}
-        {/* Marcador Tecnicos Activos */}
 
         {(filter === 'technicians' || filter === 'both') &&
           activeTechnicians.map((technician, index) => (
@@ -106,39 +106,37 @@ const Map = ({ position, zoom, activeTechnicians, selectedClient, selectedTechni
               </Popup>
             </Marker>
           ))}
-        {/* End Marcador Tecnicos Activos */}
-        {/* Marcador Tecnico Seleccionado Mapa */}
-        {selectedTechnician &&
-          selectedTechnician && ( // Mostrar el popup solo si se ha seleccionado un técnico y tiene posición
-            <Popup position={[selectedTechnician.latitud, selectedTechnician.longitud]}>
-              <div className='popup-tecnico'>
-                <img src={`https://via.placeholder.com/50`} alt='Technician' />
-                <div className='popup-content'>
-                  <h4>{selectedTechnician.nombre}</h4>
-                  <p>{selectedTechnician.telefono}</p>
-                </div>
+
+        {selectedTechnician && (
+          <Popup position={[selectedTechnician.latitud, selectedTechnician.longitud]}>
+            <div className='popup-tecnico'>
+              <img src={`https://via.placeholder.com/50`} alt='Technician' />
+              <div className='popup-content'>
+                <h4>{selectedTechnician.nombre}</h4>
+                <p>{selectedTechnician.telefono}</p>
               </div>
-              <div className='popup-tecnico-button'>
-                <button onClick={() => handleTechnicianSelect(selectedTechnician)}>
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    width='22'
-                    height='22'
-                    fill='currentColor'
-                    className='bi bi-arrow-right'
-                    viewBox='0 0 15 15'
-                  >
-                    <path
-                      fillRule='evenodd'
-                      d='M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8'
-                    />
-                  </svg>
-                </button>
-              </div>
-            </Popup>
-          )}
-        {/* End Marcador Tecnico Seleccionado Mapa */}
-        {(filter === 'clients' || filter === 'both') &&
+            </div>
+            <div className='popup-tecnico-button'>
+              <button onClick={() => handleTechnicianSelect(selectedTechnician)}>
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  width='22'
+                  height='22'
+                  fill='currentColor'
+                  className='bi bi-arrow-right'
+                  viewBox='0 0 15 15'
+                >
+                  <path
+                    fillRule='evenodd'
+                    d='M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8'
+                  />
+                </svg>
+              </button>
+            </div>
+          </Popup>
+        )}
+
+        {(filter === 'client' || filter == 'both') &&
           clientes.map((cliente, index) => (
             <Marker
               key={index}
@@ -150,7 +148,7 @@ const Map = ({ position, zoom, activeTechnicians, selectedClient, selectedTechni
             >
               <Popup>
                 <div className='popup-tecnico'>
-                  <img src={`https://via.placeholder.com/50`} alt='Technician' />
+                  <img src={`https://via.placeholder.com/50`} alt='Client' />
                   <div className='popup-content'>
                     <h4>{cliente.nombre}</h4>
                     <p>{cliente.telefono}</p>

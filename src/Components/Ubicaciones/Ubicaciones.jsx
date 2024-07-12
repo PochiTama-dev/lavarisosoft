@@ -13,7 +13,7 @@ const Ubicaciones = () => {
   const [view, setView] = useState('clientesTecnicos'); // Estado para controlar la vista inicial
   const [clientes, setClientes] = useState([])
   const [tecnicos, setTecnicos] = useState([])
-  const [selectedClient, setSelectedClient] = useState({ position: { latitude: 0, longitude: 0 } });
+  const [selectedClient, setSelectedClient] = useState( []);
   const [selectedTecnico, setSelectedTecnico] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchTec, setSearchTec] = useState('');

@@ -20,15 +20,31 @@ const verificarNumeroCliente = async () => {
     return 0;
   }
 };
-
+const guardarOrden = async (orden) => {
+  try {
+    const response = await fetch("https://lv-back.online/ordenes/guardar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(orden)
+    });
+    const result = await response.json();
+    if (result) {
+      console.log("Orden guardada con exito!!!");
+      return true;
+    } else {
+      console.log("Se produjo un error, la orden no pudo ser guardada...");
+      return false;
+    }
+  } catch (error) {
+    console.error("Error al guardar la orden.", error);
+  }
+};
+  
 const guardarCliente = async (cliente) => {
   try {
     const existeNumeroCliente = await verificarNumeroCliente(cliente.numero_cliente);
-    if (existeNumeroCliente) {
-      alert("El número de cliente ya existe. Por favor, ingrese un número de cliente diferente.");
-      return false;
-    }
-
+    
+    
     const response = await fetch("https://lv-back.online/clientes/guardar", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
