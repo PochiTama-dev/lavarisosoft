@@ -1,23 +1,23 @@
-import { useState } from "react";
+ 
+import React, { useState, useEffect } from 'react';
+import Header from '../../Components/Header/Header.jsx';
+import NuevosDatosCliente from '../../Components/Orders/NuevaOrden/NuevosDatosCliente.jsx';
+import NuevosDatosIncidente from '../../Components/Orders/NuevaOrden/NuevosDatosIncidente.jsx';
+import NuevosDatosTecnico from '../../Components/Orders/NuevaOrden/NuevosDatosTecnico.jsx';
+ 
 
-import Header from "../../Components/Header/Header.jsx";
-import NuevosDatosCliente from "../../Components/Orders/NuevaOrden/NuevosDatosCliente.jsx";
-import NuevosDatosIncidente from "../../Components/Orders/NuevaOrden/NuevosDatosIncidente.jsx";
-import NuevosDatosTecnico from "../../Components/Orders/NuevaOrden/NuevosDatosTecnico.jsx";
-import { guardarOrden } from "../../services/ordenesService";
-
-
-const verificarNumeroCliente = async (numero_cliente) => {
+const verificarNumeroCliente = async () => {
   try {
     const response = await fetch("https://lv-back.online/clientes/lista", {
       method: "GET",
       headers: { "Content-Type": "application/json" }
     });
     const clientes = await response.json();
-    return clientes.some(cliente => cliente.numero_cliente === numero_cliente);
+    const maxNumeroCliente = Math.max(...clientes.map(cliente => parseInt(cliente.numero_cliente, 10)), 0);
+    return maxNumeroCliente;
   } catch (error) {
     console.error("Error al verificar el número de cliente.", error);
-    return false;
+    return 0;
   }
 };
 
@@ -51,10 +51,24 @@ const guardarCliente = async (cliente) => {
 const NuevaOrden = () => {
   const [cliente, setCliente] = useState({});
   const [incidente, setIncidente] = useState({});
-  const [idTipoEstado, setIdTipoEstado] = useState(""); // New state for id_tipo_estado
-  const [idEmpleado, setIdEmpleado] = useState(""); // New state for id_empleado
+  const [idEmpleado, setIdEmpleado] = useState(""); // State for id_empleado
+
+  useEffect(() => {
+    const fetchMaxNumeroCliente = async () => {
+      const maxNumeroCliente = await verificarNumeroCliente();
+      setCliente(prevState => ({ ...prevState, numero_cliente: maxNumeroCliente + 1 }));
+    };
+
+    fetchMaxNumeroCliente();
+  }, []);
 
   const handleSubmit = async () => {
+ 
+    if (!incidente.numero_orden || !incidente.id_tipo_estado || !idEmpleado) {
+      alert("Por favor, complete todos los campos requeridos.");
+      return;
+    }
+ 
 
     const clienteId = await guardarCliente(cliente);
     if (clienteId) {
@@ -62,7 +76,7 @@ const NuevaOrden = () => {
         numero_orden: incidente.numero_orden, // Use the numero_orden from incidente
         id_cliente: clienteId,
         id_empleado: idEmpleado, // Use the id_empleado state
-        id_tipo_estado: incidente.id_tipo_estado,
+        id_tipo_estado: incidente.id_tipo_estado, // Use the id_tipo_estado from incidente
         equipo: incidente.equipo,
         modelo: incidente.modelo,
         marca: incidente.marca,
@@ -91,7 +105,7 @@ const NuevaOrden = () => {
         <h1>Orden #{}</h1>
       </div>
       <NuevosDatosTecnico setIdEmpleado={setIdEmpleado} />
-      <NuevosDatosCliente setCliente={setCliente} />
+      <NuevosDatosCliente setCliente={setCliente} cliente={cliente} />
       <NuevosDatosIncidente setIncidente={setIncidente} />
       <div className='d-flex justify-content-center'>
         <button className='bg-primary rounded-pill text-white papelitoButton' onClick={handleSubmit}>Crear</button>
