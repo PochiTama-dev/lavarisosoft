@@ -1,14 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useCustomContext } from '../../hooks/context';
 import imageLogin from '../../images/imageLogin.webp';
 import './Login.css';
 
 const Login = () => {
-  const { handleNavigate, setUser } = useCustomContext();
+  const { handleNavigate, setUser, user } = useCustomContext();
   const [email, setEmail] = useState('');
   const [legajo, setLegajo] = useState('');
   const [error, setError] = useState('');
-
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -36,6 +35,12 @@ const Login = () => {
       setError('Error al iniciar sesión. Por favor, inténtelo de nuevo más tarde.');
     }
   };
+
+  useEffect(() => {
+    if (user) {
+      handleNavigate('menu');
+    }
+  }, []);
 
   return (
     <div className='d-flex bg-primary loginContainer'>
