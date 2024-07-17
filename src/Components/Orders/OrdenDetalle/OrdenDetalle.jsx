@@ -2,17 +2,10 @@ import PropTypes from "prop-types";
 import DatosCliente from "./DatosCliente";
 import DatosIncidente from "./DatosIncidente";
 import DatosTecnico from "./DatosTecnico";
-import { modificarOrden/* , obtenerOrden */ } from "../../../services/ordenesService";
+import { modificarOrden } from "../../../services/ordenesService";
 import "./OrdenDetalle.css";
-import caja from "../../../images/caja.webp";
-import nuevaOrden from "../../../images/nuevaOrdenTrabajo.webp";
-import dolar from "../../../images/signoDolar.webp";
-import { Link } from "react-router-dom";
-import { useState } from "react";
 
 const OrdenDetalle = ({ orden, onUpdateOrden }) => {
-  const [show, setShow] = useState(false);
-
   // Verificación para asegurarse de que 'orden' no sea undefined
   if (!orden) {
     return <div>Selecciona una orden para ver los detalles</div>;
@@ -106,67 +99,36 @@ const OrdenDetalle = ({ orden, onUpdateOrden }) => {
             <button className="bg-info rounded-pill text-white">
               Declinar
             </button>
-            <button className="bg-info rounded-pill text-white" onClick={handleAprobar}>Aprobar</button>
+            <button
+              className="bg-info rounded-pill text-white"
+              onClick={handleAprobar}
+            >
+              Aprobar
+            </button>
           </div>
         )}
         {TiposEstado.tipo_estado === "Cancelada" && (
           <div className="orders-btn">
-            <button className="bg-info rounded-pill text-white" onClick={handlePreliminar}>Preliminar</button>
+            <button
+              className="bg-info rounded-pill text-white"
+              onClick={handlePreliminar}
+            >
+              Preliminar
+            </button>
           </div>
         )}
         {TiposEstado.tipo_estado === "Aprobada" && (
           <div className="orders-btn">
-            <button className="bg-info rounded-pill text-white" onClick={handleDeclinar}>
+            <button
+              className="bg-info rounded-pill text-white"
+              onClick={handleDeclinar}
+            >
               Declinar
             </button>
           </div>
         )}
         {/* Si la orden está "Cerrada", no se muestran botones */}
         {TiposEstado.tipo_estado === "Cerrada" && null}
-        <aside
-          className={`d-flex flex-column ${
-            show ? "asideButtons" : "positionButton"
-          } justify-content-end`}
-        >
-          {show && (
-            <div>
-              <Link to="/ordenes/ordenGlobal" className="text-decoration-none">
-                <center className="imageContainer bg-info rounded-circle position-relative">
-                  <img
-                    className="iconsOptions position-absolute iconDolar"
-                    src={dolar}
-                    alt=""
-                  />
-                  <span className="black-text" style={{ fontSize: "14px" }}>
-                    Aumento Global
-                  </span>
-                </center>
-              </Link>
-              <Link to="/ordenes/cobrarCaja" className="text-decoration-none">
-                <center className="imageContainer bg-info rounded-circle position-relative">
-                  <img className="iconsOptions" src={caja} alt="" />
-                  <span className="black-text" style={{ fontSize: "14px" }}>
-                    Cobrar en caja
-                  </span>
-                </center>
-              </Link>
-              <Link to="/ordenes/nuevaOrden" className="text-decoration-none">
-                <center className="imageContainer bg-info rounded-circle position-relative">
-                  <img className="iconsOptions" src={nuevaOrden} alt="" />
-                  <span className="black-text" style={{ fontSize: "14px" }}>
-                    Nueva orden de trabajo
-                  </span>
-                </center>
-              </Link>
-            </div>
-          )}
-          <h2
-            className="bg-info text-white text-center rounded-pill agregarRepuesto"
-            onClick={() => setShow(!show)}
-          >
-            +
-          </h2>
-        </aside>
       </div>
     </div>
   );
@@ -198,7 +160,7 @@ OrdenDetalle.propTypes = {
       tipo_estado: PropTypes.string.isRequired,
     }).isRequired,
   }),
-  onUpdateOrden: PropTypes.func
+  onUpdateOrden: PropTypes.func,
 };
 
 export default OrdenDetalle;
