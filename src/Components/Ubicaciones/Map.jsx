@@ -1,12 +1,14 @@
+import React, { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from 'leaflet';
 import markerIcon from '../../assets/marker.png';
 import clientIcon from '../../assets/man.webp';
 import 'leaflet/dist/leaflet.css';
-import { useEffect, useRef, useState } from 'react';
 import MarkerClusterGroup from 'react-leaflet-cluster';
-// Definición de límites de la provincia de Córdoba
+import Modal from './Modal'; // Adjust the path as needed
+import NuevaOrden from '../../pages/Orders/NuevaOrden';
+
 const CORDOBA_BOUNDS = {
   north: -29.0,
   south: -34.0,
@@ -20,6 +22,7 @@ const myIcon = new Icon({
   iconAnchor: [12, 41],
   popupAnchor: [1, -35],
 });
+
 const clienteIcono = new Icon({
   iconUrl: clientIcon,
   iconSize: [30, 30],
@@ -31,8 +34,9 @@ const Map = ({ position, zoom, activeTechnicians, selectedClient, selectedTechni
   const navigate = useNavigate();
   const refClient = useRef({});
   const [filter, setFilter] = useState('both');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedClientData, setSelectedClientData] = useState(null);
 
-  // Safe destructuring of position
   const { latitude = 0, longitude = 0 } = position || {};
 
   const handleTechnicianSelect = (tecnico) => {
@@ -46,6 +50,16 @@ const Map = ({ position, zoom, activeTechnicians, selectedClient, selectedTechni
 
   const handleFilterChange = (e) => {
     setFilter(e.target.value);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setSelectedClientData(null);
+  };
+
+  const handleOpenModalWithClientData = (clientData) => {
+    setSelectedClientData(clientData);
+    setIsModalOpen(true);
   };
 
   useEffect(() => {
@@ -134,7 +148,7 @@ const Map = ({ position, zoom, activeTechnicians, selectedClient, selectedTechni
           )}
         </MarkerClusterGroup>
         <MarkerClusterGroup>
-          {(filter === 'client' || filter == 'both') &&
+          {(filter === 'clients' || filter === 'both') &&
             clientes.map((cliente, index) => (
               <Marker
                 key={index}
@@ -153,7 +167,7 @@ const Map = ({ position, zoom, activeTechnicians, selectedClient, selectedTechni
                     </div>
                   </div>
                   <div className='popup-tecnico-button'>
-                    <button>
+                    <button onClick={() => handleOpenModalWithClientData(cliente)}>
                       <svg
                         xmlns='http://www.w3.org/2000/svg'
                         width='22'
@@ -174,6 +188,11 @@ const Map = ({ position, zoom, activeTechnicians, selectedClient, selectedTechni
             ))}
         </MarkerClusterGroup>
       </MapContainer>
+      {isModalOpen && (
+        <Modal isOpen={isModalOpen} onClose={handleModalClose}>
+          <NuevaOrden selectedClientData={selectedClientData} />
+        </Modal>
+      )}
     </>
   );
 };

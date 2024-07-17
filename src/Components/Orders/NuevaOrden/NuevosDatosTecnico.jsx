@@ -1,5 +1,23 @@
 import React, { useState, useEffect } from 'react';
 
+// Haversine formula to calculate the distance between two points
+const haversineDistance = (lat1, lon1, lat2, lon2) => {
+  const toRadians = (degree) => degree * (Math.PI / 180);
+  const R = 6371; // Radius of the Earth in kilometers
+
+  const dLat = toRadians(lat2 - lat1);
+  const dLon = toRadians(lon2 - lon1);
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return R * c; // Distance in kilometers
+};
+
 // Fetch function to get employees
 const empleados = async () => {
   try {
@@ -18,7 +36,7 @@ const empleados = async () => {
   }
 };
 
-const NuevosDatosTecnico = ({ setIdEmpleado }) => {
+const NuevosDatosTecnico = ({ setIdEmpleado, cliente }) => {
   const [employees, setEmployees] = useState([]);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
 
@@ -30,6 +48,20 @@ const NuevosDatosTecnico = ({ setIdEmpleado }) => {
 
     fetchEmpleados();
   }, []);
+
+  useEffect(() => {
+    if (employees.length > 0 && cliente) {
+      // Calculate distances to the client
+      const distances = employees.map(emp => ({
+        ...emp,
+        distance: haversineDistance(cliente.latitud, cliente.longitud, emp.latitud, emp.longitud)
+      }));
+      // Find the closest employee
+      const closestEmployee = distances.reduce((min, emp) => emp.distance < min.distance ? emp : min);
+      setSelectedEmployee(closestEmployee);
+      setIdEmpleado(closestEmployee.id);
+    }
+  }, [employees, cliente, setIdEmpleado]);
 
   const handleSelectChange = (e) => {
     const employee = employees.find(emp => emp.id === parseInt(e.target.value));
@@ -43,10 +75,10 @@ const NuevosDatosTecnico = ({ setIdEmpleado }) => {
       <div className='row'>
         <div className='col-md-6'>
           <div className='mb-3 row align-items-center'>
-            <label htmlFor='empleado' className='col-sm-2 col-form-label'>Empleado:</label>
+            <label htmlFor='empleado' className='col-sm-2 col-form-label'>Técnico:</label>
             <div className='col-sm-8'>
               <select id='empleado' className='form-control' onChange={handleSelectChange}>
-                <option value="">Seleccione un empleado</option>
+                <option value="">Seleccione un técnico</option>
                 {employees.map(emp => (
                   <option key={emp.id} value={emp.id}>
                     {emp.nombre} {emp.apellido}
