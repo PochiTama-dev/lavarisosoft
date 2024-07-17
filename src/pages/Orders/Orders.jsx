@@ -4,12 +4,17 @@ import NumOrden from "../../Components/Orders/NumOrden/NumOrden";
 import OrdenDetalle from "../../Components/Orders/OrdenDetalle/OrdenDetalle";
 import Tecnicos from "../../Components/Orders/OrdenTecnico/Tecnicos";
 import "./Orders.css";
+import caja from "../../images/caja.webp";
+import nuevaOrden from "../../images/nuevaOrdenTrabajo.webp";
+import dolar from "../../images/signoDolar.webp";
+import { Link } from "react-router-dom";
 const Orders = () => {
   const [tecnicos, setTecnicos] = useState([]);
   const [ordenes, setOrdenes] = useState([]);
   const [selectedOrden, setSelectedOrden] = useState(null);
   const [error, setError] = useState(null);
   const [updateTrigger, setUpdateTrigger] = useState(0);
+  const [show, setShow] = useState(false);
 
   const fetchOrdenes = async () => {
     try {
@@ -53,7 +58,7 @@ const Orders = () => {
   const handleUpdateOrden = async () => {
     await fetchOrdenes();
     setSelectedOrden(null);
-    setUpdateTrigger(prev => prev + 1);
+    setUpdateTrigger((prev) => prev + 1);
   };
 
   if (error) {
@@ -65,9 +70,12 @@ const Orders = () => {
   }
 
   return (
-    <div>
+    <div style={{ height: "100vh", overflowY: "hidden" }}>
       <Header text={"Ordenes"} />
-      <div className="d-flex m-5 p-5 text-orders">
+      <div
+        className="d-flex mt-5 pt-5 text-orders"
+        style={{ paddingLeft: "3%" }}
+      >
         <aside>
           <div>
             <Tecnicos tecnicos={tecnicos} onSelectOrden={handleSelectOrden} />
@@ -76,14 +84,66 @@ const Orders = () => {
             <NumOrden ordenes={ordenes} onSelectOrden={handleSelectOrden} />
           </div>
         </aside>
-        <aside className="w-100 bg-secondary asideDetail">
+        <aside className="bg-secondary asideDetail" style={{ width: "65%" }}>
           <div className="mx-3">
             {selectedOrden ? (
-              <OrdenDetalle orden={selectedOrden} onUpdateOrden={handleUpdateOrden} />
+              <OrdenDetalle
+                orden={selectedOrden}
+                onUpdateOrden={handleUpdateOrden}
+              />
             ) : (
               <div>Selecciona una orden para ver los detalles</div>
             )}
           </div>
+        </aside>
+        <aside className="d-flex flex-column justify-content-end m-3">
+          {show && (
+            <div>
+              {selectedOrden == null ? (
+                ""
+              ) : (
+                <>
+                  <Link
+                    to="/ordenes/cobrarCaja"
+                    className="text-decoration-none"
+                  >
+                    <center className="imageContainer bg-info rounded-circle position-relative">
+                      <img className="iconsOptions" src={caja} alt="" />
+                      <span className="black-text" style={{ fontSize: "14px" }}>
+                        Cobrar en caja
+                      </span>
+                    </center>
+                  </Link>
+                </>
+              )}
+              <Link to="/ordenes/ordenGlobal" className="text-decoration-none">
+                <center className="imageContainer bg-info rounded-circle position-relative">
+                  <img
+                    className="iconsOptions position-absolute iconDolar"
+                    src={dolar}
+                    alt=""
+                  />
+                  <span className="black-text" style={{ fontSize: "14px" }}>
+                    Aumento Global
+                  </span>
+                </center>
+              </Link>
+              <Link to="/ordenes/nuevaOrden" className="text-decoration-none">
+                <center className="imageContainer bg-info rounded-circle position-relative">
+                  <img className="iconsOptions" src={nuevaOrden} alt="" />
+                  <span className="black-text" style={{ fontSize: "14px" }}>
+                    Nueva orden de trabajo
+                  </span>
+                </center>
+              </Link>
+            </div>
+          )}
+          <h2
+            className="bg-info text-white text-center rounded-pill agregarRepuesto"
+            onClick={() => setShow(!show)}
+          >
+            +
+          </h2>
         </aside>
       </div>
     </div>
