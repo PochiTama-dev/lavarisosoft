@@ -1,10 +1,8 @@
- 
 import React, { useState, useEffect } from 'react';
 import Header from '../../Components/Header/Header.jsx';
 import NuevosDatosCliente from '../../Components/Orders/NuevaOrden/NuevosDatosCliente.jsx';
 import NuevosDatosIncidente from '../../Components/Orders/NuevaOrden/NuevosDatosIncidente.jsx';
 import NuevosDatosTecnico from '../../Components/Orders/NuevaOrden/NuevosDatosTecnico.jsx';
- 
 
 const verificarNumeroCliente = async () => {
   try {
@@ -20,6 +18,7 @@ const verificarNumeroCliente = async () => {
     return 0;
   }
 };
+
 const guardarOrden = async (orden) => {
   try {
     const response = await fetch("https://lv-back.online/ordenes/guardar", {
@@ -29,7 +28,7 @@ const guardarOrden = async (orden) => {
     });
     const result = await response.json();
     if (result) {
-      console.log("Orden guardada con exito!!!");
+      console.log("Orden guardada con éxito!!!");
       return true;
     } else {
       console.log("Se produjo un error, la orden no pudo ser guardada...");
@@ -39,52 +38,71 @@ const guardarOrden = async (orden) => {
     console.error("Error al guardar la orden.", error);
   }
 };
-  
-const guardarCliente = async (cliente) => {
-  try {
-    const existeNumeroCliente = await verificarNumeroCliente(cliente.numero_cliente);
-    
-    
-    const response = await fetch("https://lv-back.online/clientes/guardar", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(cliente)
-    });
 
+const verificarExistenciaCliente = async (cliente) => {
+  try {
+    const response = await fetch(`https://lv-back.online/clientes/${cliente.numero_cliente}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" }
+    });
     const result = await response.json();
-    if (result) {
-      console.log("Cliente guardado con éxito!!!");
-      return result.id; // Assuming the backend returns the saved client's ID
-    } else {
-      console.log("Se produjo un error, el cliente no pudo ser guardado...");
-      return null;
-    }
+    return !!result; // True if client exists, false otherwise
   } catch (error) {
-    console.error("Error al guardar el cliente.", error);
+    console.error("Error al verificar la existencia del cliente.", error);
+    return false;
   }
 };
 
-const NuevaOrden = () => {
-  const [cliente, setCliente] = useState({});
+const guardarCliente = async (cliente) => {
+  try {
+    const clienteExistente = await verificarExistenciaCliente(cliente);
+
+    if (clienteExistente) {
+      console.log("El cliente ya existe en la base de datos.");
+      return cliente.id; // Return the existing client's ID
+    } else {
+      const response = await fetch("https://lv-back.online/clientes/guardar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(cliente)
+      });
+
+      const result = await response.json();
+      if (result) {
+        console.log("Cliente guardado con éxito!!!");
+        return result.id; // Assuming the backend returns the saved client's ID
+      } else {
+        console.log("Se produjo un error, el cliente no pudo ser guardado...");
+        return null;
+      }
+    }
+  } catch (error) {
+    console.error("Error al guardar el cliente.", error);
+    return null;
+  }
+};
+
+const NuevaOrden = ({ selectedClientData }) => {
+  const [cliente, setCliente] = useState(selectedClientData || {});
   const [incidente, setIncidente] = useState({});
   const [idEmpleado, setIdEmpleado] = useState(""); // State for id_empleado
 
   useEffect(() => {
-    const fetchMaxNumeroCliente = async () => {
-      const maxNumeroCliente = await verificarNumeroCliente();
-      setCliente(prevState => ({ ...prevState, numero_cliente: maxNumeroCliente + 1 }));
-    };
+    if (!selectedClientData) {
+      const fetchMaxNumeroCliente = async () => {
+        const maxNumeroCliente = await verificarNumeroCliente();
+        setCliente(prevState => ({ ...prevState, numero_cliente: maxNumeroCliente + 1 }));
+      };
 
-    fetchMaxNumeroCliente();
-  }, []);
+      fetchMaxNumeroCliente();
+    }
+  }, [selectedClientData]);
 
   const handleSubmit = async () => {
- 
     if (!incidente.numero_orden || !incidente.id_tipo_estado || !idEmpleado) {
       alert("Por favor, complete todos los campos requeridos.");
       return;
     }
- 
 
     const clienteId = await guardarCliente(cliente);
     if (clienteId) {
@@ -102,25 +120,22 @@ const NuevaOrden = () => {
       };
       const ordenGuardada = await guardarOrden(orden);
       if (ordenGuardada) {
-        // Handle success case
+        alert("Orden guardada con éxito");
         console.log("Orden completa guardada con éxito!!!");
       } else {
-        // Handle error case
+        alert("Error al guardar orden");
         console.log("Error al guardar la orden completa...");
       }
     } else {
-      // Handle error case for cliente
       console.log("Error al guardar el cliente...");
+      alert("Error al guardar el cliente...");
     }
   };
 
   return (
     <div className="nuevaOrder-ctn">
       <Header text="Nueva Orden" />
-      <div className="mt-3 pt-3">
-        <h1>Orden #{}</h1>
-      </div>
-      <NuevosDatosTecnico setIdEmpleado={setIdEmpleado} />
+      <NuevosDatosTecnico setIdEmpleado={setIdEmpleado} cliente={cliente} />
       <NuevosDatosCliente setCliente={setCliente} cliente={cliente} />
       <NuevosDatosIncidente setIncidente={setIncidente} />
       <div className='d-flex justify-content-center'>

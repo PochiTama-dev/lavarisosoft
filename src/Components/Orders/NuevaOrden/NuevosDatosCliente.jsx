@@ -14,14 +14,14 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
         <div className='col-md-6'>
           <div className='mb-3 row align-items-center'>
             <label htmlFor='numero_cliente' className='col-sm-2 col-form-label'>
-              Número de Cliente:
+              N° Cliente:
             </label>
             <div className='col-sm-8'>
               <input
                 type='text'
                 id='numero_cliente'
                 className='form-control input-small'
-                value={cliente.numero_cliente}
+                value={cliente.numero_cliente || ''}
                 onChange={handleInputChange}
                 required
               />
@@ -32,7 +32,14 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
               Nombre:
             </label>
             <div className='col-sm-8'>
-              <input type='text' id='nombre' className='form-control input-small' onChange={handleInputChange} required />
+              <input
+                type='text'
+                id='nombre'
+                className='form-control input-small'
+                value={cliente.nombre || ''}
+                onChange={handleInputChange}
+                required
+              />
             </div>
           </div>
           <div className='mb-3 row align-items-center'>
@@ -40,19 +47,29 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
               Apellido:
             </label>
             <div className='col-sm-8'>
-              <input type='text' id='apellido' className='form-control input-small' onChange={handleInputChange} required />
+              <input
+                type='text'
+                id='apellido'
+                className='form-control input-small'
+                value={cliente.apellido || ''}
+                onChange={handleInputChange}
+                required
+              />
             </div>
           </div>
           <div className='mb-3 row align-items-center'>
-        
-        
-          </div>
-          <div className='mb-3 row align-items-center'>
-            <label htmlFor='ubicacion' className='col-sm-2 col-form-label'>
-              Ubicación:
+            <label htmlFor='cuil' className='col-sm-2 col-form-label'>
+              CUIL:
             </label>
             <div className='col-sm-8'>
-              <input type='text' id='ubicacion' className='form-control input-small' onChange={handleInputChange} required />
+              <input
+                type='text'
+                id='cuil'
+                className='form-control input-small'
+                value={cliente.cuil || ''}
+                onChange={handleInputChange}
+                required
+              />
             </div>
           </div>
         </div>
@@ -62,7 +79,14 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
               Teléfono:
             </label>
             <div className='col-sm-8'>
-              <input type='text' id='telefono' className='form-control input-small' onChange={handleInputChange} required />
+              <input
+                type='text'
+                id='telefono'
+                className='form-control input-small'
+                value={cliente.telefono || ''}
+                onChange={handleInputChange}
+                required
+              />
             </div>
           </div>
           <div className='mb-3 row align-items-center'>
@@ -70,15 +94,29 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
               Dirección:
             </label>
             <div className='col-sm-8'>
-              <input type='text' id='direccion' className='form-control input-small' onChange={handleInputChange} required />
+              <input
+                type='text'
+                id='direccion'
+                className='form-control input-small'
+                value={cliente.direccion || ''}
+                onChange={handleInputChange}
+                required
+              />
             </div>
           </div>
           <div className='mb-3 row align-items-center'>
-            <label htmlFor='localidad' className='col-sm-2 col-form-label'>
+            <label htmlFor='ubicacion' className='col-sm-2 col-form-label'>
               Localidad:
             </label>
             <div className='col-sm-8'>
-              <input type='text' id='localidad' className='form-control input-small' onChange={handleInputChange} required />
+              <input
+                type='text'
+                id='ubicacion'
+                className='form-control input-small'
+                value={cliente.ubicacion || ''}
+                onChange={handleInputChange}
+                required
+              />
             </div>
           </div>
         </div>
