@@ -57,6 +57,7 @@ export const guardarOrden = async (orden) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(orden)
     });
+    console.log('response: ', response);
     console.log('json orden: ', JSON.stringify(orden));
     const result = await response.json();
     if (result) {
