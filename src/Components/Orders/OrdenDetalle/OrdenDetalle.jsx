@@ -21,7 +21,7 @@ const OrdenDetalle = ({ orden, onUpdateOrden }) => {
     Empleado,
     TiposEstado,
   } = orden;
-
+console.log(TiposEstado)
   const handleAprobar = async () => {
     try {
       const ordenActualizada = { ...orden, id_tipo_estado: 1 };
@@ -91,6 +91,7 @@ const OrdenDetalle = ({ orden, onUpdateOrden }) => {
         modelo={modelo}
         antiguedad={`${antiguedad} años`}
         diagnostico={diagnostico}
+         estado={TiposEstado.tipo_estado}
       />
       <div className="d-flex justify-content-evenly position-relative">
         {/* Botones condicionales según el estado de la orden */}
