@@ -63,7 +63,7 @@
   
   .remito-container-total {
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
     margin-right: 25%;
     margin-top: 2%;
     gap: 5%;
@@ -85,3 +85,27 @@
     border: none;
   }
   
+  @media print {
+    body {
+      margin: 0;
+      padding: 0;
+      box-shadow: none;
+    }
+  
+    .remito-container {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      box-shadow: none;
+    }
+  
+    .remito-container-content {
+      width: 100%;
+      padding: 0;
+    }
+  
+    .remito-button-container, .logout {
+      display: none;
+    }
+
+  }
