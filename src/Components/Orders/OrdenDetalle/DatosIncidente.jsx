@@ -50,6 +50,7 @@ const DatosIncidente = ({ equipo, modelo, antiguedad, diagnostico }) => {
               <textarea disabled className='form-control rounded mx-2' defaultValue={diagnostico}></textarea>
             </div>
           </div>
+          
         </div>
         <div className='col-md-6'>
           <h3>Repuestos</h3>

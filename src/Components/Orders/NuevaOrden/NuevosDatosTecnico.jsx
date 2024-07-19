@@ -51,7 +51,7 @@ const NuevosDatosTecnico = ({ setIdEmpleado, cliente }) => {
 
   useEffect(() => {
     if (employees.length > 0 && cliente) {
-      // Calculate distances to the client
+ 
       const distances = employees.map(emp => ({
         ...emp,
         distance: haversineDistance(cliente.latitud, cliente.longitud, emp.latitud, emp.longitud)
@@ -61,7 +61,7 @@ const NuevosDatosTecnico = ({ setIdEmpleado, cliente }) => {
       setSelectedEmployee(closestEmployee);
       setIdEmpleado(closestEmployee.id);
     }
-  }, [employees, cliente, setIdEmpleado]);
+  }, [employees, setIdEmpleado]);
 
   const handleSelectChange = (e) => {
     const employee = employees.find(emp => emp.id === parseInt(e.target.value));

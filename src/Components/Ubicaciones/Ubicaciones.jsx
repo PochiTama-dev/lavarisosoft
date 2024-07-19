@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import Header from '../Header/Header';
 import Map from './Map';
-
 import './Ubicaciones.css';
 import { haversine } from './calcularDistancia';
 import { ordenes } from "../../services/ordenesService";
@@ -11,9 +10,9 @@ import { listadoEmpleados } from "../../services/empleadoService";
 const Ubicaciones = () => {
   const [showTareas, setShowTareas] = useState({});
   const [view, setView] = useState('clientesTecnicos'); // Estado para controlar la vista inicial
-  const [clientes, setClientes] = useState([])
-  const [tecnicos, setTecnicos] = useState([])
-  const [selectedClient, setSelectedClient] = useState( []);
+  const [clientes, setClientes] = useState([]);
+  const [tecnicos, setTecnicos] = useState([]);
+  const [selectedClient, setSelectedClient] = useState([]);
   const [selectedTecnico, setSelectedTecnico] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchTec, setSearchTec] = useState('');
@@ -28,8 +27,6 @@ const Ubicaciones = () => {
   const [filterTec, setFilterTec] = useState(tecnicos);
 
   const ref = useRef();
-  /*   const distancia = haversine(position.latitude, position.longitude, -33.936255, -64.370465);
-  console.log(`La distancia es de ${distancia} KM`); */
 
   useEffect(() => {
     async function initialize() {
@@ -51,7 +48,7 @@ const Ubicaciones = () => {
     initialize();
     fetchClientes();
     fetchTecnicos();
-  }, [/* position */]);
+  }, []);
 
   const fetchClientes = async () => {
     try {
@@ -85,7 +82,9 @@ const Ubicaciones = () => {
   };
 
   const [newClient, setNewClient] = useState({
+    numero_cliente: '',
     nombre: '',
+    apellido: '',
     direccion: '',
     telefono: '',
     cuilCuit: '',
@@ -97,42 +96,6 @@ const Ubicaciones = () => {
     telefono: '',
     cuilCuit: '',
   });
-
-  const tareas = [
-    {
-      id_tecnico: '1',
-      detalle: 'Partió a la casa del cliente',
-      estado: 'activo',
-    },
-    {
-      id_tecnico: '1',
-      detalle: 'Está solucionando el problema',
-      estado: 'finalizado',
-    },
-    { id_tecnico: '1', detalle: 'Está de regreso', estado: 'finalizado' },
-    {
-      id_tecnico: '2',
-      detalle: 'Partió a la casa del cliente',
-      estado: 'activo',
-    },
-    {
-      id_tecnico: '2',
-      detalle: 'Está solucionando el problema',
-      estado: 'finalizado',
-    },
-    { id_tecnico: '2', detalle: 'Está de regreso', estado: 'finalizado' },
-    {
-      id_tecnico: '3',
-      detalle: 'Partió a la casa del cliente',
-      estado: 'finalizado',
-    },
-    {
-      id_tecnico: '3',
-      detalle: 'Está solucionando el problema',
-      estado: 'finalizado',
-    },
-    { id_tecnico: '3', detalle: 'Está de regreso', estado: 'activo' },
-  ];
 
   const validateField = (name, value) => {
     let error = '';
@@ -182,12 +145,16 @@ const Ubicaciones = () => {
     setNewClient({ ...newClient, [name]: value });
   };
 
-  const handleAddClient = () => {
+  const handleAddClient = async () => {
     if (validateForm()) {
-      setClientes([...clientes, { ...newClient, distancia: '0 km', latitud: 0, longitud: 0, Ordenes: [] }]);
-      setNewClient({ nombre: '', direccion: '', telefono: '', cuil: '' });
-      setErrors({});
-      setView('clientesTecnicos');
+      const clientId = await guardarCliente(newClient); 
+      if (clientId) {
+        setClientes([...clientes, { ...newClient, id: clientId, distancia: '0 km', latitud: 0, longitud: 0, Ordenes: [] }]);
+        setNewClient({ nombre: '', direccion: '', telefono: '', cuilCuit: '', ubicacion: '' });
+        setErrors({});
+        setView('clientesTecnicos');
+        window.location.reload(); 
+      }
     }
   };
 
@@ -195,7 +162,7 @@ const Ubicaciones = () => {
     setSelectedClient(cliente);
     setView('detalleClienteBuscarTecnico');
     
-    const {latitud, longitud} = cliente;
+    const { latitud, longitud } = cliente;
     handlePosition(latitud, longitud);
   };
 
@@ -246,6 +213,107 @@ const Ubicaciones = () => {
     });
   };
 
+  const guardarCliente = async (cliente) => {
+    try {
+      const clienteExistente = await verificarExistenciaCliente(cliente);
+  
+      if (clienteExistente) {
+        console.log("El cliente ya existe en la base de datos.");
+        return cliente.id; // Return the existing client's ID
+      } else {
+        const response = await fetch("https://lv-back.online/clientes/guardar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(cliente)
+        });
+  
+        const result = await response.json();
+        if (result) {
+          console.log("Cliente guardado con éxito!!!");
+          return result.id; // Assuming the backend returns the saved client's ID
+        } else {
+          console.log("Se produjo un error, el cliente no pudo ser guardado...");
+          return null;
+        }
+      }
+    } catch (error) {
+      console.error("Error al guardar el cliente.", error);
+      return null;
+    }
+  };
+
+  const verificarExistenciaCliente = async (cliente) => {
+    try {
+      const response = await fetch(`https://lv-back.online/clientes/${cliente.numero_cliente}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" }
+      });
+      const result = await response.json();
+      return !!result; // True if client exists, false otherwise
+    } catch (error) {
+      console.error("Error al verificar la existencia del cliente.", error);
+      return false;
+    }
+  };
+
+  const verificarNumeroCliente = async () => {
+    try {
+      const response = await fetch("https://lv-back.online/clientes/lista", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" }
+      });
+      const clientes = await response.json();
+      const maxNumeroCliente = Math.max(...clientes.map(cliente => parseInt(cliente.numero_cliente, 10)), 0);
+      return maxNumeroCliente;
+    } catch (error) {
+      console.error("Error al verificar el número de cliente.", error);
+      return 0;
+    }
+  };
+
+  useEffect(() => {
+    const fetchMaxNumeroCliente = async () => {
+      const maxNumeroCliente = await verificarNumeroCliente();
+      setNewClient(prevState => ({ ...prevState, numero_cliente: maxNumeroCliente + 1 }));
+    }
+
+    fetchMaxNumeroCliente();
+  }, []);
+  const tareas = [
+    {
+      id_tecnico: '1',
+      detalle: 'Partió a la casa del cliente',
+      estado: 'activo',
+    },
+    {
+      id_tecnico: '1',
+      detalle: 'Está solucionando el problema',
+      estado: 'finalizado',
+    },
+    { id_tecnico: '1', detalle: 'Está de regreso', estado: 'finalizado' },
+    {
+      id_tecnico: '2',
+      detalle: 'Partió a la casa del cliente',
+      estado: 'activo',
+    },
+    {
+      id_tecnico: '2',
+      detalle: 'Está solucionando el problema',
+      estado: 'finalizado',
+    },
+    { id_tecnico: '2', detalle: 'Está de regreso', estado: 'finalizado' },
+    {
+      id_tecnico: '3',
+      detalle: 'Partió a la casa del cliente',
+      estado: 'finalizado',
+    },
+    {
+      id_tecnico: '3',
+      detalle: 'Está solucionando el problema',
+      estado: 'finalizado',
+    },
+    { id_tecnico: '3', detalle: 'Está de regreso', estado: 'activo' },
+  ];
   return (
     <div className='ventas-container'>
       <Header text='Ubicaciones'></Header>
@@ -331,6 +399,20 @@ const Ubicaciones = () => {
               <h2 className='p-3 feedback-containers-heading'>Cargar cliente</h2>
               <div className='scrollable-container-top'>
                 <ul>
+
+                <li className='d-flex grey-text'>
+                    <span>N° Cliente:</span>
+                  </li>
+                  <li className='d-flex justify-content-between py-2 grey-text'>
+                    <input
+                      type='text'
+                      name='numero_cliente'
+                      className='rounded text-center grey-text'
+                      value={newClient.numero_cliente}
+                      onChange={handleInputChange}
+                    />
+                  </li>
+
                   <li className='d-flex grey-text'>
                     <span>Nombre:</span>
                   </li>
@@ -343,6 +425,22 @@ const Ubicaciones = () => {
                       onChange={handleInputChange}
                     />
                   </li>
+
+                  <li className='d-flex grey-text'>
+                    <span>Apellido:</span>
+                  </li>
+                  <li className='d-flex justify-content-between py-2 grey-text'>
+                    <input
+                      type='text'
+                      name='apellido'
+                      className='rounded text-center grey-text'
+                      value={newClient.apellido}
+                      onChange={handleInputChange}
+                    />
+                  </li>
+
+
+
                   <li className='pb-1'>{errors.nombre && <div className='text-danger'>{errors.nombre}</div>}</li>
                   <li className='d-flex grey-text'>
                     <span>Dirección:</span>
