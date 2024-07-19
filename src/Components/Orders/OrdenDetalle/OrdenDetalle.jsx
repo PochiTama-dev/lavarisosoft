@@ -1,4 +1,6 @@
+import React from "react";
 import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
 import DatosCliente from "./DatosCliente";
 import DatosIncidente from "./DatosIncidente";
 import DatosTecnico from "./DatosTecnico";
@@ -6,7 +8,8 @@ import { modificarOrden } from "../../../services/ordenesService";
 import "./OrdenDetalle.css";
 
 const OrdenDetalle = ({ orden, onUpdateOrden }) => {
-  // Verificación para asegurarse de que 'orden' no sea undefined
+  const navigate = useNavigate();
+
   if (!orden) {
     return <div>Selecciona una orden para ver los detalles</div>;
   }
@@ -21,7 +24,7 @@ const OrdenDetalle = ({ orden, onUpdateOrden }) => {
     Empleado,
     TiposEstado,
   } = orden;
-console.log(TiposEstado)
+
   const handleAprobar = async () => {
     try {
       const ordenActualizada = { ...orden, id_tipo_estado: 1 };
@@ -67,6 +70,10 @@ console.log(TiposEstado)
     }
   };
 
+  const handleRedirect = () => {
+    navigate("/remitoOrden", { state: { orden } });
+  };
+
   return (
     <div className="contentDetail">
       <div>
@@ -91,13 +98,15 @@ console.log(TiposEstado)
         modelo={modelo}
         antiguedad={`${antiguedad} años`}
         diagnostico={diagnostico}
-         estado={TiposEstado.tipo_estado}
+        estado={TiposEstado.tipo_estado}
       />
       <div className="d-flex justify-content-evenly position-relative">
-        {/* Botones condicionales según el estado de la orden */}
         {TiposEstado.tipo_estado === "Pendiente" && (
           <div className="orders-btn">
-            <button className="bg-info rounded-pill text-white">
+            <button
+              className="bg-info rounded-pill text-white"
+              onClick={handleDeclinar}
+            >
               Declinar
             </button>
             <button
@@ -128,8 +137,15 @@ console.log(TiposEstado)
             </button>
           </div>
         )}
-        {/* Si la orden está "Cerrada", no se muestran botones */}
         {TiposEstado.tipo_estado === "Cerrada" && null}
+        <div className="orders-btn">
+          <button
+            className="bg-success rounded-pill text-white"
+            onClick={handleRedirect}
+          >
+           Remito
+          </button>
+        </div>
       </div>
     </div>
   );

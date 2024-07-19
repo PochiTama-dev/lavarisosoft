@@ -41,6 +41,7 @@ import Notificaciones from './Components/Notificaciones/Notificaciones';
 import Feedback from './Components/Feedback/Feedback';
 import { Provider } from './hooks/context.jsx';
 import PrivateRoute from './Components/ProtectedRoute/ProtectedRoute.jsx';
+import RemitoOrden from './Components/Orders/OrdenDetalle/RemitoOrden.jsx';
 function App() {
   return (
     <Router>
@@ -72,6 +73,7 @@ function App() {
             <Route path='/VentasRemito' element={<RemitoVentas />} />
             <Route path='/mantRemito' element={<MantRemito />} />
             <Route path='/mantEditRemito' element={<MantEditRemito />} />
+            <Route path='/remitoOrden' element={<RemitoOrden />} />
             <Route path='/mantFactura' element={<MantFacturas />} />
             <Route path='/liquidacion' element={<Liquidacion />} />
             <Route path='/cargarCuenta' element={<CargarCuenta />} />
