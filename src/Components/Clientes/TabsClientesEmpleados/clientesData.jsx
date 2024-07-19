@@ -1,11 +1,12 @@
+// clientesData.js
 const clientesDb = async () => {
   try {
-    const data = await fetch('https://lv-back.online/clientes/lista');
-    const response = await data.json();
-    return response;
+    const response = await fetch('https://lv-back.online/clientes/lista');
+    return await response.json();
   } catch (error) {
     console.error(error);
+    return [];
   }
 };
-const clientesData = await clientesDb();
-export default clientesData;
+
+export default clientesDb;
