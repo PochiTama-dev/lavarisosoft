@@ -1,20 +1,33 @@
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Table from 'react-bootstrap/Table';
 import '../clientesEmpleados.css';
-import clientesData from './clientesData';
+import clientesDb from './clientesData';
+
 const Clientes = () => {
-  /* 
-  {   "nombre": "Juan",
-  "apellido": "Perez",
-  "legajo": 123,
-  "ordenAsignada": "A001",
-  "telefono": "123-456-789",
-  "direccion": "Calle Principal 123",
-  "altura": 1.75,
-  "datoB": "Valor B",
-  "datoC": "Valor C",
-  "whatsapp": 2996666666 } */
-  console.log(clientesData);
+  const [clientesData, setClientesData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchClientesData = async () => {
+      try {
+        const data = await clientesDb();
+        setClientesData(data);
+      } catch (error) {
+        console.error('Error fetching clientes data:', error);
+        setClientesData([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchClientesData();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className='clientes-ctn'>
       <Table striped hover>

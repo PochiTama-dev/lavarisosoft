@@ -1,7 +1,23 @@
+import React, { useEffect, useState } from 'react';
 import Table from 'react-bootstrap/Table';
-import empleadosData from './empleadosData';
 
 const Empleados = () => {
+  const [empleadosData, setEmpleadosData] = useState([]);
+
+  useEffect(() => {
+    const fetchEmpleados = async () => {
+      try {
+        const response = await fetch('https://lv-back.online/empleados');
+        const data = await response.json();
+        setEmpleadosData(data);
+      } catch (error) {
+        console.error('Error fetching employees:', error);
+      }
+    };
+
+    fetchEmpleados();
+  }, []); // Empty dependency array means this effect runs once on mount
+
   return (
     <div className='clientes-ctn'>
       <Table striped hover>
