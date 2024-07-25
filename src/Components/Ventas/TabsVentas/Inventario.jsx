@@ -242,7 +242,7 @@ const Inventario = () => {
           elementos={itemsReporteVentas}
         />
       )}
-      <ul className="d-flex justify-content-between imagenes">
+      <ul className="d-flex justify-content-left w-100 imagenes">
         <div className="text-end">
           <button className="boton3Puntos" onClick={handleShow}>
             <span></span>
@@ -251,7 +251,7 @@ const Inventario = () => {
           </button>
         </div>
         {show && (
-          <>
+          <div className="d-flex justify-content-around inventario-botones">
             <li>
               <img src={descargar} alt="Descargar el excel" />{" "}
               <span>Descargar Excel</span>
@@ -274,9 +274,11 @@ const Inventario = () => {
               <div className="divMas">
                 <span className="spanMas">+</span>
               </div>
-              <span>Agregar repuestos</span>
+              <span style={{ paddingLeft: "4%", minWidth: "160px" }}>
+                Agregar repuestos
+              </span>
             </li>
-          </>
+          </div>
         )}
       </ul>
     </div>

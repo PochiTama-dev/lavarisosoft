@@ -100,3 +100,8 @@ ul .pestañasInventarioActive {
   right: 2px;
   cursor: pointer;
 }
+
+.inventario-botones {
+  justify-content: space-around;
+  width: 80%;
+}
