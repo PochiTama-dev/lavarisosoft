@@ -6,7 +6,7 @@ import { haversine } from './calcularDistancia';
 import { ordenes } from "../../services/ordenesService";
 import { listaClientes } from "../../services/clienteService";
 import { listadoEmpleados } from "../../services/empleadoService";
-
+import socket from '../services/socketService';
 const Ubicaciones = () => {
   const [showTareas, setShowTareas] = useState({});
   const [view, setView] = useState('clientesTecnicos'); // Estado para controlar la vista inicial
@@ -16,18 +16,113 @@ const Ubicaciones = () => {
   const [selectedTecnico, setSelectedTecnico] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchTec, setSearchTec] = useState('');
-
   const [showAllClientes, setShowAllClientes] = useState(false);
   const [showAllTecnicos, setShowAllTecnicos] = useState(false);
-
+  const [onlineUsers, setOnlineUsers] = useState('');
   const [position, setPosition] = useState({
     latitude: '-31.67750630032039',
     longitude: '-65.4105635773489',
   });
   const [filterTec, setFilterTec] = useState(tecnicos);
-
   const ref = useRef();
+ 
+  const [tecnicosStatus, setTecnicosStatus] = useState({});
+  const [loggedInUsers, setLoggedInUsers] = useState(new Set());
 
+
+  useEffect(() => {
+    const handleUserStatus = (status) => {
+      console.log('ESTADO DEL TECNICO:', status);
+  
+      // Actualiza el estado del técnico en `tecnicosStatus`
+      setTecnicosStatus((prevStatus) => {
+        const newStatus = {
+          ...prevStatus,
+          [status.id]: status.status // Usa `status.id` como clave para actualizar el estado del técnico
+        };
+  
+        // Guarda el estado actualizado en `localStorage`
+        localStorage.setItem('tecnicosStatus', JSON.stringify(newStatus));
+  
+        return newStatus;
+      });
+    };
+  
+    const handleUserLoggedIn = (userId) => {
+      console.log('USUARIO CONECTADO:', userId);
+  
+      // Actualiza el estado del técnico al conectarse
+      setTecnicosStatus((prevStatus) => {
+        const newStatus = {
+          ...prevStatus,
+          [userId]: 'conectado' // Marca el técnico como conectado
+        };
+  
+        // Guarda el estado actualizado en `localStorage`
+        localStorage.setItem('tecnicosStatus', JSON.stringify(newStatus));
+  
+        return newStatus;
+      });
+  
+      // Opcionalmente actualiza la lista de usuarios conectados si es necesario
+      setLoggedInUsers((prevUsers) => {
+        const updatedUsers = new Set(prevUsers);
+        updatedUsers.add(userId);
+        return updatedUsers;
+      });
+    };
+  
+    const handleUserLoggedOut = (userId) => {
+      console.log('USUARIO DESCONECTADO:', userId);
+  
+      // Actualiza el estado del técnico al desconectarse
+      setTecnicosStatus((prevStatus) => {
+        const newStatus = {
+          ...prevStatus,
+          [userId]: 'desconectado' // Marca el técnico como desconectado
+        };
+  
+        // Guarda el estado actualizado en `localStorage`
+        localStorage.setItem('tecnicosStatus', JSON.stringify(newStatus));
+  
+        return newStatus;
+      });
+  
+      // Opcionalmente actualiza la lista de usuarios conectados si es necesario
+      setLoggedInUsers((prevUsers) => {
+        const updatedUsers = new Set(prevUsers);
+        updatedUsers.delete(userId);
+        return updatedUsers;
+      });
+    };
+  
+    socket.on('userStatus', handleUserStatus);
+    socket.on('userLoggedIn', handleUserLoggedIn);
+    socket.on('userLoggedOut', handleUserLoggedOut);
+  
+    return () => {
+      socket.off('userStatus', handleUserStatus);
+      socket.off('userLoggedIn', handleUserLoggedIn);
+      socket.off('userLoggedOut', handleUserLoggedOut);
+    };
+  }, []);
+  
+  useEffect(() => {
+    // Cargar el estado desde `localStorage`
+    const storedStatus = localStorage.getItem('tecnicosStatus');
+    if (storedStatus) {
+      setTecnicosStatus(JSON.parse(storedStatus));
+    }
+  }, []);
+
+
+
+ 
+
+
+
+
+  
   useEffect(() => {
     async function initialize() {
       if (navigator.geolocation) {
@@ -198,7 +293,7 @@ const Ubicaciones = () => {
   const filteredClientes = clientes.filter((cliente) => cliente.nombre.toLowerCase().includes(searchTerm.toLowerCase()));
 
   const filteredTecnicos = tecnicos.filter((tecnico) => tecnico.nombre.toLowerCase().includes(searchTec.toLowerCase()));
-
+ 
   const activeTecnicos = tecnicos.filter((t) => t.estado == 1);
 
   const handleBack = () => {
@@ -314,6 +409,7 @@ const Ubicaciones = () => {
     },
     { id_tecnico: '3', detalle: 'Está de regreso', estado: 'activo' },
   ];
+ 
   return (
     <div className='ventas-container'>
       <Header text='Ubicaciones'></Header>
@@ -358,39 +454,94 @@ const Ubicaciones = () => {
           {/* Lista Tecnicos */}
           {view === 'clientesTecnicos' && (
             <>
-              <div id='tecnicos' className='container-lists list-tecnicos-container'>
-                <h2 className='px-3 feedback-containers-heading'>Técnicos</h2>
-                <div className='px-4 mx-3'>
-                  <input className='caja-input' type='text' placeholder='Buscar' value={searchTec} onChange={handleSearchTec} />
-                  <button className='caja-button-search'>🔍︎</button>
-                </div>
-                <div className='scrollable-container-top'>
-                  {filteredTecnicos &&
-                    filterTec.map((t, i) => (
-                      <div key={i}>
-                        <div className='feedback-tecnicos-container align-items-center'>
-                          <h3 className='feedback-tecnicos-heading mx-2'>{t.nombre} {t.apellido}</h3>
-                          <div className={`notification-badge-tecnico ${t.estado == '1' ? 'active' : 'pending'}`}></div>
-                          <ul onClick={() => handleShowTareas(t.id)} className='feedback-tecnico'>
-                            <li></li>
-                          </ul>
-                        </div>
-                        {showTareas[t.id] && (
-                          <ul className='feedback-ordenes'>
-                            {tareas
-                              .filter((tarea) => tarea.id_tecnico === t.id)
-                              .map((tarea, index) => (
-                                <div key={index} className='feedback-tecnicos-container align-items-center'>
-                                  <div className={`notification-badge-tarea ${tarea.estado === 'activo' ? 'active' : 'ending'}`}></div>
-                                  <li className='li-tarea'>{tarea.detalle}</li>
-                                </div>
-                              ))}
-                          </ul>
-                        )}
-                      </div>
-                    ))}
-                </div>
-              </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{view === 'clientesTecnicos' && (
+  <div id='tecnicos' className='container-lists list-tecnicos-container'>
+    <h2 className='px-3 feedback-containers-heading'>Técnicos</h2>
+    <div className='px-4 mx-3'>
+      <input
+        className='caja-input'
+        type='text'
+        placeholder='Buscar'
+        value={searchTec}
+        onChange={handleSearchTec}
+      />
+      <button className='caja-button-search'>🔍︎</button>
+    </div>
+    <div className='scrollable-container-top'>
+      {filteredTecnicos.map((t) => {
+        // Obtener el estado del técnico para este técnico específico
+        const estadoTecnico = tecnicosStatus[t.id];
+        
+        // Determinar la clase CSS con base en el estado del técnico
+        const badgeClass = `notification-badge-tecnico ${
+          estadoTecnico === 'conectado' ? 'connected' :
+          estadoTecnico === 'ocupado' ? 'busy' : 'disconnected'
+        }`;
+
+        // Imprimir en consola el estado del técnico y la clase CSS resultante
+        console.log(`ID Técnico: ${t.id}, Estado: ${estadoTecnico}, Clase CSS: ${badgeClass}`);
+
+        return (
+          <div key={t.id}>
+            <div className='feedback-tecnicos-container align-items-center'>
+              <h3 className='feedback-tecnicos-heading mx-2'>{t.nombre} {t.apellido}</h3>
+              <div className={badgeClass}></div>
+              <ul onClick={() => handleShowTareas(t.id)} className='feedback-tecnico'>
+                <li></li>
+              </ul>
+            </div>
+            {showTareas[t.id] && (
+              <ul className='feedback-ordenes'>
+                {tareas
+                  .filter((tarea) => tarea.id_tecnico === t.id)
+                  .map((tarea, index) => (
+                    <div key={index} className='feedback-tecnicos-container align-items-center'>
+                      <div
+                        className={`notification-badge-tarea ${tarea.estado === 'activo' ? 'active' : 'ending'}`}
+                      ></div>
+                      <li className='li-tarea'>{tarea.detalle}</li>
+                    </div>
+                  ))}
+              </ul>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  </div>
+)}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             </>
           )}
           {/* Form Clientes */}
