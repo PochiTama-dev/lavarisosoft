@@ -6,16 +6,11 @@ function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
-      contextIsolation: true,
-      enableRemoteModule: false, // This should be false for security reasons
-    },
+      preload: path.join(__dirname, 'preload.js')
+    }
   });
 
-  const startUrl = path.join(__dirname, 'dist', 'index.html');
-  mainWindow.loadFile(startUrl);
-
-  mainWindow.webContents.openDevTools(); // Open DevTools for debugging
+  mainWindow.loadFile(path.join(__dirname, 'index.html'));
 }
 
 app.on('ready', createWindow);
@@ -31,4 +26,3 @@ app.on('activate', () => {
     createWindow();
   }
 });
-  
