@@ -28,95 +28,65 @@ const Ubicaciones = () => {
  
   const [tecnicosStatus, setTecnicosStatus] = useState({});
   const [loggedInUsers, setLoggedInUsers] = useState(new Set());
-
-
+ 
   useEffect(() => {
-    const handleUserStatus = (status) => {
-      console.log('ESTADO DEL TECNICO:', status);
-  
-      // Actualiza el estado del técnico en `tecnicosStatus`
-      setTecnicosStatus((prevStatus) => {
-        const newStatus = {
-          ...prevStatus,
-          [status.id]: status.status // Usa `status.id` como clave para actualizar el estado del técnico
-        };
-  
-        // Guarda el estado actualizado en `localStorage`
-        localStorage.setItem('tecnicosStatus', JSON.stringify(newStatus));
-  
-        return newStatus;
-      });
+    // Leer estado de conexión de los técnicos desde localStorage
+    const storedTecnicosStatus = JSON.parse(localStorage.getItem('tecnicosStatus'));
+    if (storedTecnicosStatus) {
+      setTecnicosStatus(storedTecnicosStatus);
+    }
+
+    const handleUserStatus = (technicians) => {
+      const newStatus = {};
+      for (const [id, technician] of Object.entries(technicians)) {
+        newStatus[id] = technician.status;
+      }
+      setTecnicosStatus(newStatus);
+      localStorage.setItem('tecnicosStatus', JSON.stringify(newStatus));
     };
-  
-    const handleUserLoggedIn = (userId) => {
-      console.log('USUARIO CONECTADO:', userId);
-  
-      // Actualiza el estado del técnico al conectarse
+
+    const handleUserLoggedIn = (data, isLogged) => {
+      if (isLogged) {
+        setTecnicosStatus((prevStatus) => {
+          const newStatus = {
+            ...prevStatus,
+            [data.id]: 'conectado'
+          };
+          localStorage.setItem('tecnicosStatus', JSON.stringify(newStatus));
+          return newStatus;
+        });
+        setLoggedInUsers((prevUsers) => new Set(prevUsers).add(data.id));
+      }
+    };
+
+    const handleUserLoggedOut = (data) => {
       setTecnicosStatus((prevStatus) => {
         const newStatus = {
           ...prevStatus,
-          [userId]: 'conectado' // Marca el técnico como conectado
+          [data.id]: 'desconectado'
         };
-  
-        // Guarda el estado actualizado en `localStorage`
         localStorage.setItem('tecnicosStatus', JSON.stringify(newStatus));
-  
         return newStatus;
       });
-  
-      // Opcionalmente actualiza la lista de usuarios conectados si es necesario
       setLoggedInUsers((prevUsers) => {
         const updatedUsers = new Set(prevUsers);
-        updatedUsers.add(userId);
+        updatedUsers.delete(data.id);
         return updatedUsers;
       });
     };
-  
-    const handleUserLoggedOut = (userId) => {
-      console.log('USUARIO DESCONECTADO:', userId);
-  
-      // Actualiza el estado del técnico al desconectarse
-      setTecnicosStatus((prevStatus) => {
-        const newStatus = {
-          ...prevStatus,
-          [userId]: 'desconectado' // Marca el técnico como desconectado
-        };
-  
-        // Guarda el estado actualizado en `localStorage`
-        localStorage.setItem('tecnicosStatus', JSON.stringify(newStatus));
-  
-        return newStatus;
-      });
-  
-      // Opcionalmente actualiza la lista de usuarios conectados si es necesario
-      setLoggedInUsers((prevUsers) => {
-        const updatedUsers = new Set(prevUsers);
-        updatedUsers.delete(userId);
-        return updatedUsers;
-      });
-    };
-  
+
     socket.on('userStatus', handleUserStatus);
     socket.on('userLoggedIn', handleUserLoggedIn);
     socket.on('userLoggedOut', handleUserLoggedOut);
-  
+
     return () => {
       socket.off('userStatus', handleUserStatus);
       socket.off('userLoggedIn', handleUserLoggedIn);
       socket.off('userLoggedOut', handleUserLoggedOut);
     };
   }, []);
+
   
-  useEffect(() => {
-    // Cargar el estado desde `localStorage`
-    const storedStatus = localStorage.getItem('tecnicosStatus');
-    if (storedStatus) {
-      setTecnicosStatus(JSON.parse(storedStatus));
-    }
-  }, []);
-
-
-
  
 
 
@@ -149,8 +119,8 @@ const Ubicaciones = () => {
     try {
       const data = await listaClientes();
       if (data.length > 0) {
-        console.log(`Se encontró una lista con ${data.length} clientes!!`);
-        console.log(data);
+ 
+ 
         setClientes(data);
       } else {
         console.log('Aún no se registra ningún cliente...');
@@ -164,8 +134,7 @@ const Ubicaciones = () => {
     try {
       const data = await listadoEmpleados();
       if (data.length > 0) {
-        console.log(`Se encontró una lista con ${data.length} técnicos!!`);
-        console.log(data);
+  
         setTecnicos(data);
         setFilterTec(data);
       } else {
@@ -454,23 +423,10 @@ const Ubicaciones = () => {
           {/* Lista Tecnicos */}
           {view === 'clientesTecnicos' && (
             <>
+ 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{view === 'clientesTecnicos' && (
+ {view === 'clientesTecnicos' && (
   <div id='tecnicos' className='container-lists list-tecnicos-container'>
     <h2 className='px-3 feedback-containers-heading'>Técnicos</h2>
     <div className='px-4 mx-3'>
@@ -485,17 +441,15 @@ const Ubicaciones = () => {
     </div>
     <div className='scrollable-container-top'>
       {filteredTecnicos.map((t) => {
-        // Obtener el estado del técnico para este técnico específico
+     
         const estadoTecnico = tecnicosStatus[t.id];
-        
-        // Determinar la clase CSS con base en el estado del técnico
+ 
         const badgeClass = `notification-badge-tecnico ${
           estadoTecnico === 'conectado' ? 'connected' :
-          estadoTecnico === 'ocupado' ? 'busy' : 'disconnected'
+          estadoTecnico === 'ocupado' ? 'busy' : 
+          estadoTecnico === 'desconectado' ? 'disconnected' :
+          'disconnected'  
         }`;
-
-        // Imprimir en consola el estado del técnico y la clase CSS resultante
-        console.log(`ID Técnico: ${t.id}, Estado: ${estadoTecnico}, Clase CSS: ${badgeClass}`);
 
         return (
           <div key={t.id}>
@@ -526,7 +480,6 @@ const Ubicaciones = () => {
     </div>
   </div>
 )}
-
 
 
 
@@ -643,6 +596,15 @@ const Ubicaciones = () => {
               </div>
             </div>
           )}
+
+
+
+
+
+
+
+
+
           {/* Detalle cliente, Buscar tecnico */}
           {view === 'detalleClienteBuscarTecnico' && (
             <>
