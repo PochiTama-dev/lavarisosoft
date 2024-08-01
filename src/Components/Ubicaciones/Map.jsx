@@ -6,8 +6,9 @@ import markerIcon from '../../assets/marker.png';
 import clientIcon from '../../assets/man.webp';
 import 'leaflet/dist/leaflet.css';
 import MarkerClusterGroup from 'react-leaflet-cluster';
-import Modal from './Modal'; // Adjust the path as needed
+import Modal from './Modal';
 import NuevaOrden from '../../pages/Orders/NuevaOrden';
+import socket from '../services/socketService';
 
 const CORDOBA_BOUNDS = {
   north: -29.0,
@@ -36,6 +37,7 @@ const Map = ({ position, zoom, activeTechnicians, selectedClient, selectedTechni
   const [filter, setFilter] = useState('both');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedClientData, setSelectedClientData] = useState(null);
+  const [technicians, setTechnicians] = useState({});
 
   const { latitude = 0, longitude = 0 } = position || {};
 
@@ -68,6 +70,46 @@ const Map = ({ position, zoom, activeTechnicians, selectedClient, selectedTechni
     }
   }, [selectedClient]);
 
+  useEffect(() => {
+    const handleBroadcastLocation = (data) => {
+      console.log("LOCATION", data);
+      if (data && typeof data === 'object') {
+        setTechnicians((prev) => {
+          const updatedTechnicians = {};
+          Object.keys(data).forEach((key) => {
+            if (data[key].status !== 'desconectado') {
+              updatedTechnicians[key] = data[key];
+            }
+          });
+          return updatedTechnicians;
+        });
+      }
+    };
+
+    const handleUserStatus = (data) => {
+      console.log("STATUS UPDATE", data);
+      if (data && typeof data === 'object') {
+        setTechnicians((prev) => {
+          const updatedTechnicians = {};
+          Object.keys(data).forEach((key) => {
+            if (data[key].status !== 'desconectado') {
+              updatedTechnicians[key] = data[key];
+            }
+          });
+          return updatedTechnicians;
+        });
+      }
+    };
+
+    socket.on('broadcastLocation', handleBroadcastLocation);
+    socket.on('userStatus', handleUserStatus);
+
+    return () => {
+      socket.off('broadcastLocation', handleBroadcastLocation);
+      socket.off('userStatus', handleUserStatus);
+    };
+  }, []);
+
   return (
     <>
       <div>
@@ -87,64 +129,71 @@ const Map = ({ position, zoom, activeTechnicians, selectedClient, selectedTechni
 
         <MarkerClusterGroup>
           {(filter === 'technicians' || filter === 'both') &&
-            activeTechnicians.map((technician, index) => (
-              <Marker key={index} position={[technician.latitud, technician.longitud]} icon={myIcon}>
-                <Popup>
-                  <div className='popup-tecnico'>
-                    <img src={`https://via.placeholder.com/50`} alt='Technician' />
-                    <div className='popup-content'>
-                      <h4>{technician.nombre}</h4>
-                      <p>{technician.telefono}</p>
-                    </div>
-                  </div>
-                  <div className='popup-tecnico-button'>
-                    <button onClick={() => handleTechnicianSelect(technician)}>
-                      <svg
-                        xmlns='http://www.w3.org/2000/svg'
-                        width='22'
-                        height='22'
-                        fill='currentColor'
-                        className='bi bi-arrow-right'
-                        viewBox='0 0 15 15'
-                      >
-                        <path
-                          fillRule='evenodd'
-                          d='M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8'
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                </Popup>
-              </Marker>
-            ))}
+            Object.keys(technicians).map((key) => {
+              const technician = technicians[key];
+              return (
+                technician.status !== 'desconectado' && technician.latitude && technician.longitude && (
+                  <Marker key={key} position={[technician.latitude, technician.longitude]} icon={myIcon}>
+                    <Popup>
+                      <div className='popup-tecnico'>
+                        <img src={`https://via.placeholder.com/50`} alt='Technician' />
+                        <div className='popup-content'>
+                          <h4>{technician.nombre}</h4>
+                          <p>{technician.telefono}</p>
+                        </div>
+                      </div>
+                      <div className='popup-tecnico-button'>
+                        <button onClick={() => handleTechnicianSelect(technician)}>
+                          <svg
+                            xmlns='http://www.w3.org/2000/svg'
+                            width='22'
+                            height='22'
+                            fill='currentColor'
+                            className='bi bi-arrow-right'
+                            viewBox='0 0 15 15'
+                          >
+                            <path
+                              fillRule='evenodd'
+                              d='M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8'
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </Popup>
+                  </Marker>
+                )
+              );
+            })}
 
           {selectedTechnician && (
-            <Popup position={[selectedTechnician.latitud, selectedTechnician.longitud]}>
-              <div className='popup-tecnico'>
-                <img src={`https://via.placeholder.com/50`} alt='Technician' />
-                <div className='popup-content'>
-                  <h4>{selectedTechnician.nombre}</h4>
-                  <p>{selectedTechnician.telefono}</p>
+            <Marker position={[selectedTechnician.latitud, selectedTechnician.longitud]} icon={myIcon}>
+              <Popup>
+                <div className='popup-tecnico'>
+                  <img src={`https://via.placeholder.com/50`} alt='Technician' />
+                  <div className='popup-content'>
+                    <h4>{selectedTechnician.nombre}</h4>
+                    <p>{selectedTechnician.telefono}</p>
+                  </div>
                 </div>
-              </div>
-              <div className='popup-tecnico-button'>
-                <button onClick={() => handleTechnicianSelect(selectedTechnician)}>
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    width='22'
-                    height='22'
-                    fill='currentColor'
-                    className='bi bi-arrow-right'
-                    viewBox='0 0 15 15'
-                  >
-                    <path
-                      fillRule='evenodd'
-                      d='M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8'
-                    />
-                  </svg>
-                </button>
-              </div>
-            </Popup>
+                <div className='popup-tecnico-button'>
+                  <button onClick={() => handleTechnicianSelect(selectedTechnician)}>
+                    <svg
+                      xmlns='http://www.w3.org/2000/svg'
+                      width='22'
+                      height='22'
+                      fill='currentColor'
+                      className='bi bi-arrow-right'
+                      viewBox='0 0 15 15'
+                    >
+                      <path
+                        fillRule='evenodd'
+                        d='M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8'
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </Popup>
+            </Marker>
           )}
         </MarkerClusterGroup>
         <MarkerClusterGroup>

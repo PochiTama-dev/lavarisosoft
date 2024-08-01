@@ -126,3 +126,7 @@
 .notification-badge-tecnico.busy {
   background-color: orange; /* Color rojo para ocupados */
 }
+
+.desconectado {
+  background-color: gray;
+}
