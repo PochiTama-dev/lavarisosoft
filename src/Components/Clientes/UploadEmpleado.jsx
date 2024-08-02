@@ -96,7 +96,27 @@ const UploadEmpleado = () => {
   };
 
   const postEmpleado = async (empleadoForm) => {
-    const { id_rol, nombre, apellido, cuil, cuenta, legajo, telefono, email, direccion, ubicacion, longitud, latitud } = await empleadoForm;
+    let { id_rol, nombre, apellido, cuil, cuenta, legajo, telefono, email, direccion, ubicacion, longitud, latitud } = await empleadoForm;
+    switch (id_rol) {
+      case '1':
+        legajo = 'ATC-' + legajo;
+        break;
+      case '2':
+        legajo = 'CAD-' + legajo;
+        break;
+
+      case '3':
+        legajo = 'JFT-' + legajo;
+        break;
+
+      case '4':
+        legajo = 'SPA-' + legajo;
+        break;
+
+      default:
+        legajo = 'TEC-' + legajo;
+        break;
+    }
     const fetchEmpleado = await fetch('https://lv-back.online/empleados/guardar', {
       method: 'post',
       headers: {
