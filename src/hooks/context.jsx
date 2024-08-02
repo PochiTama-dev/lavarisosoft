@@ -39,7 +39,22 @@ export const Provider = ({ children }) => {
     }
   };
 
-  return <Context.Provider value={{ handleNavigate, handleEdit, user, setUser, checkRol }}>{children}</Context.Provider>;
+  const uploadEmpleadosExcel = async (empleadosForm) => {
+    empleadosForm.forEach(async (empleado) => {
+      const { id_rol, nombre, apellido, cuil, legajo, telefono, email, direccion, ubicacion } = await empleado;
+      const fetchEmpleado = await fetch('https://lv-back.online/empleados/guardar', {
+        method: 'post',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id_rol, nombre, apellido, cuil, legajo, telefono, email, direccion, ubicacion }),
+      });
+      console.log('status empleado: ', fetchEmpleado.status);
+    });
+  };
+
+  return <Context.Provider value={{ handleNavigate, handleEdit, user, setUser, checkRol, uploadEmpleadosExcel }}>{children}</Context.Provider>;
 };
 
 export function useCustomContext() {
