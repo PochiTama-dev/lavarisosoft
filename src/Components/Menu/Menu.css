@@ -11,7 +11,6 @@
   border-bottom: 10px solid #8ea3bf;
   font-size: 1.5rem;
   font-weight: 600;
-  /* padding: 45px 30px; */
   width: 80% !important;
   min-width: 220px;
   height: 17.5vh;
@@ -30,7 +29,7 @@
 .menu-button-container {
   width: 80%;
   margin-left: 10%;
-  margin-top: 5%;
+  margin-top: 1%;
   height: 90%;
   align-content: center;
 }
