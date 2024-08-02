@@ -1,39 +1,57 @@
+import { useEffect, useState } from "react";
 import Header from "../../Header/Header";
 import "./EditarStockRepuestos.css";
 import GrillaEditStock from "./GrillaEditStock";
 const EditarStockRespuestos = () => {
-  const itemsStock = [
-    {
-      nombre: "NombreAbc123",
-      id: 4366,
-      precio: 2330,
-      disponibles: 2,
-    },
-    {
-      nombre: "NombreAbc456",
-      id: 43365,
-      precio: 2330,
-      disponibles: 2,
-    },
-    {
-      nombre: "NombreAbc789",
-      id: 435,
-      precio: 2330,
-      disponibles: 2,
-    },
-    {
-      nombre: "NombreAbc159",
-      id: 3165,
-      precio: 2330,
-      disponibles: 2,
-    },
-    {
-      nombre: "NombreAbc987",
-      id: 9894,
-      precio: 2330,
-      disponibles: 2,
-    },
-  ];
+  const [loading, setLoading] = useState(true);
+  const [stockData, setStockData] = useState([]);
+  // const itemsStock = [
+  //   {
+  //     nombre: stockData.descripcion,
+  //     id: stockData.id,
+  //     precio: stockData.precio,
+  //     disponibles: stockData.cantidad,
+  //   },
+  // ];
+
+  const stockDb = async () => {
+    try {
+      const response = await fetch(
+        "https://lv-back.online/stock/principal/lista"
+      );
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  };
+
+  useEffect(() => {
+    const fetchStockData = async () => {
+      try {
+        const data = await stockDb();
+        setStockData(data);
+      } catch (error) {
+        console.error("Error fetching stock data:", error);
+        setStockData([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStockData();
+  }, []);
+
+  const itemsStock = stockData?.map((item) => ({
+    nombre: item.Repuesto?.descripcion,
+    id: item.id,
+    precio: item.precio,
+    disponibles: item.cantidad,
+  }));
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="stockContainer">
       <Header text="Editar stock de repuestos" />

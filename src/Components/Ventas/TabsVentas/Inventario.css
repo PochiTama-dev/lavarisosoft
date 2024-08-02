@@ -105,3 +105,62 @@ ul .pestañasInventarioActive {
   justify-content: space-around;
   width: 80%;
 }
+
+.grilla-inventario {
+  display: flex;
+  justify-content: left;
+}
+
+.grilla-stock {
+  width: 100%;
+}
+
+.grilla-stock tr {
+  width: 100%;
+}
+
+.grilla-stock th {
+  width: 25%;
+  text-align: center;
+  color: #283959;
+  font-size: large;
+}
+
+.grilla-body tr {
+  width: 100%;
+}
+
+.grilla-stock-body td {
+  width: 25%;
+  text-align: center;
+  color: #283959;
+  font-weight: 500;
+}
+
+.grilla-camioneta th {
+  width: 20%;
+  text-align: center;
+  color: #283959;
+  font-size: large;
+}
+
+.grilla-camioneta-body td {
+  width: 20%;
+  text-align: center;
+  color: #283959;
+  font-weight: 500;
+}
+
+.grilla-reserva th {
+  width: 20%;
+  text-align: center;
+  color: #283959;
+  font-size: large;
+}
+
+.grilla-reserva-body td {
+  width: 20%;
+  text-align: center;
+  color: #283959;
+  font-weight: 500;
+}
