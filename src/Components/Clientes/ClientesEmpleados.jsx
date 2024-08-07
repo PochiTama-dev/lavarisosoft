@@ -38,10 +38,6 @@ const ClientesEmpleados = () => {
       console.error('Error al procesar el archivo Excel:', error);
     }
   };
-  const handleUploadClientesExcel = () => {
-    console.log('Carga de clientes EXCEL');
-  };
-
   const getUploadButtonText = () => {
     return active === 0 ? 'Cargar Excel Clientes' : 'Cargar Excel Empleados';
   };
@@ -66,14 +62,12 @@ const ClientesEmpleados = () => {
         <Dropdown.Menu className='dropdown-menu-up'>
           <Dropdown.Item>Descargar Excel</Dropdown.Item>
           <Dropdown.Item>Editar</Dropdown.Item>
-          <div onClick={handleUpload}>
-            <Dropdown.Item>{getUploadButtonText()}</Dropdown.Item>
-            {getUploadButtonText() === 'Cargar Excel Empleados' ? (
+          {getUploadButtonText() === 'Cargar Excel Empleados' && (
+            <div onClick={handleUpload}>
+              <Dropdown.Item>{getUploadButtonText()}</Dropdown.Item>
               <input type='file' name='' id='' ref={fileInputRef} style={{ display: 'none' }} onChange={handleUploadEmpleadosExcel} />
-            ) : (
-              <input type='file' name='' id='' ref={fileInputRef} style={{ display: 'none' }} onChange={handleUploadClientesExcel} />
-            )}
-          </div>
+            </div>
+          )}
           <Dropdown.Item onClick={handleNavigateToAddEmpleado}>Agregar Empleado</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
