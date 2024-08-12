@@ -9,11 +9,11 @@
     "preview": "vite preview",
     "start": "vite",
     "electron": "electron .",
-    "pack": "electron-builder --dir",
+    "pack": "electron-builder",
     "dist": "electron-builder",
     "dev": "concurrently \"npm run start\" \"npm run electron\""
   },
-  "main": "./main.js",
+  "main": "./public/electron.js",
   "dependencies": {
     "@fontsource/raleway": "^5.0.17",
     "bootstrap": "^5.3.3",
@@ -24,7 +24,8 @@
     "react-dom": "^18.2.0",
     "react-leaflet": "^4.2.1",
     "react-leaflet-cluster": "^2.1.0",
-    "react-router-dom": "^6.22.3"
+    "react-router-dom": "^6.22.3",
+    "socket.io-client": "^4.7.5"
   },
   "devDependencies": {
     "@babel/plugin-syntax-top-level-await": "^7.14.5",

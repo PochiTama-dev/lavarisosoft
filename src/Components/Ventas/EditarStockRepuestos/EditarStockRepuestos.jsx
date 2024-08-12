@@ -5,14 +5,6 @@ import GrillaEditStock from "./GrillaEditStock";
 const EditarStockRespuestos = () => {
   const [loading, setLoading] = useState(true);
   const [stockData, setStockData] = useState([]);
-  // const itemsStock = [
-  //   {
-  //     nombre: stockData.descripcion,
-  //     id: stockData.id,
-  //     precio: stockData.precio,
-  //     disponibles: stockData.cantidad,
-  //   },
-  // ];
 
   const stockDb = async () => {
     try {

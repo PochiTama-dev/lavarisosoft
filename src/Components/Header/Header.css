@@ -1,12 +1,23 @@
+.header {
+  height: 7vh;
+  display: flex;
+  align-items: center;
+}
 .titles {
   text-transform: uppercase;
   color: white;
   padding: 20px;
+  width: 90%;
+  margin-left: 5%;
 }
-.titles h3 {
-  background-color: #283959;
+
+.header-title-container {
+  min-width: 30vw;
+}
+
+.titles h2 {
   border-bottom-left-radius: 5px;
-  width: 4%;
+  width: 100%;
   margin: 0;
   text-align: center;
   padding-top: 5px;
@@ -14,8 +25,12 @@
 
 .flechita {
   cursor: pointer;
+  margin-left: 2.5%;
 }
 
-.logout{
-  cursor:pointer;
+.logout {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin-left: 60%;
 }

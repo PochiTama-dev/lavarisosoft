@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Table from 'react-bootstrap/Table';
 
 const Empleados = () => {
@@ -17,7 +17,6 @@ const Empleados = () => {
 
     fetchEmpleados();
   }, []); // Empty dependency array means this effect runs once on mount
-
   return (
     <div className='clientes-ctn'>
       <Table striped hover>
@@ -37,7 +36,7 @@ const Empleados = () => {
             <tr key={index}>
               <td>{empleado.nombre}</td>
               <td>{empleado.legajo}</td>
-              <td>{empleado.rol}</td>
+              <td>{empleado.TiposRole.tipo_rol}</td>
               <td>{empleado.telefono}</td>
               <td>{empleado.email}</td>
               <td>{empleado.cuil}</td>
