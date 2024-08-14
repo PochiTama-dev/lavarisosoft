@@ -50,7 +50,8 @@ const Orders = () => {
     fetchTecnicos();
   }, [updateTrigger]);
 
-  const handleSelectOrden = (id) => {
+  const handleSelectOrden = (e, id) => {
+    e.preventDefault();
     const ordenSeleccionada = ordenes.find((orden) => orden.id === id);
     setSelectedOrden(ordenSeleccionada);
   };

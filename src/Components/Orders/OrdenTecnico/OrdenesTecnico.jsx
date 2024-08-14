@@ -30,7 +30,7 @@ const OrdenesTecnico = ({ nombre, ordenes, onSelectOrden }) => {
                 }`}
               ></div>
               <li className="li-tarea" >
-                Orden #{orden.id} <a href="#" onClick={() => onSelectOrden(orden.id)}>ver detalles</a>
+                Orden #{orden.id} <a href="#" onClick={(e) => onSelectOrden(e, orden.id)}>ver detalles</a>
               </li>
             </div>
           ))}
