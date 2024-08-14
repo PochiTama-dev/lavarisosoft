@@ -42,7 +42,7 @@ const Alertas = () => {
                 >
                   {alerta.descripciones.map((descripcion, idx) => (
                     <li key={idx}>
-                      <a className="item" href="#">
+                      <a className="item" href="">
                         <b>{alerta.nombre}</b> {descripcion}
                       </a>
                     </li>
