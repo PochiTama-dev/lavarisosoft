@@ -7,7 +7,7 @@
   margin-left: 7.5%;
 }
 
-.agregar-repuesto-formulario h3 {
+.agregar-repuesto-formulario label {
   font-weight: 400;
   font-size: larger;
   width: 15%;
@@ -36,8 +36,8 @@
   border-radius: 20px;
   border: none;
   min-width: 90px;
-  width: 10%;
-  height: 3vh;
+  width: 12.5%;
+  height: 3.2vh;
   margin-left: 10%;
   margin-top: 2%;
 }
