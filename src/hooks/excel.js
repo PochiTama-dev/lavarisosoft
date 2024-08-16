@@ -148,10 +148,8 @@ export const uploadExcelStock = async (event) => {
           worksheet.eachRow((row, rowNumber) => {
             if (rowNumber > 1) {
               const rowData = {
-                nombre: row.getCell(1).value,
-                id: row.getCell(2).value,
-                descripcion: checkRol(row.getCell(3).value),
-                precio: row.getCell(4).value,
+                articulo: row.getCell(1).value,
+                descripcion: row.getCell(2).value,
               };
               data.push(rowData);
             }
