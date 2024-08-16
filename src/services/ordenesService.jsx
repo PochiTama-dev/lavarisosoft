@@ -5,8 +5,6 @@ export const ordenes = async () => {
     const response = await fetch(`${API_URL}/ordenes`);
     const ordenes = await response.json();
     if (ordenes[0] !== undefined) {
-      console.log(`Se encontró un listado completo con ${ordenes.length} ordenes!!`);
-      console.log(ordenes)
       return ordenes;
     } else {
       console.log('Aún no se registra ninguna orden...');

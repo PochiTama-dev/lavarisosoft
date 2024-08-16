@@ -9,7 +9,9 @@ import editar from "../../../images/editar.webp";
 const Taller = () => {
   const [listaOrdenes, setOrdenes] = useState([]);
   const [empleados, setEmpleados] = useState([]);
+  const [estados, setEstados] = useState([]);
   const [selectedTecnico, setSelectedTecnico] = useState(null);
+  const [selectedEstado, setSelectedEstado] = useState(null);
   const [editIndex, setEditIndex] = useState(null);
   const [orderBy, setOrderBy] = useState(null);
   const [orderAsc, setOrderAsc] = useState(true);
@@ -26,6 +28,22 @@ const Taller = () => {
       setEmpleados(empleadosFiltrados);
     } catch (error) {
       console.error("Error al obtener empleados:", error);
+    }
+  };
+
+  const fetchTiposEstados = async () => {
+    try {
+      const response = await fetch("https://lv-back.online/opciones/estado");
+      const estados = await response.json();
+      if (estados[0] !== undefined) {
+        setEstados(estados);
+      } else {
+        console.log('Aún no se registra ningún tipo de estado...');
+        return [];
+      }
+    } catch (error) {
+      console.error("Error, no se encontraron tipos de estados en la base de datos....", error);
+      return [];
     }
   };
 
@@ -72,10 +90,15 @@ const Taller = () => {
   const handleEdit = (index) => {
     setEditIndex(index);
     setSelectedTecnico(listaOrdenes[index].Empleado.id);
+    setSelectedEstado(listaOrdenes[index].id_tipo_estado);
   };
 
   const handleTecnicoChange = (event) => {
     setSelectedTecnico(event.target.value);
+  };
+
+  const handleEstadoChange = (event) => {
+    setSelectedEstado(event.target.value);
   };
 
   const handleSave = async (index) => {
@@ -88,9 +111,23 @@ const Taller = () => {
         throw new Error("Técnico no encontrado");
       }
 
+      const estadoSeleccionado = estados.find(
+        (estado) => estado.id == selectedEstado
+      );
+
+      if (!estadoSeleccionado) {
+        throw new Error("Estado no encontrado");
+      }
+
       const updatedOrden = {
         ...listaOrdenes[index],
+        id_empleado: tecnicoSeleccionado.id,
+        id_tipo_estado: estadoSeleccionado.id,
         Empleado: { ...tecnicoSeleccionado },
+        TiposEstado: {
+          id: estadoSeleccionado.id,
+          tipo_estado: estadoSeleccionado.tipo_estado
+        }
       };
 
       const success = await modificarOrden(updatedOrden.id, updatedOrden);
@@ -135,6 +172,7 @@ const Taller = () => {
   useEffect(() => {
     fetchOrdenes();
     fetchEmpleados();
+    fetchTiposEstados();
   }, []);
 
   return (
@@ -245,7 +283,23 @@ const Taller = () => {
               </td>
               <td>{factura.numero_orden}</td>
               <td>{factura.Cliente.numero_cliente}</td>
-              <td>{factura.Presupuesto.id_estado_presupuesto}</td>
+              <td>
+                {editIndex === index ? (
+                  <select
+                    className="form-select"
+                    value={selectedEstado}
+                    onChange={handleEstadoChange}
+                  >
+                    {estados.map((estado) => (
+                      <option key={estado.id} value={estado.id}>
+                        {estado.tipo_estado}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  `${factura.TiposEstado.tipo_estado}`
+                )}
+              </td>
               <td>
                 {editIndex === index ? (
                   <>
