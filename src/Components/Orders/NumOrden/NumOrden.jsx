@@ -20,7 +20,7 @@ const NumOrden = ({ ordenes, onSelectOrden }) => {
 
           return (
             <li key={index} className="d-flex justify-content-around">
-              <a href="#" onClick={() => onSelectOrden(orden.id)} className="text-orders">#{numero_orden}</a>
+              <a href="#" onClick={(e) => onSelectOrden(e, orden.id)} className="text-orders">#{numero_orden}</a>
               <span className={estadoClase}>
                 {TiposEstado.tipo_estado}
               </span>
