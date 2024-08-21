@@ -56,3 +56,7 @@
     margin-top: 90px;
     margin-left: -20%;
   }
+
+  .flecha{
+    cursor:pointer;
+  }
