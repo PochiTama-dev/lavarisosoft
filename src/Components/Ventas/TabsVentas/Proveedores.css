@@ -115,3 +115,30 @@
 .proveedores-container span {
   margin-top: 2.5vh;
 }
+
+.grilla-proveedores {
+  width: 100%;
+}
+
+.grilla-proveedores tr {
+  width: 100%;
+}
+
+.grilla-proveedores th {
+  width: 16.67%;
+  text-align: center;
+  color: #283959;
+  font-size: large;
+}
+
+.grilla-proveedores-body td {
+  width: 16.67%;
+  text-align: center;
+  color: #283959;
+  font-weight: 500;
+}
+
+.grilla-inventario {
+  display: flex;
+  justify-content: left;
+}

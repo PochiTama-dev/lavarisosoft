@@ -1,8 +1,41 @@
 import "./Proveedores.css";
 import Grilla from "../../Grilla/Grilla";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Table } from "react-bootstrap";
 
 const Proveedores = () => {
+  const [proveedoresData, setProveedoresData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const proveedoresDb = async () => {
+    try {
+      const response = await fetch("https://lv-back.online/facturas/lista");
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  };
+
+  useEffect(() => {
+    const fetchProveedoresData = async () => {
+      try {
+        const data = await proveedoresDb();
+        setProveedoresData(data);
+      } catch (error) {
+        console.error("Error fetching proveedores data:", error);
+        setProveedoresData([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProveedoresData();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   const columnasStock = [
     "Estado",
     "Proveedor",
@@ -188,7 +221,39 @@ const Proveedores = () => {
       </div>
       <div className="proveedores-excel-wrapper">
         <h2>Pagos efectuados</h2>
-        <Grilla columnas={columnasStock} elementos={itemsStock} />
+        {/* <Grilla columnas={columnasStock} elementos={itemsStock} /> */}
+        <div className="grilla-inventario">
+          <Table hover className="grilla-proveedores">
+            <thead>
+              <tr>
+                <th>Estado</th>
+                <th>Proveedor</th>
+                <th>Fecha</th>
+                <th>Importe</th>
+                <th>Caja</th>
+                <th>Op.</th>
+              </tr>
+            </thead>
+            <tbody className="grilla-proveedores-body">
+              {proveedoresData.map((prov, index) => (
+                <tr key={index} className={index % 2 === 0 ? "" : "row-even"}>
+                  <td>
+                    {prov.estado?.length === 0
+                      ? "acá va el estado"
+                      : prov.estado}
+                  </td>
+                  <td>{prov.Proveedore.nombre}</td>
+                  <td>{prov.fecha_ingreso}</td>
+                  <td>{prov.importe}</td>
+                  <td>
+                    {prov.caja?.length === 0 ? "acá va la caja" : prov.caja}
+                  </td>
+                  <td>{prov.op?.length == 0 ? "no se que va aca" : prov.op}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </div>
       </div>
     </div>
   );
