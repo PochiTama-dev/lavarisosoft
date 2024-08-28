@@ -110,7 +110,6 @@ ul .pestañasInventarioActive {
   display: flex;
   justify-content: left;
 }
-
 .grilla-stock {
   width: 100%;
 }
@@ -126,15 +125,15 @@ ul .pestañasInventarioActive {
   font-size: large;
 }
 
-.grilla-body tr {
-  width: 100%;
-}
-
 .grilla-stock-body td {
   width: 25%;
   text-align: center;
   color: #283959;
   font-weight: 500;
+}
+
+.grilla-body tr {
+  width: 100%;
 }
 
 .grilla-camioneta th {
