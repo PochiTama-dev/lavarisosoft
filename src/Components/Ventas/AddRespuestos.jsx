@@ -6,6 +6,8 @@ import { useState } from "react";
 const AgregarRepuesto = () => {
   const [repuesto, setRepuesto] = useState({
     codigo_repuesto: 0,
+    numero_serie: "",
+    tipo_electrodomestico: "",
     descripcion: "",
   });
   const navigate = useNavigate();
@@ -64,6 +66,28 @@ const AgregarRepuesto = () => {
                 id="codigo_repuesto"
                 name="codigo_repuesto"
                 value={repuesto.codigo_repuesto}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <label htmlFor="numero_serie">Número de serie</label>
+              <input
+                type="text"
+                id="numero_serie"
+                name="numero_serie"
+                value={repuesto.numero_serie}
+                onChange={handleChange}
+              />
+            </div>{" "}
+            <div>
+              <label htmlFor="tipo_electrodomestico">
+                Tipo de electrodoméstico
+              </label>
+              <input
+                type="text"
+                id="tipo_electrodomestico"
+                name="tipo_electrodomestico"
+                value={repuesto.tipo_electrodomestico}
                 onChange={handleChange}
               />
             </div>
