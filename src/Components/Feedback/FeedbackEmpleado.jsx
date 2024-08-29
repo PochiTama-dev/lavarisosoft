@@ -36,12 +36,12 @@ const FeedbackEmpleado = () => {
     //console.log(orderSelected);
     if (orderSelected.numero_orden !== 'Sin seleccionar') {
       const nuevoFeedback = {
-        id_empleado: orderSelected.Empleado.id, //ID EMPLEADO
-        id_orden: orderSelected.id,
         feedback: feedbackValue,
+        id_empleado: orderSelected.Empleado.id,
+        id_orden: orderSelected.id,
       };
 
-      await sendFeedback(nuevoFeedback);
+      await sendFeedback({ ...nuevoFeedback });
     } else alert('Debes seleccionar una orden');
   };
 

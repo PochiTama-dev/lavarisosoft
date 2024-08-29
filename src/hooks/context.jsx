@@ -119,7 +119,11 @@ export const Provider = ({ children }) => {
   const sendFeedback = async (feedback) => {
     try {
       if (feedback) {
-        const data = await fetch(`https://lv-back.online/feedbacks/guardar`, feedback);
+        const data = await fetch(`https://lv-back.online/feedbacks/guardar`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(feedback),
+        });
         console.log(data);
         return 'feedback enviado';
       }
