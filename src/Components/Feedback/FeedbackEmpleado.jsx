@@ -8,9 +8,11 @@ const FeedbackEmpleado = () => {
   const { getEmpleadosLista, ordenes, sendFeedback } = useCustomContext();
   const [showOrders, setShowOrders] = useState({});
   const [orderSelected, setOrderSelected] = useState();
-
+  const [orderEmpleado, setOrderEmpleado] = useState([]);
   const [empleados, setEmpleados] = useState([]);
   const [nombre, setNombre] = useState();
+  const [showOrderEmployee, setShow] = useState({});
+  const [activeIndex, setActiveIndex] = useState(null);
 
   const feedbackRef = useRef();
 
@@ -27,6 +29,8 @@ const FeedbackEmpleado = () => {
 
   const handleName = (nombre) => {
     setNombre(nombre);
+    const employeeOrder = showOrders.filter((employee) => employee.Empleado.nombre === nombre);
+    setOrderEmpleado(employeeOrder);
     setOrderSelected({ numero_orden: 'Sin seleccionar' });
   };
 
@@ -40,7 +44,6 @@ const FeedbackEmpleado = () => {
         id_empleado: orderSelected.Empleado.id,
         id_orden: orderSelected.id,
       };
-
       await sendFeedback({ ...nuevoFeedback });
     } else alert('Debes seleccionar una orden');
   };
@@ -50,6 +53,14 @@ const FeedbackEmpleado = () => {
     //console.log(newOrderSelected);
     setOrderSelected(newOrderSelected);
     setNombre(newOrderSelected.Empleado.nombre);
+  };
+
+  const handleShow = (index, nombre) => {
+    setOrderSelected({ numero_orden: 'Sin seleccionar' });
+    setNombre(nombre);
+    const employeeOrder = showOrders.filter((employee) => employee.Empleado.nombre === nombre);
+    setActiveIndex((prevIndex) => (prevIndex === index ? null : index));
+    setOrderEmpleado(employeeOrder);
   };
   return (
     <div className='container-full-width'>
@@ -79,14 +90,14 @@ const FeedbackEmpleado = () => {
                       </h3>
                     </div>
                     <ul className='feedback-tecnico'>
-                      <li></li>
+                      <li onClick={() => handleShow(i, t.nombre)}></li>
                     </ul>
                   </div>
-                  {t.Ordenes && (
+                  {activeIndex === i && (
                     <ul className='feedback-ordenes'>
-                      {t.Ordenes.map((orden, index) => (
-                        <li key={index}>
-                          Orden #25645 <a href='#'>ver detalles</a>
+                      {orderEmpleado.map((orden, index) => (
+                        <li key={index} onClick={() => handleSelectOrder(orden.numero_orden)}>
+                          Orden #{orden.numero_orden}
                         </li>
                       ))}
                     </ul>
