@@ -5,14 +5,14 @@ import { useEffect, useRef, useState } from 'react';
 import { useCustomContext } from '../../hooks/context';
 
 const FeedbackEmpleado = () => {
-  const { getEmpleadosLista, ordenes, sendFeedback } = useCustomContext();
+  const { getEmpleadosLista, ordenes, sendFeedback, user } = useCustomContext();
   const [showOrders, setShowOrders] = useState({});
   const [orderSelected, setOrderSelected] = useState();
   const [orderEmpleado, setOrderEmpleado] = useState([]);
   const [empleados, setEmpleados] = useState([]);
   const [nombre, setNombre] = useState();
-  const [showOrderEmployee, setShow] = useState({});
   const [activeIndex, setActiveIndex] = useState(null);
+  const [userLogged, setUserLogged] = useState();
 
   const feedbackRef = useRef();
 
@@ -24,28 +24,27 @@ const FeedbackEmpleado = () => {
     const getOrdenes = await ordenes();
     setShowOrders(getOrdenes);
     setEmpleados(empleados);
-    //console.log(showOrders);
+    const usuarioLocal = empleados.find((empleado) => empleado.email === user.email);
+    setUserLogged(usuarioLocal);
   };
 
   const handleName = (nombre) => {
     setNombre(nombre);
     const employeeOrder = showOrders.filter((employee) => employee.Empleado.nombre === nombre);
     setOrderEmpleado(employeeOrder);
-    setOrderSelected({ numero_orden: 'Sin seleccionar' });
+    setOrderSelected({ numero_orden: '' });
   };
 
-  const handleSendFeedback = async (event) => {
-    event.preventDefault();
-    const feedbackValue = feedbackRef.current.value;
-    //console.log(orderSelected);
-    if (orderSelected.numero_orden !== 'Sin seleccionar') {
-      const nuevoFeedback = {
-        feedback: feedbackValue,
-        id_empleado: orderSelected.Empleado.id,
-        id_orden: orderSelected.id,
-      };
-      await sendFeedback({ ...nuevoFeedback });
-    } else alert('Debes seleccionar una orden');
+  const handleSendFeedback = async () => {
+    const feedbackValue = await feedbackRef.current.value;
+    const nuevoFeedback = {
+      feedback: feedbackValue,
+      id_empleado: userLogged.id,
+      id_orden: orderSelected?.id,
+    };
+    console.log(nuevoFeedback);
+    await sendFeedback({ ...nuevoFeedback });
+    return nuevoFeedback;
   };
 
   const handleSelectOrder = (orden) => {
@@ -56,7 +55,7 @@ const FeedbackEmpleado = () => {
   };
 
   const handleShow = (index, nombre) => {
-    setOrderSelected({ numero_orden: 'Sin seleccionar' });
+    setOrderSelected({ numero_orden: ' ' });
     setNombre(nombre);
     const employeeOrder = showOrders.filter((employee) => employee.Empleado.nombre === nombre);
     setActiveIndex((prevIndex) => (prevIndex === index ? null : index));
@@ -75,15 +74,7 @@ const FeedbackEmpleado = () => {
                   <div className='feedback-tecnicos-container' key={i}>
                     <div className='d-flex flex-column mb-1'>
                       <span>
-                        {t.id_rol === 1
-                          ? 'Atencion al cliente'
-                          : t.id_rol === 2
-                          ? 'Contable administrativo'
-                          : t.id_rol === 3
-                          ? 'Jefe de taller'
-                          : t.id_rol === 4
-                          ? 'Administrador'
-                          : 'Tecnico'}
+                        {t.id_rol === 1 ? 'Atencion al cliente' : t.id_rol === 2 ? 'Contable administrativo' : t.id_rol === 3 ? 'Jefe de taller' : t.id_rol === 4 ? 'Administrador' : 'Tecnico'}
                       </span>
                       <h3 className='feedback-tecnicos-heading pointer' onClick={() => handleName(t.nombre)}>
                         {t.nombre}
@@ -127,7 +118,7 @@ const FeedbackEmpleado = () => {
             className='p-3
            feedback-containers-heading'
           >
-            {nombre || orderSelected ? `Orden #${orderSelected.numero_orden} de ${nombre}` : 'Seleccionar orden o empleado'}
+            {nombre ? `${orderSelected.numero_orden && `Orden # ${orderSelected.numero_orden} de`} ${nombre}` : 'Seleccionar orden o empleado'}
           </h2>
           <div className='feedback-form'>
             <h6 className='p-3 feedback-form-charge'>Cargar feedback</h6>
