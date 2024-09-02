@@ -37,10 +37,13 @@ const FeedbackEmpleado = () => {
 
   const handleSendFeedback = async () => {
     const feedbackValue = await feedbackRef.current.value;
+    const feedbackToEmployee = empleados.find((empleado) => empleado.nombre === nombre);
+
     const nuevoFeedback = {
       feedback: feedbackValue,
       id_empleado: userLogged.id,
       id_orden: orderSelected?.id,
+      to_id_employee: orderSelected.id === undefined ? feedbackToEmployee.id : null,
     };
     console.log(nuevoFeedback);
     await sendFeedback({ ...nuevoFeedback });
@@ -61,6 +64,7 @@ const FeedbackEmpleado = () => {
     setActiveIndex((prevIndex) => (prevIndex === index ? null : index));
     setOrderEmpleado(employeeOrder);
   };
+
   return (
     <div className='container-full-width'>
       <Header text='Feedback' />
@@ -88,7 +92,7 @@ const FeedbackEmpleado = () => {
                     <ul className='feedback-ordenes'>
                       {orderEmpleado.map((orden, index) => (
                         <li key={index} onClick={() => handleSelectOrder(orden.numero_orden)}>
-                          Orden #{orden.numero_orden}
+                          Orden # {`${orden.numero_orden} ${orden.Cliente.nombre} ${orden.Cliente.apellido}`}
                         </li>
                       ))}
                     </ul>
