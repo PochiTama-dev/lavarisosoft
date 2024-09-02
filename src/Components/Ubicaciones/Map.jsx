@@ -139,6 +139,7 @@ const Map = ({ position, zoom, activeTechnicians, selectedClient, selectedTechni
                         <img src={`https://via.placeholder.com/50`} alt='Technician' />
                         <div className='popup-content'>
                           <h4>{technician.nombre}</h4>
+                 
                           <p>{technician.telefono}</p>
                         </div>
                       </div>

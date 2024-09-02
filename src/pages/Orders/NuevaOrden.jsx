@@ -29,10 +29,10 @@ const guardarOrden = async (orden) => {
     const result = await response.json();
     if (result) {
       console.log("Orden guardada con éxito!!!");
-      return true;
+      return result; // Devuelve la orden guardada, incluyendo id
     } else {
       console.log("Se produjo un error, la orden no pudo ser guardada...");
-      return false;
+      return null;
     }
   } catch (error) {
     console.error("Error al guardar la orden.", error);
@@ -70,7 +70,7 @@ const guardarCliente = async (cliente) => {
       const result = await response.json();
       if (result) {
         console.log("Cliente guardado con éxito!!!");
-        return result.id; // Assuming the backend returns the saved client's ID
+        return result.id;  
       } else {
         console.log("Se produjo un error, el cliente no pudo ser guardado...");
         return null;
@@ -79,6 +79,27 @@ const guardarCliente = async (cliente) => {
   } catch (error) {
     console.error("Error al guardar el cliente.", error);
     return null;
+  }
+};
+
+const guardarEvento = async (evento) => {
+  try {
+    const response = await fetch("https://lv-back.online/agenda/guardar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(evento)
+    });
+    const result = await response.json();
+    if (result) {
+      console.log("Evento agendado con éxito!!!");
+      console.log(result);
+      return true;
+    } else {
+      console.log("Se produjo un error, el evento no pudo ser agendado...");
+      return false;
+    }
+  } catch (error) {
+    console.error("Error al agendar el evento.", error);
   }
 };
 
@@ -104,6 +125,8 @@ const NuevaOrden = ({ selectedClientData }) => {
       return;
     }
 
+    console.log("INCIDENTE", incidente);
+
     const clienteId = await guardarCliente(cliente);
     if (clienteId) {
       const orden = {
@@ -118,10 +141,24 @@ const NuevaOrden = ({ selectedClientData }) => {
         motivo: incidente.diagnostico,
         repuestos: incidente.repuestos
       };
+
       const ordenGuardada = await guardarOrden(orden);
       if (ordenGuardada) {
-        alert("Orden guardada con éxito");
-        console.log("Orden completa guardada con éxito!!!");
+        const evento = {
+          id_cliente: clienteId, // Incluye id_cliente aquí
+          id_evento_agenda: 1, // Valor predeterminado para id_evento_agenda
+          fecha: incidente.fecha_visita,
+          hora: `${incidente.hora_inicio_visita} - ${incidente.hora_fin_visita}`
+        };
+
+        const eventoGuardado = await guardarEvento(evento);
+        if (eventoGuardado) {
+          alert("Orden y evento guardados con éxito");
+          console.log("Orden y evento guardados con éxito!!!");
+        } else {
+          alert("Error al guardar el evento");
+          console.log("Error al guardar el evento...");
+        }
       } else {
         alert("Error al guardar orden");
         console.log("Error al guardar la orden completa...");

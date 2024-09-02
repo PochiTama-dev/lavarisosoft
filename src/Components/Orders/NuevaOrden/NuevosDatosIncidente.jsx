@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
 import './nuevaOrden.css';
-
+import dayjs, { Dayjs } from 'dayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { TimeClock } from '@mui/x-date-pickers/TimeClock';
+import { Modal, Button } from '@mui/material';
 const NuevosDatosIncidente = ({ setIncidente }) => {
   const [repuestos, setRepuestos] = useState([]);
   const [nuevoRepuesto, setNuevoRepuesto] = useState('');
@@ -9,9 +13,24 @@ const NuevosDatosIncidente = ({ setIncidente }) => {
   const [selectedEstado, setSelectedEstado] = useState(4);
   const [numeroOrden, setNumeroOrden] = useState('');
   const [showMore, setShowMore] = useState(false);
+  const [fechaVisita, setFechaVisita] = useState('');
+  const [horaInicioVisita, setHoraInicioVisita] = useState(dayjs());
+  const [horaFinVisita, setHoraFinVisita] = useState(dayjs());
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSelectingStartTime, setIsSelectingStartTime] = useState(true);
+  const [timeClockKey, setTimeClockKey] = useState(0); // New state to control the key
   const handleShowMore = () => {
     setShowMore(!showMore);
   };
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+    setIsSelectingStartTime(true); // Start with selecting the start time
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   const listadoOrdenes = async () => {
     try {
       const response = await fetch("https://lv-back.online/ordenes/listado");
@@ -93,6 +112,33 @@ const NuevosDatosIncidente = ({ setIncidente }) => {
     setShowInput(!showInput);
   };
 
+  const handleFechaVisitaChange = (e) => {
+    setFechaVisita(e.target.value);
+    setIncidente(prevState => ({ ...prevState, fecha_visita: e.target.value }));
+  };
+  const handleHoraInicioVisitaChange = (newValue) => {
+    if (newValue?.isValid()) {
+      setHoraInicioVisita(newValue);
+      setIncidente(prevState => ({ ...prevState, hora_inicio_visita: newValue.format('HH:mm') }));
+  
+    
+      if (  newValue.minute() !== horaInicioVisita.minute()) {
+        setIsSelectingStartTime(false);  
+        setTimeClockKey(prevKey => prevKey + 1);  
+      }
+    }
+  };
+  
+  
+  const handleHoraFinVisitaChange = (newValue) => {
+    if (newValue?.isValid()) {
+      setHoraFinVisita(newValue);
+      setIncidente(prevState => ({ ...prevState, hora_fin_visita: newValue.format('HH:mm') }));
+      
+ 
+    }
+  };
+
   return (
     <div>
       <div className='row'>
@@ -118,8 +164,7 @@ const NuevosDatosIncidente = ({ setIncidente }) => {
               <input type='text' id='equipo' className='form-control input-small' onChange={handleInputChange} required />
             </div>
           </div>
-
-  
+          
           {showMore && (
             <>
               <div className='mb-3 row align-items-center'>
@@ -153,6 +198,89 @@ const NuevosDatosIncidente = ({ setIncidente }) => {
                   </select>
                 </div>
               </div>
+              <div className='mb-3 row align-items-center'>
+                <label htmlFor='fecha_visita' className='col-sm-2 col-form-label'>Fecha de Visita:</label>
+                <div className='col-sm-8'>
+                  <input 
+                    type='date' 
+                    id='fechaVisita' 
+                    className='form-control input-small' 
+                    value={fechaVisita} 
+                    onChange={handleFechaVisitaChange} 
+                    required 
+                  />
+                </div>
+              </div>
+              <div className='mb-3 row'>
+                <div className='col-sm-10 offset-sm-2'>
+                <Button variant="contained" color="primary" onClick={handleOpenModal}>
+        Seleccionar Horario de Visita
+      </Button>
+      <p>
+            Intervalo Seleccionado: {horaInicioVisita.format('HH:mm')} - {horaFinVisita.format('HH:mm')}
+          </p>
+                </div>
+              </div>
+              <Modal open={isModalOpen} onClose={handleCloseModal} className="modal">
+  <div className="modal-content">
+    <div className="modal-header">
+      <h5 className="modal-title">
+        {isSelectingStartTime ? 'Selecciona la Hora de Inicio' : 'Selecciona la Hora de Fin'}
+      </h5>
+    </div>
+    <div className="modal-body">
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        {isSelectingStartTime ? (
+          <TimeClock 
+    ampm={false} 
+            key={timeClockKey} 
+            value={horaInicioVisita} 
+            onChange={handleHoraInicioVisitaChange} 
+          />
+        ) : (
+          <TimeClock 
+    ampm={false} 
+
+            key={timeClockKey} 
+            value={horaFinVisita} 
+            onChange={handleHoraFinVisitaChange} 
+          />
+        )}
+      </LocalizationProvider>
+      <div className="selected-times mt-3">
+ 
+        {!isSelectingStartTime && horaInicioVisita && horaFinVisita && (
+          <p>
+            Intervalo Seleccionado: {horaInicioVisita.format('HH:mm')} - {horaFinVisita.format('HH:mm')}
+          </p>
+        )}
+      </div>
+    </div>
+    <div className="modal-footer">
+      <Button 
+        variant="contained" 
+        color="secondary" 
+ 
+        onClick={() => {
+          setHoraInicioVisita(dayjs()); // Reset start time
+          setHoraFinVisita(dayjs()); // Reset end time
+          setIsSelectingStartTime(true); // Go back to start time selection
+          setTimeClockKey(prevKey => prevKey + 1); // Force TimeClock reset
+        }}
+      >
+        Borrar
+      </Button>
+      <Button 
+        variant="contained" 
+        color="primary" 
+        onClick={handleCloseModal}
+      >
+        Aceptar
+      </Button>
+    </div>
+  </div>
+</Modal>
+
             </>
           )}
 
