@@ -42,6 +42,7 @@ import Notificaciones from './Components/Notificaciones/Notificaciones';
 import Feedback from './Components/Feedback/Feedback';
 import PrivateRoute from './Components/ProtectedRoute/ProtectedRoute.jsx';
 import RemitoOrden from './Components/Orders/OrdenDetalle/RemitoOrden.jsx';
+import FeedbackEmpleado from './Components/Feedback/FeedbackEmpleado.jsx';
 
 function App() {
   return (
@@ -58,6 +59,7 @@ function App() {
         <Route path='/uploadEmpleadoExcel' element={<UploadEmpleadoExcel />} />
         {/* Ruta Feedback */}
         <Route path='/feedback' element={<Feedback />} />
+        <Route path='/feedback/empleado' element={<FeedbackEmpleado />} />
       </Route>
 
       <Route element={<PrivateRoute roles={['Contable administrativo', 'Super administrador']} />}>
@@ -80,7 +82,7 @@ function App() {
         <Route path='/caja' element={<NuevaCaja />} />
         <Route path='/cajasBancos' element={<CajasBancos />} />
         <Route path='/proveedor' element={<NuevoProveedor />} />
-        <Route path='/proveedorEdit' element={<EditProveedor />} />
+        <Route path='/proveedorEdit/:id' element={<EditProveedor />} />
         <Route path='/mantenimiento' element={<Mantenimiento />} />
         <Route path='/presupuestos' element={<Presupuestos />} />
       </Route>

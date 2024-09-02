@@ -5,9 +5,6 @@ export const empleados = async () => {
     const response = await fetch(`${API_URL}/empleados`);
     const empleados = await response.json();
     if (empleados[0] !== undefined) {
-      console.log(
-        `Se encontró un listado completo con ${empleados.length} empleados!!`
-      );
       return empleados;
     } else {
       console.log("Aún no se registra ningún empleado...");
@@ -26,7 +23,6 @@ export const listadoEmpleados = async () => {
     const response = await fetch(`${API_URL}/empleados/listado`);
     const empleados = await response.json();
     if (empleados[0] !== undefined) {
-      console.log(`Se encontró un listado con ${empleados.length} empleados!!`);
       return empleados;
     } else {
       console.log("Aún no se registra ningún empleado...");
@@ -45,7 +41,6 @@ export const obtenerEmpleado = async (id) => {
     const response = await fetch(`${API_URL}/empleados/${id}`);
     const empleado = await response.json();
     if (empleado) {
-      console.log(`Se encontró un empleado asociado al id ${id}`);
       return empleado;
     } else {
       console.log(`No se encontró ningún empleado con el id ${id}`);

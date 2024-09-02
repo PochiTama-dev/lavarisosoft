@@ -10,14 +10,30 @@ const Menu = () => {
     if (!user) handleNavigate('login');
   }, [user]);
   return (
-    <div className='container-full-width'>
-      <Header text='Menú Principal' />
+    <div className='container-full-width' style={{ overflow: 'hidden' }}>
+      <Header text='Menú Principal' showBackButton={false} />
+      <h3
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          paddingRight: '8%',
+          marginBottom: '2%',
+          marginTop: '6%',
+          fontWeight: '500',
+          color: 'black',
+        }}
+      >
+        Sesión de: {user?.email}
+      </h3>
       {user?.tipoRol === 'Super administrador' ? (
         <div className='row menu-button-container'>
           <div className='col-md-4'>
             <div className='btn-group-vertical '>
               <Link to='/agenda' className='btn btn-lg btn-block menu-button'>
                 Agenda
+              </Link>
+              <Link to='/feedback' className='btn btn-lg btn-block menu-button'>
+                Feedback
               </Link>
             </div>
             <div className='btn-group-vertical '>
