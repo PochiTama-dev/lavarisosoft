@@ -8,7 +8,21 @@
     margin-bottom: 15px;  
   }
   
-
+  .modal-content {
+    width: 500px;
+    height: 500px;
+    margin: 0 auto; /* Center the modal horizontally */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center content vertically */
+    align-items: center; /* Center content horizontally */
+  }
+  .modal {
+    display: flex;
+    justify-content: center; /* Center the modal horizontally */
+    align-items: center; /* Center the modal vertically */
+ 
+  }
   .input-small {
   width: 80%; 
  
