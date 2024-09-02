@@ -1,3 +1,6 @@
+.pointer{
+  cursor:pointer;
+}
 .feedback-heading {
   background-color: #69688c;
   color: white;
@@ -34,6 +37,7 @@
   background-color: #e6e6e6;
   max-height: 49%;
   min-width: 375px;
+  overflow: hidden;
 }
 
 .feedback-tecnico li {
