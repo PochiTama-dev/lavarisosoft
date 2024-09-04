@@ -81,7 +81,7 @@ const Feedback = () => {
   const handleSelectOrder = async (empleado, orden) => {
     const newOrderSelected = await showOrders.filter((order) => order.numero_orden === orden);
     setOrderSelected(newOrderSelected);
-    setNombre();
+    //setNombre();
     setOrderSelected(newOrderSelected[0]);
     const getFeedback = allFeedbacks.find((feedback) => feedback.id_orden === newOrderSelected[0].id && feedback.id_empleado === empleado.id);
     setFeedback(getFeedback);
@@ -92,6 +92,8 @@ const Feedback = () => {
     setNombre(empleado.nombre);
     setOrderSelected();
     const getEmployees = allFeedbacks.filter((feedback) => feedback.to_id_employee === empleado.id && feedback.id_orden === null);
+    console.log(getEmployees);
+
     setFeedbackEmpleados(getEmployees);
     setFeedback({ feedback: '' });
   };
@@ -124,7 +126,7 @@ const Feedback = () => {
                     <ul className='feedback-ordenes'>
                       {showOrders.map((order, index) => (
                         <li key={index} onClick={() => handleSelectOrder(t, order.numero_orden)}>
-                          Orden #{order.numero_orden}
+                          Orden #{order.numero_orden} hecho por {t.nombre}
                         </li>
                       ))}
                     </ul>
@@ -152,25 +154,27 @@ const Feedback = () => {
             className='p-3
            feedback-containers-heading'
           >
-            {orderSelected || nombre ? `${orderSelected ? `Orden #${orderSelected.numero_orden}` : ''} ${(nombre && 'Feedback a ' + nombre) || ''}` : 'Seleccionar orden o empleado'}
+            {orderSelected || nombre
+              ? `${orderSelected ? `Orden #${orderSelected.numero_orden} hecho por ${nombre}` : ''} ${(!orderSelected && 'Feedback a ' + nombre) || ''}`
+              : 'Seleccionar orden o empleado'}
           </h2>
-          {!orderSelected && nombre ? (
-            <div className='d-flex justify-content-evenly'>
-              <h3>hecho por</h3>
-              <select>
-                <option value='' disabled selected>
-                  Seleccione un empleado
-                </option>
-                {feedbackEmpleados.map((employee, index) => (
-                  <option key={index} value={index} onClick={() => handleEmployee(employee)}>
-                    {employee.Empleado.nombre}
-                  </option>
-                ))}
-              </select>
-            </div>
-          ) : (
-            ''
-          )}
+          {!orderSelected && nombre
+            ? feedbackEmpleados.length > 0 && (
+                <div className='d-flex justify-content-evenly'>
+                  <h3>hecho por </h3>
+                  <select>
+                    <option value='' disabled selected>
+                      Seleccione un empleado
+                    </option>
+                    {feedbackEmpleados.map((employee, index) => (
+                      <option key={index} value={index} onClick={() => handleEmployee(employee)}>
+                        {employee.Empleado.nombre}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )
+            : ''}
 
           <div className='feedback-form'>
             <h6 className='p-3 feedback-form-charge'></h6>
