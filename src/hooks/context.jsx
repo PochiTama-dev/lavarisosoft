@@ -129,6 +129,16 @@ export const Provider = ({ children }) => {
     }
   };
 
+  const getFeedbacks = async () => {
+    try {
+      const data = await fetch('https://lv-back.online/feedbacks/listado');
+      const response = await data.json();
+      return response;
+    } catch (error) {
+      console.error('Error al traer los feedbacks: ', error);
+    }
+  };
+
   return (
     <Context.Provider
       value={{
@@ -146,6 +156,7 @@ export const Provider = ({ children }) => {
         ordenes,
         //feedback
         sendFeedback,
+        getFeedbacks,
       }}
     >
       {children}
