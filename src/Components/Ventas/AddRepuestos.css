@@ -7,7 +7,7 @@
   margin-left: 7.5%;
 }
 
-.agregar-repuesto-formulario h3 {
+.agregar-repuesto-formulario label {
   font-weight: 400;
   font-size: larger;
   width: 15%;
@@ -36,8 +36,75 @@
   border-radius: 20px;
   border: none;
   min-width: 90px;
-  width: 10%;
-  height: 3vh;
+  width: 12.5%;
+  height: 3.2vh;
   margin-left: 10%;
   margin-top: 2%;
+}
+
+/* Modal estilos */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 30px;
+  border-radius: 12px;
+  max-width: 80%;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content h2 {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.modal-buttons {
+  margin-bottom: 20px;
+}
+
+.modal-btn {
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin: 0 10px;
+}
+
+.modal-btn:hover {
+  background-color: #0056b3;
+}
+
+.modal-close {
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  background-color: #dc3545;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.modal-close:hover {
+  background-color: #c82333;
 }
