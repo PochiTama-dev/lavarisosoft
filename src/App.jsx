@@ -42,11 +42,17 @@ import Notificaciones from './Components/Notificaciones/Notificaciones';
 import Feedback from './Components/Feedback/Feedback';
 import PrivateRoute from './Components/ProtectedRoute/ProtectedRoute.jsx';
 import RemitoOrden from './Components/Orders/OrdenDetalle/RemitoOrden.jsx';
+ 
+import AddFactura from './Components/Ventas/FileUploader/AddFactura.jsx';
+ 
 import FeedbackEmpleado from './Components/Feedback/FeedbackEmpleado.jsx';
-
+ 
 function App() {
+
+  
   return (
     <Routes>
+      
       <Route path='/' element={<Login />} />
       <Route path='/login' element={<Login />} />
       <Route path='/menu' element={<Menu />} />
@@ -85,8 +91,8 @@ function App() {
         <Route path='/proveedorEdit/:id' element={<EditProveedor />} />
         <Route path='/mantenimiento' element={<Mantenimiento />} />
         <Route path='/presupuestos' element={<Presupuestos />} />
+      <Route path='/addFactura' element={<AddFactura />} />
       </Route>
-
       <Route element={<PrivateRoute roles={['Jefe de taller', 'Super administrador']} />}>
         <Route path='/liquidacionPresupuestos' element={<LiquidacionPresupuestos />} />
         <Route path='/editarStockRepuestos' element={<EditarStockRespuestos />} />
