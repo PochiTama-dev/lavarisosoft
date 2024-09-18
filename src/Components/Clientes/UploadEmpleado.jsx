@@ -59,7 +59,6 @@ const UploadEmpleado = () => {
         nombre,
         apellido,
         cuil,
-        cuenta,
         legajo,
         telefono,
         email,
@@ -73,7 +72,7 @@ const UploadEmpleado = () => {
         color,
         patente,
       } = await empleado;
-      await postEmpleado({ id_rol, nombre, apellido, cuil, cuenta, legajo, telefono, email, direccion, ubicacion, longitud, latitud, estado });
+      await postEmpleado({ id_rol, nombre, apellido, cuil, legajo, telefono, email, direccion, ubicacion, longitud, latitud, estado });
       if (marca && modelo && patente && color) {
         const idEmpleado = await getEmpleado(email);
         await postVehiculo({ id_empleado: idEmpleado, marca, modelo, patente, color });
@@ -96,14 +95,34 @@ const UploadEmpleado = () => {
   };
 
   const postEmpleado = async (empleadoForm) => {
-    const { id_rol, nombre, apellido, cuil, cuenta, legajo, telefono, email, direccion, ubicacion, longitud, latitud } = await empleadoForm;
+    let { id_rol, nombre, apellido, cuil, legajo, telefono, email, direccion, ubicacion, longitud, latitud } = await empleadoForm;
+    switch (id_rol) {
+      case '1':
+        legajo = 'ATC-' + legajo;
+        break;
+      case '2':
+        legajo = 'CAD-' + legajo;
+        break;
+
+      case '3':
+        legajo = 'JFT-' + legajo;
+        break;
+
+      case '4':
+        legajo = 'SPA-' + legajo;
+        break;
+
+      default:
+        legajo = 'TEC-' + legajo;
+        break;
+    }
     const fetchEmpleado = await fetch('https://lv-back.online/empleados/guardar', {
       method: 'post',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ id_rol, nombre, apellido, cuil, cuenta, legajo, telefono, email, direccion, ubicacion, longitud, latitud, estado: 0 }),
+      body: JSON.stringify({ id_rol, nombre, apellido, cuil, legajo, telefono, email, direccion, ubicacion, longitud, latitud, estado: 0 }),
     });
     console.log('status empleado: ', fetchEmpleado.status);
   };
@@ -204,17 +223,6 @@ const UploadEmpleado = () => {
                 placeholder='Ingrese su legajo'
                 style={{ textAlign: 'left', borderRadius: '5px', width: '350px' }}
               />
-              <Form.Label className={camposVacios.includes('cuenta') ? 'required-field' : ''} style={{ textAlign: 'left', display: 'block' }}>
-                Cuenta
-              </Form.Label>
-              <Form.Control
-                type='text'
-                name='cuenta'
-                value={empleado.cuenta}
-                onChange={handleChange}
-                placeholder='Ingrese su cuenta'
-                style={{ textAlign: 'left', borderRadius: '5px', width: '350px' }}
-              />
             </Form.Group>
             <Form.Group controlId='formTelefono' className='label-input-margin'>
               <Form.Label className={camposVacios.includes('telefono') ? 'required-field' : ''} style={{ textAlign: 'left', display: 'block' }}>
@@ -281,7 +289,7 @@ const UploadEmpleado = () => {
                 style={{ textAlign: 'left', borderRadius: '5px', width: '350px' }}
               />
             </Form.Group>
-            <Form.Group controlId='formLatitud' className='label-input-margin'>
+            {/* <Form.Group controlId='formLatitud' className='label-input-margin'>
               <Form.Label className={camposVacios.includes('latitud') ? 'required-field' : ''} style={{ textAlign: 'left', display: 'block' }}>
                 Latitud
               </Form.Label>
@@ -293,8 +301,8 @@ const UploadEmpleado = () => {
                 placeholder='Ingrese su latitud WTF!?'
                 style={{ textAlign: 'left', borderRadius: '5px', width: '350px' }}
               />
-            </Form.Group>
-            <Form.Group controlId='formLongitud' className='label-input-margin'>
+            </Form.Group> */}
+            {/* <Form.Group controlId='formLongitud' className='label-input-margin'>
               <Form.Label className={camposVacios.includes('longitud') ? 'required-field' : ''} style={{ textAlign: 'left', display: 'block' }}>
                 Longitud
               </Form.Label>
@@ -306,7 +314,7 @@ const UploadEmpleado = () => {
                 placeholder='Ingrese su longitud AHRE!'
                 style={{ textAlign: 'left', borderRadius: '5px', width: '350px' }}
               />
-            </Form.Group>
+            </Form.Group> */}
             {/* <Form.Group controlId='formEstado' className='label-input-margin'>
               <Form.Label className={camposVacios.includes('estado') ? 'required-field' : ''} style={{ textAlign: 'left', display: 'block' }}>
                 Estado

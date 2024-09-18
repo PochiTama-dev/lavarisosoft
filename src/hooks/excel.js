@@ -148,4 +148,6 @@ export const uploadExcelStock = async (event) => {
       reject(new Error('No file selected'));
     }
   });
+
 };
+
