@@ -166,6 +166,7 @@ export const Provider = ({ children }) => {
     }
   };
 
+  //NOTIFICACIONES
   const handleNotifications = async () => {
     try {
       const data = await fetch('https://lv-back.online/notificaciones/');
@@ -173,6 +174,25 @@ export const Provider = ({ children }) => {
       return response;
     } catch (error) {
       console.error('Error en tryCactch: ', error);
+    }
+  };
+
+  const marcarNotificacionVista = async (idEmpleado) => {
+    try {
+      const response = await fetch(`http://localhost:8000/notificaciones/modificar/${idEmpleado}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const result = await response.json();
+      if (result[0] > 0) {
+        console.log('Notificaciones revisadas!!!');
+        return true;
+      } else {
+        console.log('Se produjo un error, la notificacion no fue revisada...');
+        return false;
+      }
+    } catch (error) {
+      console.error('Error al modificar la notificacion.', error);
     }
   };
 
@@ -198,6 +218,7 @@ export const Provider = ({ children }) => {
         getFeedbacks,
         //Notificaciones
         handleNotifications,
+        marcarNotificacionVista,
       }}
     >
       {children}

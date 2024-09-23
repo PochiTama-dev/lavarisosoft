@@ -5,7 +5,7 @@ import ModalAprobar from './ModalAprobar';
 import checked from '../../assets/cheked.webp';
 
 const NotificacionesDetalle = () => {
-  const { handleNotifications, getEmpleadosLista, user, ordenesGenerales } = useCustomContext();
+  const { handleNotifications, getEmpleadosLista, user, ordenesGenerales, marcarNotificacionVista } = useCustomContext();
   const [notificaciones, setNotificaciones] = useState([]);
   const [ordenes, setOrdenes] = useState([]);
   const [modal, setModal] = useState(false);
@@ -55,6 +55,7 @@ const NotificacionesDetalle = () => {
   const handleChecked = (type, index) => {
     if (type === 'notificacion') {
       setCheckedNotifications((prev) => [...prev, index]);
+      marcarNotificacionVista(index);
     } else if (type === 'orden') {
       setCheckedOrders((prev) => [...prev, index]);
     }
