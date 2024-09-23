@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import './Notificaciones.css';
-import socket from '../services/socketService';
 import { useCustomContext } from '../../hooks/context';
 import ModalAprobar from './ModalAprobar';
 import checked from '../../assets/cheked.webp';
@@ -16,29 +15,9 @@ const NotificacionesDetalle = () => {
   const [hoveredItem, setHoveredItem] = useState();
 
   useEffect(() => {
-    const handleNotificaciones = (data) => {
-      console.log('Mensaje recibido:', data);
-    };
     fetchData();
 
     // Manejar notificaciones dependiendo del rol del usuario
-    const manageSockets = () => {
-      if (user.tipoRol === 'Super administrador') {
-        socket.on('todasNotificaciones', handleNotificaciones);
-      } else if (user.tipoRol === 'Jefe de taller') {
-        socket.on('nuevaOrden', handleNotificaciones);
-      } else if (user.tipoRol === 'Contable administrativo') {
-        socket.on('ordenActualizada', handleNotificaciones);
-      }
-    };
-
-    manageSockets();
-
-    return () => {
-      socket.off('todasNotificaciones', handleNotificaciones);
-      socket.off('nuevaOrden', handleNotificaciones);
-      socket.off('ordenActualizada', handleNotificaciones);
-    };
   }, [user.tipoRol]);
 
   // Llamadas a la API

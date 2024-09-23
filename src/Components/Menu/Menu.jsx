@@ -3,12 +3,23 @@ import { Link } from 'react-router-dom';
 import Header from '../Header/Header.jsx';
 import { useCustomContext } from '../../hooks/context.jsx';
 import { useEffect } from 'react';
+import socket from '../services/socketService.tsx';
 
 const Menu = () => {
   const { user, handleNavigate } = useCustomContext();
   useEffect(() => {
     if (!user) handleNavigate('login');
+    if (user.tipoRol === 'Super administrador') {
+      socket.on('todasNotificaciones', handleNotificaciones);
+    } else if (user.tipoRol === 'Jefe de taller') {
+      socket.on('nuevaOrden', handleNotificaciones);
+    } else if (user.tipoRol === 'Contable administrativo') {
+      socket.on('ordenActualizada', handleNotificaciones);
+    }
   }, [user]);
+  const handleNotificaciones = (data) => {
+    console.log('Mensaje recibido:', data);
+  };
   return (
     <div className='container-full-width' style={{ overflow: 'hidden' }}>
       <Header text='Menú Principal' showBackButton={false} />
