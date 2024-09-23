@@ -1,26 +1,4 @@
-/*
-sistema contable
- fecha	(FECHA REGISTRACION EN SISTEMA)
-fecha comprobante	(FECHA FACTURA)
-cuenta (CODIGO CLIENTE)
-cliente	(NOMBRE COMPLETO DEL CLIENTE	)
-SISTEMA	(C1/C2)
-codigo iva (CODIGO SISTEMA IVA)
-tipo iva (RESP.INSCRIPTO/MONOTRIBUTO/CONS FINAL/ETC)
-cuit (CUIT)
-codigo factura (CODIGO FACTURA)
-tipo factura (FACT/NC/ND)
-letra	(A/B/M/ETC.)
-sucursal (NUMERO SUCURSAL
-comprobante (N°FACTURA AFIP)
-control interno (N° CORRELATIVO EN SISTEMA PARA CONTROL)
-neto (MONTO NETO)
-IVA (MONTO IVA
-total (MONTO TOTAL)
-porcentaje (21/10,5)
-fecha vto (VTO PARA EL PAGO)
- */
-
+ 
 import ExcelJS from 'exceljs';
 
 export const uploadExcelSistemaContable = async (req, res) => {
@@ -170,4 +148,6 @@ export const uploadExcelStock = async (event) => {
       reject(new Error('No file selected'));
     }
   });
+
 };
+
