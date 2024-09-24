@@ -5,6 +5,7 @@ import cargar from "../../../images/cargarExcel.webp";
 import descargar from "../../../images/descargarExcel.webp";
 import editar from "../../../images/editar.webp";
 import { listaRepuestos } from "../../../services/repuestosService.jsx";
+import { listaStockCamioneta } from "../../../services/stockCamionetaService.jsx";
 import { modificarStockCamioneta } from "../../../services/stockCamionetaService.jsx";
 import ModalAsignarRepuestos from "../../Mantenimiento/TabsMantenimiento/ModalAsignarRepuestos";
 import { useCustomContext } from "../../../hooks/context.jsx";
@@ -26,11 +27,19 @@ const Inventario = () => {
   const [tecnicoAsignado, setTecnicoAsignado] = useState(null);
 
   const handleShowRepuestos = (index) => {
-    setStockDataSeleccionada(filteredCamionetaData[index]);
-    setCamionetaSeleccionada(filteredCamionetaData[index].id);
-    setTecnicoAsignado(filteredCamionetaData[index].Empleado);
+    const selectedCamioneta = filteredCamionetaData[index];
+    setStockDataSeleccionada(selectedCamioneta);
+    setCamionetaSeleccionada(selectedCamioneta.id);
+    
+    if (selectedCamioneta.Empleado) {
+      setTecnicoAsignado(selectedCamioneta.Empleado);
+    } else {
+      console.warn("No hay empleado asignado para esta camioneta");
+      setTecnicoAsignado(null); // o un valor por defecto
+    }
     setShowModal(true);
   };
+  
 
   const handleCloseRepuestos = () => setShowModal(false);
 
@@ -39,17 +48,39 @@ const Inventario = () => {
   };
 
   const filteredStockData = stockData.filter((item) => {
-    if (item.Repuesto) {
-      return item.Repuesto.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
+    try {
+      console.log("Datos solicitados:", item.Repuesto);
+      if (item.Repuesto) {
+        return item.Repuesto.descripcion.toLowerCase().includes(searchTerm.toLowerCase());
+      }
+    } catch (error) {
+      console.error("Error al acceder a item.Repuesto:", error);
+      return false; 
     }
-  }
-  );
-  const filteredCamionetaData = camionetaData.filter((item) =>
-    item.Repuesto.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-  const filteredReservaData = reservaData.filter((item) =>
-    item.id.toString().includes(searchTerm.toLowerCase())
-  );
+  });
+  
+  const filteredCamionetaData = camionetaData.filter((item) => {
+    try {
+      console.log("Datos solicitados camioneta:", item.Repuesto);
+      return item.Repuesto && item.Repuesto.descripcion && 
+             item.Repuesto.descripcion.toLowerCase().includes(searchTerm.toLowerCase());
+    } catch (error) {
+      console.error("Error al acceder a item.Repuesto:", error);
+      return false; 
+    }
+  });
+
+  
+  const filteredReservaData = reservaData.filter((item) => {
+    try {
+      console.log("Datos solicitados:", item.id);
+      return item.id.toString().includes(searchTerm.toLowerCase());
+    } catch (error) {
+      console.error("Error al acceder a item.id:", error);
+      return false; 
+    }
+  });
+  
 
   const stockDb = async () => {
     try {
@@ -63,7 +94,7 @@ const Inventario = () => {
     }
   };
 
-  const camionetaDb = async () => {
+  /* const camionetaDb = async () => {
     try {
       const response = await fetch(
         "https://lv-back.online/stock/camioneta/lista"
@@ -73,7 +104,7 @@ const Inventario = () => {
       console.error(error);
       return [];
     }
-  };
+  }; */
 
   const reservaDb = async () => {
     try {
@@ -110,7 +141,7 @@ const Inventario = () => {
     };
     const fetchCamionetaData = async () => {
       try {
-        const data = await camionetaDb();
+        const data = await listaStockCamioneta();//camionetaDb();
         setCamionetaData(data);
       } catch (error) {
         console.error("Error fetching camioneta data:", error);
@@ -239,21 +270,21 @@ const Inventario = () => {
           <Table hover className="grilla-camioneta">
             <thead>
               <tr>
-                <th>Técnico</th>
                 <th>ID</th>
-                <th>ID de repuesto</th>
-                <th>Nombre de repuesto</th>
-                <th>Disponibles</th>
+                <th>Tecnico</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Patente</th>
               </tr>
             </thead>
             <tbody className="grilla-camioneta-body">
-              {filteredCamionetaData.map((camioneta, index) => (
+              {camionetaData.map((camioneta, index) => (
                 <tr key={index} className={index % 2 === 0 ? "" : "row-even"}>
-                  <td>{camioneta.Empleado.nombre}</td>
                   <td>{camioneta.id}</td>
-                  <td>{camioneta.id_repuesto}</td>
-                  <td>{camioneta.Repuesto.descripcion}</td>
-                  <td>{camioneta.cantidad}</td>
+                  <td>{camioneta.Empleado.nombre} {camioneta.Empleado.apellido}</td>
+                  <td>{camioneta.Empleado.Vehiculo.marca}</td>
+                  <td>{camioneta.Empleado.Vehiculo.modelo}</td>
+                  <td>{camioneta.Empleado.Vehiculo.patente}</td>
                   <td>
                     <span className="btnMas" onClick={() => handleShowRepuestos(index)}>+</span>
                   </td>
@@ -349,6 +380,8 @@ const Inventario = () => {
               cantidad: repuesto.cantidad || 1,
               lote: stockDataSeleccionada.lote || "N/A",
             };
+
+            console.log("RepuestoData: ", repuestoData)
 
             const success = await modificarStockCamioneta(camionetaSeleccionada, repuestoData);
 
