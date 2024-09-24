@@ -381,122 +381,107 @@ const Ubicaciones = () => {
  
   return (
     <div className='ventas-container'>
-      <Header text='Ubicaciones'></Header>
-      <div className='row w-100 p-5 mt-5'>
-        <div className='col-4'>
-          {/* Listado Clientes */}
-          {(view === 'clientesTecnicos' || view === 'formClientes') && (
-            <>
-              <div id='clientes' className='container-lists list-clientes-container'>
-                <h2 className='px-3 pb-2 feedback-containers-heading'>Clientes</h2>
-                <div className='px-4 mx-3'>
-                  <input className='caja-input' type='text' placeholder='Buscar' value={searchTerm} onChange={handleSearchChange} />
-                  <button className='caja-button-search'>🔍︎</button>
-                </div>
-                <div className='scrollable-container-top'>
-                  {(showAllClientes ? filteredClientes : filteredClientes.slice(0, 3)).map((t, i) => (
-                    <div key={i} className='my-2'>
-                      <div className='feedback-tecnicos-container align-items-center'>
-                        <button className='feedback-tecnicos-heading-button' onClick={() => handleSelectClient(t)}>
-                          {t.nombre} {t.apellido}
-                        </button>
-                        <span className='mx-2'>
-                          Se encuentra a{' '}
-                          {haversine(t.latitud, t.longitud, position.latitude, position.longitude)}
-                          km
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                {!showAllClientes && filteredClientes.length > 3 && (
-                  <div className='d-flex justify-content-center'>
-                    <button onClick={handleShowAllClientes} className='bg-info rounded-pill py-1 px-4 text-white'>
-                      Mostrar todos
-                    </button>
-                  </div>
-                )}
-              </div>
-              <hr></hr>
-            </>
-          )}
-          {/* Lista Tecnicos */}
-          {view === 'clientesTecnicos' && (
-            <>
- 
-
-
- {view === 'clientesTecnicos' && (
-  <div id='tecnicos' className='container-lists list-tecnicos-container'>
-    <h2 className='px-3 feedback-containers-heading'>Técnicos</h2>
-    <div className='px-4 mx-3'>
-      <input
-        className='caja-input'
-        type='text'
-        placeholder='Buscar'
-        value={searchTec}
-        onChange={handleSearchTec}
-      />
-      <button className='caja-button-search'>🔍︎</button>
-    </div>
-    <div className='scrollable-container-top'>
-      {filteredTecnicos.map((t) => {
-     
-        const estadoTecnico = tecnicosStatus[t.id];
- 
-        const badgeClass = `notification-badge-tecnico ${
-          estadoTecnico === 'conectado' ? 'connected' :
-          estadoTecnico === 'ocupado' ? 'busy' : 
-          estadoTecnico === 'desconectado' ? 'disconnected' :
-          'disconnected'  
-        }`;
-
-        return (
-          <div key={t.id}>
-            <div className='feedback-tecnicos-container align-items-center'>
-              <h3 className='feedback-tecnicos-heading mx-2'>{t.nombre} {t.apellido}</h3>
-              <div className={badgeClass}></div>
-              <ul onClick={() => handleShowTareas(t.id)} className='feedback-tecnico'>
-                <li></li>
-              </ul>
+  <Header text='Ubicaciones'></Header>
+  <div className='row w-100 p-5 mt-5'>
+    <div className='col-4'>
+      {/* Listado Clientes */}
+      {(view === 'clientesTecnicos' || view === 'formClientes') && (
+        <>
+          <div id='clientes' className='container-lists list-clientes-container'>
+            <h2 className='px-3 pb-2 feedback-containers-heading'>Clientes</h2>
+            <div className='d-flex align-items-center px-4 mx-3'>
+              <input
+                className='caja-input form-control me-2'
+                type='text'
+                placeholder='Buscar'
+                value={searchTerm}
+                onChange={handleSearchChange}
+              />
+              <button className='caja-button-search btn btn-primary'>🔍︎</button>
             </div>
-            {showTareas[t.id] && (
-              <ul className='feedback-ordenes'>
-                {tareas
-                  .filter((tarea) => tarea.id_tecnico === t.id)
-                  .map((tarea, index) => (
-                    <div key={index} className='feedback-tecnicos-container align-items-center'>
-                      <div
-                        className={`notification-badge-tarea ${tarea.estado === 'activo' ? 'active' : 'ending'}`}
-                      ></div>
-                      <li className='li-tarea'>{tarea.detalle}</li>
-                    </div>
-                  ))}
-              </ul>
+            <div className='scrollable-container-top mt-3'>
+              {(showAllClientes ? filteredClientes : filteredClientes.slice(0, 3)).map((t, i) => (
+                <div key={i} className='cliente-item my-2 p-3 d-flex justify-content-between align-items-center bg-light rounded shadow-sm'>
+                  <button
+                    className='btn btn-link feedback-tecnicos-heading-button'
+                    onClick={() => handleSelectClient(t)}
+                  >
+                    {t.nombre} {t.apellido}
+                  </button>
+                  <span className='text-muted'>
+                    {haversine(t.latitud, t.longitud, position.latitude, position.longitude)} km
+                  </span>
+                </div>
+              ))}
+            </div>
+            {!showAllClientes && filteredClientes.length > 3 && (
+              <div className='d-flex justify-content-center mt-3'>
+                <button
+                  onClick={handleShowAllClientes}
+                  className='btn btn-info rounded-pill text-white'
+                >
+                  Mostrar todos
+                </button>
+              </div>
             )}
           </div>
-        );
-      })}
-    </div>
-  </div>
-)}
+          <hr />
+        </>
+      )}
+      {/* Lista Técnicos */}
+      {view === 'clientesTecnicos' && (
+        <div id='tecnicos' className='container-lists list-tecnicos-container'>
+          <h2 className='px-3 feedback-containers-heading'>Técnicos</h2>
+          <div className='px-4 mx-3'>
+            <input
+              className='caja-input'
+              type='text'
+              placeholder='Buscar'
+              value={searchTec}
+              onChange={handleSearchTec}
+            />
+            <button className='caja-button-search'>🔍︎</button>
+          </div>
+          <div className='scrollable-container-top'>
+            {filteredTecnicos.map((t) => {
+              const estadoTecnico = tecnicosStatus[t.id];
+              const badgeClass = `notification-badge-tecnico ${
+                estadoTecnico === 'conectado' ? 'connected' :
+                estadoTecnico === 'ocupado' ? 'busy' : 
+                estadoTecnico === 'desconectado' ? 'disconnected' :
+                'disconnected'  
+              }`;
 
+              return (
+                <div key={t.id}>
+                  <div className='feedback-tecnicos-container align-items-center'>
+                    <h3 className='feedback-tecnicos-heading mx-2'>{t.nombre} {t.apellido}</h3>
+                    <div className={badgeClass}></div>
+                    <ul onClick={() => handleShowTareas(t.id)} className='feedback-tecnico'>
+                      <li></li>
+                    </ul>
+                  </div>
+                  {showTareas[t.id] && (
+                    <ul className='feedback-ordenes'>
+                      {tareas
+                        .filter((tarea) => tarea.id_tecnico === t.id)
+                        .map((tarea, index) => (
+                          <div key={index} className='feedback-tecnicos-container align-items-center'>
+                            <div
+                              className={`notification-badge-tarea ${tarea.estado === 'activo' ? 'active' : 'ending'}`}
+                            ></div>
+                            <li className='li-tarea'>{tarea.detalle}</li>
+                          </div>
+                        ))}
+                    </ul>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-            </>
-          )}
           {/* Form Clientes */}
           {view === 'formClientes' && (
             <div id='formClientes' className='container-lists'>
@@ -606,57 +591,56 @@ const Ubicaciones = () => {
 
 
           {/* Detalle cliente, Buscar tecnico */}
-          {view === 'detalleClienteBuscarTecnico' && (
-            <>
-              <div id='detalleCliente' className='container-lists'>
-                <h2 className='px-3 pt-3 feedback-containers-heading'>Cliente</h2>
-                <div className='scrollable-container-top'>
-                  <div className='feedback-tecnicos-container align-items-center'>
-                    <h4 className='feedback-tecnicos-heading'>{selectedClient.nombre}</h4>
-                    <span className='mx-2'>{selectedClient.distancia}</span>
-                  </div>
-                  <div className='feedback-tecnicos-container align-items-center'>
-                    <h4 className='feedback-tecnicos-heading'>Teléfono: {selectedClient.telefono}</h4>
-                  </div>
-                  <div className='feedback-tecnicos-container align-items-center'>
-                    <h4 className='feedback-tecnicos-heading'>Calle: {selectedClient.direccion}</h4>
-                  </div>
-                  <div className='feedback-tecnicos-container align-items-center'>
-                    <h4 className='feedback-tecnicos-heading'>CUIL/CUIT: {selectedClient.cuil}</h4>
-                  </div>
-                  <button className='feedback-tecnicos-heading-button' onClick={handleBack}>
-                    volver
-                  </button>
-                </div>
-              </div>
-              <div id='buscarTecnico' className='container-lists list-tecnicos-container'>
-                <h2 className='px-3 pt-3 feedback-containers-heading'>Buscar técnico</h2>
-                <div className='scrollable-container-top'>
-                  {(showAllTecnicos ? activeTecnicos : activeTecnicos.slice(0, 3)).map((t) => (
-                    <div key={t.id}>
-                      <div className='feedback-tecnicos-container align-items-center'>
-                        <button className='feedback-tecnicos-heading-button' onClick={() => handleSelectTecnico(t)}>
-                          {t.nombre}
-                        </button>
-                        <span className='mx-2'>
-                          Se encuentra a{' '}
-                          {haversine(t.latitud, t.longitud, selectedClient.latitud, selectedClient.longitud)}
-                          km
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                {!showAllTecnicos && activeTecnicos.length > 3 && (
-                  <div className='d-flex justify-content-center mt-4'>
-                    <button className='bg-info rounded-pill py-1 px-4 text-white' onClick={handleShowAllTecnicos}>
-                      Mostrar todos
-                    </button>
-                  </div>
-                )}
-              </div>
-            </>
-          )}
+{view === 'detalleClienteBuscarTecnico' && (
+  <>
+    <div id='detalleCliente' className='container-lists'>
+      <h2 className='px-3 pt-3 feedback-containers-heading'>Cliente</h2>
+      <div className='scrollable-container-top'>
+        <div className='feedback-tecnicos-container'>
+          <h4 className='feedback-tecnicos-heading'>{selectedClient.nombre}</h4>
+          <span className='client-info'>{selectedClient.distancia} km</span>
+        </div>
+        <div className='feedback-tecnicos-container'>
+          <h4 className='feedback-tecnicos-heading'>Teléfono: {selectedClient.telefono}</h4>
+        </div>
+        <div className='feedback-tecnicos-container'>
+          <h4 className='feedback-tecnicos-heading'>Calle: {selectedClient.direccion}</h4>
+        </div>
+        <div className='feedback-tecnicos-container'>
+          <h4 className='feedback-tecnicos-heading'>CUIL/CUIT: {selectedClient.cuil}</h4>
+        </div>
+        <div className='d-flex justify-content-center mt-3'>
+          <button className='feedback-tecnicos-heading-button' onClick={handleBack}>
+            Volver
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id='buscarTecnico' className='container-lists list-tecnicos-container'>
+      <h2 className='px-3 pt-3 feedback-containers-heading'>Buscar técnico</h2>
+      <div className='scrollable-container-top'>
+        {(showAllTecnicos ? activeTecnicos : activeTecnicos.slice(0, 3)).map((t) => (
+          <div key={t.id} className='feedback-tecnicos-container'>
+            <button className='feedback-tecnicos-heading-button' onClick={() => handleSelectTecnico(t)}>
+              {t.nombre}
+            </button>
+            <span className='mx-2'>
+              {haversine(t.latitud, t.longitud, selectedClient.latitud, selectedClient.longitud)} km
+            </span>
+          </div>
+        ))}
+      </div>
+      {!showAllTecnicos && activeTecnicos.length > 3 && (
+        <div className='d-flex justify-content-center mt-4'>
+          <button className='bg-info rounded-pill py-1 px-4 text-white' onClick={handleShowAllTecnicos}>
+            Mostrar todos
+          </button>
+        </div>
+      )}
+    </div>
+  </>
+)}
+
         </div>
         <div className='col-8'>
           <Map

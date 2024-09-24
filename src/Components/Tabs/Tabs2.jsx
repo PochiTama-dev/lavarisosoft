@@ -9,6 +9,7 @@ const Tabs = ({ active, onChange, children, direction }) => {
       <div className={`tabs2 ${tabsClass}`}>
         {children.map((c, index) => (
           <a
+            key={index}
             href={"javascript: void(0)"}
             onClick={() => onChange(index)}
             className={active === index ? "activeTab" : ""}
