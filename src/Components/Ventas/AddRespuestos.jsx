@@ -1,16 +1,36 @@
-import { useNavigate } from "react-router-dom";
-import Header from "../Header/Header";
-import "./AddRepuestos.css";
-import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
+import Header from '../Header/Header';
+import './AddRepuestos.css';
+import { useState, useEffect } from 'react';
 
 const AgregarRepuesto = () => {
   const [repuesto, setRepuesto] = useState({
-    codigo_repuesto: 0,
-    numero_serie: "",
-    tipo_electrodomestico: "",
-    descripcion: "",
+    nombre: '',
+    id_repuesto: 0,
+    id_proveedor: '',
+    precio: 0,
+    cantidad: 0,
+  
+    lote: '',
+    fecha_ingreso: '',
   });
+  const [proveedoresList, setProveedoresList] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchProveedores();
+  }, []);
+
+  const fetchProveedores = async () => {
+    try {
+      const response = await fetch('https://lv-back.online/proveedores');
+      const proveedores = await response.json();
+      setProveedoresList(proveedores);
+    } catch (error) {
+      console.error('Error al obtener proveedores:', error);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -18,94 +38,166 @@ const AgregarRepuesto = () => {
       ...prevRepuesto,
       [name]: value,
     }));
+
+    if (name === 'id_proveedor') {
+      const proveedorSeleccionado = proveedoresList.find(proveedor => proveedor.id === parseInt(value));
+      if (proveedorSeleccionado) {
+        const fechaActual = new Date().toISOString().split('T')[0].split('-').reverse().join('');  
+        const lote = `${proveedorSeleccionado.nombre.toUpperCase()}${fechaActual}`;
+        setRepuesto((prevRepuesto) => ({
+          ...prevRepuesto,
+          lote: lote,
+        }));
+      }
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    handleCreateRepuesto(repuesto);
+    setIsModalOpen(true);
   };
 
-  const handleCreateRepuesto = async (repuesto) => {
+  const handleGuardar = async (e) => {
+    e.preventDefault();
+
     try {
-      const { codigo_repuesto, descripcion } = await repuesto;
-      await postRepuesto({ codigo_repuesto, descripcion });
-      alert("Repuesto agregado con éxito");
-      navigate(-1);
+      const fechaActual = new Date().toISOString().split('T')[0].split('-').reverse().join(''); // Convertir la fecha al formato ddmmyyyy
+
+      // Actualizar repuesto con la fecha actual
+      const repuestoConFecha = {
+        ...repuesto,
+        fecha_ingreso: fechaActual,
+      };
+
+      // Enviar los datos completos incluyendo los campos obligatorios
+      const response = await fetch('https://lv-back.online/stock/principal/guardar', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(repuestoConFecha),  // Usar el objeto con la fecha actualizada
+      });
+
+      if (response.ok) {
+        alert('Repuesto agregado con éxito');
+      } else {
+        const errorData = await response.json();
+        console.error('Error al agregar repuesto:', errorData);
+        alert('Hubo un problema al agregar el repuesto.');
+      }
     } catch (error) {
-      console.error(error);
+      console.error('Error de red o al agregar repuesto:', error);
     }
   };
 
-  const postRepuesto = async (repuesto) => {
-    const { codigo_repuesto, descripcion } = await repuesto;
-    const fetchRepuesto = await fetch(
-      "https://lv-back.online/repuestos/guardar",
-      {
-        method: "post",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ codigo_repuesto, descripcion }),
-      }
-    );
-    console.log("repuesto cargado: ", fetchRepuesto.status);
+  const handleRedirect = () => {
+    navigate('/addFactura');
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
     <div>
       <Header text="Agregar un repuesto" />
       <div className="stockContainer">
-        <h1 style={{ marginLeft: "5%" }}>Agregar un producto</h1>
+        <h1 style={{ marginLeft: '5%' }}>Agregar un producto</h1>
         <div className="agregar-repuesto-formulario">
           <form onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="codigo_repuesto">Código Repuesto</label>
+              <label htmlFor="nombre">Nombre</label>
+              <input
+                type="text"
+                id="nombre"
+                name="nombre"
+                value={repuesto.nombre}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <label htmlFor="id_repuesto">ID Repuesto</label>
               <input
                 type="number"
-                id="codigo_repuesto"
-                name="codigo_repuesto"
-                value={repuesto.codigo_repuesto}
+                id="id_repuesto"
+                name="id_repuesto"
+                value={repuesto.id_repuesto}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="id_proveedor">Proveedor</label>
+              <select
+                id="id_proveedor"
+                name="id_proveedor"
+                value={repuesto.id_proveedor}
+                onChange={handleChange}
+              >
+                <option value="">Selecciona un proveedor</option>
+                {proveedoresList.map((proveedor) => (
+                  <option key={proveedor.id} value={proveedor.id}>
+                    {proveedor.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="precio">Precio</label>
+              <input
+                type="number"
+                id="precio"
+                name="precio"
+                value={repuesto.precio}
                 onChange={handleChange}
               />
             </div>
             <div>
-              <label htmlFor="numero_serie">Número de serie</label>
+              <label htmlFor="cantidad">Cantidad</label>
               <input
-                type="text"
-                id="numero_serie"
-                name="numero_serie"
-                value={repuesto.numero_serie}
-                onChange={handleChange}
-              />
-            </div>{" "}
-            <div>
-              <label htmlFor="tipo_electrodomestico">
-                Tipo de electrodoméstico
-              </label>
-              <input
-                type="text"
-                id="tipo_electrodomestico"
-                name="tipo_electrodomestico"
-                value={repuesto.tipo_electrodomestico}
+                type="number"
+                id="cantidad"
+                name="cantidad"
+                value={repuesto.cantidad}
                 onChange={handleChange}
               />
             </div>
+          
             <div>
-              <label htmlFor="descripcion">Descripción</label>
+              <label htmlFor="lote">Lote</label>
               <input
                 type="text"
-                id="descripcion"
-                name="descripcion"
-                value={repuesto.descripcion}
+                id="lote"
+                name="lote"
+                value={repuesto.lote}
                 onChange={handleChange}
+                disabled 
               />
             </div>
-            <button type="submit">Agregar Repuesto</button>
+            <button type="submit">Continuar</button>
           </form>
         </div>
+
+        {isModalOpen && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <h2>¿Qué deseas hacer?</h2>
+              <div className="modal-buttons">
+                <button className="modal-btn" onClick={handleRedirect}>
+                  Cargar factura y guardar
+                </button>
+                <button className="modal-btn" onClick={handleGuardar}>
+                  Guardar sin factura
+                </button>
+              </div>
+              <button className="modal-close" onClick={handleCloseModal}>
+                Cerrar
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 };
+
 export default AgregarRepuesto;

@@ -1,9 +1,27 @@
+.rounded-pill{
+  cursor:pointer;
+}
+.check, .checked{
+  width: 30px;
+  height: 30px;
+  opacity: 0.3;
+}
+.checked, .hover-class{
+  opacity: 1;
+  background-color: #40A63D;
+  border-radius: 50%;
+}
 .notificaciones-container{
   text-align: start;
 }
 
+.contentWidth{
+  width:100%;
+}
+
 .container.notificaciones-container {
   background-color: #E6E6E6;
+  overflow: scroll;
 }
 
 .container.notificaciones-container h2 {

@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import { createContext, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { modificarOrden } from '../services/ordenesService';
 const Context = createContext();
 
 export const Provider = ({ children }) => {
@@ -83,6 +84,19 @@ export const Provider = ({ children }) => {
       console.error(error);
     }
   };
+  //ORDENES!!
+  const ordenesGenerales = async () => {
+    try {
+      const ordenesResponse = await fetch('https://lv-back.online/ordenes');
+      if (!ordenesResponse.ok) {
+        throw new Error('Error al obtener datos de las APIs');
+      }
+      return await ordenesResponse.json();
+    } catch (error) {
+      console.error('Error al obtener datos:', error);
+      throw error;
+    }
+  };
   const ordenes = async () => {
     try {
       const empleadoId = localStorage.getItem('empleadoId');
@@ -115,7 +129,20 @@ export const Provider = ({ children }) => {
       throw error;
     }
   };
-
+  const handleAprobar = async (orden) => {
+    try {
+      const ordenActualizada = { ...orden, id_tipo_estado: 1 };
+      const resultado = await modificarOrden(orden.id, ordenActualizada);
+      if (resultado) {
+        console.log('Orden aprobada con éxito.');
+      } else {
+        console.log('Error al aprobar la orden.');
+      }
+    } catch (error) {
+      console.error('Error al aprobar la orden:', error);
+    }
+  };
+  //FEEDBACK
   const sendFeedback = async (feedback) => {
     try {
       const data = await fetch(`https://lv-back.online/feedbacks/guardar`, {
@@ -139,6 +166,36 @@ export const Provider = ({ children }) => {
     }
   };
 
+  //NOTIFICACIONES
+  const handleNotifications = async () => {
+    try {
+      const data = await fetch('https://lv-back.online/notificaciones/');
+      const response = await data.json();
+      return response;
+    } catch (error) {
+      console.error('Error en tryCactch: ', error);
+    }
+  };
+
+  const marcarNotificacionVista = async (idEmpleado) => {
+    try {
+      const response = await fetch(`http://localhost:8000/notificaciones/modificar/${idEmpleado}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const result = await response.json();
+      if (result[0] > 0) {
+        console.log('Notificaciones revisadas!!!');
+        return true;
+      } else {
+        console.log('Se produjo un error, la notificacion no fue revisada...');
+        return false;
+      }
+    } catch (error) {
+      console.error('Error al modificar la notificacion.', error);
+    }
+  };
+
   return (
     <Context.Provider
       value={{
@@ -154,9 +211,14 @@ export const Provider = ({ children }) => {
         getClienteById,
         //Ordenes
         ordenes,
+        ordenesGenerales,
+        handleAprobar,
         //feedback
         sendFeedback,
         getFeedbacks,
+        //Notificaciones
+        handleNotifications,
+        marcarNotificacionVista,
       }}
     >
       {children}
