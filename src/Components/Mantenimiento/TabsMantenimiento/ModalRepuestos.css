@@ -1,0 +1,23 @@
+.input-modal {
+    margin-right: 5px;
+}
+
+.modal-repuestos-li {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.ul-modal {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-top: 1rem;
+    padding-left: 0;
+}
+
+.input-cantidad {
+    margin-top: .2rem;
+    margin-bottom: .2rem;
+    margin-left: auto;
+}
