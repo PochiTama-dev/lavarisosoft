@@ -436,6 +436,7 @@ const Taller = () => {
             const success = await guardarOrdenRepuesto(repuestoData);
 
             if (success) {
+              alert("Repuesto asignado correctamente");
               console.log("Repuesto asignado correctamente");
             }
 
