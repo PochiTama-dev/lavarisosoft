@@ -101,6 +101,23 @@ ul .pestañasInventarioActive {
   cursor: pointer;
 }
 
+.btnMas {
+  width: 30px;
+  height: 30px;
+  background-color: #69688c;
+  border-radius: 50%;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.btnMas:hover {
+  background-color: #5a5780;
+}
+
 .inventario-botones {
   justify-content: space-around;
   width: 80%;
@@ -162,4 +179,10 @@ ul .pestañasInventarioActive {
   text-align: center;
   color: #283959;
   font-weight: 500;
+}
+
+.modal .modal-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }

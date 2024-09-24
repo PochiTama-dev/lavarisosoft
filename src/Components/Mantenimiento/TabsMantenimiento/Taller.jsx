@@ -4,17 +4,30 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { ordenes, modificarOrden } from "../../../services/ordenesService";
 import { listadoEmpleados } from "../../../services/empleadoService";
+import { listaRepuestos } from "../../../services/repuestosService";
+import { guardarOrdenRepuesto } from "../../../services/ordenesRepuestosService";
+import ModalAsignarRepuestos from "./ModalAsignarRepuestos";
 import editar from "../../../images/editar.webp";
 
 const Taller = () => {
   const [listaOrdenes, setOrdenes] = useState([]);
   const [empleados, setEmpleados] = useState([]);
   const [estados, setEstados] = useState([]);
+  const [repuestos, setRepuestos] = useState([]);
   const [selectedTecnico, setSelectedTecnico] = useState(null);
   const [selectedEstado, setSelectedEstado] = useState(null);
   const [editIndex, setEditIndex] = useState(null);
   const [orderBy, setOrderBy] = useState(null);
   const [orderAsc, setOrderAsc] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+
+  const handleShow = (index) => {
+    setOrdenSeleccionada(listaOrdenes[index]);
+    setTecnicoAsignado(listaOrdenes[index].Empleado);
+    setShowModal(true);
+  };
+
+  const handleClose = () => setShowModal(false);
 
   const fetchEmpleados = async () => {
     try {
@@ -28,6 +41,16 @@ const Taller = () => {
       setEmpleados(empleadosFiltrados);
     } catch (error) {
       console.error("Error al obtener empleados:", error);
+    }
+  };
+
+  const fetchRepuestos = async () => {
+    try {
+      const repuestosData = await listaRepuestos();
+      console.log(repuestosData);
+      setRepuestos(repuestosData);
+    } catch (error) {
+      console.error("Error al obtener repuestos:", error);
     }
   };
 
@@ -173,7 +196,28 @@ const Taller = () => {
     fetchOrdenes();
     fetchEmpleados();
     fetchTiposEstados();
+    fetchRepuestos();
   }, []);
+
+  /* datos form */
+  const [nombre, setNombre] = useState("");
+  const [tipo, setTipo] = useState("");
+  const [fechaIngreso, setFechaIngreso] = useState("");
+  const [ordenSeleccionada, setOrdenSeleccionada] = useState(null);
+  const [tecnicoAsignado, setTecnicoAsignado] = useState(null);
+
+  const tiposDeProveedores = [
+    { id: 1, tipo_proveedor: "Tipo 1" },
+    { id: 2, tipo_proveedor: "Tipo 2" },
+  ];
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Aquí puedes manejar el envío del formulario
+    console.log({ nombre, tipo, fechaIngreso });
+  };
+
+  /* end datos form */
 
   return (
     <div className="taller-ctn">
@@ -351,18 +395,56 @@ const Taller = () => {
                     </svg>
                   </>
                 ) : (
-                  <img
-                    src={editar}
-                    alt="editar"
-                    className="imgEditar"
-                    onClick={() => handleEdit(index)}
-                  />
+                  <>
+                    <div className="d-flex">
+                      <img
+                        src={editar}
+                        alt="editar"
+                        className="imgEditar"
+                        onClick={() => handleEdit(index)}
+                      />
+                      <div className="divMas" onClick={() => handleShow(index)}>
+                        <span className="spanMas">+</span>
+                      </div>
+                    </div>
+                  </>
                 )}
               </td>
             </tr>
           ))}
         </tbody>
       </Table>
+
+      {/* ModalAsignarRepuestos */}
+      <ModalAsignarRepuestos
+        showModal={showModal}
+        handleClose={handleClose}
+        ordenSeleccionada={ordenSeleccionada}
+        stockDataSeleccionada={false}
+        tecnicoAsignado={tecnicoAsignado}
+        repuestos={repuestos}
+        handleAsignarRepuestos={async (repuestosSeleccionados) => {
+          console.log("Repuestos asignados:", repuestosSeleccionados);
+          for (const repuesto of repuestosSeleccionados) {
+            const repuestoData = {
+              ordenId: ordenSeleccionada.id,
+              tecnicoId: tecnicoAsignado.id,
+              repuestoId: repuesto.id,
+              cantidad: repuesto.cantidad,
+            };
+
+            const success = await guardarOrdenRepuesto(repuestoData);
+
+            if (success) {
+              console.log("Repuesto asignado correctamente");
+            }
+
+            if (!success) {
+              console.log("Error al asignar el repuesto:", repuesto);
+            }
+          }
+        }}
+      />
     </div>
   );
 };

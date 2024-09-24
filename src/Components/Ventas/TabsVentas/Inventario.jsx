@@ -4,6 +4,9 @@ import "./Inventario.css";
 import cargar from "../../../images/cargarExcel.webp";
 import descargar from "../../../images/descargarExcel.webp";
 import editar from "../../../images/editar.webp";
+import { listaRepuestos } from "../../../services/repuestosService.jsx";
+import { modificarStockCamioneta } from "../../../services/stockCamionetaService.jsx";
+import ModalAsignarRepuestos from "../../Mantenimiento/TabsMantenimiento/ModalAsignarRepuestos";
 import { useCustomContext } from "../../../hooks/context.jsx";
 import { Table } from "react-bootstrap";
 
@@ -11,18 +14,35 @@ const Inventario = () => {
   const { handleNavigate } = useCustomContext();
   const [pestaña, setPestaña] = useState("Stock");
   const [show, setShow] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [stockData, setStockData] = useState([]);
+  const [stockDataSeleccionada, setStockDataSeleccionada] = useState([]);
+  const [repuestos, setRepuestos] = useState([]);
   const [camionetaData, setCamionetaData] = useState([]);
   const [reservaData, setReservaData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [camionetaSeleccionada, setCamionetaSeleccionada] = useState(null);
+  const [tecnicoAsignado, setTecnicoAsignado] = useState(null);
+
+  const handleShowRepuestos = (index) => {
+    setStockDataSeleccionada(filteredCamionetaData[index]);
+    setCamionetaSeleccionada(filteredCamionetaData[index].id);
+    setTecnicoAsignado(filteredCamionetaData[index].Empleado);
+    setShowModal(true);
+  };
+
+  const handleCloseRepuestos = () => setShowModal(false);
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
 
-  const filteredStockData = stockData.filter((item) =>
-    item.Repuesto.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredStockData = stockData.filter((item) => {
+    if (item.Repuesto) {
+      return item.Repuesto.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
+    }
+  }
   );
   const filteredCamionetaData = camionetaData.filter((item) =>
     item.Repuesto.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
@@ -67,6 +87,15 @@ const Inventario = () => {
     }
   };
 
+  const fetchRepuestos = async () => {
+    try {
+      const repuestosData = await listaRepuestos();
+      setRepuestos(repuestosData);
+    } catch (error) {
+      console.error("Error al obtener repuestos:", error);
+    }
+  };
+
   useEffect(() => {
     const fetchStockData = async () => {
       try {
@@ -104,6 +133,7 @@ const Inventario = () => {
     fetchStockData();
     fetchCamionetaData();
     fetchReservaData();
+    fetchRepuestos();
   }, []);
 
   if (loading) {
@@ -142,33 +172,29 @@ const Inventario = () => {
       <ul className="d-flex justify-content-around">
         <li
           onClick={() => setPestaña("Stock")}
-          className={`pestañasInventario ${
-            pestaña === "Stock" ? "pestañasInventarioActive" : ""
-          }`}
+          className={`pestañasInventario ${pestaña === "Stock" ? "pestañasInventarioActive" : ""
+            }`}
         >
           Stock
         </li>
         <li
           onClick={() => setPestaña("Stock Camionetas")}
-          className={`pestañasInventario ${
-            pestaña === "Stock Camionetas" ? "pestañasInventarioActive" : ""
-          }`}
+          className={`pestañasInventario ${pestaña === "Stock Camionetas" ? "pestañasInventarioActive" : ""
+            }`}
         >
           Stock Camionetas
         </li>
         <li
           onClick={() => setPestaña("Reserva")}
-          className={`pestañasInventario ${
-            pestaña === "Reserva" ? "pestañasInventarioActive" : ""
-          }`}
+          className={`pestañasInventario ${pestaña === "Reserva" ? "pestañasInventarioActive" : ""
+            }`}
         >
           Reserva
         </li>
         <li
           onClick={() => setPestaña("Reporte de ventas")}
-          className={`pestañasInventario ${
-            pestaña === "Reporte de ventas" ? "pestañasInventarioActive" : ""
-          }`}
+          className={`pestañasInventario ${pestaña === "Reporte de ventas" ? "pestañasInventarioActive" : ""
+            }`}
         >
           Reporte de ventas
         </li>
@@ -228,6 +254,9 @@ const Inventario = () => {
                   <td>{camioneta.id_repuesto}</td>
                   <td>{camioneta.Repuesto.descripcion}</td>
                   <td>{camioneta.cantidad}</td>
+                  <td>
+                    <span className="btnMas" onClick={() => handleShowRepuestos(index)}>+</span>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -303,6 +332,36 @@ const Inventario = () => {
           </div>
         )}
       </ul>
+
+      {/* ModalAsignarRepuestos */}
+      <ModalAsignarRepuestos
+        showModal={showModal}
+        handleClose={handleCloseRepuestos}
+        ordenSeleccionada={false} //No se asigna orden en este caso
+        stockDataSeleccionada={stockDataSeleccionada}
+        tecnicoAsignado={tecnicoAsignado}
+        repuestos={repuestos}
+        handleAsignarRepuestos={async (repuestosSeleccionados) => {
+          for (const repuesto of repuestosSeleccionados) {
+            const repuestoData = {
+              id_empleado: tecnicoAsignado.id,
+              id_repuesto: repuesto.id,
+              cantidad: repuesto.cantidad || 1,
+              lote: stockDataSeleccionada.lote || "N/A",
+            };
+
+            const success = await modificarStockCamioneta(camionetaSeleccionada, repuestoData);
+
+            if (success) {
+              console.log("Repuesto asignado correctamente");
+            }
+
+            if (!success) {
+              console.log("Error al asignar el repuesto:", repuesto);
+            }
+          }
+        }}
+      />
     </div>
   );
 };
