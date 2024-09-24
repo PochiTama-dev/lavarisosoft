@@ -26,11 +26,19 @@ const Inventario = () => {
   const [tecnicoAsignado, setTecnicoAsignado] = useState(null);
 
   const handleShowRepuestos = (index) => {
-    setStockDataSeleccionada(filteredCamionetaData[index]);
-    setCamionetaSeleccionada(filteredCamionetaData[index].id);
-    setTecnicoAsignado(filteredCamionetaData[index].Empleado);
+    const selectedCamioneta = filteredCamionetaData[index];
+    setStockDataSeleccionada(selectedCamioneta);
+    setCamionetaSeleccionada(selectedCamioneta.id);
+    
+    if (selectedCamioneta.Empleado) {
+      setTecnicoAsignado(selectedCamioneta.Empleado);
+    } else {
+      console.warn("No hay empleado asignado para esta camioneta");
+      setTecnicoAsignado(null); // o un valor por defecto
+    }
     setShowModal(true);
   };
+  
 
   const handleCloseRepuestos = () => setShowModal(false);
 
@@ -39,17 +47,39 @@ const Inventario = () => {
   };
 
   const filteredStockData = stockData.filter((item) => {
-    if (item.Repuesto) {
-      return item.Repuesto.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
+    try {
+      console.log("Datos solicitados:", item.Repuesto);
+      if (item.Repuesto) {
+        return item.Repuesto.descripcion.toLowerCase().includes(searchTerm.toLowerCase());
+      }
+    } catch (error) {
+      console.error("Error al acceder a item.Repuesto:", error);
+      return false; 
     }
-  }
-  );
-  const filteredCamionetaData = camionetaData.filter((item) =>
-    item.Repuesto.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-  const filteredReservaData = reservaData.filter((item) =>
-    item.id.toString().includes(searchTerm.toLowerCase())
-  );
+  });
+  
+  const filteredCamionetaData = camionetaData.filter((item) => {
+    try {
+      console.log("Datos solicitados camioneta:", item.Repuesto);
+      return item.Repuesto && item.Repuesto.descripcion && 
+             item.Repuesto.descripcion.toLowerCase().includes(searchTerm.toLowerCase());
+    } catch (error) {
+      console.error("Error al acceder a item.Repuesto:", error);
+      return false; 
+    }
+  });
+
+  
+  const filteredReservaData = reservaData.filter((item) => {
+    try {
+      console.log("Datos solicitados:", item.id);
+      return item.id.toString().includes(searchTerm.toLowerCase());
+    } catch (error) {
+      console.error("Error al acceder a item.id:", error);
+      return false; 
+    }
+  });
+  
 
   const stockDb = async () => {
     try {

@@ -9,13 +9,10 @@
   }
   
   .modal-content {
-    width: 500px;
-    height: 500px;
     margin: 0 auto; /* Center the modal horizontally */
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Center content vertically */
-    align-items: center; /* Center content horizontally */
+    justify-content: center; /* Center content vertically * /* Center content horizontally */
   }
   .modal {
     display: flex;

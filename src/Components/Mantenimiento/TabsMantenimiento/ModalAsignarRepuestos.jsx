@@ -27,7 +27,7 @@ const ModalAsignarRepuestos = ({
   };
 
   const repuestosFiltrados = repuestos.filter((repuesto) =>
-    repuesto.descripcion.toLowerCase().includes(filtroRepuestos.toLowerCase())
+    repuesto.nombre.toLowerCase().includes(filtroRepuestos.toLowerCase())
   );
 
   const handleSubmit = () => {
@@ -65,7 +65,7 @@ const ModalAsignarRepuestos = ({
                   checked={repuestosSeleccionados.includes(repuesto)}
                   onChange={() => toggleRepuesto(repuesto)}
                 />
-                 {repuesto.descripcion}
+                 {repuesto.nombre}
               </li>
             ))}
           </ul>

@@ -2,7 +2,7 @@ const API_URL = "https://lv-back.online/";
 
 export const listaRepuestos = async () => {
     try {
-      const response = await fetch(`${API_URL}/repuestos/lista`);
+      const response = await fetch(`${API_URL}/stock/principal/lista`);
       const repuestos = await response.json();
       if (repuestos[0] !== undefined) {
         console.log(`Se encontró un listado con ${repuestos.length} repuestos!!`);
