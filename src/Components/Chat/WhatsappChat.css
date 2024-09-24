@@ -1,0 +1,122 @@
+.chat-container {
+  display: flex;
+  height: 80vh;
+  width: 100%;
+}
+
+.clients-list {
+  margin-left: 2.5%;
+  width: 20%;
+  background-color: #f0f0f0;
+  border-right: 1px solid #ccc;
+  padding: 10px;
+  box-sizing: border-box;
+  height: 80vh;
+  border-radius: 5px;
+}
+
+.clients-list h3 {
+  margin: 0 0 10px;
+}
+
+.clients-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  height: 70vh;
+  overflow-y: auto;
+}
+
+.clients-list li {
+  padding: 10px;
+  cursor: pointer;
+  transition: background 0.3s;
+  border-bottom: 1px solid #ccc;
+}
+
+.clients-list li:hover {
+  background-color: #e0e0e0;
+}
+
+.clients-list li.selected {
+  background-color: #d1e7dd;
+  font-weight: bold;
+}
+
+.chat-window {
+  width: 75%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px;
+  box-sizing: border-box;
+  background-color: #c8cfda;
+  border-radius: 5px;
+}
+
+.chat-header {
+  border-bottom: 5px solid #7a92b8;
+  color: black;
+  padding: 10px;
+}
+
+.messages {
+  flex-grow: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px;
+  background-color: #c8cfda;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.message {
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  width: auto;
+  max-width: 40%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  display: block;
+}
+
+.message.sent {
+  background-color: #dcf8c6;
+  text-align: right;
+  margin-left: auto;
+  margin-right: 10px;
+}
+
+.message.received {
+  background-color: #fff;
+  text-align: left;
+  margin-right: auto;
+  margin-left: 10px;
+}
+
+.chat-container textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 25px;
+  border: 1px solid #ccc;
+  resize: none;
+}
+
+.chat-container button {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #7a92b8;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  width: 20%;
+  margin-left: 40%;
+}
+
+.chat-container button:hover {
+  background-color: #8ba7d4;
+}
