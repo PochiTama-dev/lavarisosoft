@@ -1,12 +1,13 @@
+import PropTypes from 'prop-types';
 import { useCustomContext } from '../../hooks/context';
 import DatosTecnico from '../Orders/OrdenDetalle/DatosTecnico';
-
-const ModalAprobar = ({ orden, handleClose }) => {
+const ModalAprobar = ({ orden, handleClose, aprobar }) => {
   const { handleNavigate, handleAprobar } = useCustomContext();
   const handleAprove = async () => {
-    //await handleAprobar(orden)
+    //await handleAprobar(orden);
+    aprobar();
+    handleClose();
   };
-  console.log(orden);
   return (
     <div className='modal-overlay'>
       <div className='modal'>
@@ -32,3 +33,9 @@ const ModalAprobar = ({ orden, handleClose }) => {
   );
 };
 export default ModalAprobar;
+
+ModalAprobar.propTypes = {
+  orden: PropTypes.object,
+  handleClose: PropTypes.func,
+  aprobar: PropTypes.func,
+};
