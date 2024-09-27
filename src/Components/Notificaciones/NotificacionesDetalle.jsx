@@ -13,12 +13,13 @@ const NotificacionesDetalle = () => {
   const [checkedNotifications, setCheckedNotifications] = useState([]);
   const [checkedOrders, setCheckedOrders] = useState([]);
   const [hoveredItem, setHoveredItem] = useState();
+  const [aprobado, setAprobado] = useState(false);
 
   useEffect(() => {
     fetchData();
 
     // Manejar notificaciones dependiendo del rol del usuario
-  }, [user.tipoRol]);
+  }, [aprobado]);
 
   // Llamadas a la API
   const fetchData = async () => {
@@ -58,6 +59,7 @@ const NotificacionesDetalle = () => {
       marcarNotificacionVista(index);
     } else if (type === 'orden') {
       setCheckedOrders((prev) => [...prev, index]);
+      console.log(checkedOrders);
     }
   };
 
@@ -82,9 +84,16 @@ const NotificacionesDetalle = () => {
     );
   };
 
+  const handleAproveAndUncheck = (order) => {
+    setCheckedOrders((prev) => prev.filter((orderIndex) => orderIndex !== order.id)); // Eliminar la orden de los chequeados
+    setAprobado(!aprobado); // Cambia el estado para forzar el re-render
+    setHoveredItem(null); // Restablecer el hover
+  };
+
   const renderOrden = (orden, index) => {
     const isChecked = checkedOrders.includes(index);
     const isHovered = hoveredItem === index;
+    console.log(isChecked);
     return (
       <div className='d-flex justify-content-between mt-2' onClick={() => handleModal(orden)} key={index}>
         <b>Orden pendiente de aprobación #{orden.numero_orden}</b>
@@ -102,7 +111,6 @@ const NotificacionesDetalle = () => {
 
   // Combinación de notificaciones y órdenes
   const combinedList = [...notificaciones.map((notificacion) => ({ type: 'notificacion', ...notificacion })), ...ordenes.map((orden) => ({ type: 'orden', ...orden }))];
-
   return (
     <div className='container p-5 notificaciones-container'>
       <h2>Notificaciones</h2>
@@ -119,7 +127,7 @@ const NotificacionesDetalle = () => {
           <hr />
         </div>
       ))}
-      {modal && user.tipoRol === 'Atencion al cliente' && <ModalAprobar orden={selectedOrder} handleClose={() => setModal(false)} />}
+      {modal && user.tipoRol === 'Atención al cliente' && <ModalAprobar aprobar={() => setAprobado(!aprobado)} orden={selectedOrder} handleClose={() => setModal(false)} />}
     </div>
   );
 };

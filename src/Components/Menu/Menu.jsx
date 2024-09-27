@@ -150,6 +150,9 @@ const Menu = () => {
             <Link to='/chat' className='btn btn-lg btn-block menu-button'>
               Chat
             </Link>
+            <Link to='/notificaciones' className='btn btn-lg btn-block menu-button'>
+              Notificaciones
+            </Link>
             <div className='btn-group-vertical '></div>
           </div>
           <div className='col-md-4'>

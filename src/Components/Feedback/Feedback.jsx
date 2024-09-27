@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useCustomContext } from '../../hooks/context';
 
 const Feedback = () => {
-  const { getFeedbacks } = useCustomContext();
+  const { getFeedbacks, handleNavigate } = useCustomContext();
   const [showOrders, setShowOrders] = useState({});
   const [empleados, setEmpleados] = useState([]);
   const [feedbackEmpleados, setFeedbackEmpleados] = useState();
@@ -107,6 +107,11 @@ const Feedback = () => {
       <Header text='Feedback' />
       <div className='content-container'>
         <div className='left-containers'>
+          <div>
+            <h1 className='pointer' onClick={() => handleNavigate('feedback/empleado')}>
+              Enviar feedback
+            </h1>
+          </div>
           <div className='left-container'>
             {/* Contenedor izquierdo superior */}
             <h2 className='p-3 feedback-containers-heading'>Empleados</h2>
