@@ -6,102 +6,80 @@ import { useCustomContext } from '../../hooks/context';
 
 const Feedback = () => {
   const { getFeedbacks, handleNavigate } = useCustomContext();
-  const [showOrders, setShowOrders] = useState({});
+  const [showOrders, setShowOrders] = useState([]);
   const [empleados, setEmpleados] = useState([]);
-  const [feedbackEmpleados, setFeedbackEmpleados] = useState();
+  const [feedbackEmpleados, setFeedbackEmpleados] = useState([]);
   const [allFeedbacks, setAllFeedbacks] = useState([]);
   const [feedback, setFeedback] = useState('');
-  const [activeIndex, setActiveIndex] = useState();
+  const [activeIndex, setActiveIndex] = useState(null);
   const [orders, setOrders] = useState([]);
-  const [orderSelected, setOrderSelected] = useState();
-  const [nombre, setNombre] = useState();
+  const [orderSelected, setOrderSelected] = useState(null);
+  const [nombre, setNombre] = useState('');
+  const [selectedTab, setSelectedTab] = useState('orders');
 
   useEffect(() => {
-    feedbacks();
+    loadFeedbacks();
   }, []);
-  const feedbacks = async () => {
+
+  const loadFeedbacks = async () => {
     const feedbacks = await getFeedbacks();
     setAllFeedbacks(feedbacks);
-    // Utilizamos un Set para almacenar los correos electrónicos únicos
+
+    // Filtrar empleados por correos únicos
     const uniqueEmails = new Set();
-    // Filtramos empleados con correos repetidos
     const employees = feedbacks
       .map((feedback) => feedback.Empleado)
       .filter((empleado) => {
-        // Verificamos si el correo ya existe en el Set
-        if (uniqueEmails.has(empleado.email)) {
-          return false; // Si ya existe, lo excluimos
-        } else {
-          // Si no existe, lo agregamos al Set y lo incluimos en el array filtrado
-          uniqueEmails.add(empleado.email);
-          return true;
-        }
+        if (uniqueEmails.has(empleado.email)) return false;
+        uniqueEmails.add(empleado.email);
+        return true;
       });
-    const uniqueOrder = new Set();
-    const allOrders = feedbacks
-      .map((feedback) => feedback.Ordene)
-      .filter((numOrder) => {
-        if (numOrder === null) {
-          return false; // Excluimos si order o numero_orden es null o undefined
-        }
-        if (uniqueOrder.has(numOrder.numero_orden)) {
-          return false;
-        } else {
-          uniqueOrder.add(numOrder.numero_orden);
-          return true;
-        }
-      });
+
+    // Filtrar órdenes por número único
+    const uniqueOrders = new Set();
+    const allOrders = feedbacks.map((feedback) => feedback.Ordene).filter((order) => order && !uniqueOrders.has(order.numero_orden) && uniqueOrders.add(order.numero_orden));
+
     setEmpleados(employees);
     setOrders(allOrders);
   };
-  const handleShowOrder = (nombre, index) => {
-    /*
-    console.log('Empleados', employees); */
+
+  const handleShowOrder = (nombreEmpleado, index) => {
     setActiveIndex((prevIndex) => (prevIndex === index ? null : index));
-    const uniqueNumOrder = new Set();
-    const feedbackEmployee = allFeedbacks.filter((feedback) => feedback.Empleado.nombre === nombre);
-    const feedback = feedbackEmployee
-      .map((feedback) => feedback.Ordene)
-      .filter((order) => {
-        if (!order || !order.numero_orden) {
-          return false; // Excluimos si order o numero_orden es null o undefined
-        }
-        // Verificamos si el correo ya existe en el Set
-        if (uniqueNumOrder.has(order.numero_orden)) {
-          return false; // Si ya existe, lo excluimos
-        } else {
-          // Si no existe, lo agregamos al Set y lo incluimos en el array filtrado
-          uniqueNumOrder.add(order.numero_orden);
-          return true;
-        }
-      });
-    setShowOrders(feedback);
+
+    const employeeFeedbacks = allFeedbacks.filter((feedback) => feedback.Empleado.nombre === nombreEmpleado);
+    const filteredOrders = employeeFeedbacks.map((feedback) => feedback.Ordene).filter((order) => order && !showOrders.some((o) => o.numero_orden === order.numero_orden));
+
+    setShowOrders(filteredOrders);
   };
 
-  const handleSelectOrder = async (empleado, orden) => {
-    const newOrderSelected = await showOrders.filter((order) => order.numero_orden === orden);
-    setOrderSelected(newOrderSelected);
-    //setNombre();
-    setOrderSelected(newOrderSelected[0]);
-    const getFeedback = allFeedbacks.find((feedback) => feedback.id_orden === newOrderSelected[0].id && feedback.id_empleado === empleado.id);
-    setFeedback(getFeedback);
-    //console.log("Feedback de orden ",feedback);
+  const handleSelectOrder = async (empleado, numeroOrden) => {
+    handleName(empleado);
+
+    const selectedOrder = showOrders.find((order) => order.numero_orden === numeroOrden);
+    setOrderSelected(selectedOrder);
+
+    const orderFeedback = allFeedbacks.find((feedback) => feedback.id_orden === selectedOrder.id && feedback.id_empleado === empleado.id);
+    setFeedback(orderFeedback);
   };
 
   const handleName = (empleado) => {
     setNombre(empleado.nombre);
-    setOrderSelected();
-    const getEmployees = allFeedbacks.filter((feedback) => feedback.to_id_employee === empleado.id && feedback.id_orden === null);
-    console.log(getEmployees);
+    setOrderSelected(null);
 
-    setFeedbackEmpleados(getEmployees);
-    setFeedback({ feedback: '' });
+    const employeeFeedbacks = allFeedbacks.filter((feedback) => feedback.to_id_employee === empleado.id && !feedback.id_orden);
+    setFeedbackEmpleados(employeeFeedbacks);
+    setFeedback('');
   };
 
+  const handleTab = (tab, empleado) => {
+    setSelectedTab(tab);
+    if (tab === 'employees') {
+      handleName(empleado);
+    }
+  };
   const handleEmployee = (employee) => {
     setFeedback(employee);
   };
-
   return (
     <div className='container-full-width'>
       <Header text='Feedback' />
@@ -113,37 +91,48 @@ const Feedback = () => {
             </h1>
           </div>
           <div className='left-container'>
-            {/* Contenedor izquierdo superior */}
             <h2 className='p-3 feedback-containers-heading'>Empleados</h2>
-            {/* Lista de elementos por número técnico */}
             <div className='scrollable-container-top'>
-              {empleados?.map((t, i) => (
-                <>
-                  <div className='feedback-tecnicos-container' key={i}>
-                    <h3 className='feedback-tecnicos-heading' onClick={() => handleName(t)}>
-                      {t.nombre}
-                    </h3>
-                    <ul onClick={() => handleShowOrder(t.nombre, i)} className='feedback-tecnico'>
-                      <li></li>
-                    </ul>
-                  </div>
+              {empleados.map((empleado, i) => (
+                <div className='feedback-tecnicos-container' key={i}>
+                  <h3 className='feedback-tecnicos-heading' onClick={() => handleName(empleado)}>
+                    {empleado.nombre}
+                  </h3>
+                  <ul onClick={() => handleShowOrder(empleado.nombre, i)} className='feedback-tecnico'>
+                    <li> </li>
+                  </ul>
                   {activeIndex === i && (
-                    <ul className='feedback-ordenes'>
-                      {showOrders.map((order, index) => (
-                        <li key={index} onClick={() => handleSelectOrder(t, order.numero_orden)}>
-                          Orden #{order.numero_orden} hecho por {t.nombre}
+                    <>
+                      <ul className='d-flex justify-content-evenly'>
+                        <li className={`pointer ${selectedTab === 'orders' ? 'active' : ''} mx-2`} onClick={() => handleTab('orders', empleado)}>
+                          Órdenes
                         </li>
-                      ))}
-                    </ul>
+                        <li className={`pointer ${selectedTab === 'employees' ? 'active' : ''} mx-2`} onClick={() => handleTab('employees', empleado)}>
+                          Empleados
+                        </li>
+                      </ul>
+                      <ul className='feedback-ordenes'>
+                        {selectedTab === 'orders' &&
+                          showOrders.map((order, index) => (
+                            <li key={index} onClick={() => handleSelectOrder(empleado, order.numero_orden)}>
+                              Orden #{order.numero_orden} hecho por {empleado.nombre}
+                            </li>
+                          ))}
+                        {selectedTab === 'employees' &&
+                          feedbackEmpleados.map((employee, index) => (
+                            <li key={index} onClick={() => handleEmployee(employee)}>
+                              Feedback de {employee.Empleado.nombre}
+                            </li>
+                          ))}
+                      </ul>
+                    </>
                   )}
-                </>
+                </div>
               ))}
             </div>
           </div>
           <div className='left-container'>
-            {/* Contenedor izquierdo inferior */}
             <h2 className='p-3 feedback-containers-heading'>Por número de orden</h2>
-            {/* Lista de elementos por número de orden */}
             <ul className='scrollable-container-bottom'>
               {orders.map((order, index) => (
                 <li key={index} className='scrollable-container-bottom-item'>
@@ -153,33 +142,29 @@ const Feedback = () => {
             </ul>
           </div>
         </div>
+
         <div className='right-container'>
-          {/* Contenedor derecho */}
-          <h2
-            className='p-3
-           feedback-containers-heading'
-          >
+          <h2 className='p-3 feedback-containers-heading'>
             {orderSelected || nombre
-              ? `${orderSelected ? `Orden #${orderSelected.numero_orden} hecho por ${nombre}` : ''} ${(!orderSelected && 'Feedback a ' + nombre) || ''}`
+              ? `${orderSelected ? `Orden #${orderSelected.numero_orden} hecho por ${nombre}` : ''} ${!orderSelected && nombre ? 'Feedback a ' + nombre : ''}`
               : 'Seleccionar orden o empleado'}
           </h2>
-          {!orderSelected && nombre
-            ? feedbackEmpleados.length > 0 && (
-                <div className='d-flex justify-content-evenly'>
-                  <h3>hecho por </h3>
-                  <select>
-                    <option value='' disabled selected>
-                      Seleccione un empleado
-                    </option>
-                    {feedbackEmpleados.map((employee, index) => (
-                      <option key={index} value={index} onClick={() => handleEmployee(employee)}>
-                        {employee.Empleado.nombre}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )
-            : ''}
+
+          {nombre && !orderSelected && feedbackEmpleados.length > 0 && (
+            <div className='d-flex justify-content-evenly'>
+              <h3>hecho por </h3>
+              <select>
+                <option value='' disabled selected>
+                  Seleccione un empleado
+                </option>
+                {feedbackEmpleados.map((employee, index) => (
+                  <option key={index} value={index} onClick={() => handleEmployee(employee)}>
+                    {employee.Empleado.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div className='feedback-form'>
             <h6 className='p-3 feedback-form-charge'></h6>
