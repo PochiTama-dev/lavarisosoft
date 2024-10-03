@@ -9,6 +9,12 @@
   flex-direction: column; /* Distribuye el contenido verticalmente */
   justify-content: space-between;
 }
+/* Suegerencias GeoApify */
+.suggestion-item{
+  border: 1px solid #0056b3;
+  border-radius: 5px;
+  margin: 2px auto;
+}
 
 /* Input and search button */
 .caja-input {
