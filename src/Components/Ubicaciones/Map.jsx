@@ -111,7 +111,6 @@ const Map = ({ position, zoom, selectedClient, selectedTechnician, setSelectedTe
     };
   }, []);
 
-  //console.log(technicians);
   return (
     <>
       <div>

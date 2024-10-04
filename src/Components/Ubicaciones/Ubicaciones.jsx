@@ -21,6 +21,10 @@ const Ubicaciones = () => {
     latitude: '-31.67750630032039',
     longitude: '-65.4105635773489',
   });
+  const [coordinatesClient, setCoordinatesClient] = useState([]);
+
+  const [refresh, setRefresh] = useState(false);
+
   const [filterTec, setFilterTec] = useState(tecnicos);
   const ref = useRef();
 
@@ -85,7 +89,7 @@ const Ubicaciones = () => {
       socket.off('userLoggedIn', handleUserLoggedIn);
       socket.off('userLoggedOut', handleUserLoggedOut);
     };
-  }, []);
+  }, [refresh]);
 
   useEffect(() => {
     async function initialize() {
@@ -140,9 +144,11 @@ const Ubicaciones = () => {
     numero_cliente: '',
     nombre: '',
     apellido: '',
-    direccion: '',
+    direccion: ', Argentina',
     telefono: '',
     cuilCuit: '',
+    latitud: 0,
+    longitud: 0,
   });
 
   const [errors, setErrors] = useState({
@@ -230,28 +236,29 @@ const Ubicaciones = () => {
   };
 
   const handleSuggestionClick = (coordinates) => {
-    console.log(coordinates);
+    setCoordinatesClient(coordinates);
     const [lon, lat] = coordinates;
+    newClient.latitud = lat;
+    newClient.longitud = lon;
     setPosition([lat, lon]);
 
     if (mapRef.current) {
       mapRef.current.setView([lat, lon], 13);
     }
-    //setSuggestions([]);
+    setSuggestions([]);
   };
 
   const handleAddClient = async () => {
-    console.log(newClient);
-    /* if (validateForm()) {
+    if (validateForm()) {
       const clientId = await guardarCliente(newClient);
       if (clientId) {
-        setClientes([...clientes, { ...newClient, id: clientId, distancia: '0 km', latitud: 0, longitud: 0, Ordenes: [] }]);
+        setClientes([...clientes, { ...newClient, id: clientId, distancia: '0 km', latitud: coordinatesClient[1], longitud: coordinatesClient[0], Ordenes: [] }]);
         setNewClient({ nombre: '', direccion: '', telefono: '', cuilCuit: '', ubicacion: '' });
         setErrors({});
         setView('clientesTecnicos');
-        window.location.reload();
+        setRefresh(!refresh);
       }
-    } */
+    }
   };
 
   const handleSelectClient = (cliente) => {
