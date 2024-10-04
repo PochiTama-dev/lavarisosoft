@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { useNavigate } from 'react-router-dom';
@@ -31,7 +32,7 @@ const clienteIcono = new Icon({
   popupAnchor: [1, -35],
 });
 
-const Map = ({ position, zoom, activeTechnicians, selectedClient, selectedTechnician, setSelectedTechnician, clientes }) => {
+const Map = ({ position, zoom, selectedClient, selectedTechnician, setSelectedTechnician, clientes }) => {
   const navigate = useNavigate();
   const refClient = useRef({});
   const [filter, setFilter] = useState('both');
@@ -72,9 +73,9 @@ const Map = ({ position, zoom, activeTechnicians, selectedClient, selectedTechni
 
   useEffect(() => {
     const handleBroadcastLocation = (data) => {
-      console.log("LOCATION", data);
+      console.log('LOCATION', data);
       if (data && typeof data === 'object') {
-        setTechnicians((prev) => {
+        setTechnicians(() => {
           const updatedTechnicians = {};
           Object.keys(data).forEach((key) => {
             if (data[key].status !== 'desconectado') {
@@ -87,9 +88,9 @@ const Map = ({ position, zoom, activeTechnicians, selectedClient, selectedTechni
     };
 
     const handleUserStatus = (data) => {
-      console.log("STATUS UPDATE", data);
+      console.log('STATUS UPDATE', data);
       if (data && typeof data === 'object') {
-        setTechnicians((prev) => {
+        setTechnicians(() => {
           const updatedTechnicians = {};
           Object.keys(data).forEach((key) => {
             if (data[key].status !== 'desconectado') {
@@ -132,31 +133,23 @@ const Map = ({ position, zoom, activeTechnicians, selectedClient, selectedTechni
             Object.keys(technicians).map((key) => {
               const technician = technicians[key];
               return (
-                technician.status !== 'desconectado' && technician.latitude && technician.longitude && (
+                technician.status !== 'desconectado' &&
+                technician.latitude &&
+                technician.longitude && (
                   <Marker key={key} position={[technician.latitude, technician.longitude]} icon={myIcon}>
                     <Popup>
                       <div className='popup-tecnico'>
                         <img src={`https://via.placeholder.com/50`} alt='Technician' />
                         <div className='popup-content'>
                           <h4>{technician.nombre}</h4>
-                 
+
                           <p>{technician.telefono}</p>
                         </div>
                       </div>
                       <div className='popup-tecnico-button'>
                         <button onClick={() => handleTechnicianSelect(technician)}>
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            width='22'
-                            height='22'
-                            fill='currentColor'
-                            className='bi bi-arrow-right'
-                            viewBox='0 0 15 15'
-                          >
-                            <path
-                              fillRule='evenodd'
-                              d='M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8'
-                            />
+                          <svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' fill='currentColor' className='bi bi-arrow-right' viewBox='0 0 15 15'>
+                            <path fillRule='evenodd' d='M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8' />
                           </svg>
                         </button>
                       </div>
@@ -178,18 +171,8 @@ const Map = ({ position, zoom, activeTechnicians, selectedClient, selectedTechni
                 </div>
                 <div className='popup-tecnico-button'>
                   <button onClick={() => handleTechnicianSelect(selectedTechnician)}>
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      width='22'
-                      height='22'
-                      fill='currentColor'
-                      className='bi bi-arrow-right'
-                      viewBox='0 0 15 15'
-                    >
-                      <path
-                        fillRule='evenodd'
-                        d='M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8'
-                      />
+                    <svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' fill='currentColor' className='bi bi-arrow-right' viewBox='0 0 15 15'>
+                      <path fillRule='evenodd' d='M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8' />
                     </svg>
                   </button>
                 </div>
@@ -218,18 +201,8 @@ const Map = ({ position, zoom, activeTechnicians, selectedClient, selectedTechni
                   </div>
                   <div className='popup-tecnico-button'>
                     <button onClick={() => handleOpenModalWithClientData(cliente)}>
-                      <svg
-                        xmlns='http://www.w3.org/2000/svg'
-                        width='22'
-                        height='22'
-                        fill='currentColor'
-                        className='bi bi-arrow-right'
-                        viewBox='0 0 15 15'
-                      >
-                        <path
-                          fillRule='evenodd'
-                          d='M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8'
-                        />
+                      <svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' fill='currentColor' className='bi bi-arrow-right' viewBox='0 0 15 15'>
+                        <path fillRule='evenodd' d='M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8' />
                       </svg>
                     </button>
                   </div>
