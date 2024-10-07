@@ -634,6 +634,7 @@ const Ubicaciones = () => {
             selectedTechnician={selectedTecnico}
             setSelectedTechnician={setSelectedTecnico}
             clientes={clientes}
+            tecnicos={tecnicos}
             refClient={ref}
           />
           <div className='d-flex justify-content-end mt-4'>
