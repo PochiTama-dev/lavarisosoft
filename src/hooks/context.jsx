@@ -142,6 +142,27 @@ export const Provider = ({ children }) => {
       console.error('Error al aprobar la orden:', error);
     }
   };
+
+  const guardarRepuestoOrden = async ({ id_orden, id_repuesto }) => {
+    const repuesto = { id_orden, id_repuesto };
+    try {
+      const response = await fetch('https://lv-back.online/ordenes/repuestos/guardar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(repuesto),
+      });
+      const result = await response.json();
+      if (result) {
+        console.log('Repuesto agregado con exito!!!');
+        return true;
+      } else {
+        console.log('Se produjo un error, el repuesto no pudo ser agregado...');
+        return false;
+      }
+    } catch (error) {
+      console.error('Error al guardar el repuesto.', error);
+    }
+  };
   //FEEDBACK
   const sendFeedback = async (feedback) => {
     try {
@@ -179,7 +200,7 @@ export const Provider = ({ children }) => {
 
   const marcarNotificacionVista = async (idEmpleado) => {
     try {
-      const response = await fetch(`http://localhost:8000/notificaciones/modificar/${idEmpleado}`, {
+      const response = await fetch(`https://lv-back.online/notificaciones/modificar/${idEmpleado}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -193,6 +214,21 @@ export const Provider = ({ children }) => {
       }
     } catch (error) {
       console.error('Error al modificar la notificacion.', error);
+    }
+  };
+  const listaRepuestos = async () => {
+    try {
+      const response = await fetch('https://lv-back.online/repuestos/lista');
+      const repuestos = await response.json();
+      if (repuestos[0] !== undefined) {
+        console.log(`Se encontró un listado con ${repuestos.length} repuestos!!`);
+        return repuestos;
+      } else {
+        console.log('Aún no se registra ningún repuesto...');
+        return false;
+      }
+    } catch (error) {
+      console.error('Error, no se encontraron repuestos en la base de datos....', error);
     }
   };
 
@@ -213,6 +249,9 @@ export const Provider = ({ children }) => {
         ordenes,
         ordenesGenerales,
         handleAprobar,
+        guardarRepuestoOrden,
+        //Repuesto
+        listaRepuestos,
         //feedback
         sendFeedback,
         getFeedbacks,
