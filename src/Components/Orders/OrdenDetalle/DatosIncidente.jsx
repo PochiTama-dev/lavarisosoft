@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useCustomContext } from '../../../hooks/context';
 
-const DatosIncidente = ({ equipo, modelo, antiguedad, diagnostico }) => {
+const DatosIncidente = ({ equipo, modelo, antiguedad, diagnostico, repuestosSeleccionados }) => {
   const [repuestos, setRepuestos] = useState([]);
   const [nuevoRepuesto, setNuevoRepuesto] = useState([]);
   const [showInput, setShowInput] = useState(false);
@@ -23,12 +23,14 @@ const DatosIncidente = ({ equipo, modelo, antiguedad, diagnostico }) => {
     if (selectedRepuesto) {
       setNuevoRepuesto((prevRepuestos) => [...prevRepuestos, selectedRepuesto]);
       setSelectedRepuesto(null); // Limpia el repuesto seleccionado después de agregarlo
-      setSearchTerm(''); // Resetea el término de búsqueda si es necesario
+      setSearchTerm('');
       handleShow(); // Cierra el input de búsqueda
     }
   };
   const handleSelect = (repuesto) => {
     setSelectedRepuesto(repuesto);
+    setSearchTerm(repuesto.descripcion);
+    repuestosSeleccionados.push(repuesto);
   };
 
   const handleShow = () => {
@@ -102,7 +104,8 @@ DatosIncidente.propTypes = {
   equipo: PropTypes.string.isRequired,
   modelo: PropTypes.string.isRequired,
   antiguedad: PropTypes.string.isRequired,
-  diagnostico: PropTypes.string.isRequired,
+  diagnostico: PropTypes.string,
+  repuestosSeleccionados: PropTypes.array,
 };
 
 export default DatosIncidente;
