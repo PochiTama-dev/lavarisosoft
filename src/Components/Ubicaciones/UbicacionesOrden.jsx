@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import Header from "../Header/Header";
 import { useLocation } from "react-router-dom";
 import { ordenes, guardarOrden } from "../../services/ordenesService";
@@ -8,13 +8,23 @@ import "./Ubicaciones.css";
 const UbicacionesOrden = () => {
   const location = useLocation();
   const { selectedTechnician, selectedClient } = location.state || {};
-  const [nroNuevaOrden, setNroNuevaOrden] = useState(0)
+  const [nroNuevaOrden, setNroNuevaOrden] = useState(0);
 
   const separarDireccion = (direccion) => {
-    const partes = direccion.split(" ");
-    const altura = partes.pop();
-    const calle = partes.join(" ");
-    return { calle, altura };
+    if (!direccion || typeof direccion !== "string") {
+      return { calle: "", altura: "" };
+    }
+
+    const regex = /(.*?)(\d+)\s*$/;
+    const match = direccion.match(regex);
+
+    if (match) {
+      const calle = match[1].trim();
+      const altura = match[2];
+      return { calle, altura };
+    }
+
+    return { calle: direccion, altura: "" };
   };
 
   const { calle, altura } = separarDireccion(selectedClient.direccion);
@@ -24,15 +34,18 @@ const UbicacionesOrden = () => {
       const data = await ordenes();
       if (data.length > 0) {
         console.log(`Se encontraron una lista con ${data.length} ordenes!!`);
-        const entries = Object.entries(data)
-        const [last] = entries.slice(-1)
-        const nroOrden = last[1].id + 1; //Tomo el ultimo id de las ordenes cargadas y le sumo 1 
+        const entries = Object.entries(data);
+        const [last] = entries.slice(-1);
+        const nroOrden = last[1].id + 1; //Tomo el ultimo id de las ordenes cargadas y le sumo 1
         setNroNuevaOrden(nroOrden);
       } else {
-        console.log('Aún no se registra ningúna orden...');
+        console.log("Aún no se registra ningúna orden...");
       }
     } catch (error) {
-      console.error("Error, no se encontraron ordenes en la base de datos....", error);
+      console.error(
+        "Error, no se encontraron ordenes en la base de datos....",
+        error
+      );
     }
   };
 
@@ -52,7 +65,7 @@ const UbicacionesOrden = () => {
         motivo: null,
       };
       const ordenGuardada = await guardarOrden(orden);
-      console.log('ordenGuardada:', ordenGuardada);
+      console.log("ordenGuardada:", ordenGuardada);
       if (ordenGuardada) {
         alert("Orden guardada con éxito");
         console.log("Orden completa guardada con éxito!!!");
@@ -65,7 +78,7 @@ const UbicacionesOrden = () => {
 
   useEffect(() => {
     fetchOrdenes();
-  })
+  });
 
   return (
     <div className="ventas-container">
@@ -125,8 +138,13 @@ const UbicacionesOrden = () => {
             </div>
           </div>
         </div>
-        <div className='d-flex justify-content-center'>
-          <button className='bg-info rounded-pill text-white' onClick={handleSubmit}>Confirmar</button>
+        <div className="d-flex justify-content-center">
+          <button
+            className="bg-info rounded-pill text-white"
+            onClick={handleSubmit}
+          >
+            Confirmar
+          </button>
         </div>
       </div>
     </div>
