@@ -19,15 +19,6 @@ const Taller = () => {
   const [editIndex, setEditIndex] = useState(null);
   const [orderBy, setOrderBy] = useState(null);
   const [orderAsc, setOrderAsc] = useState(true);
-  const [showModal, setShowModal] = useState(false);
-
-  const handleShow = (index) => {
-    setOrdenSeleccionada(listaOrdenes[index]);
-    setTecnicoAsignado(listaOrdenes[index].Empleado);
-    setShowModal(true);
-  };
-
-  const handleClose = () => setShowModal(false);
 
   const fetchEmpleados = async () => {
     try {
@@ -61,11 +52,14 @@ const Taller = () => {
       if (estados[0] !== undefined) {
         setEstados(estados);
       } else {
-        console.log('Aún no se registra ningún tipo de estado...');
+        console.log("Aún no se registra ningún tipo de estado...");
         return [];
       }
     } catch (error) {
-      console.error("Error, no se encontraron tipos de estados en la base de datos....", error);
+      console.error(
+        "Error, no se encontraron tipos de estados en la base de datos....",
+        error
+      );
       return [];
     }
   };
@@ -149,8 +143,8 @@ const Taller = () => {
         Empleado: { ...tecnicoSeleccionado },
         TiposEstado: {
           id: estadoSeleccionado.id,
-          tipo_estado: estadoSeleccionado.tipo_estado
-        }
+          tipo_estado: estadoSeleccionado.tipo_estado,
+        },
       };
 
       const success = await modificarOrden(updatedOrden.id, updatedOrden);
@@ -403,9 +397,6 @@ const Taller = () => {
                         className="imgEditar"
                         onClick={() => handleEdit(index)}
                       />
-                      <div className="divMas" onClick={() => handleShow(index)}>
-                        <span className="spanMas">+</span>
-                      </div>
                     </div>
                   </>
                 )}
@@ -414,38 +405,6 @@ const Taller = () => {
           ))}
         </tbody>
       </Table>
-
-      {/* ModalAsignarRepuestos */}
-      <ModalAsignarRepuestos
-        showModal={showModal}
-        handleClose={handleClose}
-        ordenSeleccionada={ordenSeleccionada}
-        stockDataSeleccionada={false}
-        tecnicoAsignado={tecnicoAsignado}
-        repuestos={repuestos}
-        handleAsignarRepuestos={async (repuestosSeleccionados) => {
-          console.log("Repuestos asignados:", repuestosSeleccionados);
-          for (const repuesto of repuestosSeleccionados) {
-            const repuestoData = {
-              ordenId: ordenSeleccionada.id,
-              tecnicoId: tecnicoAsignado.id,
-              repuestoId: repuesto.id,
-              cantidad: repuesto.cantidad,
-            };
-
-            const success = await guardarOrdenRepuesto(repuestoData);
-
-            if (success) {
-              alert("Repuesto asignado correctamente");
-              console.log("Repuesto asignado correctamente");
-            }
-
-            if (!success) {
-              console.log("Error al asignar el repuesto:", repuesto);
-            }
-          }
-        }}
-      />
     </div>
   );
 };
