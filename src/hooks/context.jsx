@@ -75,6 +75,23 @@ export const Provider = ({ children }) => {
     }
   };
 
+  //CLIENTES
+  const listaClientes = async () => {
+    try {
+      const response = await fetch('https://lv-back.online/clientes/lista');
+      const clientes = await response.json();
+      if (clientes[0] !== undefined) {
+        //console.log(`Se encontró una lista con ${clientes.length} clientes!!`);
+        //console.log(clientes);
+        return clientes;
+      } else {
+        console.log('Aún no se registra ningún cliente...');
+        return false;
+      }
+    } catch (error) {
+      console.error('Error, no se encontraron clientes en la base de datos....', error);
+    }
+  };
   const getClienteById = async (id) => {
     try {
       const data = await fetch(`https://lv-back.online/clientes/${id}`);
@@ -245,6 +262,7 @@ export const Provider = ({ children }) => {
         getEmpleadosLista,
         //clientes
         getClienteById,
+        listaClientes,
         //Ordenes
         ordenes,
         ordenesGenerales,
