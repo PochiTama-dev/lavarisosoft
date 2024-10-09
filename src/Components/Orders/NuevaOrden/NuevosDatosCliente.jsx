@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import './nuevaOrden.css';
 import { useCustomContext } from '../../../hooks/context';
 
@@ -7,7 +7,8 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
   const [clientes, setClientes] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
   const [clientOrNew, setClientOrNew] = useState(false);
-
+  const [suggestions, setSuggestions] = useState([]);
+  const [ubicacion, setUbicacion] = useState(',Cordoba,Argentina');
   useEffect(() => {
     getClientes();
   }, []);
@@ -18,7 +19,12 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
   };
   const handleInputChange = (e) => {
     const { id, value } = e.target;
+    console.log(id);
+    console.log(value);
+
     setCliente((prevState) => ({ ...prevState, [id]: value }));
+    setUbicacion((prevState) => value);
+    console.log(ubicacion);
   };
 
   const handleSelected = (client) => {
@@ -28,6 +34,42 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
   const handleNew = () => {
     setClientOrNew(true);
     setSelectedClient(null);
+  };
+
+  const handleSuggestions = async (event) => {
+    handleInputChange(event);
+    const ARGENTINA_BOUNDS = [-73.415, -55.25, -53.628, -21.832];
+    const geoApiKey = 'c7778bb5bb994ac88ff65b8732e2cbdf';
+    const defaultCenter = [-31.4166867, -64.1834193];
+    const query = event.target.value;
+    if (query) {
+      try {
+        setTimeout(async () => {
+          //const response = await fetch(`https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(query)}&apiKey=${geoApiKey}&limit=10`);
+          const response = await fetch(
+            `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(query)}&apiKey=${geoApiKey}&bias=proximity:${defaultCenter.join(',')}&bbox=${ARGENTINA_BOUNDS.join(',')}&limit=5`
+          );
+          const data = await response.json();
+          if (data.features && data.features.length > 0) {
+            setSuggestions(data.features);
+          } else {
+            setSuggestions([]);
+          }
+        }, '1000');
+      } catch (error) {
+        console.error('Error fetching geocode:', error);
+      }
+    } else {
+      setSuggestions([]);
+    }
+  };
+  const handleSuggestionClick = (coordinates, sugestion) => {
+    console.log(sugestion);
+    const [lon, lat] = coordinates;
+    cliente.latitud = lat;
+    cliente.longitud = lon;
+    setUbicacion(`${sugestion.properties.address_line1},${sugestion.properties.city},Argentina`);
+    setSuggestions([]);
   };
   return (
     <div>
@@ -47,7 +89,7 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
         <div className='col-sm-3 col-form-label'>
           <h4>o</h4>
         </div>
-        <div className='col-sm-3 col-form-label'>
+        <div className='col-sm-3 col-form-label pointer'>
           <h4 onClick={handleNew}>Cargar nuevo cliente</h4>
         </div>
         {selectedClient !== null && !clientOrNew && (
@@ -175,8 +217,23 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
                 Localidad:
               </label>
               <div className='col-sm-8'>
-                <input type='text' id='ubicacion' className='form-control input-small' value={cliente.ubicacion || ''} onChange={handleInputChange} required />
+                <input type='text' id='ubicacion' className='form-control input-small' value={ubicacion} onChange={handleSuggestions} required />
               </div>
+              <Suspense fallback={<>Cargando...</>}>
+                {suggestions.length > 0 && (
+                  <>
+                    {suggestions.map((suggestion, index) => {
+                      const coordinates = suggestion.geometry.coordinates;
+
+                      return (
+                        <div key={index} className='suggestion-item pointer' onClick={() => handleSuggestionClick(coordinates, suggestion)}>
+                          {suggestion.properties.formatted}
+                        </div>
+                      );
+                    })}
+                  </>
+                )}
+              </Suspense>
             </div>
           </div>
         </div>
