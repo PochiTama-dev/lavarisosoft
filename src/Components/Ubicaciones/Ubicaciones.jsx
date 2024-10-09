@@ -1,9 +1,8 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import Header from "../Header/Header";
 import Map from "./Map";
 import "./Ubicaciones.css";
 import { haversine } from "./calcularDistancia";
-import { ordenes } from "../../services/ordenesService";
 import { listaClientes } from "../../services/clienteService";
 import { listadoEmpleados } from "../../services/empleadoService";
 import socket from "../services/socketService";
@@ -18,16 +17,22 @@ const Ubicaciones = () => {
   const [searchTec, setSearchTec] = useState("");
   const [showAllClientes, setShowAllClientes] = useState(false);
   const [showAllTecnicos, setShowAllTecnicos] = useState(false);
-  const [onlineUsers, setOnlineUsers] = useState("");
   const [position, setPosition] = useState({
     latitude: "-31.67750630032039",
     longitude: "-65.4105635773489",
   });
+  const [coordinatesClient, setCoordinatesClient] = useState([]);
+
+  const [refresh, setRefresh] = useState(false);
+
   const [filterTec, setFilterTec] = useState(tecnicos);
   const ref = useRef();
 
   const [tecnicosStatus, setTecnicosStatus] = useState({});
   const [loggedInUsers, setLoggedInUsers] = useState(new Set());
+
+  const suggestionsRef = useRef();
+  const mapRef = useRef();
 
   useEffect(() => {
     // Leer estado de conexión de los técnicos desde localStorage
@@ -86,7 +91,7 @@ const Ubicaciones = () => {
       socket.off("userLoggedIn", handleUserLoggedIn);
       socket.off("userLoggedOut", handleUserLoggedOut);
     };
-  }, []);
+  }, [refresh]);
 
   useEffect(() => {
     async function initialize() {
@@ -147,9 +152,13 @@ const Ubicaciones = () => {
     numero_cliente: "",
     nombre: "",
     apellido: "",
-    direccion: "",
+    direccion: ", Argentina",
+    piso: "",
+    departamento: "",
     telefono: "",
     cuil: "",
+    latitud: 0,
+    longitud: 0,
   });
 
   const [errors, setErrors] = useState({
@@ -207,9 +216,61 @@ const Ubicaciones = () => {
     setNewClient({ ...newClient, [name]: value });
   };
 
+  const [suggestions, setSuggestions] = useState([]);
+  const handleSuggestions = async (event) => {
+    handleInputChange(event);
+    const ARGENTINA_BOUNDS = [-73.415, -55.25, -53.628, -21.832];
+    const geoApiKey = "c7778bb5bb994ac88ff65b8732e2cbdf";
+    const defaultCenter = [-31.4166867, -64.1834193];
+    const query = event.target.value;
+    if (query) {
+      try {
+        setTimeout(async () => {
+          //const response = await fetch(`https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(query)}&apiKey=${geoApiKey}&limit=10`);
+          const response = await fetch(
+            `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(
+              query
+            )}&apiKey=${geoApiKey}&bias=proximity:${defaultCenter.join(
+              ","
+            )}&bbox=${ARGENTINA_BOUNDS.join(",")}&limit=5`
+          );
+          const data = await response.json();
+          if (data.features && data.features.length > 0) {
+            setSuggestions(data.features);
+          } else {
+            setSuggestions([]);
+          }
+        }, "3000");
+      } catch (error) {
+        console.error("Error fetching geocode:", error);
+      }
+    } else {
+      setSuggestions([]);
+    }
+  };
+
+  const handleSuggestionClick = (coordinates) => {
+    setCoordinatesClient(coordinates);
+    const [lon, lat] = coordinates;
+    newClient.latitud = lat;
+    newClient.longitud = lon;
+    setPosition([lat, lon]);
+
+    if (mapRef.current) {
+      mapRef.current.setView([lat, lon], 13);
+    }
+    setSuggestions([]);
+  };
+
   const handleAddClient = async () => {
     if (validateForm()) {
-      const clientId = await guardarCliente(newClient);
+      const clientData = {
+        ...newClient,
+        piso: newClient.piso || 0,
+        departamento: newClient.departamento || "-",
+      };
+
+      const clientId = await guardarCliente(clientData);
       if (clientId) {
         setClientes([
           ...clientes,
@@ -217,21 +278,23 @@ const Ubicaciones = () => {
             ...newClient,
             id: clientId,
             distancia: "0 km",
-            latitud: 0,
-            longitud: 0,
+            latitud: coordinatesClient[1],
+            longitud: coordinatesClient[0],
             Ordenes: [],
           },
         ]);
         setNewClient({
           nombre: "",
           direccion: "",
+          piso: 0,
+          departamento: "-",
           telefono: "",
           cuil: "",
           ubicacion: "",
         });
         setErrors({});
         setView("clientesTecnicos");
-        window.location.reload();
+        setRefresh(!refresh);
       }
     }
   };
@@ -571,7 +634,6 @@ const Ubicaciones = () => {
                       onChange={handleInputChange}
                     />
                   </li>
-
                   <li className="d-flex grey-text">
                     <span>Nombre:</span>
                   </li>
@@ -584,7 +646,6 @@ const Ubicaciones = () => {
                       onChange={handleInputChange}
                     />
                   </li>
-
                   <li className="d-flex grey-text">
                     <span>Apellido:</span>
                   </li>
@@ -597,7 +658,6 @@ const Ubicaciones = () => {
                       onChange={handleInputChange}
                     />
                   </li>
-
                   <li className="pb-1">
                     {errors.nombre && (
                       <div className="text-danger">{errors.nombre}</div>
@@ -612,13 +672,60 @@ const Ubicaciones = () => {
                       name="direccion"
                       className="rounded text-center grey-text"
                       value={newClient.direccion}
-                      onChange={handleInputChange}
+                      onChange={handleSuggestions}
                     />
                   </li>
+                  <div ref={suggestionsRef} className="suggestions-box">
+                    <Suspense fallback={<>Cargando...</>}>
+                      {suggestions.length > 0 && (
+                        <>
+                          {suggestions.map((suggestion, index) => {
+                            const coordinates = suggestion.geometry.coordinates;
+
+                            return (
+                              <div
+                                key={index}
+                                className="suggestion-item pointer"
+                                onClick={() =>
+                                  handleSuggestionClick(coordinates)
+                                }
+                              >
+                                {suggestion.properties.formatted}
+                              </div>
+                            );
+                          })}
+                        </>
+                      )}
+                    </Suspense>
+                  </div>
                   <li className="pb-1">
                     {errors.direccion && (
                       <div className="text-danger">{errors.direccion}</div>
                     )}
+                  </li>
+                  <li className="d-flex grey-text">
+                    <span>Piso:</span>
+                  </li>
+                  <li className="d-flex justify-content-between py-2 grey-text">
+                    <input
+                      type="number"
+                      name="piso"
+                      className="rounded text-center grey-text"
+                      value={newClient.piso || 0}
+                      onChange={handleInputChange}
+                    />
+                  </li>{" "}
+                  <li className="d-flex grey-text">
+                    <span>Departamento:</span>
+                  </li>
+                  <li className="d-flex justify-content-between py-2 grey-text">
+                    <input
+                      type="text"
+                      name="departamento"
+                      className="rounded text-center grey-text"
+                      value={newClient.departamento || ""}
+                      onChange={handleInputChange}
+                    />
                   </li>
                   <li className="d-flex grey-text">
                     <span>Telefono:</span>
@@ -771,6 +878,7 @@ const Ubicaciones = () => {
             selectedTechnician={selectedTecnico}
             setSelectedTechnician={setSelectedTecnico}
             clientes={clientes}
+            tecnicos={tecnicos}
             refClient={ref}
           />
           <div className="d-flex justify-content-end mt-4">

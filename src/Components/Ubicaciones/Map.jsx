@@ -9,6 +9,7 @@ import MarkerClusterGroup from "react-leaflet-cluster";
 import Modal from "./Modal";
 import NuevaOrden from "../../pages/Orders/NuevaOrden";
 import socket from "../services/socketService";
+import PropTypes from "prop-types";
 
 const CORDOBA_BOUNDS = {
   north: -29.0,
@@ -34,18 +35,17 @@ const clienteIcono = new Icon({
 const Map = ({
   position,
   zoom,
-  activeTechnicians,
   selectedClient,
   selectedTechnician,
   setSelectedTechnician,
   clientes,
+  tecnicos,
 }) => {
   const navigate = useNavigate();
   const refClient = useRef({});
   const [filter, setFilter] = useState("both");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedClientData, setSelectedClientData] = useState(null);
-  const [technicians, setTechnicians] = useState({});
 
   const { latitude = 0, longitude = 0 } = position || {};
 
@@ -151,15 +151,14 @@ const Map = ({
 
         <MarkerClusterGroup>
           {(filter === "technicians" || filter === "both") &&
-            Object.keys(technicians).map((key) => {
-              const technician = technicians[key];
+            tecnicos.map((tecnico, index) => {
               return (
-                technician.status !== "desconectado" &&
-                technician.latitude &&
-                technician.longitude && (
+                tecnico.status !== "desconectado" &&
+                tecnico.latitud &&
+                tecnico.longitud && (
                   <Marker
-                    key={key}
-                    position={[technician.latitude, technician.longitude]}
+                    key={index}
+                    position={[tecnico.latitud, tecnico.longitud]}
                     icon={myIcon}
                   >
                     <Popup>
@@ -169,14 +168,20 @@ const Map = ({
                           alt="Technician"
                         />
                         <div className="popup-content">
-                          <h4>{technician.nombre}</h4>
-
-                          <p>{technician.telefono}</p>
+                          <h4>{tecnico.nombre}</h4>
+                          <p>{tecnico.telefono}</p>
                         </div>
                       </div>
                       <div className="popup-tecnico-button">
                         <button
-                          onClick={() => handleTechnicianSelect(technician)}
+                          onClick={() =>
+                            handleTechnicianSelect(
+                              tecnico,
+                              selectedClient,
+                              setSelectedTechnician,
+                              navigate
+                            )
+                          }
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -220,7 +225,14 @@ const Map = ({
                 </div>
                 <div className="popup-tecnico-button">
                   <button
-                    onClick={() => handleTechnicianSelect(selectedTechnician)}
+                    onClick={() =>
+                      handleTechnicianSelect(
+                        selectedTechnician,
+                        selectedClient,
+                        setSelectedTechnician,
+                        navigate
+                      )
+                    }
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -265,19 +277,7 @@ const Map = ({
                     <button
                       onClick={() => handleOpenModalWithClientData(cliente)}
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="22"
-                        height="22"
-                        fill="currentColor"
-                        className="bi bi-arrow-right"
-                        viewBox="0 0 15 15"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"
-                        />
-                      </svg>
+                      Ver detalles
                     </button>
                   </div>
                 </Popup>
@@ -285,13 +285,25 @@ const Map = ({
             ))}
         </MarkerClusterGroup>
       </MapContainer>
+
+      {/* Modal para mostrar detalles del cliente */}
       {isModalOpen && (
         <Modal isOpen={isModalOpen} onClose={handleModalClose}>
-          <NuevaOrden selectedClientData={selectedClientData} />
+          <NuevaOrden cliente={selectedClientData} />
         </Modal>
       )}
     </>
   );
+};
+
+Map.propTypes = {
+  position: PropTypes.object,
+  zoom: PropTypes.number,
+  selectedClient: PropTypes.array,
+  selectedTechnician: PropTypes.array,
+  setSelectedTechnician: PropTypes.func,
+  clientes: PropTypes.array,
+  tecnicos: PropTypes.array,
 };
 
 export default Map;
