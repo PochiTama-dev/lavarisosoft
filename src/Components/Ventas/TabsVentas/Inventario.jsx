@@ -61,22 +61,6 @@ const Inventario = () => {
     }
   });
 
-  // const filteredCamionetaData = camionetaData.filter((item) => {
-  //   try {
-  //     console.log("Datos solicitados camioneta:", item.Repuesto);
-  //     return (
-  //       item.Repuesto &&
-  //       item.Repuesto.descripcion &&
-  //       item.Repuesto.descripcion
-  //         .toLowerCase()
-  //         .includes(searchTerm.toLowerCase())
-  //     );
-  //   } catch (error) {
-  //     console.error("Error al acceder a item.Repuesto:", error);
-  //     return false;
-  //   }
-  // });
-
   const filteredReservaData = reservaData.filter((item) => {
     try {
       console.log("Datos solicitados:", item.id);
@@ -320,14 +304,6 @@ const Inventario = () => {
                   <td>{tec.Vehiculo?.marca}</td>
                   <td>{tec.Vehiculo?.modelo}</td>
                   <td>{tec.Vehiculo?.patente}</td>
-                  <td>
-                    <span
-                      className="btnMas"
-                      onClick={() => handleShowRepuestos(index)}
-                    >
-                      +
-                    </span>
-                  </td>
                 </tr>
               ))}
             </tbody>
@@ -338,20 +314,16 @@ const Inventario = () => {
           <Table hover className="grilla-reserva">
             <thead>
               <tr>
-                <th>Nombre de repuesto</th>
                 <th>ID</th>
                 <th>ID de repuesto</th>
-                <th>No. Orden</th>
                 <th>Disponibles</th>
               </tr>
             </thead>
             <tbody className="grilla-reserva-body">
               {filteredReservaData.map((reserva, index) => (
                 <tr key={index} className={index % 2 === 0 ? "" : "row-even"}>
-                  <td>{reserva.Repuesto.descripcion}</td>
                   <td>{reserva.id}</td>
                   <td>{reserva.id_repuesto}</td>
-                  <td>{reserva.Ordene.numero_orden}</td>
                   <td>{reserva.cantidad}</td>
                 </tr>
               ))}
@@ -403,39 +375,6 @@ const Inventario = () => {
           </div>
         )}
       </ul>
-
-      <ModalAsignarRepuestos
-        showModal={showModal}
-        handleClose={handleCloseRepuestos}
-        ordenSeleccionada={false} // No se asigna orden en este caso
-        stockDataSeleccionada={stockDataSeleccionada}
-        tecnicoAsignado={tecnicoAsignado}
-        repuestos={repuestos}
-        handleAsignarRepuestos={async (repuestosSeleccionados) => {
-          for (const repuesto of repuestosSeleccionados) {
-            const repuestoData = {
-              id_empleado: tecnicoAsignado.id,
-              id_repuesto: repuesto.id,
-              cantidad: repuesto.cantidad || 1,
-              lote: stockDataSeleccionada.lote || "N/A",
-            };
-
-            console.log("RepuestoData: ", repuestoData);
-            console.log("ID del repuesto:", repuesto.id);
-
-            const success = await modificarStockCamioneta(
-              camionetaSeleccionada,
-              repuestoData
-            );
-
-            if (success) {
-              console.log("Repuesto asignado correctamente");
-            } else {
-              console.log("Error al asignar el repuesto:", repuesto);
-            }
-          }
-        }}
-      />
     </div>
   );
 };
