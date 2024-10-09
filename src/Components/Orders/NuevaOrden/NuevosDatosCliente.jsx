@@ -147,6 +147,22 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
                 </div>
               </div>
               <div className='mb-3 row align-items-center'>
+                <label htmlFor='piso' className='col-sm-2 col-form-label'>
+                  Piso:
+                </label>
+                <div className='col-sm-8'>
+                  <input type='number' id='piso' className='form-control input-small' value={selectedClient?.piso || ''} required />
+                </div>
+              </div>
+              <div className='mb-3 row align-items-center'>
+                <label htmlFor='departamento' className='col-sm-2 col-form-label'>
+                  Departamento:
+                </label>
+                <div className='col-sm-8'>
+                  <input type='text' id='departamento' className='form-control input-small' value={selectedClient?.departamento || ''} required />
+                </div>
+              </div>
+              <div className='mb-3 row align-items-center'>
                 <label htmlFor='ubicacion' className='col-sm-2 col-form-label'>
                   Localidad:
                 </label>
@@ -210,6 +226,22 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
               </label>
               <div className='col-sm-8'>
                 <input type='text' id='direccion' className='form-control input-small' value={cliente.direccion || ''} onChange={handleInputChange} required />
+              </div>
+            </div>
+            <div className='mb-3 row align-items-center'>
+              <label htmlFor='piso' className='col-sm-2 col-form-label'>
+                Piso:
+              </label>
+              <div className='col-sm-8'>
+                <input type='number' id='piso' className='form-control input-small' value={cliente.piso || ''} onChange={handleInputChange} required />
+              </div>
+            </div>
+            <div className='mb-3 row align-items-center'>
+              <label htmlFor='departamento' className='col-sm-2 col-form-label'>
+                Departamento:
+              </label>
+              <div className='col-sm-8'>
+                <input type='text' id='departamento' className='form-control input-small' value={cliente.departamento || ''} onChange={handleInputChange} required />
               </div>
             </div>
             <div className='mb-3 row align-items-center'>

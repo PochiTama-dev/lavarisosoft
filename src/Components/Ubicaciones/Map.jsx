@@ -1,15 +1,15 @@
-import { useState, useEffect, useRef } from 'react';
-import PropTypes from 'prop-types';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { useNavigate } from 'react-router-dom';
-import { Icon } from 'leaflet';
-import markerIcon from '../../assets/marker.png';
-import clientIcon from '../../assets/man.webp';
-import 'leaflet/dist/leaflet.css';
-import MarkerClusterGroup from 'react-leaflet-cluster';
-import Modal from './Modal';
-import NuevaOrden from '../../pages/Orders/NuevaOrden';
-import { handleTechnicianSelect } from '../../helpers/MapLeaflet/map';
+import { useState, useEffect, useRef } from "react";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { useNavigate } from "react-router-dom";
+import { Icon } from "leaflet";
+import markerIcon from "../../assets/marker.png";
+import clientIcon from "../../assets/man.webp";
+import "leaflet/dist/leaflet.css";
+import MarkerClusterGroup from "react-leaflet-cluster";
+import Modal from "./Modal";
+import NuevaOrden from "../../pages/Orders/NuevaOrden";
+import socket from "../services/socketService";
+import PropTypes from "prop-types";
 
 const CORDOBA_BOUNDS = {
   north: -29.0,
@@ -32,14 +32,31 @@ const clienteIcono = new Icon({
   popupAnchor: [1, -35],
 });
 
-const Map = ({ position, zoom, selectedClient, selectedTechnician, setSelectedTechnician, clientes, tecnicos }) => {
+const Map = ({
+  position,
+  zoom,
+  selectedClient,
+  selectedTechnician,
+  setSelectedTechnician,
+  clientes,
+  tecnicos,
+}) => {
   const navigate = useNavigate();
   const refClient = useRef({});
-  const [filter, setFilter] = useState('both');
+  const [filter, setFilter] = useState("both");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedClientData, setSelectedClientData] = useState(null);
 
   const { latitude = 0, longitude = 0 } = position || {};
+
+  const handleTechnicianSelect = (tecnico) => {
+    if (selectedClient) {
+      setSelectedTechnician(tecnico);
+      navigate("/locationOrder", {
+        state: { selectedTechnician: tecnico, selectedClient: selectedClient },
+      });
+    }
+  };
 
   const handleFilterChange = (e) => {
     setFilter(e.target.value);
@@ -56,48 +73,128 @@ const Map = ({ position, zoom, selectedClient, selectedTechnician, setSelectedTe
   };
 
   useEffect(() => {
-    if (selectedClient && refClient.current[`${selectedClient.latitud}-${selectedClient.longitud}`]) {
-      refClient.current[`${selectedClient.latitud}-${selectedClient.longitud}`].openPopup();
+    if (
+      selectedClient &&
+      refClient.current[`${selectedClient.latitud}-${selectedClient.longitud}`]
+    ) {
+      refClient.current[
+        `${selectedClient.latitud}-${selectedClient.longitud}`
+      ].openPopup();
     }
   }, [selectedClient]);
+
+  useEffect(() => {
+    const handleBroadcastLocation = (data) => {
+      console.log("LOCATION", data);
+      if (data && typeof data === "object") {
+        setTechnicians((prev) => {
+          const updatedTechnicians = {};
+          Object.keys(data).forEach((key) => {
+            if (data[key].status !== "desconectado") {
+              updatedTechnicians[key] = data[key];
+            }
+          });
+          return updatedTechnicians;
+        });
+      }
+    };
+
+    const handleUserStatus = (data) => {
+      console.log("STATUS UPDATE", data);
+      if (data && typeof data === "object") {
+        setTechnicians((prev) => {
+          const updatedTechnicians = {};
+          Object.keys(data).forEach((key) => {
+            if (data[key].status !== "desconectado") {
+              updatedTechnicians[key] = data[key];
+            }
+          });
+          return updatedTechnicians;
+        });
+      }
+    };
+
+    socket.on("broadcastLocation", handleBroadcastLocation);
+    socket.on("userStatus", handleUserStatus);
+
+    return () => {
+      socket.off("broadcastLocation", handleBroadcastLocation);
+      socket.off("userStatus", handleUserStatus);
+    };
+  }, []);
 
   return (
     <>
       <div>
-        <select name='filter' id='filter' value={filter} onChange={handleFilterChange}>
-          <option value='clients'>Clientes</option>
-          <option value='technicians'>Técnicos</option>
-          <option value='both'>Ambos</option>
+        <select
+          name="filter"
+          id="filter"
+          value={filter}
+          onChange={handleFilterChange}
+        >
+          <option value="clients">Clientes</option>
+          <option value="technicians">Técnicos</option>
+          <option value="both">Ambos</option>
         </select>
       </div>
       <MapContainer
-        className='searchMap'
+        className="searchMap"
         bounds={CORDOBA_BOUNDS}
-        center={selectedClient && selectedClient.nombre ? [selectedClient.latitud, selectedClient.longitud] : [latitude || 0, longitude || 0]}
+        center={
+          selectedClient && selectedClient.nombre
+            ? [selectedClient.latitud, selectedClient.longitud]
+            : [latitude || 0, longitude || 0]
+        }
         zoom={zoom}
       >
-        <TileLayer url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' />
+        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
         <MarkerClusterGroup>
-          {(filter === 'technicians' || filter === 'both') &&
+          {(filter === "technicians" || filter === "both") &&
             tecnicos.map((tecnico, index) => {
               return (
-                tecnico.status !== 'desconectado' &&
+                tecnico.status !== "desconectado" &&
                 tecnico.latitud &&
                 tecnico.longitud && (
-                  <Marker key={index} position={[tecnico.latitud, tecnico.longitud]} icon={myIcon}>
+                  <Marker
+                    key={index}
+                    position={[tecnico.latitud, tecnico.longitud]}
+                    icon={myIcon}
+                  >
                     <Popup>
-                      <div className='popup-tecnico'>
-                        <img src={`https://via.placeholder.com/50`} alt='Technician' />
-                        <div className='popup-content'>
+                      <div className="popup-tecnico">
+                        <img
+                          src={`https://via.placeholder.com/50`}
+                          alt="Technician"
+                        />
+                        <div className="popup-content">
                           <h4>{tecnico.nombre}</h4>
                           <p>{tecnico.telefono}</p>
                         </div>
                       </div>
-                      <div className='popup-tecnico-button'>
-                        <button onClick={() => handleTechnicianSelect(tecnico, selectedClient, setSelectedTechnician, navigate)}>
-                          <svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' fill='currentColor' className='bi bi-arrow-right' viewBox='0 0 15 15'>
-                            <path fillRule='evenodd' d='M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8' />
+                      <div className="popup-tecnico-button">
+                        <button
+                          onClick={() =>
+                            handleTechnicianSelect(
+                              tecnico,
+                              selectedClient,
+                              setSelectedTechnician,
+                              navigate
+                            )
+                          }
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="22"
+                            height="22"
+                            fill="currentColor"
+                            className="bi bi-arrow-right"
+                            viewBox="0 0 15 15"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"
+                            />
                           </svg>
                         </button>
                       </div>
@@ -108,19 +205,47 @@ const Map = ({ position, zoom, selectedClient, selectedTechnician, setSelectedTe
             })}
 
           {selectedTechnician && (
-            <Marker position={[selectedTechnician.latitud, selectedTechnician.longitud]} icon={myIcon}>
+            <Marker
+              position={[
+                selectedTechnician.latitud,
+                selectedTechnician.longitud,
+              ]}
+              icon={myIcon}
+            >
               <Popup>
-                <div className='popup-tecnico'>
-                  <img src={`https://via.placeholder.com/50`} alt='Technician' />
-                  <div className='popup-content'>
+                <div className="popup-tecnico">
+                  <img
+                    src={`https://via.placeholder.com/50`}
+                    alt="Technician"
+                  />
+                  <div className="popup-content">
                     <h4>{selectedTechnician.nombre}</h4>
                     <p>{selectedTechnician.telefono}</p>
                   </div>
                 </div>
-                <div className='popup-tecnico-button'>
-                  <button onClick={() => handleTechnicianSelect(selectedTechnician, selectedClient, setSelectedTechnician, navigate)}>
-                    <svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' fill='currentColor' className='bi bi-arrow-right' viewBox='0 0 15 15'>
-                      <path fillRule='evenodd' d='M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8' />
+                <div className="popup-tecnico-button">
+                  <button
+                    onClick={() =>
+                      handleTechnicianSelect(
+                        selectedTechnician,
+                        selectedClient,
+                        setSelectedTechnician,
+                        navigate
+                      )
+                    }
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="22"
+                      height="22"
+                      fill="currentColor"
+                      className="bi bi-arrow-right"
+                      viewBox="0 0 15 15"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"
+                      />
                     </svg>
                   </button>
                 </div>
@@ -129,26 +254,31 @@ const Map = ({ position, zoom, selectedClient, selectedTechnician, setSelectedTe
           )}
         </MarkerClusterGroup>
         <MarkerClusterGroup>
-          {(filter === 'clients' || filter === 'both') &&
+          {(filter === "clients" || filter === "both") &&
             clientes.map((cliente, index) => (
               <Marker
                 key={index}
                 position={[cliente.latitud, cliente.longitud]}
                 icon={clienteIcono}
                 ref={(ref) => {
-                  refClient.current[`${cliente.latitud}-${cliente.longitud}`] = ref;
+                  refClient.current[`${cliente.latitud}-${cliente.longitud}`] =
+                    ref;
                 }}
               >
                 <Popup>
-                  <div className='popup-tecnico'>
-                    <img src={`https://via.placeholder.com/50`} alt='Client' />
-                    <div className='popup-content'>
+                  <div className="popup-tecnico">
+                    <img src={`https://via.placeholder.com/50`} alt="Client" />
+                    <div className="popup-content">
                       <h4>{cliente.nombre}</h4>
                       <p>{cliente.telefono}</p>
                     </div>
                   </div>
-                  <div className='popup-tecnico-button'>
-                    <button onClick={() => handleOpenModalWithClientData(cliente)}>Ver detalles</button>
+                  <div className="popup-tecnico-button">
+                    <button
+                      onClick={() => handleOpenModalWithClientData(cliente)}
+                    >
+                      Ver detalles
+                    </button>
                   </div>
                 </Popup>
               </Marker>
