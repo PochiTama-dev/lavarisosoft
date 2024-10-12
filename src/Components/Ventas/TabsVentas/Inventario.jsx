@@ -4,173 +4,104 @@ import './Inventario.css';
 import cargar from '../../../images/cargarExcel.webp';
 import descargar from '../../../images/descargarExcel.webp';
 import editar from '../../../images/editar.webp';
-import { listaRepuestos } from '../../../services/repuestosService.jsx';
-import { listaStockCamioneta } from '../../../services/stockCamionetaService.jsx';
-import { modificarStockCamioneta } from '../../../services/stockCamionetaService.jsx';
-import ModalAsignarRepuestos from '../../Mantenimiento/TabsMantenimiento/ModalAsignarRepuestos';
 import { useCustomContext } from '../../../hooks/context.jsx';
 import { Table } from 'react-bootstrap';
+// import { listaRepuestos } from '../../../services/repuestosService.jsx';
+// import { listaStockCamioneta } from '../../../services/stockCamionetaService.jsx';
+// import { modificarStockCamioneta } from '../../../services/stockCamionetaService.jsx';
+// import ModalAsignarRepuestos from '../../Mantenimiento/TabsMantenimiento/ModalAsignarRepuestos';
 
 const Inventario = () => {
   const { handleNavigate } = useCustomContext();
   const [pestaña, setPestaña] = useState('Stock');
   const [show, setShow] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   const [stockData, setStockData] = useState([]);
-  const [stockDataSeleccionada, setStockDataSeleccionada] = useState([]);
-  const [repuestos, setRepuestos] = useState([]);
-  const [camionetaData, setCamionetaData] = useState([]);
   const [reservaData, setReservaData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [camionetaSeleccionada, setCamionetaSeleccionada] = useState(null);
-  const [tecnicoAsignado, setTecnicoAsignado] = useState(null);
   const [tecnicos, setTecnicos] = useState([]);
 
-  const handleShowRepuestos = (index) => {
-    const selectedCamioneta = camionetaData[index];
-    setStockDataSeleccionada(selectedCamioneta);
-    setCamionetaSeleccionada(selectedCamioneta.id);
+  // Manejador de búsqueda
+  const handleSearchChange = (event) => setSearchTerm(event.target.value);
 
-    if (selectedCamioneta.Empleado) {
-      setTecnicoAsignado(selectedCamioneta.Empleado);
-    } else {
-      console.warn('No hay empleado asignado para esta camioneta');
-      setTecnicoAsignado(null);
-    }
-    setShowModal(true);
-  };
-
-  const handleCloseRepuestos = () => setShowModal(false);
-
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-  };
-
+  // Filtrar datos de stock según el término de búsqueda
   const filteredStockData = stockData.filter((item) => {
     try {
-      console.log('Datos solicitados:', item.Repuesto);
       if (item.Repuesto) {
         return item.Repuesto.descripcion.toLowerCase().includes(searchTerm.toLowerCase());
       }
     } catch (error) {
       console.error('Error al acceder a item.Repuesto:', error);
-      return false;
     }
+    return false;
   });
 
-  const filteredReservaData = reservaData.filter((item) => {
-    try {
-      console.log('Datos solicitados:', item.id);
-      return item.id.toString().includes(searchTerm.toLowerCase());
-    } catch (error) {
-      console.error('Error al acceder a item.id:', error);
-      return false;
-    }
-  });
-
-  const stockDb = async () => {
+  // Obtener datos de stock desde la API
+  const fetchStockData = async () => {
     try {
       const response = await fetch('https://lv-back.online/stock/principal/lista');
       return await response.json();
     } catch (error) {
-      console.error(error);
+      console.error('Error fetching stock data:', error);
       return [];
     }
   };
 
-  const obtenerTecnicos = async () => {
+  // Obtener datos de técnicos desde la API
+  const fetchTecnicos = async () => {
     try {
       const response = await fetch('https://lv-back.online/empleados');
       const empleados = await response.json();
-      const tecnicos = empleados.filter((empleado) => empleado.id_rol === 5);
-      return tecnicos;
+      return empleados.filter((empleado) => empleado.id_rol === 5);
     } catch (error) {
-      console.error(error);
+      console.error('Error obteniendo los tecnicos: ', error);
       return [];
     }
   };
 
-  const camionetaDb = async () => {
-    try {
-      const response = await fetch('https://lv-back.online/stock/camioneta/lista');
-      return await response.json();
-    } catch (error) {
-      console.error(error);
-      return [];
-    }
-  };
-
-  const reservaDb = async () => {
+  // Obtener datos de reserva desde la API
+  const fetchReservaData = async () => {
     try {
       const response = await fetch('https://lv-back.online/stock/reserva/lista');
       return await response.json();
     } catch (error) {
-      console.error(error);
+      console.error('Error fetching reserva data:', error);
       return [];
     }
   };
 
-  const fetchRepuestos = async () => {
-    try {
-      const repuestosData = await listaRepuestos();
-      setRepuestos(repuestosData);
-    } catch (error) {
-      console.error('Error al obtener repuestos:', error);
-    }
-  };
-
+  // Cargar datos al montar el componente
   useEffect(() => {
-    const fetchStockData = async () => {
+    const loadData = async () => {
+      setLoading(true);
       try {
-        const data = await stockDb();
-        setStockData(data);
+        const [stock, tecnicos, reservas] = await Promise.all([fetchStockData(), fetchTecnicos(), fetchReservaData()]);
+        setStockData(stock);
+        setTecnicos(tecnicos);
+        setReservaData(reservas);
       } catch (error) {
-        console.error('Error fetching stock data:', error);
-        setStockData([]);
+        console.error('Error al cargar datos:', error);
       } finally {
         setLoading(false);
       }
     };
-    const fetchTecnico = async () => {
-      try {
-        const data = await obtenerTecnicos();
-        setTecnicos(data);
-      } catch (error) {
-        console.log('Error obteniendo los tecnicos: ', error);
-        setTecnicos([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    const fetchCamionetaData = async () => {
-      try {
-        const data = await listaStockCamioneta(); //camionetaDb();
-        setCamionetaData(data);
-      } catch (error) {
-        console.error('Error fetching camioneta data:', error);
-        setCamionetaData([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    const fetchReservaData = async () => {
-      try {
-        const data = await reservaDb();
-        setReservaData(data);
-      } catch (error) {
-        console.error('Error fetching reserva data:', error);
-        setReservaData([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchStockData();
-    fetchTecnico();
-    fetchCamionetaData();
-    fetchReservaData();
-    fetchRepuestos();
+    loadData();
+    // fetchCamionetaData();
+    // fetchRepuestos();
   }, []);
+  const mergedReservaData = reservaData.map((reserva) => {
+    // Buscar el objeto correspondiente en stockData que coincida con el id_repuesto
+    const repuesto = stockData.find((stock) => stock.id_repuesto === reserva.id_repuesto);
+
+    // Devolver un nuevo objeto que combine la data original de reserva y agregue el objeto Repuesto si existe
+    return {
+      ...reserva,
+      Repuesto: repuesto ? repuesto.Repuesto : null,
+    };
+  });
+  /* console.log(stockData);
+  console.log(reservaData);
+  console.log(mergedReservaData); */
 
   if (loading) {
     return <div>Loading...</div>;
@@ -178,55 +109,29 @@ const Inventario = () => {
 
   const columnasReporteVentas = ['Nombre', 'ID', 'Precio', 'No.Orden'];
   const itemsReporteVentas = [
-    {
-      nombre: 'Reporte 1',
-      id: 1,
-      precio: 1000,
-      nOrden: 10000,
-    },
-    {
-      nombre: 'Reporte 2',
-      id: 2,
-      precio: 2000,
-      nOrden: 20000,
-    },
-    {
-      nombre: 'Reporte 3',
-      id: 3,
-      precio: 3000,
-      nOrden: 30000,
-    },
+    { nombre: 'Reporte 1', id: 1, precio: 1000, nOrden: 10000 },
+    { nombre: 'Reporte 2', id: 2, precio: 2000, nOrden: 20000 },
+    { nombre: 'Reporte 3', id: 3, precio: 3000, nOrden: 30000 },
   ];
 
-  const handleShow = () => {
-    setShow(!show);
-  };
+  const handleShow = () => setShow(!show);
 
-  console.log(filteredReservaData);
   return (
     <div className='bg-secondary inventario-container'>
       <h1 className='text-primary'>Inventario</h1>
       <ul className='d-flex justify-content-around'>
-        <li onClick={() => setPestaña('Stock')} className={`pestañasInventario ${pestaña === 'Stock' ? 'pestañasInventarioActive' : ''}`}>
-          Stock
-        </li>
-        <li onClick={() => setPestaña('Stock Camionetas')} className={`pestañasInventario ${pestaña === 'Stock Camionetas' ? 'pestañasInventarioActive' : ''}`}>
-          Stock Camionetas
-        </li>
-        <li onClick={() => setPestaña('Reserva')} className={`pestañasInventario ${pestaña === 'Reserva' ? 'pestañasInventarioActive' : ''}`}>
-          Reserva
-        </li>
-        <li onClick={() => setPestaña('Reporte de ventas')} className={`pestañasInventario ${pestaña === 'Reporte de ventas' ? 'pestañasInventarioActive' : ''}`}>
-          Reporte de ventas
-        </li>
+        {['Stock', 'Stock Camionetas', 'Reserva', 'Reporte de ventas'].map((name) => (
+          <li key={name} onClick={() => setPestaña(name)} className={`pestañasInventario ${pestaña === name ? 'pestañasInventarioActive' : ''}`}>
+            {name}
+          </li>
+        ))}
       </ul>
       <div>
         <h2 className='caja-input-text'>Buscar piezas</h2>
-        {/* <input className="caja-input" type="text" placeholder="Buscar"  /> */}
         <input className='caja-input' type='text' placeholder='Buscar' value={searchTerm} onChange={handleSearchChange} />
         <button className='caja-button-search'>🔍︎</button>
       </div>
-      {pestaña === 'Stock' ? (
+      {pestaña === 'Stock' && (
         <div className='grilla-inventario'>
           <Table hover className='grilla-stock'>
             <thead>
@@ -249,13 +154,14 @@ const Inventario = () => {
             </tbody>
           </Table>
         </div>
-      ) : pestaña === 'Stock Camionetas' ? (
+      )}
+      {pestaña === 'Stock Camionetas' && (
         <div className='grilla-inventario'>
           <Table hover className='grilla-camioneta'>
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Tecnico</th>
+                <th>Técnico</th>
                 <th>Marca</th>
                 <th>Modelo</th>
                 <th>Patente</th>
@@ -276,32 +182,32 @@ const Inventario = () => {
             </tbody>
           </Table>
         </div>
-      ) : pestaña === 'Reserva' ? (
+      )}
+      {pestaña === 'Reserva' && (
         <div className='grilla-inventario'>
           <Table hover className='grilla-reserva'>
             <thead>
               <tr>
-                <th>Tecnico</th>
-                <th>ID de repuesto</th>
+                <th>Técnico</th>
+                <th>Repuesto</th>
                 <th>Disponibles</th>
               </tr>
             </thead>
             <tbody className='grilla-reserva-body'>
-              {filteredReservaData.map((reserva, index) => (
+              {mergedReservaData.map((reserva, index) => (
                 <tr key={index} className={index % 2 === 0 ? '' : 'row-even'}>
                   <td>
                     {reserva.Empleado.nombre} {reserva.Empleado.apellido}
                   </td>
-                  <td>{reserva.id_repuesto}</td>
+                  <td>{reserva.Repuesto ? reserva.Repuesto.descripcion : 'null'}</td>
                   <td>{reserva.cantidad}</td>
                 </tr>
               ))}
             </tbody>
           </Table>
         </div>
-      ) : (
-        <Grilla columnas={columnasReporteVentas} elementos={itemsReporteVentas} />
       )}
+      {pestaña === 'Reporte de ventas' && <Grilla columnas={columnasReporteVentas} elementos={itemsReporteVentas} />}
       <ul className='d-flex justify-content-left w-100 imagenes'>
         <div className='text-end'>
           <button className='boton3Puntos' onClick={handleShow}>
@@ -313,14 +219,16 @@ const Inventario = () => {
         {show && (
           <div className='d-flex justify-content-around inventario-botones'>
             <li>
-              <img src={descargar} alt='Descargar el excel' /> <span>Descargar Excel</span>
+              <img src={descargar} alt='Descargar el excel' />
+              <span>Descargar Excel</span>
             </li>
             <li>
               <img src={editar} alt='editar' onClick={() => handleNavigate('editarStockRepuestos')} />
               <span>Editar</span>
             </li>
             <li onClick={() => handleNavigate('addLoteExcel')}>
-              <img src={cargar} alt='Carga de excel' /> <span>Carga Excel</span>
+              <img src={cargar} alt='Carga de excel' />
+              <span>Carga Excel</span>
             </li>
             <li className='d-flex' onClick={() => handleNavigate('addRespuestos')}>
               <div className='divMas'>

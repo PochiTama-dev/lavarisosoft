@@ -263,6 +263,21 @@ export const Provider = ({ children }) => {
       console.error('Error, no se encontraron repuestos en la base de datos....', error);
     }
   };
+  const stockReserva = async () => {
+    try {
+      const response = await fetch('https://lv-back.online/stock/reserva/lista');
+      const repuestos = await response.json();
+      if (repuestos[0] !== undefined) {
+        //console.log(`Se encontró un listado con ${repuestos.length} repuestos!!`);
+        return repuestos;
+      } else {
+        console.log('Aún no se registra ningún repuesto...');
+        return false;
+      }
+    } catch (error) {
+      console.error('Error, no se encontraron repuestos en la base de datos....', error);
+    }
+  };
 
   return (
     <Context.Provider
@@ -286,6 +301,7 @@ export const Provider = ({ children }) => {
         //Repuesto
         listaRepuestos,
         repuestosOrdenes,
+        stockReserva,
         //feedback
         sendFeedback,
         getFeedbacks,
