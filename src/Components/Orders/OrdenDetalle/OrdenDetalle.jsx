@@ -83,7 +83,15 @@ const OrdenDetalle = ({ orden, onUpdateOrden }) => {
       </div>
       <DatosTecnico nombre={Empleado.nombre} apellido={Empleado.apellido} legajo={Empleado.legajo} />
       <DatosCliente nombre={Cliente.nombre} apellido={Cliente.apellido} legajo={`CL-${Cliente.id}`} telefono={Cliente.telefono} direccion={Cliente.direccion} localidad={Cliente.ubicacion} />
-      <DatosIncidente equipo={equipo} modelo={modelo} antiguedad={`${antiguedad} años`} diagnostico={diagnostico} estado={TiposEstado.tipo_estado} repuestosSeleccionados={repuestos} />
+      <DatosIncidente
+        equipo={equipo}
+        modelo={modelo}
+        antiguedad={`${antiguedad} años`}
+        diagnostico={diagnostico}
+        estado={TiposEstado.tipo_estado}
+        repuestosSeleccionados={repuestos}
+        idOrden={orden.id}
+      />
       <div className='d-flex justify-content-evenly position-relative'>
         {TiposEstado.tipo_estado === 'Pendiente' && (
           <div className='orders-btn'>

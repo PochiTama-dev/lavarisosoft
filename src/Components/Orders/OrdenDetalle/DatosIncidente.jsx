@@ -2,24 +2,27 @@ import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useCustomContext } from '../../../hooks/context';
 
-const DatosIncidente = ({ equipo, modelo, antiguedad, diagnostico, repuestosSeleccionados }) => {
+const DatosIncidente = ({ equipo, modelo, antiguedad, diagnostico, idOrden }) => {
+  //const [nuevoRepuesto, setNuevoRepuesto] = useState([]);
+  //const [showInput, setShowInput] = useState(false);
+  //const [selectedRepuesto, setSelectedRepuesto] = useState();
+  //const [searchTerm, setSearchTerm] = useState('');
   const [repuestos, setRepuestos] = useState([]);
-  const [nuevoRepuesto, setNuevoRepuesto] = useState([]);
-  const [showInput, setShowInput] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedRepuesto, setSelectedRepuesto] = useState();
 
-  const { listaRepuestos } = useCustomContext();
+  const { repuestosOrdenes } = useCustomContext();
 
   useEffect(() => {
-    fetchRepuestos();
-  }, []);
+    fetchRepuestosOrdenes();
+  }, [idOrden]);
 
-  const fetchRepuestos = async () => {
-    setRepuestos(await listaRepuestos());
+  const fetchRepuestosOrdenes = async () => {
+    const listadoRepuestosOrdenes = await repuestosOrdenes();
+    console.log(listadoRepuestosOrdenes);
+    const id_Orden = await listadoRepuestosOrdenes.filter((orden) => orden.id_orden === idOrden);
+    setRepuestos(id_Orden);
   };
 
-  const handleAdd = () => {
+  /* const handleAdd = () => {
     if (selectedRepuesto) {
       setNuevoRepuesto((prevRepuestos) => [...prevRepuestos, selectedRepuesto]);
       setSelectedRepuesto(null); // Limpia el repuesto seleccionado después de agregarlo
@@ -32,16 +35,15 @@ const DatosIncidente = ({ equipo, modelo, antiguedad, diagnostico, repuestosSele
     setSearchTerm(repuesto.descripcion);
     repuestosSeleccionados.push(repuesto);
   };
-
+  
   const handleShow = () => {
     setShowInput(!showInput);
-  };
-
+  }; 
+  
   const handleSearch = (e) => {
     setSearchTerm(e.target.value.toLowerCase());
   };
-
-  const filteredRepuestos = repuestos.filter((repuesto) => repuesto.descripcion.toLowerCase().includes(searchTerm));
+  const filteredRepuestos = repuestos.filter((repuesto) => repuesto.descripcion.toLowerCase().includes(searchTerm));*/
 
   return (
     <div>
@@ -75,25 +77,14 @@ const DatosIncidente = ({ equipo, modelo, antiguedad, diagnostico, repuestosSele
         </div>
         <div className='col-md-6'>
           <h3>Repuestos</h3>
-          {nuevoRepuesto && nuevoRepuesto.map((repuesto, i) => <li key={i}>{repuesto.descripcion}</li>)}
-          {showInput && (
-            <>
-              <input type='text' className='form-control mb-2' placeholder='Buscar repuesto...' onChange={handleSearch} value={searchTerm} />
-              <ul className='ulRepuestos'>
-                {filteredRepuestos.map((repuesto) => (
-                  <li className='mx-3 mb-2 pointer' key={repuesto.id} value={repuesto.id} onClick={() => handleSelect(repuesto)}>
-                    {repuesto.descripcion}
-                  </li>
-                ))}
-              </ul>
-              <button onClick={handleAdd} className='btn btn-primary'>
-                Agregar
-              </button>
-            </>
-          )}
-          <h2 onClick={handleShow} className='agregarRepuesto'>
-            +
-          </h2>
+          <ul className='ulRepuestos'>
+            {repuestos &&
+              repuestos.map((repuesto) => (
+                <li className='mx-3 mb-2' key={repuesto.id}>
+                  {repuesto.nombre} x{repuesto.cantidad}
+                </li>
+              ))}
+          </ul>
         </div>
       </div>
     </div>
@@ -105,7 +96,7 @@ DatosIncidente.propTypes = {
   modelo: PropTypes.string.isRequired,
   antiguedad: PropTypes.string.isRequired,
   diagnostico: PropTypes.string,
-  repuestosSeleccionados: PropTypes.array,
+  idOrden: PropTypes.number.isRequired,
 };
 
 export default DatosIncidente;
