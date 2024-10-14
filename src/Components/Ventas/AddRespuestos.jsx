@@ -1,48 +1,68 @@
-import { useNavigate } from 'react-router-dom';
-import Header from '../Header/Header';
-import './AddRepuestos.css';
-import { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
+import Header from "../Header/Header";
+import "./AddRepuestos.css";
+import { useState, useEffect } from "react";
+import fetchDolarBlue from "../../services/ApiDolarService";
 
 const AgregarRepuesto = () => {
   const [repuesto, setRepuesto] = useState({
-    nombre: '',
+    nombre: "",
     id_repuesto: 0,
-    id_proveedor: '',
+    id_proveedor: "",
     precio: 0,
     cantidad: 0,
-  
-    lote: '',
-    fecha_ingreso: '',
+    lote: "",
+    fecha_ingreso: new Date().toISOString().split("T")[0],
   });
   const [proveedoresList, setProveedoresList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
+  const [tasaDolarBlue, setTasaDolarBlue] = useState(null);
 
   useEffect(() => {
     fetchProveedores();
   }, []);
 
+  useEffect(() => {
+    const obtenerTasaDolar = async () => {
+      const tasa = await fetchDolarBlue();
+      setTasaDolarBlue(tasa);
+    };
+    obtenerTasaDolar();
+  }, []);
+
   const fetchProveedores = async () => {
     try {
-      const response = await fetch('https://lv-back.online/proveedores');
+      const response = await fetch("https://lv-back.online/proveedores");
       const proveedores = await response.json();
       setProveedoresList(proveedores);
     } catch (error) {
-      console.error('Error al obtener proveedores:', error);
+      console.error("Error al obtener proveedores:", error);
     }
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    const newValue =
+      name === "precio" ||
+      name === "id_repuesto" ||
+      name === "cantidad" ||
+      name === "id_proveedor"
+        ? Number(value)
+        : value;
+
     setRepuesto((prevRepuesto) => ({
       ...prevRepuesto,
-      [name]: value,
+      [name]: newValue,
     }));
 
-    if (name === 'id_proveedor') {
-      const proveedorSeleccionado = proveedoresList.find(proveedor => proveedor.id === parseInt(value));
+    if (name === "id_proveedor") {
+      const proveedorSeleccionado = proveedoresList.find(
+        (proveedor) => proveedor.id === parseInt(value)
+      );
       if (proveedorSeleccionado) {
-        const fechaActual = new Date().toISOString().split('T')[0].split('-').reverse().join('');  
+        const fechaActual = new Date().toISOString().split("T")[0];
         const lote = `${proveedorSeleccionado.nombre.toUpperCase()}${fechaActual}`;
         setRepuesto((prevRepuesto) => ({
           ...prevRepuesto,
@@ -58,40 +78,44 @@ const AgregarRepuesto = () => {
   };
 
   const handleGuardar = async (e) => {
-    e.preventDefault();
+    // e.preventDefault();
 
     try {
-      const fechaActual = new Date().toISOString().split('T')[0].split('-').reverse().join(''); // Convertir la fecha al formato ddmmyyyy
-
-      // Actualizar repuesto con la fecha actual
+      const precioEnDolares = repuesto.precio / tasaDolarBlue;
       const repuestoConFecha = {
         ...repuesto,
-        fecha_ingreso: fechaActual,
+        precio: parseFloat(precioEnDolares.toFixed(2)),
       };
 
-      // Enviar los datos completos incluyendo los campos obligatorios
-      const response = await fetch('https://lv-back.online/stock/principal/guardar', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(repuestoConFecha),  // Usar el objeto con la fecha actualizada
-      });
+      console.log(repuestoConFecha);
+      const response = await fetch(
+        "https://lv-back.online/stock/principal/guardar",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(repuestoConFecha),
+        }
+      );
 
       if (response.ok) {
-        alert('Repuesto agregado con éxito');
+        alert("Repuesto agregado con éxito");
+        setIsModalOpen(false);
+        navigate(-1);
       } else {
         const errorData = await response.json();
-        console.error('Error al agregar repuesto:', errorData);
-        alert('Hubo un problema al agregar el repuesto.');
+        console.error("Error al agregar repuesto:", errorData);
+        alert("Hubo un problema al agregar el repuesto.");
       }
     } catch (error) {
-      console.error('Error de red o al agregar repuesto:', error);
+      console.error("Error de red o al agregar repuesto:", error);
     }
   };
 
   const handleRedirect = () => {
-    navigate('/addFactura');
+    setIsModalOpen(false);
+    navigate("/addFactura");
   };
 
   const handleCloseModal = () => {
@@ -102,7 +126,7 @@ const AgregarRepuesto = () => {
     <div>
       <Header text="Agregar un repuesto" />
       <div className="stockContainer">
-        <h1 style={{ marginLeft: '5%' }}>Agregar un producto</h1>
+        <h1 style={{ marginLeft: "5%" }}>Agregar un producto</h1>
         <div className="agregar-repuesto-formulario">
           <form onSubmit={handleSubmit}>
             <div>
@@ -125,7 +149,7 @@ const AgregarRepuesto = () => {
                 onChange={handleChange}
               />
             </div>
-            <div className="form-group">
+            <div className="">
               <label htmlFor="id_proveedor">Proveedor</label>
               <select
                 id="id_proveedor"
@@ -161,7 +185,7 @@ const AgregarRepuesto = () => {
                 onChange={handleChange}
               />
             </div>
-          
+
             <div>
               <label htmlFor="lote">Lote</label>
               <input
@@ -170,7 +194,7 @@ const AgregarRepuesto = () => {
                 name="lote"
                 value={repuesto.lote}
                 onChange={handleChange}
-                disabled 
+                disabled
               />
             </div>
             <button type="submit">Continuar</button>
