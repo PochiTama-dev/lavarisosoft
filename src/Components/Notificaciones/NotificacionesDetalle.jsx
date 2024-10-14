@@ -93,7 +93,6 @@ const NotificacionesDetalle = () => {
   const renderOrden = (orden, index) => {
     const isChecked = checkedOrders.includes(index);
     const isHovered = hoveredItem === index;
-    console.log(isChecked);
     return (
       <div className='d-flex justify-content-between mt-2' onClick={() => handleModal(orden)} key={index}>
         <b>Orden pendiente de aprobación #{orden.numero_orden}</b>
