@@ -8,6 +8,7 @@ export const Provider = ({ children }) => {
   const usuario = JSON.parse(localStorage.getItem('usuario'));
   const navigate = useNavigate();
   const [user, setUser] = useState(usuario);
+  const [notifications, setNotifications] = useState([]);
 
   const handleNavigate = (text) => {
     navigate(`${text}`);
@@ -308,6 +309,8 @@ export const Provider = ({ children }) => {
         //Notificaciones
         handleNotifications,
         marcarNotificacionVista,
+        notifications,
+        setNotifications,
       }}
     >
       {children}
