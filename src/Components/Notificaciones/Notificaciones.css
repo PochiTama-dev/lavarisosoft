@@ -1,3 +1,31 @@
+.barraCarga,.barraCarga0,.barraTiempo{
+  position:relative;
+  top:10px;
+  left: 20px;
+  width:100px;
+  height: 10px;
+}
+.barraCarga{
+  background-color: #283959;
+}
+
+.barraTiempo{
+  background-color: red;
+  
+}
+
+.notificacionAnim{
+  transition: ease-in all 0.3s ;
+  left: 50%;
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+}
+.notiX{
+  position: absolute;
+  left:101%;
+  top:-10px;
+}
 .rounded-pill{
   cursor:pointer;
 }
