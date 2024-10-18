@@ -1,7 +1,7 @@
 .inventario-container {
   width: 70vw;
-  height: 80vh;
-  margin-top: 2.5%;
+  height: 82vh;
+  /* margin-top: 2.5%; */
   padding: 1%;
   color: #283959;
 }
@@ -185,4 +185,123 @@ ul .pestañasInventarioActive {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+.reporte-diario {
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.contenido {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.panel-izquierdo,
+.panel-derecho {
+  width: 45%;
+}
+
+.visitas-realizadas {
+  text-align: center;
+}
+
+.grafico-circular {
+  width: 100px;
+  height: 100px;
+  position: relative;
+}
+
+.circular {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: conic-gradient(#4caf50 80%, #e0e0e0 80%);
+  display: inline-block;
+}
+
+.inside-circle {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.visitas-por-tecnico ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.visitas-por-tecnico li {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  align-items: center;
+}
+
+.barra-contenedor {
+  width: 60%;
+  background-color: #e0e0e0;
+  height: 20px;
+  position: relative;
+}
+
+.barra {
+  background-color: #4caf50;
+  height: 100%;
+}
+
+.total {
+  position: absolute;
+  right: 5px;
+  top: 2px;
+  color: black;
+}
+
+.estadisticas-ordenes {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.estadistica {
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  margin: 0 10px;
+  border-radius: 5px;
+  color: black;
+}
+
+.estadistica.ok {
+  border-left: 5px solid #4caf50;
+  box-shadow: 2px 2px rgb(160, 159, 159);
+}
+
+.estadistica.desvio {
+  border-left: 5px solid #ffeb3b;
+  box-shadow: 2px 2px rgb(160, 159, 159);
+}
+
+.estadistica.no-cumplidas {
+  border-left: 5px solid #e53935;
+  box-shadow: 2px 2px rgb(160, 159, 159);
+}
+
+.porcentaje {
+  font-size: 14px;
+  font-weight: bold;
 }
