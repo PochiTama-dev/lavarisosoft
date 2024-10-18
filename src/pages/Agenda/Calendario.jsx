@@ -10,11 +10,9 @@ const Calendario = () => {
   useEffect(() => {
     const fetchDatos = async () => {
       try {
-        // Obtener eventos
         const eventosResponse = await fetch('https://lv-back.online/agenda/lista');
         const eventosData = await eventosResponse.json();
         
-        // Obtener clientes
         const clientesResponse = await fetch('https://lv-back.online/clientes/lista');
         const clientesData = await clientesResponse.json();
 
@@ -22,10 +20,8 @@ const Calendario = () => {
           throw new Error('No se encontraron eventos o clientes');
         }
 
-        // Mapear clientes por id
         const clientesMap = new Map(clientesData.map(cliente => [cliente.id, cliente.nombre]));
 
-        // Asignar nombre de cliente a los eventos
         const eventosConNombres = eventosData.map(evento => {
           const { fecha, hora, id_cliente, id_evento_agenda } = evento;
           const fechaObj = new Date(fecha);
@@ -37,6 +33,7 @@ const Calendario = () => {
             nombreCliente,
             estado,
             dia: diaSemana,
+            fecha,  
             horario: hora
           };
         });
@@ -54,44 +51,38 @@ const Calendario = () => {
     fetchDatos();
   }, []);
 
-  // Datos del calendario
   const horas = [];
   for (let i = 8; i <= 24; i++) {
     horas.push(i < 24 ? `${i}:00` : '00:00');
   }
 
   const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-  const dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+  const dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
-  // Datos actuales de la semana
+ 
   const fechaActual = new Date();
   const primerDiaSemana = new Date(fechaActual);
   const ultimoDiaSemana = new Date(fechaActual);
-  primerDiaSemana.setDate(fechaActual.getDate() - fechaActual.getDay() + (fechaActual.getDay() === 0 ? -6 : 1));
+  
+ 
+  primerDiaSemana.setDate(fechaActual.getDate() - (fechaActual.getDay() === 0 ? 6 : fechaActual.getDay() - 1));
   ultimoDiaSemana.setDate(primerDiaSemana.getDate() + 6);
 
   const [comienzoSemana, setComienzoSemana] = useState(primerDiaSemana);
   const [finSemana, setFinSemana] = useState(ultimoDiaSemana);
 
   const semanaAnterior = () => {
-    let nuevaSemana = new Date(comienzoSemana);
+    const nuevaSemana = new Date(comienzoSemana);
     nuevaSemana.setDate(nuevaSemana.getDate() - 7);
-
-    let nuevoFinde = new Date(finSemana);
-    nuevoFinde.setDate(nuevoFinde.getDate() - 7);
-
     setComienzoSemana(nuevaSemana);
-    setFinSemana(nuevoFinde);
+    setFinSemana(new Date(nuevaSemana.getTime() + 6 * 24 * 60 * 60 * 1000));
   };
 
   const semanaSiguiente = () => {
-    let nuevaSemana = new Date(comienzoSemana);
+    const nuevaSemana = new Date(comienzoSemana);
     nuevaSemana.setDate(nuevaSemana.getDate() + 7);
     setComienzoSemana(nuevaSemana);
-
-    let nuevoFinde = new Date(finSemana);
-    nuevoFinde.setDate(nuevoFinde.getDate() + 7);
-    setFinSemana(nuevoFinde);
+    setFinSemana(new Date(nuevaSemana.getTime() + 6 * 24 * 60 * 60 * 1000));
   };
 
   const calcularPosicionYDuracion = (hora) => {
@@ -100,29 +91,13 @@ const Calendario = () => {
       return hora + minutos / 60;
     });
 
-    // Cada intervalo de 1 hora es equivalente a 40px de altura
-    const top = (inicio - 8) * 40; // 40px por cada hora
+    const top = (inicio - 8) * 40;  
     const height = (fin - inicio) * 40;
 
     return { top: `${top}px`, height: `${height}px` };
   };
 
-  const ultimoDiaMes = (anio, mes) => {
-    if (mes === 2) {
-      if ((anio % 4 === 0 && anio % 100 !== 0) || anio % 400 === 0) {
-        return 29;
-      } else {
-        return 28;
-      }
-    } else {
-      const diasPorMes = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-      return diasPorMes[mes - 1];
-    }
-  };
-
-  const ultimoDiaDePrimerSemana = ultimoDiaMes(fechaActual.getFullYear(), primerDiaSemana.getMonth() + 1);
-
-  // Mapeo de ID de eventos a nombres
+ 
   const estadoEventoMap = {
     1: 'Agendado',
     2: 'Concluido',
@@ -144,15 +119,20 @@ const Calendario = () => {
         </h3>
       </div>
 
-      {/* Contenedor separado para los días de la semana */}
+    
       <div className='d-flex justify-content-evenly dias-semana'>
-        {dias.map((diaSemana, index) => (
-          <div key={index} className='text-center'>
-            <span className='dia-nombre'>
-              {diaSemana} {comienzoSemana.getDate() + index > ultimoDiaDePrimerSemana ? index - 1 : comienzoSemana.getDate() + index}
-            </span>
-          </div>
-        ))}
+        {dias.map((diaSemana, index) => {
+          const fechaDiaActual = new Date(comienzoSemana);
+          fechaDiaActual.setDate(comienzoSemana.getDate() + index);  
+          
+          return (
+            <div key={index} className='text-center'>
+              <span className='dia-nombre'>
+                {diaSemana} {fechaDiaActual.getDate()}
+              </span>
+            </div>
+          );
+        })}
       </div>
 
       <div className='d-flex grillaCalendario'>
@@ -164,22 +144,34 @@ const Calendario = () => {
           ))}
         </ul>
         <ul className='d-flex justify-content-evenly dias p-0'>
-  {dias.map((diaSemana, index) => (
-    <li key={index} className={'dia bg-light mx-2 text-center position-relative'}>
-      {eventos
-        .filter((evento) => evento.dia === diaSemana)
-        .map((evento, i) => {
-          const estilos = calcularPosicionYDuracion(evento.horario);
-          return (
-            <div key={i} className={`evento ${evento.estado} text-white position-absolute`} style={estilos}>
-              <div> <strong>{evento.nombreCliente}</strong> </div>
-              <div>  {evento.horario}</div>
-            </div>
-          );
-        })}
-    </li>
-  ))}
-</ul>
+          {dias.map((diaSemana, index) => {
+            const fechaDiaActual = new Date(comienzoSemana);
+            fechaDiaActual.setDate(comienzoSemana.getDate() + index -1); 
+            return (
+              <li key={index} className={'dia bg-light mx-2 text-center position-relative'}>
+                {eventos
+                  .filter((evento) => {
+                    const fechaEvento = new Date(evento.fecha);
+                    fechaEvento.setHours(0, 0, 0, 0);
+                    return (
+                      fechaEvento.getFullYear() === fechaDiaActual.getFullYear() &&
+                      fechaEvento.getMonth() === fechaDiaActual.getMonth() &&
+                      fechaEvento.getDate() === fechaDiaActual.getDate()
+                    );
+                  })
+                  .map((evento, i) => {
+                    const estilos = calcularPosicionYDuracion(evento.horario);
+                    return (
+                      <div key={i} className={`evento ${evento.estado} text-white position-absolute`} style={estilos}>
+                        <div><strong>{evento.nombreCliente}</strong></div>
+                        <div>{evento.horario}</div>
+                      </div>
+                    );
+                  })}
+              </li>
+            );
+          })}
+        </ul>
       </div>
 
       <div className='d-flex'>
