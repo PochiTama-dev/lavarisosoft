@@ -106,34 +106,32 @@ const Inventario = () => {
       }
     };
     loadData();
-    // fetchCamionetaData();
-    // fetchRepuestos();
   }, []);
   const mergedReservaData = reservaData.map((reserva) => {
-    // Buscar el objeto correspondiente en stockData que coincida con el id_repuesto
     const repuesto = stockData.find(
       (stock) => stock.id_repuesto === reserva.id_repuesto
     );
 
-    // Devolver un nuevo objeto que combine la data original de reserva y agregue el objeto Repuesto si existe
     return {
       ...reserva,
       Repuesto: repuesto ? repuesto.Repuesto : null,
     };
   });
-  /* console.log(stockData);
-  console.log(reservaData);
-  console.log(mergedReservaData); */
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  const columnasReporteVentas = ["Nombre", "ID", "Precio", "No.Orden"];
-  const itemsReporteVentas = [
-    { nombre: "Reporte 1", id: 1, precio: 1000, nOrden: 10000 },
-    { nombre: "Reporte 2", id: 2, precio: 2000, nOrden: 20000 },
-    { nombre: "Reporte 3", id: 3, precio: 3000, nOrden: 30000 },
+  const totalVisitas = 31;
+  const visitasRealizadas = 25;
+  const porcentaje = (visitasRealizadas / totalVisitas) * 100;
+
+  const tecnicoss = [
+    { nombre: "Alejandro Pilone", visitas: 0, total: 1 },
+    { nombre: "Enzo Gastón Mondolo", visitas: 2, total: 4 },
+    { nombre: "Roberto Barrionuevo", visitas: 5, total: 5 },
+    { nombre: "Martín Perrone", visitas: 8, total: 10 },
+    { nombre: "Sergio Narballo", visitas: 10, total: 11 },
   ];
 
   const handleShow = () => setShow(!show);
@@ -156,17 +154,21 @@ const Inventario = () => {
           )
         )}
       </ul>
-      <div>
-        <h2 className="caja-input-text">Buscar piezas</h2>
-        <input
-          className="caja-input"
-          type="text"
-          placeholder="Buscar"
-          value={searchTerm}
-          onChange={handleSearchChange}
-        />
-        <button className="caja-button-search">🔍︎</button>
-      </div>
+      {pestaña === "Reporte de ventas" ? (
+        ""
+      ) : (
+        <div>
+          <h2 className="caja-input-text">Buscar piezas</h2>
+          <input
+            className="caja-input"
+            type="text"
+            placeholder="Buscar"
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
+          <button className="caja-button-search">🔍︎</button>
+        </div>
+      )}
       {pestaña === "Stock" && (
         <div className="grilla-inventario">
           <Table hover className="grilla-stock">
@@ -246,51 +248,131 @@ const Inventario = () => {
         </div>
       )}
       {pestaña === "Reporte de ventas" && (
-        <Grilla
-          columnas={columnasReporteVentas}
-          elementos={itemsReporteVentas}
-        />
-      )}
-      <ul className="d-flex justify-content-left w-100 imagenes">
-        <div className="text-end">
-          <button className="boton3Puntos" onClick={handleShow}>
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
-        </div>
-        {show && (
-          <div className="d-flex justify-content-around inventario-botones">
-            <li>
-              <img src={descargar} alt="Descargar el excel" />
-              <span>Descargar Excel</span>
-            </li>
-            <li>
-              <img
-                src={editar}
-                alt="editar"
-                onClick={() => handleNavigate("editarStockRepuestos")}
-              />
-              <span>Editar</span>
-            </li>
-            <li onClick={() => handleNavigate("addLoteExcel")}>
-              <img src={cargar} alt="Carga de excel" />
-              <span>Carga Excel</span>
-            </li>
-            <li
-              className="d-flex"
-              onClick={() => handleNavigate("addRespuestos")}
-            >
-              <div className="divMas">
-                <span className="spanMas">+</span>
-              </div>
-              <span style={{ paddingLeft: "4%", minWidth: "160px" }}>
-                Agregar repuestos
-              </span>
-            </li>
+        <div className="reporte-diario">
+          <div className="header">
+            <h2>Reporte de Actividad</h2>
+            <input type="date" value="2024-09-25" className="fecha" />
           </div>
-        )}
-      </ul>
+          <div className="contenido">
+            <div className="panel-izquierdo">
+              <div className="ordenes-trabajo">
+                <p>31 Órdenes de Trabajo del día</p>
+                <p>5 Técnicos en calle</p>
+                <p>13h. Tiempo de trabajo en campo</p>
+              </div>
+              <div className="visitas-realizadas">
+                <h3>Visitas realizadas</h3>
+                <div className="grafico-circular">
+                  <div className="circular">
+                    <div
+                      className="mask full"
+                      style={{
+                        transform: `rotate(${(porcentaje / 100) * 180}deg)`,
+                      }}
+                    ></div>
+                    <div className="mask half"></div>
+                    <div className="inside-circle">
+                      <p>{porcentaje.toFixed(1)}%</p>
+                    </div>
+                  </div>
+                </div>
+                <p>
+                  {visitasRealizadas} de {totalVisitas}
+                </p>
+              </div>
+            </div>
+
+            <div className="panel-derecho">
+              <div className="estadisticas-ordenes">
+                <div className="estadistica ok">
+                  <h4>Cerradas OK</h4>
+                  <p>7/31</p>
+                  <span className="porcentaje ok">22.6%</span>
+                </div>
+                <div className="estadistica desvio">
+                  <h4>Cerradas con Desvío</h4>
+                  <p>0/31</p>
+                  <span className="porcentaje desvio">0.0%</span>
+                </div>
+                <div className="estadistica no-cumplidas">
+                  <h4>Cerradas No Cumplidas</h4>
+                  <p>0/31</p>
+                  <span className="porcentaje no-cumplidas">0.0%</span>
+                </div>
+              </div>
+
+              <div className="visitas-por-tecnico">
+                <h3>Visitas por técnico</h3>
+                <ul>
+                  {tecnicoss.map((tecnico, index) => (
+                    <li key={index}>
+                      <span>{tecnico.nombre}</span>
+                      <div className="barra-contenedor">
+                        <div
+                          className="barra"
+                          style={{
+                            width: `${
+                              (tecnico.visitas / tecnico.total) * 100
+                            }%`,
+                          }}
+                        ></div>
+                        <span className="total">
+                          {" "}
+                          {tecnico.visitas}/{tecnico.total}
+                        </span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {pestaña === "Reporte de ventas" ? (
+        ""
+      ) : (
+        <ul className="d-flex justify-content-left w-100 imagenes">
+          <div className="text-end">
+            <button className="boton3Puntos" onClick={handleShow}>
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+          </div>
+          {show && (
+            <div className="d-flex justify-content-around inventario-botones">
+              <li>
+                <img src={descargar} alt="Descargar el excel" />
+                <span>Descargar Excel</span>
+              </li>
+              <li>
+                <img
+                  src={editar}
+                  alt="editar"
+                  onClick={() => handleNavigate("editarStockRepuestos")}
+                />
+                <span>Editar</span>
+              </li>
+              <li onClick={() => handleNavigate("addLoteExcel")}>
+                <img src={cargar} alt="Carga de excel" />
+                <span>Carga Excel</span>
+              </li>
+              <li
+                className="d-flex"
+                onClick={() => handleNavigate("addRespuestos")}
+              >
+                <div className="divMas">
+                  <span className="spanMas">+</span>
+                </div>
+                <span style={{ paddingLeft: "4%", minWidth: "160px" }}>
+                  Agregar repuestos
+                </span>
+              </li>
+            </div>
+          )}
+        </ul>
+      )}
     </div>
   );
 };
