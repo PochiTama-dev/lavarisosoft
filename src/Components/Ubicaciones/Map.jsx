@@ -1,15 +1,15 @@
-import { useState, useEffect, useRef } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import { useNavigate } from "react-router-dom";
-import { Icon } from "leaflet";
-import markerIcon from "../../assets/marker.png";
-import clientIcon from "../../assets/man.webp";
-import "leaflet/dist/leaflet.css";
-import MarkerClusterGroup from "react-leaflet-cluster";
-import Modal from "./Modal";
-import NuevaOrden from "../../pages/Orders/NuevaOrden";
-import socket from "../services/socketService";
-import PropTypes from "prop-types";
+import { useState, useEffect, useRef } from 'react';
+import { MapContainer, TileLayer, Circle, useMap } from 'react-leaflet';
+import { useNavigate } from 'react-router-dom';
+import 'leaflet/dist/leaflet.css';
+import MarkerClusterGroup from 'react-leaflet-cluster';
+import Modal from './Modal';
+import NuevaOrden from '../../pages/Orders/NuevaOrden';
+import socket from '../services/socketService';
+import PropTypes from 'prop-types';
+import { ClientMarker, TechnicianMarker } from './Markers';
+import { haversine } from './calcularDistancia';
+import { useCustomContext } from '../../hooks/context';
 
 const CORDOBA_BOUNDS = {
   north: -29.0,
@@ -18,41 +18,38 @@ const CORDOBA_BOUNDS = {
   east: -62.0,
 };
 
-const myIcon = new Icon({
-  iconUrl: markerIcon,
-  iconSize: [30, 30],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -35],
-});
+const MapZoomOnSelect = ({ coordinates, zoomLevel }) => {
+  const map = useMap();
 
-const clienteIcono = new Icon({
-  iconUrl: clientIcon,
-  iconSize: [30, 30],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -35],
-});
+  useEffect(() => {
+    if (coordinates) {
+      map.setView(coordinates, zoomLevel, {
+        animate: true,
+      });
+    }
+  }, [coordinates, zoomLevel, map]);
 
-const Map = ({
-  position,
-  zoom,
-  selectedClient,
-  selectedTechnician,
-  setSelectedTechnician,
-  clientes,
-  tecnicos,
-}) => {
+  return null;
+};
+
+const Map = ({ position, zoom, selectedClient, selectedTechnician, setSelectedTechnician, clientes, tecnicos, tecniCoordinates }) => {
   const navigate = useNavigate();
   const refClient = useRef({});
-  const [filter, setFilter] = useState("both");
+  const refTechnicians = useRef({});
+
+  const [filter, setFilter] = useState('both');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedClientData, setSelectedClientData] = useState(null);
+  const [clientCoordinates, setClientCoordinates] = useState([0, 0]);
 
   const { latitude = 0, longitude = 0 } = position || {};
+  const { user } = useCustomContext();
 
+  console.log(user);
   const handleTechnicianSelect = (tecnico) => {
     if (selectedClient) {
       setSelectedTechnician(tecnico);
-      navigate("/locationOrder", {
+      navigate('/locationOrder', {
         state: { selectedTechnician: tecnico, selectedClient: selectedClient },
       });
     }
@@ -73,217 +70,135 @@ const Map = ({
   };
 
   useEffect(() => {
-    if (
-      selectedClient &&
-      refClient.current[`${selectedClient.latitud}-${selectedClient.longitud}`]
-    ) {
-      refClient.current[
-        `${selectedClient.latitud}-${selectedClient.longitud}`
-      ].openPopup();
+    if (selectedClient) {
+      selectedClient.latitud !== undefined && handleCoordinates(selectedClient);
+      const clientKey = `${selectedClient.latitud}-${selectedClient.longitud}`;
+      const clientMarker = refClient.current[clientKey];
+
+      if (clientMarker) {
+        clientMarker.openPopup();
+      }
     }
   }, [selectedClient]);
 
   useEffect(() => {
-    const handleBroadcastLocation = (data) => {
-      console.log("LOCATION", data);
-      if (data && typeof data === "object") {
-        setTechnicians((prev) => {
-          const updatedTechnicians = {};
-          Object.keys(data).forEach((key) => {
-            if (data[key].status !== "desconectado") {
-              updatedTechnicians[key] = data[key];
-            }
-          });
-          return updatedTechnicians;
+    const timers = {};
+    const startTime = {}; // Para almacenar el tiempo inicial
+    tecnicos.forEach((tecnico) => {
+      const checkProximity = () => {
+        // Verifica si está a menos de 50 metros de algún cliente
+        const isNearby = clientes.some((cliente) => {
+          const distancia = haversine(tecnico.latitud, tecnico.longitud, cliente.latitud, cliente.longitud);
+          return distancia <= 0.05; // 50 metros
         });
-      }
-    };
 
-    const handleUserStatus = (data) => {
-      console.log("STATUS UPDATE", data);
-      if (data && typeof data === "object") {
-        setTechnicians((prev) => {
-          const updatedTechnicians = {};
-          Object.keys(data).forEach((key) => {
-            if (data[key].status !== "desconectado") {
-              updatedTechnicians[key] = data[key];
-            }
-          });
-          return updatedTechnicians;
-        });
-      }
-    };
+        if (isNearby) {
+          // Iniciar contador o realizar alguna acción
+          if (!timers[tecnico.id]) {
+            startTime[tecnico.id] = Date.now();
+            timers[tecnico.id] = setInterval(() => {
+              console.log(`El técnico ${tecnico.nombre} está cerca de un cliente.`);
+              // Aquí puedes implementar una acción adicional (p.ej., notificar, contar tiempo, etc.)
+            }, 60000); // Intervalo de tiempo
+          }
+        } else {
+          // Limpiar temporizador si el técnico ya no está cerca
+          if (timers[tecnico.id]) {
+            const endTime = Date.now();
+            const elapsedTime = endTime - startTime[tecnico.id];
+            clearInterval(timers[tecnico.id]);
+            delete timers[tecnico.id];
 
-    socket.on("broadcastLocation", handleBroadcastLocation);
-    socket.on("userStatus", handleUserStatus);
+            const timeSpent = formatElapsedTime(elapsedTime);
+            console.log(`El técnico ${tecnico.nombre} estuvo cerca por ${timeSpent}.`);
+          }
+        }
+      };
 
-    return () => {
-      socket.off("broadcastLocation", handleBroadcastLocation);
-      socket.off("userStatus", handleUserStatus);
-    };
+      // Comenzar la verificación periódica
+      const interval = setInterval(checkProximity, 600000); // Revisar cada 10 minutos
+
+      return () => {
+        clearInterval(interval); // Limpiar intervalos al desmontar el componente
+        Object.values(timers).forEach(clearInterval); // Limpiar todos los temporizadores
+      };
+    });
   }, []);
+
+  const formatElapsedTime = (milliseconds) => {
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    let formattedTime = '';
+    if (hours > 0) {
+      formattedTime += `${hours} hora${hours > 1 ? 's' : ''}, `;
+    }
+    if (minutes > 0) {
+      formattedTime += `${minutes} minuto${minutes > 1 ? 's' : ''}, `;
+    }
+    formattedTime += `${seconds} segundo${seconds > 1 ? 's' : ''}`;
+
+    return formattedTime;
+  };
+
+  const handleCoordinates = (cliente) => {
+    setClientCoordinates([cliente.latitud, cliente.longitud]);
+  };
+  useEffect(() => {
+    if (tecniCoordinates && tecniCoordinates[0] !== 0) {
+      const technicianKey = `${tecniCoordinates[0]}-${tecniCoordinates[1]}`;
+      const technicianMarker = refTechnicians.current[technicianKey];
+
+      if (technicianMarker) {
+        technicianMarker.openPopup();
+      }
+    }
+  }, [tecniCoordinates]);
 
   return (
     <>
       <div>
-        <select
-          name="filter"
-          id="filter"
-          value={filter}
-          onChange={handleFilterChange}
-        >
-          <option value="clients">Clientes</option>
-          <option value="technicians">Técnicos</option>
-          <option value="both">Ambos</option>
+        <select name='filter' id='filter' value={filter} onChange={handleFilterChange}>
+          <option value='clients'>Clientes</option>
+          <option value='technicians'>Técnicos</option>
+          <option value='both'>Ambos</option>
         </select>
       </div>
       <MapContainer
-        className="searchMap"
+        className='searchMap'
         bounds={CORDOBA_BOUNDS}
-        center={
-          selectedClient && selectedClient.nombre
-            ? [selectedClient.latitud, selectedClient.longitud]
-            : [latitude || 0, longitude || 0]
-        }
+        center={selectedClient && selectedClient.nombre ? [selectedClient.latitud, selectedClient.longitud] : [latitude || 0, longitude || 0]}
         zoom={zoom}
       >
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        <TileLayer url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' />
+
+        {/* Filtro TECNICOS */}
 
         <MarkerClusterGroup>
-          {(filter === "technicians" || filter === "both") &&
-            tecnicos.map((tecnico, index) => {
+          {(filter === 'technicians' || filter === 'both') &&
+            tecnicos.map((tecnico) => {
               return (
-                tecnico.status !== "desconectado" &&
+                tecnico.status !== 'desconectado' &&
                 tecnico.latitud &&
-                tecnico.longitud && (
-                  <Marker
-                    key={index}
-                    position={[tecnico.latitud, tecnico.longitud]}
-                    icon={myIcon}
-                  >
-                    <Popup>
-                      <div className="popup-tecnico">
-                        <img
-                          src={`https://via.placeholder.com/50`}
-                          alt="Technician"
-                        />
-                        <div className="popup-content">
-                          <h4>{tecnico.nombre}</h4>
-                          <p>{tecnico.telefono}</p>
-                        </div>
-                      </div>
-                      <div className="popup-tecnico-button">
-                        <button
-                          onClick={() =>
-                            handleTechnicianSelect(
-                              tecnico,
-                              selectedClient,
-                              setSelectedTechnician,
-                              navigate
-                            )
-                          }
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="22"
-                            height="22"
-                            fill="currentColor"
-                            className="bi bi-arrow-right"
-                            viewBox="0 0 15 15"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    </Popup>
-                  </Marker>
-                )
+                tecnico.longitud && <TechnicianMarker key={tecnico.id} tecnico={tecnico} onTechnicianSelect={() => handleTechnicianSelect(tecnico)} />
               );
             })}
-
-          {selectedTechnician && (
-            <Marker
-              position={[
-                selectedTechnician.latitud,
-                selectedTechnician.longitud,
-              ]}
-              icon={myIcon}
-            >
-              <Popup>
-                <div className="popup-tecnico">
-                  <img
-                    src={`https://via.placeholder.com/50`}
-                    alt="Technician"
-                  />
-                  <div className="popup-content">
-                    <h4>{selectedTechnician.nombre}</h4>
-                    <p>{selectedTechnician.telefono}</p>
-                  </div>
-                </div>
-                <div className="popup-tecnico-button">
-                  <button
-                    onClick={() =>
-                      handleTechnicianSelect(
-                        selectedTechnician,
-                        selectedClient,
-                        setSelectedTechnician,
-                        navigate
-                      )
-                    }
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="22"
-                      height="22"
-                      fill="currentColor"
-                      className="bi bi-arrow-right"
-                      viewBox="0 0 15 15"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              </Popup>
-            </Marker>
-          )}
+          {tecniCoordinates && tecniCoordinates[0] !== 0 && <MapZoomOnSelect coordinates={tecniCoordinates} zoomLevel={10} />}
         </MarkerClusterGroup>
+
+        {/* Filtro CLIENTES */}
         <MarkerClusterGroup>
-          {(filter === "clients" || filter === "both") &&
-            clientes.map((cliente, index) => (
-              <Marker
-                key={index}
-                position={[cliente.latitud, cliente.longitud]}
-                icon={clienteIcono}
-                ref={(ref) => {
-                  refClient.current[`${cliente.latitud}-${cliente.longitud}`] =
-                    ref;
-                }}
-              >
-                <Popup>
-                  <div className="popup-tecnico">
-                    <img src={`https://via.placeholder.com/50`} alt="Client" />
-                    <div className="popup-content">
-                      <h4>{cliente.nombre}</h4>
-                      <p>{cliente.telefono}</p>
-                    </div>
-                  </div>
-                  <div className="popup-tecnico-button">
-                    <button
-                      onClick={() => handleOpenModalWithClientData(cliente)}
-                    >
-                      Ver detalles
-                    </button>
-                  </div>
-                </Popup>
-              </Marker>
+          {(filter === 'clients' || filter === 'both') &&
+            clientes.map((cliente) => (
+              <>
+                <ClientMarker key={cliente.id} cliente={cliente} handleCoordinates={() => handleCoordinates(cliente)} handleOpenModalWithClientData={() => handleOpenModalWithClientData(cliente)} />
+              </>
             ))}
         </MarkerClusterGroup>
+        {clientCoordinates[0] != 0 && <Circle center={[clientCoordinates[0], clientCoordinates[1]]} pathOptions={{ fillColor: 'blue' }} radius={100} />}
+        {clientCoordinates[0] !== 0 && <MapZoomOnSelect coordinates={clientCoordinates} zoomLevel={18} />}
       </MapContainer>
 
       {/* Modal para mostrar detalles del cliente */}
@@ -299,8 +214,8 @@ const Map = ({
 Map.propTypes = {
   position: PropTypes.object,
   zoom: PropTypes.number,
-  selectedClient: PropTypes.array,
-  selectedTechnician: PropTypes.array,
+  selectedClient: PropTypes.any,
+  selectedTechnician: PropTypes.object,
   setSelectedTechnician: PropTypes.func,
   clientes: PropTypes.array,
   tecnicos: PropTypes.array,

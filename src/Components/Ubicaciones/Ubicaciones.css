@@ -55,10 +55,11 @@
 }
 
 /* Scrollable area for clients */
-.scrollable-container-top {
+.scrollable-container-topLocation {
   flex-grow: 1; /* Hace que la lista crezca para llenar el espacio */
   overflow-y: auto; /* Permite desplazarse si hay muchos elementos */
   margin-bottom: 10px;
+  height:90%;
 }
 
 /* Show all button */
@@ -190,7 +191,7 @@
 }
 
 .popup-tecnico-button button {
-  border-radius: 55%;
+  border-radius: 10px;
   border: none;
   color: #69688C;
   cursor: pointer;
