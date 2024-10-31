@@ -2,58 +2,61 @@ import { useEffect, useState } from "react";
 import Header from "../Header/Header";
 import "./CargarFactura.css";
 import { useNavigate } from "react-router-dom";
+import { listadoEmpleados } from "../../services/empleadoService";
+import { listaCajas } from "../../services/CajasService";
+import { listaStockPrincipal } from "../../services/stockPrincipalService";
+import { listadoProveedores } from "../../services/proveedoresService";
 
 const CargarFactura = () => {
   const [factura, setFactura] = useState({
     id_proveedor: 0,
     id_repuesto: 0,
+    id_responsable: 0,
     cantidad: 0,
     importe: 0,
     codigo_imputacion: "",
     fecha_ingreso: "",
     imagen_comprobante: "",
+    estado_pago: 0,
+    caja: 0,
+    lote: "",
   });
   const [proveedores, setProveedores] = useState([]);
   const [repuestos, setRepuestos] = useState([]);
+  const [empleados, setEmpleados] = useState([]);
+  const [cajas, setCajas] = useState([]);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const obtenerProveedores = async () => {
-      try {
-        const response = await fetch("https://lv-back.online/proveedores");
-        if (!response.ok) {
-          throw new Error("Error al obtener los proveedores");
-        }
-        const data = await response.json();
-        setProveedores(data);
-      } catch (error) {
-        console.error(error.message);
-      }
+      const data = await listadoProveedores();
+      setProveedores(data);
     };
 
     const obtenerRepuestos = async () => {
-      try {
-        const response = await fetch("https://lv-back.online/repuestos/lista");
-        if (!response.ok) {
-          throw new Error("Error al obtener los repuestos");
-        }
-        const data = await response.json();
-        setRepuestos(data);
-      } catch (error) {
-        console.error(error.message);
-      }
+      const data = await listaStockPrincipal();
+      setRepuestos(data);
     };
-
+    const obtenerEmpleados = async () => {
+      const data = await listadoEmpleados();
+      setEmpleados(data);
+    };
+    const obtenerCajas = async () => {
+      const data = await listaCajas();
+      setCajas(data);
+    };
     obtenerProveedores();
     obtenerRepuestos();
+    obtenerEmpleados();
+    obtenerCajas();
   }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFactura((prevFactura) => ({
       ...prevFactura,
-      [name]: value,
+      [name]: name === "estado_pago" ? Number(value) : value,
     }));
   };
 
@@ -67,20 +70,28 @@ const CargarFactura = () => {
       const {
         id_proveedor,
         id_repuesto,
+        id_responsable,
         cantidad,
         importe,
         codigo_imputacion,
         fecha_ingreso,
         imagen_comprobante,
+        estado_pago,
+        caja,
+        lote,
       } = await factura;
       await postFactura({
         id_proveedor,
         id_repuesto,
+        id_responsable,
         cantidad,
         importe,
         codigo_imputacion,
         fecha_ingreso,
         imagen_comprobante,
+        estado_pago,
+        caja,
+        lote,
       });
       alert("Factura agregada con éxito");
       navigate(-1);
@@ -93,11 +104,15 @@ const CargarFactura = () => {
     const {
       id_proveedor,
       id_repuesto,
+      id_responsable,
       cantidad,
       importe,
       codigo_imputacion,
       fecha_ingreso,
       imagen_comprobante,
+      estado_pago,
+      caja,
+      lote,
     } = await factura;
     const fetchFactura = await fetch(
       "https://lv-back.online/facturas/guardar",
@@ -110,11 +125,15 @@ const CargarFactura = () => {
         body: JSON.stringify({
           id_proveedor,
           id_repuesto,
+          id_responsable,
           cantidad,
           importe,
           codigo_imputacion,
           fecha_ingreso,
           imagen_comprobante,
+          estado_pago,
+          caja,
+          lote,
         }),
       }
     );
@@ -154,7 +173,23 @@ const CargarFactura = () => {
               <option value="">Seleccione un repuesto</option>
               {repuestos.map((rep) => (
                 <option key={rep.id} value={rep.id}>
-                  {rep.descripcion}
+                  {rep.nombre}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <h3>Responsable:</h3>
+            <select
+              name="id_responsable"
+              value={factura.id_responsable}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Seleccione un responsable</option>
+              {empleados.map((emp) => (
+                <option key={emp.id} value={emp.id}>
+                  {emp.nombre} {emp.apellido}
                 </option>
               ))}
             </select>
@@ -208,6 +243,45 @@ const CargarFactura = () => {
               type="file"
               name="imagen_comprobante"
               value={factura.imagen_comprobante}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <h3>Estado pago:</h3>
+            <select
+              name="estado_pago"
+              value={factura.estado_pago}
+              onChange={handleChange}
+              required
+            >
+              <option value={0}>No pagado</option>
+              <option value={1}>Pagado</option>
+            </select>
+          </div>
+
+          <div>
+            <h3>Caja:</h3>
+            <select
+              name="caja"
+              value={factura.caja}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Seleccione una caja</option>
+              {cajas.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.denominacion}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <h3>Lote:</h3>
+            <input
+              type="text"
+              name="lote"
+              value={factura.lote}
               onChange={handleChange}
               required
             />
