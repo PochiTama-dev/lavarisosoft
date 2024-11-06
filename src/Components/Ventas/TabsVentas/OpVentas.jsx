@@ -36,6 +36,7 @@ const OpVentas = () => {
   };
 
   const handleFilterChange = (field, value) => {
+    console.log(field);
     if (field === 'created_at') {
       const targetDate = new Date(value);
       targetDate.setDate(targetDate.getDate() + 1);

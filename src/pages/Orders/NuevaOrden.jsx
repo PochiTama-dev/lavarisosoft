@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Header from '../../Components/Header/Header.jsx';
 import NuevosDatosCliente from '../../Components/Orders/NuevaOrden/NuevosDatosCliente.jsx';
 import NuevosDatosIncidente from '../../Components/Orders/NuevaOrden/NuevosDatosIncidente.jsx';
@@ -103,12 +103,12 @@ const guardarEvento = async (evento) => {
   }
 };
 
-const NuevaOrden = ({ selectedClientData }) => {
-  const [cliente, setCliente] = useState(selectedClientData || {});
+const NuevaOrden = ({ clienteData }) => {
+  const [cliente, setCliente] = useState(clienteData || {});
   const [incidente, setIncidente] = useState({});
   const [idEmpleado, setIdEmpleado] = useState(''); // State for id_empleado
   useEffect(() => {
-    if (!selectedClientData) {
+    if (!clienteData) {
       const fetchMaxNumeroCliente = async () => {
         const maxNumeroCliente = await verificarNumeroCliente();
         setCliente((prevState) => ({ ...prevState, numero_cliente: maxNumeroCliente + 1 }));
@@ -116,7 +116,7 @@ const NuevaOrden = ({ selectedClientData }) => {
 
       fetchMaxNumeroCliente();
     }
-  }, [selectedClientData]);
+  }, [clienteData]);
 
   const handleSubmit = async () => {
     if (!incidente.numero_orden || !incidente.id_tipo_estado || !idEmpleado) {
@@ -167,7 +167,6 @@ const NuevaOrden = ({ selectedClientData }) => {
       alert('Error al guardar el cliente...');
     }
   };
-
   return (
     <div className='nuevaOrder-ctn'>
       <Header text='Nueva Orden' />
