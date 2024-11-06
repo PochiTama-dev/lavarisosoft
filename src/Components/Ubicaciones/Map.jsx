@@ -44,8 +44,6 @@ const Map = ({ position, zoom, selectedClient, selectedTechnician, setSelectedTe
 
   const { latitude = 0, longitude = 0 } = position || {};
   const { user } = useCustomContext();
-
-  console.log(user);
   const handleTechnicianSelect = (tecnico) => {
     if (selectedClient) {
       setSelectedTechnician(tecnico);
@@ -204,7 +202,7 @@ const Map = ({ position, zoom, selectedClient, selectedTechnician, setSelectedTe
       {/* Modal para mostrar detalles del cliente */}
       {isModalOpen && (
         <Modal isOpen={isModalOpen} onClose={handleModalClose}>
-          <NuevaOrden cliente={selectedClientData} />
+          <NuevaOrden clienteData={selectedClientData} />
         </Modal>
       )}
     </>
