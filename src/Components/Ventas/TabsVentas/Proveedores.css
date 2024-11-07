@@ -25,7 +25,7 @@
   margin-left: 5%;
 }
 .proveedores-top-box div {
-  width: 30%;
+  width: 25%;
 }
 .proveedores-top-box h4 {
   font-size: large;
@@ -43,15 +43,6 @@
   border-top-left-radius: 20px;
   border-bottom-left-radius: 20px;
   padding-left: 3%;
-}
-
-.proveedores-button-search {
-  border-top-right-radius: 20px;
-  border-bottom-right-radius: 20px;
-  padding-right: 5px;
-  color: white;
-  background-color: #777777;
-  max-width: 5vw;
 }
 
 .proveedores-button-arrow {
@@ -125,14 +116,14 @@
 }
 
 .grilla-proveedores th {
-  width: 16.67%;
+  width: 12.5%;
   text-align: center;
   color: #283959;
   font-size: large;
 }
 
 .grilla-proveedores-body td {
-  width: 16.67%;
+  width: 12.5%;
   text-align: center;
   color: #283959;
   font-weight: 500;

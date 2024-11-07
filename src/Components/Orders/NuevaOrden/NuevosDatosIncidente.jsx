@@ -77,7 +77,10 @@ const NuevosDatosIncidente = ({ setIncidente }) => {
       if (ordenesList.length > 0) {
         const maxNumeroOrden = Math.max(...ordenesList.map((o) => o.numero_orden));
         setNumeroOrden(maxNumeroOrden + 1);
-        setIncidente((prevState) => ({ ...prevState, numero_orden: maxNumeroOrden + 1 }));
+        setIncidente((prevState) => ({
+          ...prevState,
+          numero_orden: maxNumeroOrden + 1,
+        }));
       } else {
         setNumeroOrden(1);
         setIncidente((prevState) => ({ ...prevState, numero_orden: 1 }));
@@ -90,7 +93,12 @@ const NuevosDatosIncidente = ({ setIncidente }) => {
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
-    setIncidente((prevState) => ({ ...prevState, [id]: value, repuestos, id_tipo_estado: selectedEstado }));
+    setIncidente((prevState) => ({
+      ...prevState,
+      [id]: value,
+      repuestos,
+      id_tipo_estado: selectedEstado,
+    }));
   };
 
   const handleEstadoChange = (e) => {
@@ -102,7 +110,10 @@ const NuevosDatosIncidente = ({ setIncidente }) => {
     if (nuevoRepuesto.trim() !== '') {
       const updatedRepuestos = [...repuestos, nuevoRepuesto];
       setRepuestos(updatedRepuestos);
-      setIncidente((prevState) => ({ ...prevState, repuestos: updatedRepuestos }));
+      setIncidente((prevState) => ({
+        ...prevState,
+        repuestos: updatedRepuestos,
+      }));
       setNuevoRepuesto('');
       handleShow();
     }
@@ -114,12 +125,18 @@ const NuevosDatosIncidente = ({ setIncidente }) => {
 
   const handleFechaVisitaChange = (e) => {
     setFechaVisita(e.target.value);
-    setIncidente((prevState) => ({ ...prevState, fecha_visita: e.target.value }));
+    setIncidente((prevState) => ({
+      ...prevState,
+      fecha_visita: e.target.value,
+    }));
   };
   const handleHoraInicioVisitaChange = (newValue) => {
     if (newValue?.isValid()) {
       setHoraInicioVisita(newValue);
-      setIncidente((prevState) => ({ ...prevState, hora_inicio_visita: newValue.format('HH:mm') }));
+      setIncidente((prevState) => ({
+        ...prevState,
+        hora_inicio_visita: newValue.format('HH:mm'),
+      }));
 
       if (newValue.minute() !== horaInicioVisita.minute()) {
         setIsSelectingStartTime(false);
@@ -131,17 +148,20 @@ const NuevosDatosIncidente = ({ setIncidente }) => {
   const handleHoraFinVisitaChange = (newValue) => {
     if (newValue?.isValid()) {
       setHoraFinVisita(newValue);
-      setIncidente((prevState) => ({ ...prevState, hora_fin_visita: newValue.format('HH:mm') }));
+      setIncidente((prevState) => ({
+        ...prevState,
+        hora_fin_visita: newValue.format('HH:mm'),
+      }));
     }
   };
 
   return (
-    <div>
-      <div className='row'>
+    <div style={{ width: '40vw', marginLeft: '2%', marginTop: '3%' }}>
+      <div>
         <div className='col-md-6'>
           <h3 className='m-4'>Datos del incidente</h3>
           <div className='mb-3 row align-items-center'>
-            <label htmlFor='numero_orden' className='col-sm-2 col-form-label'>
+            <label htmlFor='numero_orden' className='col-sm-3 text-left'>
               N° Orden:
             </label>
             <div className='col-sm-8'>
@@ -149,7 +169,7 @@ const NuevosDatosIncidente = ({ setIncidente }) => {
             </div>
           </div>
           <div className='mb-3 row align-items-center'>
-            <label htmlFor='equipo' className='col-sm-2 col-form-label'>
+            <label htmlFor='equipo' className='col-sm-3 text-left'>
               Equipo:
             </label>
             <div className='col-sm-8'>
@@ -160,7 +180,7 @@ const NuevosDatosIncidente = ({ setIncidente }) => {
           {showMore && (
             <>
               <div className='mb-3 row align-items-center'>
-                <label htmlFor='marca' className='col-sm-2 col-form-label'>
+                <label htmlFor='marca' className='col-sm-3 text-left'>
                   Marca:
                 </label>
                 <div className='col-sm-8'>
@@ -168,7 +188,7 @@ const NuevosDatosIncidente = ({ setIncidente }) => {
                 </div>
               </div>
               <div className='mb-3 row align-items-center'>
-                <label htmlFor='modelo' className='col-sm-2 col-form-label'>
+                <label htmlFor='modelo' className='col-sm-3 text-left'>
                   Modelo:
                 </label>
                 <div className='col-sm-8'>
@@ -176,7 +196,7 @@ const NuevosDatosIncidente = ({ setIncidente }) => {
                 </div>
               </div>
               <div className='mb-3 row align-items-center'>
-                <label htmlFor='diagnostico' className='col-sm-2 col-form-label'>
+                <label htmlFor='diagnostico' className='col-sm-3 text-left'>
                   Diagnóstico:
                 </label>
                 <div className='col-sm-8'>
