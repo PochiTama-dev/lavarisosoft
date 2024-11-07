@@ -5,7 +5,9 @@ import { useCustomContext } from "../../../hooks/context";
 const NuevosDatosCliente = ({ setCliente, cliente }) => {
   const { listaClientes } = useCustomContext();
   const [clientes, setClientes] = useState([]);
-  const [selectedClient, setSelectedClient] = useState(null);
+  const [selectedClient, setSelectedClient] = useState(
+    cliente ? cliente : null
+  );
   const [clientOrNew, setClientOrNew] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [ubicacion, setUbicacion] = useState(",Cordoba,Argentina");
@@ -80,29 +82,33 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
   };
   return (
     <div>
-      <h3 className="m-4">Clientes</h3>
+      <h3 className="m-4">{cliente ? "Cliente" : "Clientes"}</h3>
       <div className="row">
-        <select className="col-sm-3 col-form-label">
-          <option value="" selected disabled>
-            Seleccione un cliente
-          </option>
-          {clientes &&
-            clientes.map((client) => (
-              <option
-                value={client.id}
-                key={client.id}
-                onClick={() => handleSelected(client)}
-              >
-                {client.nombre} #{client.numero_cliente}
+        {!cliente && (
+          <>
+            <select className="col-sm-3 col-form-label">
+              <option value="" selected disabled>
+                Seleccione un cliente
               </option>
-            ))}
-        </select>
-        <div className="col-sm-3 col-form-label">
-          <h4>o</h4>
-        </div>
-        <div className="col-sm-3 col-form-label pointer">
-          <h4 onClick={handleNew}>Cargar nuevo cliente</h4>
-        </div>
+              {clientes &&
+                clientes.map((client) => (
+                  <option
+                    value={client.id}
+                    key={client.id}
+                    onClick={() => handleSelected(client)}
+                  >
+                    {client.nombre} #{client.numero_cliente}
+                  </option>
+                ))}
+            </select>
+            <div className="col-sm-3 col-form-label">
+              <h4>o</h4>
+            </div>
+            <div className="col-sm-3 col-form-label pointer">
+              <h4 onClick={handleNew}>Cargar nuevo cliente</h4>
+            </div>
+          </>
+        )}
         {selectedClient !== null && !clientOrNew && (
           <>
             <div className="col-md-6">
