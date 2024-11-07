@@ -269,9 +269,6 @@ const UploadEmpleado = () => {
                 placeholder='Ingrese su Direccion'
                 style={{ textAlign: 'left', borderRadius: '5px', width: '350px' }}
               />
-              {/* <li className='d-flex justify-content-between py-2 grey-text'>
-                <input type='text' name='direccion' className='rounded text-center grey-text' value={empleado.direccion} onChange={handleSuggestions} />
-              </li> */}
               <div ref={suggestionsRef} className='suggestions-box'>
                 <Suspense fallback={<>Cargando...</>}>
                   {suggestions.length > 0 && (
@@ -290,58 +287,6 @@ const UploadEmpleado = () => {
                 </Suspense>
               </div>
             </Form.Group>
-            <Form.Group controlId='formUbicacion' className='label-input-margin'>
-              <Form.Label className={camposVacios.includes('ubicacion') ? 'required-field' : ''} style={{ textAlign: 'left', display: 'block' }}>
-                Ubicacion
-              </Form.Label>
-              <Form.Control
-                type='text'
-                name='ubicacion'
-                value={empleado.ubicacion}
-                onChange={handleChange}
-                placeholder='Ingrese su ubicacion'
-                style={{ textAlign: 'left', borderRadius: '5px', width: '350px' }}
-              />
-            </Form.Group>
-            {/* <Form.Group controlId='formLatitud' className='label-input-margin'>
-              <Form.Label className={camposVacios.includes('latitud') ? 'required-field' : ''} style={{ textAlign: 'left', display: 'block' }}>
-                Latitud
-              </Form.Label>
-              <Form.Control
-                type='text'
-                name='latitud'
-                value={empleado.latitud}
-                onChange={handleChange}
-                placeholder='Ingrese su latitud WTF!?'
-                style={{ textAlign: 'left', borderRadius: '5px', width: '350px' }}
-              />
-            </Form.Group> */}
-            {/* <Form.Group controlId='formLongitud' className='label-input-margin'>
-              <Form.Label className={camposVacios.includes('longitud') ? 'required-field' : ''} style={{ textAlign: 'left', display: 'block' }}>
-                Longitud
-              </Form.Label>
-              <Form.Control
-                type='text'
-                name='longitud'
-                value={empleado.longitud}
-                onChange={handleChange}
-                placeholder='Ingrese su longitud AHRE!'
-                style={{ textAlign: 'left', borderRadius: '5px', width: '350px' }}
-              />
-            </Form.Group> */}
-            {/* <Form.Group controlId='formEstado' className='label-input-margin'>
-              <Form.Label className={camposVacios.includes('estado') ? 'required-field' : ''} style={{ textAlign: 'left', display: 'block' }}>
-                Estado
-              </Form.Label>
-              <Form.Control
-                type='number'
-                name='estado'
-                value={empleado.estado}
-                onChange={handleChange}
-                placeholder='Ingrese su Estado'
-                style={{ textAlign: 'left', borderRadius: '5px', width: '350px' }}
-              />
-            </Form.Group> */}
           </Col>
           <Col className='uploadEmpleado-c2' style={{ textAlign: 'left' }}>
             <Form.Group controlId='formAutomovil' className='label-input-margin'>
