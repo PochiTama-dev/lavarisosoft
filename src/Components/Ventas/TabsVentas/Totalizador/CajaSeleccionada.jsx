@@ -1,90 +1,56 @@
-import PropTypes from 'prop-types';
-import DatosCaja from './DatosCaja';
-import { useEffect, useState } from 'react';
-import '../Inventario.css';
-import Cajas from './Cajas';
-const CajaSeleccionada = ({ cajaSelected }) => {
-  const [pestaña, setPestaña] = useState('Efectivo');
-  const [caja, setCaja] = useState(cajaSelected.efectivo);
+import PropTypes from "prop-types";
 
-  const handlePestaña = (nombre) => {
-    setPestaña(nombre);
+const CajaSeleccionada = ({ onDateChange }) => {
+  const handleDateInput = (event) => {
+    onDateChange(event.target.value);
   };
-
-  useEffect(() => {
-    switch (pestaña) {
-      case 'Efectivo':
-        setCaja(cajaSelected.efectivo);
-        break;
-      case 'Dolares':
-        setCaja(cajaSelected.dolares);
-        break;
-      case 'Bancos':
-        setCaja(cajaSelected.banco);
-        break;
-      default:
-        setCaja(cajaSelected.efectivo);
-    }
-  }, [pestaña, cajaSelected]);
-
   return (
     <div>
       <ul>
         <li>
-          <div className='d-flex justify-content-between my-2 inputsItems'>
-            <label className='text-primary' htmlFor=''>
+          <div className="d-flex justify-content-between my-2 inputsItems">
+            <label className="text-primary" htmlFor="">
               Filtrar por fecha
             </label>
-            <input className='rounded-pill mx-4' type='date' name='' id='' />
+            <input
+              className="rounded-pill mx-4"
+              type="date"
+              onChange={handleDateInput}
+            />
           </div>
-          <div className='d-flex justify-content-between my-2 inputsItems'>
-            <label className='text-primary' htmlFor=''>
+          <div className="d-flex justify-content-between my-2 inputsItems">
+            <label className="text-primary" htmlFor="">
               Filtrar por cod.Imp
             </label>
-            <input className='rounded-pill mx-4 codImp' type='search' name='' id='' />
+            <input className="rounded-pill mx-4 codImp" type="search" />
           </div>
         </li>
       </ul>
-      <ul className='row'>
-        <li
-          className={`pestañasFont pestañasInventario col text-center ${
-            pestaña === 'Efectivo' ? 'pestañasInventarioActive' : ''
-          }`}
-          onClick={() => handlePestaña('Efectivo')}
-        >
+      <ul className="row">
+        <li className="pestañasFont pestañasInventario col text-center">
           Efectivo
         </li>
-        <li
-          className={`pestañasFont pestañasInventario col text-center ${
-            pestaña === 'Dolares' ? 'pestañasInventarioActive' : ''
-          }`}
-          onClick={() => handlePestaña('Dolares')}
-        >
+        <li className="pestañasFont pestañasInventario col text-center">
           Dólares
         </li>
-        <li
-          className={`pestañasFont pestañasInventario col text-center ${
-            pestaña === 'Bancos' ? 'pestañasInventarioActive' : ''
-          }`}
-          onClick={() => handlePestaña('Bancos')}
-        >
+        <li className="pestañasFont pestañasInventario col text-center">
           Bancos
         </li>
       </ul>
-      <ul className='row'>
-        <li className='col text-center items'>Fecha de ingreso</li>
-        <li className='col text-center items'>Código de imputacíon</li>
-        <li className='col text-center items'>Número de operacíon</li>
-        <li className='col text-center items'>Nombre del cliente</li>
-        <li className='col text-center items'>ID Cliente</li>
-        <li className='col text-center items'>Valor</li>
+      <ul className="row">
+        <li className="col text-center items">ID de orden</li>
+        <li className="col text-center items">ID de repuesto</li>
+        <li className="col text-center items">Número de caja</li>
+        <li className="col text-center items">Precio</li>
+        <li className="col text-center items">Cantidad</li>
+        <li className="col text-center items">Total</li>
       </ul>
-      <DatosCaja datosCajaSelected={caja} monedaSeteada={pestaña} />
     </div>
   );
 };
-export default CajaSeleccionada;
 
 CajaSeleccionada.propTypes = {
-  cajaSelected: PropTypes.object.isRequired,
+  onDateChange: PropTypes.func.isRequired,
 };
+
+export default CajaSeleccionada;
