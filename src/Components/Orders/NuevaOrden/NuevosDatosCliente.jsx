@@ -1,7 +1,7 @@
 import { Suspense, useEffect, useState } from 'react';
 import './nuevaOrden.css';
 import { useCustomContext } from '../../../hooks/context';
-
+import { func, object } from 'prop-types';
 const NuevosDatosCliente = ({ setCliente, cliente }) => {
   const { listaClientes } = useCustomContext();
   const [clientes, setClientes] = useState([]);
@@ -23,7 +23,7 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
     console.log(value);
 
     setCliente((prevState) => ({ ...prevState, [id]: value }));
-    setUbicacion((prevState) => value);
+    setUbicacion(() => value);
     console.log(ubicacion);
   };
 
@@ -276,6 +276,11 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
       )}
     </div>
   );
+};
+
+NuevosDatosCliente.propTypes = {
+  setCliente: func,
+  cliente: object,
 };
 
 export default NuevosDatosCliente;
