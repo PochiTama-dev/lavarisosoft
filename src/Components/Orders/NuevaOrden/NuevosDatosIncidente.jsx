@@ -10,7 +10,7 @@ const NuevosDatosIncidente = ({ setIncidente }) => {
   const [nuevoRepuesto, setNuevoRepuesto] = useState('');
   const [showInput, setShowInput] = useState(false);
   const [estados, setEstados] = useState([]);
-  const [selectedEstado, setSelectedEstado] = useState(4);
+  const [selectedEstado, setSelectedEstado] = useState(1);
   const [numeroOrden, setNumeroOrden] = useState('');
   const [showMore, setShowMore] = useState(false);
   const [fechaVisita, setFechaVisita] = useState('');
@@ -94,7 +94,7 @@ const NuevosDatosIncidente = ({ setIncidente }) => {
   };
 
   const handleEstadoChange = (e) => {
-    setSelectedEstado(e.target.value);
+    setSelectedEstado(1);
     setIncidente((prevState) => ({ ...prevState, id_tipo_estado: e.target.value }));
   };
 
@@ -181,21 +181,6 @@ const NuevosDatosIncidente = ({ setIncidente }) => {
                 </label>
                 <div className='col-sm-8'>
                   <textarea id='diagnostico' className='form-control input-small' onChange={handleInputChange} required></textarea>
-                </div>
-              </div>
-              <div className='mb-3 row align-items-center'>
-                <label htmlFor='estado' className='col-sm-2 col-form-label'>
-                  Estado:
-                </label>
-                <div className='col-sm-8'>
-                  <select id='estado' className='form-control' onChange={handleEstadoChange} value={selectedEstado} required>
-                    <option value=''>Seleccione un estado</option>
-                    {estados.map((estado) => (
-                      <option key={estado.id} value={estado.id}>
-                        {estado.tipo_estado}
-                      </option>
-                    ))}
-                  </select>
                 </div>
               </div>
               <div className='mb-3 row align-items-center'>

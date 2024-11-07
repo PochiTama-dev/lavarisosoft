@@ -75,7 +75,7 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
     <div>
       <h3 className='m-4'>{cliente ? 'Cliente' : 'Clientes'}</h3>
       <div className='row'>
-        {!cliente && (
+        {selectedClient && (
           <>
             <select className='col-sm-3 col-form-label'>
               <option value='' selected disabled>
