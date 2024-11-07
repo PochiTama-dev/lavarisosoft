@@ -1,15 +1,16 @@
-.tecnico{
-    height:30vh;
-    overflow: hidden;
+.tecnico {
+  height: 30vh;
+  overflow: hidden;
 }
 
-.asideDetail{
-    margin-left: 10px;
+.asideDetail {
+  margin-left: 10px;
 }
-.nuevaOrder-ctn{
-    margin-top: 50px;
+.nuevaOrder-ctn {
+  margin-top: 50px;
+  width: 96%;
 }
 
-.text-orders{
-    color: #283959;
+.text-orders {
+  color: #283959;
 }
