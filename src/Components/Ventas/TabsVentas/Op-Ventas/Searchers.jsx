@@ -17,6 +17,10 @@ const filterConfig = {
     { label: 'Técnico', field: 'tecnico', placeholder: 'Buscar Técnico' },
     { label: 'Repuesto', field: 'repuesto', placeholder: 'Buscar Repuesto' },
   ],
+  3: [
+    { label: 'Cliente o Tecnico involucrado', field: 'cliente_tecnico', placeholder: 'Cliente/Tecnico involucrado' },
+    { label: 'Tipo de incumplimiento', field: 'tipo', placeholder: 'Tipo de incumplimiento' },
+  ],
 };
 
 const Searchers = ({ activeTab, onFilterChange }) => {
