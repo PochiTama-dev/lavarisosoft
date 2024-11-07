@@ -30,6 +30,7 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
   const handleSelected = (client) => {
     setSelectedClient(client);
     setClientOrNew(false);
+    setCliente(client)
   };
   const handleNew = () => {
     setClientOrNew(true);

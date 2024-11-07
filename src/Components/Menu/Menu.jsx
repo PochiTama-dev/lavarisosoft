@@ -62,10 +62,12 @@ const Menu = () => {
               <Link to='/agenda' className='btn btn-lg btn-block menu-button'>
                 Agenda
               </Link>
+            </div>
+              <div className='btn-group-vertical '>
               <Link to='/feedback' className='btn btn-lg btn-block menu-button'>
                 Feedback
               </Link>
-            </div>
+              </div>
             <div className='btn-group-vertical '>
               <Link to='/notificaciones' className='btn btn-lg btn-block menu-button'>
                 Notificaciones
