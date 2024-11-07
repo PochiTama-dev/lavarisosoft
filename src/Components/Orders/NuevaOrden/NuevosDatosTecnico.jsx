@@ -76,12 +76,12 @@ const NuevosDatosTecnico = ({ setIdEmpleado, cliente }) => {
   };
 
   return (
-    <div style={{ marginTop: "5%" }}>
+    <div style={{ width: "40vw", marginLeft: "2%", marginTop: "3%" }}>
       <h3 className="m-4">Datos del técnico</h3>
-      <div className="row">
+      <div className="">
         <div className="col-md-6">
           <div className="mb-3 row align-items-center">
-            <label htmlFor="empleado" className="col-sm-3 col-form-label">
+            <label htmlFor="empleado" className="col-sm-4 col-form-label">
               Técnicos disponibles:
             </label>
             <div className="col-sm-8">
@@ -104,7 +104,7 @@ const NuevosDatosTecnico = ({ setIdEmpleado, cliente }) => {
           {selectedEmployee && (
             <>
               <div className="mb-3 row align-items-center">
-                <label htmlFor="nombre" className="col-sm-2 col-form-label">
+                <label htmlFor="nombre" className="col-sm-4 text-left">
                   Nombre:
                 </label>
                 <div className="col-sm-8">
@@ -118,7 +118,7 @@ const NuevosDatosTecnico = ({ setIdEmpleado, cliente }) => {
                 </div>
               </div>
               <div className="mb-3 row align-items-center">
-                <label htmlFor="apellido" className="col-sm-2 col-form-label">
+                <label htmlFor="apellido" className="col-sm-4 text-left">
                   Apellido:
                 </label>
                 <div className="col-sm-8">
@@ -132,7 +132,7 @@ const NuevosDatosTecnico = ({ setIdEmpleado, cliente }) => {
                 </div>
               </div>
               <div className="mb-3 row align-items-center">
-                <label htmlFor="legajo" className="col-sm-2 col-form-label">
+                <label htmlFor="legajo" className="col-sm-4 text-left">
                   Legajo:
                 </label>
                 <div className="col-sm-8">
