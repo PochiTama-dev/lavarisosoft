@@ -1,4 +1,3 @@
- 
 import ExcelJS from 'exceljs';
 
 export const uploadExcelSistemaContable = async (req, res) => {
@@ -72,7 +71,6 @@ export const uploadExcelEmpleados = async (event) => {
                 cuil: row.getCell(6).value,
                 telefono: row.getCell(7).value,
                 direccion: row.getCell(8).value,
-                ubicacion: row.getCell(9).value,
               };
               data.push(rowData);
             }
@@ -148,6 +146,4 @@ export const uploadExcelStock = async (event) => {
       reject(new Error('No file selected'));
     }
   });
-
 };
-
