@@ -42,15 +42,16 @@ const PorProducto = ({ data }) => {
                 </tr>
               </thead>
               <tbody>
-                {sortedData.map((item, index) => (
-                  <tr key={index} className={index % 2 === 0 ? '' : 'row-even'}>
-                    <td>{item.StockPrincipal?.nombre}</td>
-                    <td>{item.id_repuesto}</td>
-                    <td>{item?.responsable}</td>
-                    <td>{item.StockPrincipal?.precio}</td>
-                    <td>{item.cantidad}</td>
-                  </tr>
-                ))}
+                {sortedData &&
+                  sortedData.map((item, index) => (
+                    <tr key={index} className={index % 2 === 0 ? '' : 'row-even'}>
+                      <td>{item.StockPrincipal?.nombre}</td>
+                      <td>{item.id_repuesto}</td>
+                      <td>{item?.responsable}</td>
+                      <td>{item.StockPrincipal?.precio}</td>
+                      <td>{item.cantidad}</td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           </div>
@@ -75,7 +76,7 @@ const PorProducto = ({ data }) => {
   );
 };
 PorProducto.propTypes = {
-  data: array.isRequired,
+  data: array,
 };
 
 export default PorProducto;

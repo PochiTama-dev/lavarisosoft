@@ -63,14 +63,16 @@ const OpVentas = () => {
   };
 
   const applyFilters = () => {
-    const filtered = dataTab.filter((item) => {
-      return Object.keys(filters).every((key) => {
-        //console.log(key);
-        const filterValue = key !== 'created_at' && filters[key].toLowerCase();
-        const itemValue = getNestedValue(item, key);
-        return filterValue === '' || (itemValue && itemValue.toString().toLowerCase().includes(filterValue));
+    const filtered =
+      dataTab &&
+      dataTab.filter((item) => {
+        return Object.keys(filters).every((key) => {
+          //console.log(key);
+          const filterValue = key !== 'created_at' && filters[key].toLowerCase();
+          const itemValue = getNestedValue(item, key);
+          return filterValue === '' || (itemValue && itemValue.toString().toLowerCase().includes(filterValue));
+        });
       });
-    });
     console.log(filtered);
     setFilteredData(filtered);
   };
