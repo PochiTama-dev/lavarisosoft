@@ -84,21 +84,40 @@ const UbicacionesOrden = () => {
               >
                 <div className="scrollable-container-topLocation">
                   <div className=" align-items-center">
-                    <h4 className="">
+                    <h3 style={{ fontWeight: "bold" }}>
                       {orden.Cliente.nombre} {orden.Cliente.apellido}
-                    </h4>
+                    </h3>
                   </div>
                   <div className=" align-items-center">
-                    <h4 className="">Teléfono: {orden.Cliente.telefono}</h4>
+                    <h6 className="">
+                      {" "}
+                      <span style={{ fontSize: "1.5rem" }}>Teléfono: </span>
+                      {orden.Cliente.telefono}
+                    </h6>
                   </div>
                   <div className=" align-items-center">
-                    <h4 className="">Direccion: {orden.Cliente.direccion}</h4>
+                    <h6 className="">
+                      {" "}
+                      <span style={{ fontSize: "1.5rem" }}>
+                        Dirección:{" "}
+                      </span>{" "}
+                      {orden.Cliente.direccion}
+                    </h6>
                   </div>
                   <div className=" align-items-center">
-                    <h4 className="">Localidad: {orden.Cliente.ubicacion}</h4>
+                    <h6 className="">
+                      {" "}
+                      <span style={{ fontSize: "1.5rem" }}>
+                        Localidad:{" "}
+                      </span>{" "}
+                      {orden.Cliente.ubicacion}
+                    </h6>
                   </div>
                   <div className=" align-items-center">
-                    <h4 className="">Diagnostico: {orden.diagnostico}</h4>
+                    <h6 className="">
+                      <span style={{ fontSize: "1.5rem" }}>Diagnostico: </span>
+                      {orden.diagnostico}
+                    </h6>
                   </div>
                 </div>
               </div>
