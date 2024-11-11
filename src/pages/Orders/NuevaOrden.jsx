@@ -123,6 +123,7 @@ const NuevaOrden = ({ clienteData }) => {
       alert('Por favor, complete todos los campos requeridos.');
       return;
     }
+    console.log(cliente);
     const verify = await verificarExistenciaCliente(cliente);
     console.log('INCIDENTE', incidente);
     if (!verify) {
