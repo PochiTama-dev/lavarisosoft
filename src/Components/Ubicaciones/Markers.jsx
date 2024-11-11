@@ -1,6 +1,6 @@
 import { Marker, Popup } from "react-leaflet";
 import { Icon } from "leaflet";
-import markerIcon from "../../assets/marker.png";
+import markerIcon from "../../assets/camioneta.png";
 import clientIcon from "../../assets/man.webp";
 import "leaflet/dist/leaflet.css";
 import PropTypes from "prop-types";
