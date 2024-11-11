@@ -4,6 +4,7 @@ import markerIcon from "../../assets/camioneta.png";
 import clientIcon from "../../assets/man.webp";
 import "leaflet/dist/leaflet.css";
 import PropTypes from "prop-types";
+import "./Markers.css";
 
 const clienteIcono = new Icon({
   iconUrl: clientIcon,
@@ -17,6 +18,7 @@ const myIcon = new Icon({
   iconSize: [30, 30],
   iconAnchor: [12, 41],
   popupAnchor: [1, -35],
+  className: "camioneta-tecnico",
 });
 export const TechnicianMarker = ({ tecnico, onTechnicianSelect }) => (
   <Marker position={[tecnico.latitud, tecnico.longitud]} icon={myIcon}>

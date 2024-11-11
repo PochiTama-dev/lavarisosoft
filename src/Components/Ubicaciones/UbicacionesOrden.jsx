@@ -54,33 +54,6 @@ const UbicacionesOrden = () => {
     }
   };
 
-  /* const handleSubmit = async () => {
-    if (selectedClient) {
-      const orden = {
-        numero_orden: nroNuevaOrden,
-        id_cliente: selectedClient.id,
-        id_empleado: selectedTechnician.id,
-        id_tipo_estado: 4,
-        id_tipo_cierre_extendido: null,
-        equipo: '',
-        marca: '',
-        modelo: '',
-        antiguedad: 0,
-        diagnostico: null,
-        motivo: null,
-      };
-      const ordenGuardada = await guardarOrden(orden);
-      console.log('ordenGuardada:', ordenGuardada);
-      if (ordenGuardada) {
-        alert('Orden guardada con éxito');
-        console.log('Orden completa guardada con éxito!!!');
-      } else {
-        alert('Error al guardar orden');
-        console.log('Error al guardar la orden completa...');
-      }
-    }
-  }; */
-
   const handleSelectOrder = async (ordenId) => {
     const ordenToSelect = orders.find((orden) => orden.id === ordenId);
     setSelectedOrder(ordenToSelect);
@@ -104,28 +77,47 @@ const UbicacionesOrden = () => {
             orders.map((orden) => (
               <div
                 key={orden.id}
-                className={`container-lists col ${
+                className={`container-lists-order col ${
                   selectedOrder.id === orden.id ? "bg-primary-subtle" : ""
                 }`}
                 onClick={() => handleSelectOrder(orden.id)}
               >
                 <div className="scrollable-container-topLocation">
                   <div className=" align-items-center">
-                    <h4 className="">
+                    <h3 style={{ fontWeight: "bold" }}>
                       {orden.Cliente.nombre} {orden.Cliente.apellido}
-                    </h4>
+                    </h3>
                   </div>
                   <div className=" align-items-center">
-                    <h4 className="">Teléfono: {orden.Cliente.telefono}</h4>
+                    <h6 className="">
+                      {" "}
+                      <span style={{ fontSize: "1.5rem" }}>Teléfono: </span>
+                      {orden.Cliente.telefono}
+                    </h6>
                   </div>
                   <div className=" align-items-center">
-                    <h4 className="">Direccion: {orden.Cliente.direccion}</h4>
+                    <h6 className="">
+                      {" "}
+                      <span style={{ fontSize: "1.5rem" }}>
+                        Dirección:{" "}
+                      </span>{" "}
+                      {orden.Cliente.direccion}
+                    </h6>
                   </div>
                   <div className=" align-items-center">
-                    <h4 className="">Localidad: {orden.Cliente.ubicacion}</h4>
+                    <h6 className="">
+                      {" "}
+                      <span style={{ fontSize: "1.5rem" }}>
+                        Localidad:{" "}
+                      </span>{" "}
+                      {orden.Cliente.ubicacion}
+                    </h6>
                   </div>
                   <div className=" align-items-center">
-                    <h4 className="">Diagnostico: {orden.diagnostico}</h4>
+                    <h6 className="">
+                      <span style={{ fontSize: "1.5rem" }}>Diagnostico: </span>
+                      {orden.diagnostico}
+                    </h6>
                   </div>
                 </div>
               </div>
