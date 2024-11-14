@@ -1,7 +1,7 @@
 import { Suspense, useEffect, useState } from "react";
 import "./nuevaOrden.css";
 import { useCustomContext } from "../../../hooks/context";
-
+import { func, object } from "prop-types";
 const NuevosDatosCliente = ({ setCliente, cliente }) => {
   const { listaClientes } = useCustomContext();
   const [clientes, setClientes] = useState([]);
@@ -25,7 +25,7 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
     console.log(value);
 
     setCliente((prevState) => ({ ...prevState, [id]: value }));
-    setUbicacion((prevState) => value);
+    setUbicacion(() => value);
     console.log(ubicacion);
   };
 
@@ -81,12 +81,15 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
     setSuggestions([]);
   };
   return (
-    <div>
-      <h3 className="m-4">{cliente ? "Cliente" : "Clientes"}</h3>
+    <div style={{ marginTop: "6%", marginLeft: "2%" }}>
+      <h3 style={{ marginLeft: "5%" }}>{cliente ? "Cliente" : "Clientes"}</h3>
       <div className="row">
-        {!cliente && (
+        {selectedClient && (
           <>
-            <select className="col-sm-3 col-form-label">
+            <select
+              className="col-sm-3 text-left"
+              style={{ marginBottom: "1%" }}
+            >
               <option value="" selected disabled>
                 Seleccione un cliente
               </option>
@@ -101,10 +104,16 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
                   </option>
                 ))}
             </select>
-            <div className="col-sm-3 col-form-label">
+            <div
+              className="col-sm-3 text-left"
+              style={{ width: "2vw", paddingLeft: "5%" }}
+            >
               <h4>o</h4>
             </div>
-            <div className="col-sm-3 col-form-label pointer">
+            <div
+              className="col-sm-3 text-left pointer"
+              style={{ paddingLeft: "5%" }}
+            >
               <h4 onClick={handleNew}>Cargar nuevo cliente</h4>
             </div>
           </>
@@ -113,10 +122,7 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
           <>
             <div className="col-md-6">
               <div className="mb-3 row align-items-center">
-                <label
-                  htmlFor="numero_cliente"
-                  className="col-sm-2 col-form-label"
-                >
+                <label htmlFor="numero_cliente" className="col-sm-2 text-left">
                   N° Cliente:
                 </label>
                 <div className="col-sm-8">
@@ -131,7 +137,7 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
                 </div>
               </div>
               <div className="mb-3 row align-items-center">
-                <label htmlFor="nombre" className="col-sm-2 col-form-label">
+                <label htmlFor="nombre" className="col-sm-2 text-left">
                   Nombre:
                 </label>
                 <div className="col-sm-8">
@@ -145,7 +151,7 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
                 </div>
               </div>
               <div className="mb-3 row align-items-center">
-                <label htmlFor="apellido" className="col-sm-2 col-form-label">
+                <label htmlFor="apellido" className="col-sm-2 text-left">
                   Apellido:
                 </label>
                 <div className="col-sm-8">
@@ -159,7 +165,7 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
                 </div>
               </div>
               <div className="mb-3 row align-items-center">
-                <label htmlFor="cuil" className="col-sm-2 col-form-label">
+                <label htmlFor="cuil" className="col-sm-2 text-left">
                   CUIL:
                 </label>
                 <div className="col-sm-8">
@@ -176,7 +182,7 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
 
             <div className="col-md-6">
               <div className="mb-3 row align-items-center">
-                <label htmlFor="telefono" className="col-sm-2 col-form-label">
+                <label htmlFor="telefono" className="col-sm-3 text-left">
                   Teléfono:
                 </label>
                 <div className="col-sm-8">
@@ -190,7 +196,7 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
                 </div>
               </div>
               <div className="mb-3 row align-items-center">
-                <label htmlFor="direccion" className="col-sm-2 col-form-label">
+                <label htmlFor="direccion" className="col-sm-3 text-left">
                   Dirección:
                 </label>
                 <div className="col-sm-8">
@@ -204,7 +210,7 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
                 </div>
               </div>
               <div className="mb-3 row align-items-center">
-                <label htmlFor="piso" className="col-sm-2 col-form-label">
+                <label htmlFor="piso" className="col-sm-3 text-left">
                   Piso:
                 </label>
                 <div className="col-sm-8">
@@ -218,10 +224,7 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
                 </div>
               </div>
               <div className="mb-3 row align-items-center">
-                <label
-                  htmlFor="departamento"
-                  className="col-sm-2 col-form-label"
-                >
+                <label htmlFor="departamento" className="col-sm-3 text-left">
                   Departamento:
                 </label>
                 <div className="col-sm-8">
@@ -235,7 +238,7 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
                 </div>
               </div>
               <div className="mb-3 row align-items-center">
-                <label htmlFor="ubicacion" className="col-sm-2 col-form-label">
+                <label htmlFor="ubicacion" className="col-sm-3 text-left">
                   Localidad:
                 </label>
                 <div className="col-sm-8">
@@ -257,10 +260,7 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
           <div className="col-md-6">
             <h3 className="m-4">Nuevo cliente</h3>
             <div className="mb-3 row align-items-center">
-              <label
-                htmlFor="numero_cliente"
-                className="col-sm-2 col-form-label"
-              >
+              <label htmlFor="numero_cliente" className="col-sm-2 text-left">
                 N° Cliente:
               </label>
               <div className="col-sm-8">
@@ -276,7 +276,7 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
               </div>
             </div>
             <div className="mb-3 row align-items-center">
-              <label htmlFor="nombre" className="col-sm-2 col-form-label">
+              <label htmlFor="nombre" className="col-sm-2 text-left">
                 Nombre:
               </label>
               <div className="col-sm-8">
@@ -291,7 +291,7 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
               </div>
             </div>
             <div className="mb-3 row align-items-center">
-              <label htmlFor="apellido" className="col-sm-2 col-form-label">
+              <label htmlFor="apellido" className="col-sm-2 text-left">
                 Apellido:
               </label>
               <div className="col-sm-8">
@@ -306,7 +306,7 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
               </div>
             </div>
             <div className="mb-3 row align-items-center">
-              <label htmlFor="cuil" className="col-sm-2 col-form-label">
+              <label htmlFor="cuil" className="col-sm-2 text-left">
                 CUIL:
               </label>
               <div className="col-sm-8">
@@ -323,7 +323,7 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
           </div>
           <div className="col-md-6">
             <div className="mb-3 row align-items-center">
-              <label htmlFor="telefono" className="col-sm-2 col-form-label">
+              <label htmlFor="telefono" className="col-sm-3 text-left">
                 Teléfono:
               </label>
               <div className="col-sm-8">
@@ -338,7 +338,7 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
               </div>
             </div>
             <div className="mb-3 row align-items-center">
-              <label htmlFor="direccion" className="col-sm-2 col-form-label">
+              <label htmlFor="direccion" className="col-sm-3 text-left">
                 Dirección:
               </label>
               <div className="col-sm-8">
@@ -353,7 +353,7 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
               </div>
             </div>
             <div className="mb-3 row align-items-center">
-              <label htmlFor="piso" className="col-sm-2 col-form-label">
+              <label htmlFor="piso" className="col-sm-3 text-left">
                 Piso:
               </label>
               <div className="col-sm-8">
@@ -368,7 +368,7 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
               </div>
             </div>
             <div className="mb-3 row align-items-center">
-              <label htmlFor="departamento" className="col-sm-2 col-form-label">
+              <label htmlFor="departamento" className="col-sm-3 text-left">
                 Departamento:
               </label>
               <div className="col-sm-8">
@@ -383,7 +383,7 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
               </div>
             </div>
             <div className="mb-3 row align-items-center">
-              <label htmlFor="ubicacion" className="col-sm-2 col-form-label">
+              <label htmlFor="ubicacion" className="col-sm-3 text-left">
                 Localidad:
               </label>
               <div className="col-sm-8">
@@ -423,6 +423,11 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
       )}
     </div>
   );
+};
+
+NuevosDatosCliente.propTypes = {
+  setCliente: func,
+  cliente: object,
 };
 
 export default NuevosDatosCliente;

@@ -3,9 +3,7 @@ import PropTypes from "prop-types";
 const DatosCaja = ({ cobros, selectedDate }) => {
   const filteredCobros = selectedDate
     ? cobros.filter((cobro) => {
-        // Convertir `created_at` a 'DD/MM/YYYY'
-        const [year, month, day] = cobro.created_at.split("T")[0].split("-");
-        const formattedDate = `${day}/${month}/${year}`;
+        const formattedDate = cobro.created_at.split("T")[0];
         return formattedDate === selectedDate;
       })
     : cobros;

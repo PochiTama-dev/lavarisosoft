@@ -3,7 +3,7 @@ import Header from '../../Components/Header/Header.jsx';
 import NuevosDatosCliente from '../../Components/Orders/NuevaOrden/NuevosDatosCliente.jsx';
 import NuevosDatosIncidente from '../../Components/Orders/NuevaOrden/NuevosDatosIncidente.jsx';
 import NuevosDatosTecnico from '../../Components/Orders/NuevaOrden/NuevosDatosTecnico.jsx';
-
+import { object } from 'prop-types';
 const verificarNumeroCliente = async () => {
   try {
     const response = await fetch('https://lv-back.online/clientes/lista', {
@@ -108,7 +108,10 @@ const NuevaOrden = ({ clienteData }) => {
     if (!clienteData) {
       const fetchMaxNumeroCliente = async () => {
         const maxNumeroCliente = await verificarNumeroCliente();
-        setCliente((prevState) => ({ ...prevState, numero_cliente: maxNumeroCliente + 1 }));
+        setCliente((prevState) => ({
+          ...prevState,
+          numero_cliente: maxNumeroCliente + 1,
+        }));
       };
 
       fetchMaxNumeroCliente();
@@ -120,6 +123,7 @@ const NuevaOrden = ({ clienteData }) => {
       alert('Por favor, complete todos los campos requeridos.');
       return;
     }
+    console.log(cliente);
     const verify = await verificarExistenciaCliente(cliente);
     console.log('INCIDENTE', incidente);
     if (!verify) {
@@ -204,15 +208,19 @@ const NuevaOrden = ({ clienteData }) => {
     <div className='nuevaOrder-ctn'>
       <Header text='Nueva Orden' />
       <NuevosDatosCliente setCliente={setCliente} cliente={cliente} />
-      <NuevosDatosIncidente setIncidente={setIncidente} />
-      <NuevosDatosTecnico setIdEmpleado={setIdEmpleado} cliente={cliente} />
+      <div className='row'>
+        <NuevosDatosIncidente setIncidente={setIncidente} />
+        <NuevosDatosTecnico setIdEmpleado={setIdEmpleado} cliente={cliente} />
+      </div>
       <div className='d-flex justify-content-center'>
-        <button className='bg-primary rounded-pill text-white papelitoButton' onClick={handleSubmit}>
+        <button className='bg-primary rounded-pill text-white papelitoButton m-4' onClick={handleSubmit}>
           Crear
         </button>
       </div>
     </div>
   );
 };
-
+NuevaOrden.propTypes = {
+  clienteData: object,
+};
 export default NuevaOrden;

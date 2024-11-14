@@ -40,10 +40,20 @@ const Totalizador = () => {
   };
 
   const handleDateChange = (date) => {
-    const [year, month, day] = date.split("-");
-    const formattedDate = `${day}/${month}/${year}`;
-    setSelectedDate(formattedDate);
+    setSelectedDate(date);
   };
+
+  const filteredCobros = cobros.filter((cobro) => {
+    const matchesCaja = selectedCajaId
+      ? cobro.id_caja === selectedCajaId
+      : true;
+    const createdAtFormatted = cobro.created_at.slice(0, 10);
+    const matchesDate = selectedDate
+      ? createdAtFormatted === selectedDate
+      : true;
+
+    return matchesCaja && matchesDate;
+  });
 
   return (
     <div className="totalizadorContainer">
@@ -55,8 +65,8 @@ const Totalizador = () => {
           selectedCajaId={selectedCajaId}
         />
         <div className="content">
-          <CajaSeleccionada onDateChange={handleDateChange} />{" "}
-          <DatosCaja cobros={cobros} selectedDate={selectedDate} />{" "}
+          <CajaSeleccionada onDateChange={handleDateChange} />
+          <DatosCaja cobros={filteredCobros} selectedDate={selectedDate} />
         </div>
       </div>
     </div>

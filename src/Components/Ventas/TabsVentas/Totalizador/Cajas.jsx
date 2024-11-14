@@ -2,10 +2,9 @@ import PropTypes from "prop-types";
 import "./Cajas.css";
 
 const Cajas = ({ cajas, onCajaSelect }) => {
-  // Definición de la función handleCaja
   const handleCaja = (event) => {
     const selectedIndex = event.target.value;
-    onCajaSelect(Number(selectedIndex)); // Llamando al prop `onCajaSelect`
+    onCajaSelect(Number(selectedIndex));
   };
 
   return (
@@ -14,9 +13,10 @@ const Cajas = ({ cajas, onCajaSelect }) => {
         <option value="" disabled>
           Seleccione una caja
         </option>
+        <option>Todas las cajas</option>
         {cajas?.map((caja, index) => (
-          <option key={index} value={caja.id}>
-            {caja.denominacion}
+          <option key={index} value={caja?.id}>
+            {caja?.denominacion}
           </option>
         ))}
       </select>

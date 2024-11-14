@@ -13,17 +13,19 @@ const PorTecnico = ({ data }) => {
     }
   };
 
-  const sortedData = [...data].sort((a, b) => {
-    if (orderBy === 'fecha') {
-      const dateA = new Date(a.fecha);
-      const dateB = new Date(b.fecha);
-      return orderAsc ? dateA - dateB : dateB - dateA;
-    } else {
-      const valA = a[orderBy];
-      const valB = b[orderBy];
-      return orderAsc ? (valA < valB ? -1 : valA > valB ? 1 : 0) : valA > valB ? -1 : valA < valB ? 1 : 0;
-    }
-  });
+  const sortedData =
+    data &&
+    [...data].sort((a, b) => {
+      if (orderBy === 'fecha') {
+        const dateA = new Date(a.fecha);
+        const dateB = new Date(b.fecha);
+        return orderAsc ? dateA - dateB : dateB - dateA;
+      } else {
+        const valA = a[orderBy];
+        const valB = b[orderBy];
+        return orderAsc ? (valA < valB ? -1 : valA > valB ? 1 : 0) : valA > valB ? -1 : valA < valB ? 1 : 0;
+      }
+    });
 
   const mediosPagos = (num) => {
     if (num === 1) return 'Echeq';
@@ -52,18 +54,19 @@ const PorTecnico = ({ data }) => {
                 </tr>
               </thead>
               <tbody>
-                {sortedData.map((item, index) => (
-                  <tr key={index} className={index % 2 === 0 ? '' : 'row-even'}>
-                    <td>{new Date(item.created_at).toLocaleDateString()}</td>
-                    <td>{item.Empleado.legajo}</td>
-                    <td>{'Domicilio/Taller'}</td>
-                    <td>{item.numero_orden}</td>
-                    <td>{item.motivo}</td>
-                    <td>{item.Cliente?.numero_cliente}</td>
-                    <td>{item.Presupuesto?.total}</td>
-                    <td>{mediosPagos(item.Presupuesto?.id_medio_de_pago)}</td>
-                  </tr>
-                ))}
+                {sortedData &&
+                  sortedData.map((item, index) => (
+                    <tr key={index} className={index % 2 === 0 ? '' : 'row-even'}>
+                      <td>{new Date(item.created_at).toLocaleDateString()}</td>
+                      <td>{item.Empleado.legajo}</td>
+                      <td>{'Domicilio/Taller'}</td>
+                      <td>{item.numero_orden}</td>
+                      <td>{item.motivo}</td>
+                      <td>{item.Cliente?.numero_cliente}</td>
+                      <td>{item.Presupuesto?.total}</td>
+                      <td>{mediosPagos(item.Presupuesto?.id_medio_de_pago)}</td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           </div>

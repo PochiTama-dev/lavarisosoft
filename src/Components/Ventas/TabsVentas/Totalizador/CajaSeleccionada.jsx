@@ -18,12 +18,6 @@ const CajaSeleccionada = ({ onDateChange }) => {
               onChange={handleDateInput}
             />
           </div>
-          <div className="d-flex justify-content-between my-2 inputsItems">
-            <label className="text-primary" htmlFor="">
-              Filtrar por cod.Imp
-            </label>
-            <input className="rounded-pill mx-4 codImp" type="search" />
-          </div>
         </li>
       </ul>
       <ul className="row">
