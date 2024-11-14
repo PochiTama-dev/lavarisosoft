@@ -1,33 +1,32 @@
-import editar from '../../../../images/editar2.webp';
-import PropTypes from 'prop-types';
-import './Cajas.css';
+import PropTypes from "prop-types";
+import "./Cajas.css";
 
-const Cajas = ({ nombresCajas, cajaSeteada }) => {
+const Cajas = ({ cajas, onCajaSelect }) => {
   const handleCaja = (event) => {
     const selectedIndex = event.target.value;
-    cajaSeteada(Number(selectedIndex));
+    onCajaSelect(Number(selectedIndex));
   };
 
   return (
-    <div className='cajas bg-secondary'>
- 
-      <select onChange={handleCaja} className='form-select' defaultValue="">
-    <option value="" disabled>Seleccione una caja</option>
-        {nombresCajas && 
-          nombresCajas.map((caja, index) => (
-            <option key={index} value={index}>
-              {caja}
-            </option>
-          ))
-        }
+    <div className="cajas bg-secondary">
+      <select onChange={handleCaja} className="form-select" defaultValue="">
+        <option value="" disabled>
+          Seleccione una caja
+        </option>
+        <option>Todas las cajas</option>
+        {cajas?.map((caja, index) => (
+          <option key={index} value={caja?.id}>
+            {caja?.denominacion}
+          </option>
+        ))}
       </select>
     </div>
   );
 };
 
 Cajas.propTypes = {
-  nombresCajas: PropTypes.array.isRequired,
-  cajaSeteada: PropTypes.func.isRequired,
+  cajas: PropTypes.array.isRequired,
+  onCajaSelect: PropTypes.func.isRequired,
 };
 
 export default Cajas;

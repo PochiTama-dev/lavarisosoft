@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Grilla from "../../Grilla/Grilla";
 import "./Inventario.css";
 import cargar from "../../../images/cargarExcel.webp";
 import descargar from "../../../images/descargarExcel.webp";
@@ -7,10 +6,6 @@ import editar from "../../../images/editar.webp";
 import { useCustomContext } from "../../../hooks/context.jsx";
 import { Table } from "react-bootstrap";
 import fetchDolarBlue from "../../../services/ApiDolarService.jsx";
-// import { listaRepuestos } from '../../../services/repuestosService.jsx';
-// import { listaStockCamioneta } from '../../../services/stockCamionetaService.jsx';
-// import { modificarStockCamioneta } from '../../../services/stockCamionetaService.jsx';
-// import ModalAsignarRepuestos from '../../Mantenimiento/TabsMantenimiento/ModalAsignarRepuestos';
 
 const Inventario = () => {
   const { handleNavigate } = useCustomContext();
@@ -23,10 +18,8 @@ const Inventario = () => {
   const [tecnicos, setTecnicos] = useState([]);
   const [tasaDolarBlue, setTasaDolarBlue] = useState(null);
 
-  // Manejador de búsqueda
   const handleSearchChange = (event) => setSearchTerm(event.target.value);
 
-  // Filtrar datos de stock según el término de búsqueda
   const filteredStockData = stockData.filter((item) => {
     try {
       if (item.Repuesto) {
@@ -40,7 +33,6 @@ const Inventario = () => {
     return false;
   });
 
-  // Obtener datos de stock desde la API
   const fetchStockData = async () => {
     try {
       const response = await fetch(
@@ -53,7 +45,6 @@ const Inventario = () => {
     }
   };
 
-  // Obtener datos de técnicos desde la API
   const fetchTecnicos = async () => {
     try {
       const response = await fetch("https://lv-back.online/empleados");
@@ -65,7 +56,6 @@ const Inventario = () => {
     }
   };
 
-  // Obtener datos de reserva desde la API
   const fetchReservaData = async () => {
     try {
       const response = await fetch(
@@ -86,7 +76,6 @@ const Inventario = () => {
     obtenerTasaDolar();
   }, []);
 
-  // Cargar datos al montar el componente
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
