@@ -45,7 +45,62 @@ const Map = ({ position, zoom, selectedClient, selectedTechnician, setSelectedTe
   const { latitude = 0, longitude = 0 } = position || {};
   const { user } = useCustomContext();
 
-  console.log(user);
+
+
+
+  const [updatedTechnicians, setUpdatedTechnicians] = useState(tecnicos || []); 
+
+  useEffect(() => {
+    const handleBroadcastLocation = (data) => {
+      console.log('Ubicaciones recibidas (broadcastLocation):', data);
+  
+      // Extraer el técnico de los datos
+      const [id, technicianData] = Object.entries(data)[0];
+  
+      // Actualizar la lista de técnicos solo si hay cambios
+      setUpdatedTechnicians((prevTechnicians) => {
+        const existingTechnician = prevTechnicians.find((tecnico) => tecnico.id === parseInt(id));
+  
+        // Evitar actualizaciones innecesarias
+        if (
+          existingTechnician &&
+          existingTechnician.latitude === technicianData.latitude &&
+          existingTechnician.longitude === technicianData.longitude
+        ) {
+          return prevTechnicians;
+        }
+  
+        const updated = prevTechnicians.map((tecnico) =>
+          tecnico.id === parseInt(id)
+            ? { ...tecnico, ...technicianData, latitud: technicianData.latitude, longitud: technicianData.longitude }
+            : tecnico
+        );
+  
+        if (!updated.find((tecnico) => tecnico.id === parseInt(id))) {
+          updated.push({
+            id: parseInt(id),
+            nombre: technicianData.nombre,
+            latitud: technicianData.latitude,
+            longitud: technicianData.longitude,
+            status: technicianData.status,
+          });
+        }
+  
+        return updated;
+      });
+    };
+  
+    socket.on('broadcastLocation', handleBroadcastLocation);
+  
+    return () => {
+      socket.off('broadcastLocation', handleBroadcastLocation);
+    };
+  }, []);
+  
+ 
+
+
+ 
   const handleTechnicianSelect = (tecnico) => {
     if (selectedClient) {
       setSelectedTechnician(tecnico);
@@ -67,6 +122,7 @@ const Map = ({ position, zoom, selectedClient, selectedTechnician, setSelectedTe
   const handleOpenModalWithClientData = (clientData) => {
     setSelectedClientData(clientData);
     setIsModalOpen(true);
+    
   };
 
   useEffect(() => {
@@ -177,16 +233,27 @@ const Map = ({ position, zoom, selectedClient, selectedTechnician, setSelectedTe
         {/* Filtro TECNICOS */}
 
         <MarkerClusterGroup>
-          {(filter === 'technicians' || filter === 'both') &&
-            tecnicos.map((tecnico) => {
-              return (
-                tecnico.status !== 'desconectado' &&
-                tecnico.latitud &&
-                tecnico.longitud && <TechnicianMarker key={tecnico.id} tecnico={tecnico} onTechnicianSelect={() => handleTechnicianSelect(tecnico)} />
-              );
-            })}
-          {tecniCoordinates && tecniCoordinates[0] !== 0 && <MapZoomOnSelect coordinates={tecniCoordinates} zoomLevel={10} />}
-        </MarkerClusterGroup>
+      {(filter === 'technicians' || filter === 'both') &&
+        updatedTechnicians.map((tecnico) => {
+          // Solo renderizamos técnicos que no estén desconectados y tengan coordenadas válidas
+          return (
+            tecnico.status !== 'desconectado' &&
+            tecnico.latitud &&
+            tecnico.longitud && (
+              <TechnicianMarker
+                key={tecnico.id}
+                tecnico={tecnico}
+                onTechnicianSelect={() => handleTechnicianSelect(tecnico)}
+              />
+            )
+          );
+        })}
+      
+      {/* Si tecniCoordinates tiene valores válidos (diferentes a 0), aplicar zoom en la ubicación */}
+      {tecniCoordinates && tecniCoordinates[0] !== 0 && (
+        <MapZoomOnSelect coordinates={tecniCoordinates} zoomLevel={10} />
+      )}
+    </MarkerClusterGroup>
 
         {/* Filtro CLIENTES */}
         <MarkerClusterGroup>

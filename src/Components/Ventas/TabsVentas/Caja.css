@@ -171,12 +171,44 @@
 }
 
 .opventas-container ::-webkit-scrollbar {
-  width: 12px; /* Ancho del scrollbar */
+  width: 12px;  
+}
+
+
+.caja-export-button-container {
+  display: flex;
+  justify-content: center;  
+  align-items: center;     
+         
+}
+.caja-export-button {
+  background-color: #69688c;  
+  color: white;  
+  border: none;
+  padding: 10px 20px;  
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 8px;  
+  transition: background-color 0.3s ease;
+}
+
+ 
+.caja-export-button:hover {
+  background-color: #45a049;  
+}
+
+ 
+.caja-export-button:active {
+  background-color: #3e8e41;  
 }
 
 .opventas-container ::-webkit-scrollbar-track {
-  background: #c8cfda; /* Color del fondo del scrollbar */
-  border-radius: 10px; /* Borde redondeado del fondo del scrollbar */
+  background: #c8cfda;  
+  border-radius: 10px;  
 }
 
 .opventas-container ::-webkit-scrollbar-thumb {

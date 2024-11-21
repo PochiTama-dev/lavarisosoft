@@ -109,3 +109,21 @@ export const eliminarCaja = async (id) => {
     console.error("Error al tratar de eliminar la caja.", error);
   }
 };
+
+
+export const listaCobros = async () => {
+  try {
+    const response = await fetch(`${API_URL}/cobros/lista`);
+    const cobros = await response.json();
+    if (cobros[0] !== undefined) {
+      console.log(`Se encontró una lista con ${cobros.length} cobros!!`);
+      console.log(cobros);
+      return cobros;
+    } else {
+      console.log('Aún no se registra ningún cobro...');
+      return false;
+    }
+  } catch (error) {
+    console.error("Error, no se encontraron cobros en la base de datos....", error);
+  }
+};
