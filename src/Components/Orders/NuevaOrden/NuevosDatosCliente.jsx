@@ -33,6 +33,7 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
     setSelectedClient(client);
     setCliente(client);
     setClientOrNew(false);
+    setCliente(client)
   };
   const handleNew = () => {
     setClientOrNew(true);
