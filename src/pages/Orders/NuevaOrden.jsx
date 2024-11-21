@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Header from '../../Components/Header/Header.jsx';
 import NuevosDatosCliente from '../../Components/Orders/NuevaOrden/NuevosDatosCliente.jsx';
 import NuevosDatosIncidente from '../../Components/Orders/NuevaOrden/NuevosDatosIncidente.jsx';
 import NuevosDatosTecnico from '../../Components/Orders/NuevaOrden/NuevosDatosTecnico.jsx';
-
+import { object } from 'prop-types';
 const verificarNumeroCliente = async () => {
   try {
     const response = await fetch('https://lv-back.online/clientes/lista', {
@@ -41,12 +41,9 @@ const guardarOrden = async (orden) => {
 
 const verificarExistenciaCliente = async (cliente) => {
   try {
-    const response = await fetch(`https://lv-back.online/clientes/${cliente.numero_cliente}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-    });
+    const response = await fetch(`https://lv-back.online/clientes/${cliente.id}`);
     const result = await response.json();
-    return !!result; // True if client exists, false otherwise
+    return result;
   } catch (error) {
     console.error('Error al verificar la existencia del cliente.', error);
     return false;
@@ -103,35 +100,78 @@ const guardarEvento = async (evento) => {
   }
 };
 
-const NuevaOrden = ({ selectedClientData }) => {
-  const [cliente, setCliente] = useState(selectedClientData || {});
+const NuevaOrden = ({ clienteData }) => {
+  const [cliente, setCliente] = useState(clienteData || {});
   const [incidente, setIncidente] = useState({});
-  const [idEmpleado, setIdEmpleado] = useState(''); // State for id_empleado
+  const [idEmpleado, setIdEmpleado] = useState(null); 
   useEffect(() => {
-    if (!selectedClientData) {
+    if (!clienteData) {
       const fetchMaxNumeroCliente = async () => {
         const maxNumeroCliente = await verificarNumeroCliente();
-        setCliente((prevState) => ({ ...prevState, numero_cliente: maxNumeroCliente + 1 }));
+        setCliente((prevState) => ({
+          ...prevState,
+          numero_cliente: maxNumeroCliente + 1,
+        }));
       };
 
       fetchMaxNumeroCliente();
     }
-  }, [selectedClientData]);
+  }, [clienteData]);
 
   const handleSubmit = async () => {
-    if (!incidente.numero_orden || !incidente.id_tipo_estado || !idEmpleado) {
+    if (!incidente.numero_orden || !incidente.id_tipo_estado ) {
       alert('Por favor, complete todos los campos requeridos.');
       return;
     }
-
+    console.log(cliente);
+    const verify = await verificarExistenciaCliente(cliente);
     console.log('INCIDENTE', incidente);
+    if (!verify) {
+      const clienteId = await guardarCliente(cliente);
+      if (clienteId) {
+        const orden = {
+          numero_orden: incidente.numero_orden, // Use the numero_orden from incidente
+          id_cliente: clienteId,
+          id_empleado: idEmpleado || null, 
+          id_tipo_estado: incidente.id_tipo_estado, // Use the id_tipo_estado from incidente
+          equipo: incidente.equipo,
+          modelo: incidente.modelo,
+          marca: incidente.marca,
+          antiguedad: incidente.antiguedad,
+          motivo: incidente.diagnostico,
+          repuestos: incidente.repuestos,
+        };
 
-    const clienteId = await guardarCliente(cliente);
-    if (clienteId) {
+        const ordenGuardada = await guardarOrden(orden);
+        if (ordenGuardada) {
+          const evento = {
+            id_cliente: clienteId, // Incluye id_cliente aquí
+            id_evento_agenda: 1, // Valor predeterminado para id_evento_agenda
+            fecha: incidente.fecha_visita,
+            hora: `${incidente.hora_inicio_visita} - ${incidente.hora_fin_visita}`,
+          };
+
+          const eventoGuardado = await guardarEvento(evento);
+          if (eventoGuardado) {
+            alert('Orden y evento guardados con éxito');
+            console.log('Orden y evento guardados con éxito!!!');
+          } else {
+            alert('Error al guardar el evento');
+            console.log('Error al guardar el evento...');
+          }
+        } else {
+          alert('Error al guardar orden');
+          console.log('Error al guardar la orden completa...');
+        }
+      } else {
+        console.log('Error al guardar el cliente...');
+        alert('Error al guardar el cliente...');
+      }
+    } else {
       const orden = {
         numero_orden: incidente.numero_orden, // Use the numero_orden from incidente
-        id_cliente: clienteId,
-        id_empleado: idEmpleado, // Use the id_empleado state
+        id_cliente: verify.id,
+        id_empleado: idEmpleado || null,
         id_tipo_estado: incidente.id_tipo_estado, // Use the id_tipo_estado from incidente
         equipo: incidente.equipo,
         modelo: incidente.modelo,
@@ -144,7 +184,7 @@ const NuevaOrden = ({ selectedClientData }) => {
       const ordenGuardada = await guardarOrden(orden);
       if (ordenGuardada) {
         const evento = {
-          id_cliente: clienteId, // Incluye id_cliente aquí
+          id_cliente: verify.id, // Incluye id_cliente aquí
           id_evento_agenda: 1, // Valor predeterminado para id_evento_agenda
           fecha: incidente.fecha_visita,
           hora: `${incidente.hora_inicio_visita} - ${incidente.hora_fin_visita}`,
@@ -162,25 +202,25 @@ const NuevaOrden = ({ selectedClientData }) => {
         alert('Error al guardar orden');
         console.log('Error al guardar la orden completa...');
       }
-    } else {
-      console.log('Error al guardar el cliente...');
-      alert('Error al guardar el cliente...');
     }
   };
-
   return (
     <div className='nuevaOrder-ctn'>
       <Header text='Nueva Orden' />
-      <NuevosDatosTecnico setIdEmpleado={setIdEmpleado} cliente={cliente} />
       <NuevosDatosCliente setCliente={setCliente} cliente={cliente} />
-      <NuevosDatosIncidente setIncidente={setIncidente} />
+      <div className='row'>
+        <NuevosDatosIncidente setIncidente={setIncidente} />
+        <NuevosDatosTecnico setIdEmpleado={setIdEmpleado} cliente={cliente} />
+      </div>
       <div className='d-flex justify-content-center'>
-        <button className='bg-primary rounded-pill text-white papelitoButton' onClick={handleSubmit}>
+        <button className='bg-primary rounded-pill text-white papelitoButton m-4' onClick={handleSubmit}>
           Crear
         </button>
       </div>
     </div>
   );
 };
-
+NuevaOrden.propTypes = {
+  clienteData: object,
+};
 export default NuevaOrden;

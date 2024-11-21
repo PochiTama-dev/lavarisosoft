@@ -1,15 +1,15 @@
-import { useState, useEffect, useRef } from 'react';
-import { MapContainer, TileLayer, Circle, useMap } from 'react-leaflet';
-import { useNavigate } from 'react-router-dom';
-import 'leaflet/dist/leaflet.css';
-import MarkerClusterGroup from 'react-leaflet-cluster';
-import Modal from './Modal';
-import NuevaOrden from '../../pages/Orders/NuevaOrden';
-import socket from '../services/socketService';
-import PropTypes from 'prop-types';
-import { ClientMarker, TechnicianMarker } from './Markers';
-import { haversine } from './calcularDistancia';
-import { useCustomContext } from '../../hooks/context';
+import { useState, useEffect, useRef } from "react";
+import { MapContainer, TileLayer, Circle, useMap } from "react-leaflet";
+import { useNavigate } from "react-router-dom";
+import "leaflet/dist/leaflet.css";
+import MarkerClusterGroup from "react-leaflet-cluster";
+import Modal from "./Modal";
+import NuevaOrden from "../../pages/Orders/NuevaOrden";
+import socket from "../services/socketService";
+import PropTypes from "prop-types";
+import { ClientMarker, TechnicianMarker } from "./Markers";
+import { haversine } from "./calcularDistancia";
+import { useCustomContext } from "../../hooks/context";
 
 const CORDOBA_BOUNDS = {
   north: -29.0,
@@ -32,18 +32,28 @@ const MapZoomOnSelect = ({ coordinates, zoomLevel }) => {
   return null;
 };
 
-const Map = ({ position, zoom, selectedClient, selectedTechnician, setSelectedTechnician, clientes, tecnicos, tecniCoordinates }) => {
+const Map = ({
+  position,
+  zoom,
+  selectedClient,
+  selectedTechnician,
+  setSelectedTechnician,
+  clientes,
+  tecnicos,
+  tecniCoordinates,
+}) => {
   const navigate = useNavigate();
   const refClient = useRef({});
   const refTechnicians = useRef({});
 
-  const [filter, setFilter] = useState('both');
+  const [filter, setFilter] = useState("both");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedClientData, setSelectedClientData] = useState(null);
   const [clientCoordinates, setClientCoordinates] = useState([0, 0]);
 
   const { latitude = 0, longitude = 0 } = position || {};
   const { user } = useCustomContext();
+ 
 
 
 
@@ -101,10 +111,11 @@ const Map = ({ position, zoom, selectedClient, selectedTechnician, setSelectedTe
 
 
  
+ 
   const handleTechnicianSelect = (tecnico) => {
     if (selectedClient) {
       setSelectedTechnician(tecnico);
-      navigate('/locationOrder', {
+      navigate("/locationOrder", {
         state: { selectedTechnician: tecnico, selectedClient: selectedClient },
       });
     }
@@ -144,7 +155,12 @@ const Map = ({ position, zoom, selectedClient, selectedTechnician, setSelectedTe
       const checkProximity = () => {
         // Verifica si está a menos de 50 metros de algún cliente
         const isNearby = clientes.some((cliente) => {
-          const distancia = haversine(tecnico.latitud, tecnico.longitud, cliente.latitud, cliente.longitud);
+          const distancia = haversine(
+            tecnico.latitud,
+            tecnico.longitud,
+            cliente.latitud,
+            cliente.longitud
+          );
           return distancia <= 0.05; // 50 metros
         });
 
@@ -153,7 +169,9 @@ const Map = ({ position, zoom, selectedClient, selectedTechnician, setSelectedTe
           if (!timers[tecnico.id]) {
             startTime[tecnico.id] = Date.now();
             timers[tecnico.id] = setInterval(() => {
-              console.log(`El técnico ${tecnico.nombre} está cerca de un cliente.`);
+              console.log(
+                `El técnico ${tecnico.nombre} está cerca de un cliente.`
+              );
               // Aquí puedes implementar una acción adicional (p.ej., notificar, contar tiempo, etc.)
             }, 60000); // Intervalo de tiempo
           }
@@ -166,7 +184,9 @@ const Map = ({ position, zoom, selectedClient, selectedTechnician, setSelectedTe
             delete timers[tecnico.id];
 
             const timeSpent = formatElapsedTime(elapsedTime);
-            console.log(`El técnico ${tecnico.nombre} estuvo cerca por ${timeSpent}.`);
+            console.log(
+              `El técnico ${tecnico.nombre} estuvo cerca por ${timeSpent}.`
+            );
           }
         }
       };
@@ -187,14 +207,14 @@ const Map = ({ position, zoom, selectedClient, selectedTechnician, setSelectedTe
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
 
-    let formattedTime = '';
+    let formattedTime = "";
     if (hours > 0) {
-      formattedTime += `${hours} hora${hours > 1 ? 's' : ''}, `;
+      formattedTime += `${hours} hora${hours > 1 ? "s" : ""}, `;
     }
     if (minutes > 0) {
-      formattedTime += `${minutes} minuto${minutes > 1 ? 's' : ''}, `;
+      formattedTime += `${minutes} minuto${minutes > 1 ? "s" : ""}, `;
     }
-    formattedTime += `${seconds} segundo${seconds > 1 ? 's' : ''}`;
+    formattedTime += `${seconds} segundo${seconds > 1 ? "s" : ""}`;
 
     return formattedTime;
   };
@@ -216,23 +236,33 @@ const Map = ({ position, zoom, selectedClient, selectedTechnician, setSelectedTe
   return (
     <>
       <div>
-        <select name='filter' id='filter' value={filter} onChange={handleFilterChange}>
-          <option value='clients'>Clientes</option>
-          <option value='technicians'>Técnicos</option>
-          <option value='both'>Ambos</option>
+        <select
+          name="filter"
+          id="filter"
+          value={filter}
+          onChange={handleFilterChange}
+        >
+          <option value="clients">Clientes</option>
+          <option value="technicians">Técnicos</option>
+          <option value="both">Ambos</option>
         </select>
       </div>
       <MapContainer
-        className='searchMap'
+        className="searchMap"
         bounds={CORDOBA_BOUNDS}
-        center={selectedClient && selectedClient.nombre ? [selectedClient.latitud, selectedClient.longitud] : [latitude || 0, longitude || 0]}
+        center={
+          selectedClient && selectedClient.nombre
+            ? [selectedClient.latitud, selectedClient.longitud]
+            : [latitude || 0, longitude || 0]
+        }
         zoom={zoom}
       >
-        <TileLayer url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' />
+        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
         {/* Filtro TECNICOS */}
 
         <MarkerClusterGroup>
+ 
       {(filter === 'technicians' || filter === 'both') &&
         updatedTechnicians.map((tecnico) => {
           // Solo renderizamos técnicos que no estén desconectados y tengan coordenadas válidas
@@ -254,24 +284,40 @@ const Map = ({ position, zoom, selectedClient, selectedTechnician, setSelectedTe
         <MapZoomOnSelect coordinates={tecniCoordinates} zoomLevel={10} />
       )}
     </MarkerClusterGroup>
+ 
 
         {/* Filtro CLIENTES */}
         <MarkerClusterGroup>
-          {(filter === 'clients' || filter === 'both') &&
+          {(filter === "clients" || filter === "both") &&
             clientes.map((cliente) => (
               <>
-                <ClientMarker key={cliente.id} cliente={cliente} handleCoordinates={() => handleCoordinates(cliente)} handleOpenModalWithClientData={() => handleOpenModalWithClientData(cliente)} />
+                <ClientMarker
+                  key={cliente.id}
+                  cliente={cliente}
+                  handleCoordinates={() => handleCoordinates(cliente)}
+                  handleOpenModalWithClientData={() =>
+                    handleOpenModalWithClientData(cliente)
+                  }
+                />
               </>
             ))}
         </MarkerClusterGroup>
-        {clientCoordinates[0] != 0 && <Circle center={[clientCoordinates[0], clientCoordinates[1]]} pathOptions={{ fillColor: 'blue' }} radius={100} />}
-        {clientCoordinates[0] !== 0 && <MapZoomOnSelect coordinates={clientCoordinates} zoomLevel={18} />}
+        {clientCoordinates[0] != 0 && (
+          <Circle
+            center={[clientCoordinates[0], clientCoordinates[1]]}
+            pathOptions={{ fillColor: "blue" }}
+            radius={100}
+          />
+        )}
+        {clientCoordinates[0] !== 0 && (
+          <MapZoomOnSelect coordinates={clientCoordinates} zoomLevel={18} />
+        )}
       </MapContainer>
 
       {/* Modal para mostrar detalles del cliente */}
       {isModalOpen && (
         <Modal isOpen={isModalOpen} onClose={handleModalClose}>
-          <NuevaOrden cliente={selectedClientData} />
+          <NuevaOrden clienteData={selectedClientData} />
         </Modal>
       )}
     </>

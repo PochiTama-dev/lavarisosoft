@@ -76,6 +76,16 @@ export const Provider = ({ children }) => {
     }
   };
 
+  const getEmpleadosListaCompleta = async () => {
+    try {
+      const data = await fetch('https://lv-back.online/empleados');
+      const response = data.json();
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   //CLIENTES
   const listaClientes = async () => {
     try {
@@ -279,6 +289,21 @@ export const Provider = ({ children }) => {
       console.error('Error, no se encontraron repuestos en la base de datos....', error);
     }
   };
+  const stockCamioneta = async () => {
+    try {
+      const response = await fetch('https://lv-back.online/stock/camioneta/lista');
+      const repuestos = await response.json();
+      if (repuestos[0] !== undefined) {
+        //console.log(`Se encontró un listado con ${repuestos.length} repuestos!!`);
+        return repuestos;
+      } else {
+        console.log('Aún no se registra ningún repuesto...');
+        return false;
+      }
+    } catch (error) {
+      console.error('Error, no se encontraron repuestos en la base de datos....', error);
+    }
+  };
 
   return (
     <Context.Provider
@@ -291,6 +316,7 @@ export const Provider = ({ children }) => {
         uploadEmpleadosExcel,
         //empleados
         getEmpleadosLista,
+        getEmpleadosListaCompleta,
         //clientes
         getClienteById,
         listaClientes,
@@ -303,6 +329,7 @@ export const Provider = ({ children }) => {
         listaRepuestos,
         repuestosOrdenes,
         stockReserva,
+        stockCamioneta,
         //feedback
         sendFeedback,
         getFeedbacks,

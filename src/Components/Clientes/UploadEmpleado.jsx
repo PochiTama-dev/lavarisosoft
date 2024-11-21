@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import Header from '../Header/Header';
 import { useNavigate } from 'react-router-dom';
@@ -34,44 +34,52 @@ const UploadEmpleado = () => {
       [name]: value,
     }));
   };
+  const [suggestions, setSuggestions] = useState([]);
 
+  const suggestionsRef = useRef();
+
+  const handleSuggestions = async (event) => {
+    handleChange(event);
+    const ARGENTINA_BOUNDS = [-73.415, -55.25, -53.628, -21.832];
+    const geoApiKey = 'c7778bb5bb994ac88ff65b8732e2cbdf';
+    const defaultCenter = [-31.4166867, -64.1834193];
+    const query = event.target.value;
+    if (query) {
+      try {
+        setTimeout(async () => {
+          //const response = await fetch(`https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(query)}&apiKey=${geoApiKey}&limit=10`);
+          const response = await fetch(
+            `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(query)}&apiKey=${geoApiKey}&bias=proximity:${defaultCenter.join(',')}&bbox=${ARGENTINA_BOUNDS.join(',')}&limit=5`
+          );
+          const data = await response.json();
+          if (data.features && data.features.length > 0) {
+            setSuggestions(data.features);
+          } else {
+            setSuggestions([]);
+          }
+        }, '3000');
+      } catch (error) {
+        console.error('Error fetching geocode:', error);
+      }
+    } else {
+      setSuggestions([]);
+    }
+  };
+
+  const handleSuggestionClick = (coordinates) => {
+    const [lon, lat] = coordinates;
+    empleado.latitud = lat;
+    empleado.longitud = lon;
+    setSuggestions([]);
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
     handleCreateEmpleado(empleado);
-    /* setEmpleado({
-      nombre: '',
-      legajo: '',
-      rol: '',
-      telefono: '',
-      email: '',
-      cuil: '',
-      automovil: '',
-      modelo: '',
-      color: '',
-      patente: '',
-    }); */
   };
 
   const handleCreateEmpleado = async (empleado) => {
     try {
-      const {
-        id_rol,
-        nombre,
-        apellido,
-        cuil,
-        legajo,
-        telefono,
-        email,
-        direccion,
-        ubicacion,
-        longitud,
-        latitud,
-        estado,
-        marca,
-        modelo,
-        color,
-        patente,
-      } = await empleado;
+      const { id_rol, nombre, apellido, cuil, legajo, telefono, email, direccion, ubicacion, longitud, latitud, estado, marca, modelo, color, patente } = await empleado;
       await postEmpleado({ id_rol, nombre, apellido, cuil, legajo, telefono, email, direccion, ubicacion, longitud, latitud, estado });
       if (marca && modelo && patente && color) {
         const idEmpleado = await getEmpleado(email);
@@ -168,14 +176,7 @@ const UploadEmpleado = () => {
               <Form.Label className={camposVacios.includes('rol') ? 'required-field' : ''} style={{ textAlign: 'left', display: 'block' }}>
                 Rol
               </Form.Label>
-              <Form.Control
-                as='select'
-                name='id_rol'
-                value={empleado.rol}
-                onChange={handleChange}
-                placeholder='Seleccione el rol'
-                style={{ textAlign: 'left', borderRadius: '5px', width: '350px' }}
-              >
+              <Form.Control as='select' name='id_rol' value={empleado.rol} onChange={handleChange} placeholder='Seleccione el rol' style={{ textAlign: 'left', borderRadius: '5px', width: '350px' }}>
                 <option value=''>Seleccionar</option>
                 {roles &&
                   roles.map((rol) => (
@@ -254,14 +255,7 @@ const UploadEmpleado = () => {
               <Form.Label className={camposVacios.includes('cuil') ? 'required-field' : ''} style={{ textAlign: 'left', display: 'block' }}>
                 CUIL
               </Form.Label>
-              <Form.Control
-                type='text'
-                name='cuil'
-                value={empleado.cuil}
-                onChange={handleChange}
-                placeholder='Ingrese su CUIL'
-                style={{ textAlign: 'left', borderRadius: '5px', width: '350px' }}
-              />
+              <Form.Control type='text' name='cuil' value={empleado.cuil} onChange={handleChange} placeholder='Ingrese su CUIL' style={{ textAlign: 'left', borderRadius: '5px', width: '350px' }} />
             </Form.Group>
             <Form.Group controlId='formDireccion' className='label-input-margin'>
               <Form.Label className={camposVacios.includes('direccion') ? 'required-field' : ''} style={{ textAlign: 'left', display: 'block' }}>
@@ -271,63 +265,28 @@ const UploadEmpleado = () => {
                 type='text'
                 name='direccion'
                 value={empleado.direccion}
-                onChange={handleChange}
+                onChange={handleSuggestions}
                 placeholder='Ingrese su Direccion'
                 style={{ textAlign: 'left', borderRadius: '5px', width: '350px' }}
               />
+              <div ref={suggestionsRef} className='suggestions-box'>
+                <Suspense fallback={<>Cargando...</>}>
+                  {suggestions.length > 0 && (
+                    <>
+                      {suggestions.map((suggestion, index) => {
+                        const coordinates = suggestion.geometry.coordinates;
+
+                        return (
+                          <div key={index} className='suggestion-item pointer' onClick={() => handleSuggestionClick(coordinates)}>
+                            {suggestion.properties.formatted}
+                          </div>
+                        );
+                      })}
+                    </>
+                  )}
+                </Suspense>
+              </div>
             </Form.Group>
-            <Form.Group controlId='formUbicacion' className='label-input-margin'>
-              <Form.Label className={camposVacios.includes('ubicacion') ? 'required-field' : ''} style={{ textAlign: 'left', display: 'block' }}>
-                Ubicacion
-              </Form.Label>
-              <Form.Control
-                type='text'
-                name='ubicacion'
-                value={empleado.ubicacion}
-                onChange={handleChange}
-                placeholder='Ingrese su ubicacion'
-                style={{ textAlign: 'left', borderRadius: '5px', width: '350px' }}
-              />
-            </Form.Group>
-            {/* <Form.Group controlId='formLatitud' className='label-input-margin'>
-              <Form.Label className={camposVacios.includes('latitud') ? 'required-field' : ''} style={{ textAlign: 'left', display: 'block' }}>
-                Latitud
-              </Form.Label>
-              <Form.Control
-                type='text'
-                name='latitud'
-                value={empleado.latitud}
-                onChange={handleChange}
-                placeholder='Ingrese su latitud WTF!?'
-                style={{ textAlign: 'left', borderRadius: '5px', width: '350px' }}
-              />
-            </Form.Group> */}
-            {/* <Form.Group controlId='formLongitud' className='label-input-margin'>
-              <Form.Label className={camposVacios.includes('longitud') ? 'required-field' : ''} style={{ textAlign: 'left', display: 'block' }}>
-                Longitud
-              </Form.Label>
-              <Form.Control
-                type='text'
-                name='longitud'
-                value={empleado.longitud}
-                onChange={handleChange}
-                placeholder='Ingrese su longitud AHRE!'
-                style={{ textAlign: 'left', borderRadius: '5px', width: '350px' }}
-              />
-            </Form.Group> */}
-            {/* <Form.Group controlId='formEstado' className='label-input-margin'>
-              <Form.Label className={camposVacios.includes('estado') ? 'required-field' : ''} style={{ textAlign: 'left', display: 'block' }}>
-                Estado
-              </Form.Label>
-              <Form.Control
-                type='number'
-                name='estado'
-                value={empleado.estado}
-                onChange={handleChange}
-                placeholder='Ingrese su Estado'
-                style={{ textAlign: 'left', borderRadius: '5px', width: '350px' }}
-              />
-            </Form.Group> */}
           </Col>
           <Col className='uploadEmpleado-c2' style={{ textAlign: 'left' }}>
             <Form.Group controlId='formAutomovil' className='label-input-margin'>
@@ -388,12 +347,7 @@ const UploadEmpleado = () => {
             </Form.Group>
           </Col>
         </Row>
-        <Button
-          className='guardarEmpleado-btn'
-          variant='primary'
-          type='submit'
-          style={{ backgroundColor: '#69688C', borderRadius: '20px', border: 'none' }}
-        >
+        <Button className='guardarEmpleado-btn' variant='primary' type='submit' style={{ backgroundColor: '#69688C', borderRadius: '20px', border: 'none' }}>
           Guardar Empleado
         </Button>
       </Form>

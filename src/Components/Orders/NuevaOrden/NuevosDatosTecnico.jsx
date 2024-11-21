@@ -40,6 +40,8 @@ const NuevosDatosTecnico = ({ setIdEmpleado, cliente }) => {
   const [employees, setEmployees] = useState([]);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [employeesOnline, setEmployeesOnline] = useState([]);
+  const [assignNow, setAssignNow] = useState(null); 
+
 
   useEffect(() => {
     const fetchEmpleados = async () => {
@@ -60,13 +62,14 @@ const NuevosDatosTecnico = ({ setIdEmpleado, cliente }) => {
         ...emp,
         distance: haversineDistance(cliente.latitud, cliente.longitud, emp.latitud, emp.longitud),
       }));
-      // Find the closest employee
+      Find the closest employee
       const closestEmployee = distances.reduce((min, emp) => (emp.distance < min.distance ? emp : min));
       setSelectedEmployee(closestEmployee);
       setIdEmpleado(closestEmployee.id);
     }
   }, [employees, setIdEmpleado]);
  */
+
   const handleSelectChange = (e) => {
     const employee = employees.find(
       (emp) => emp.id === parseInt(e.target.value)
@@ -75,13 +78,29 @@ const NuevosDatosTecnico = ({ setIdEmpleado, cliente }) => {
     setIdEmpleado(employee.id); // Set the selected employee's ID
   };
 
+  const handleSelectNowChange = (e) => {
+    setSelectNow(e.target.checked);
+    if (!e.target.checked) {
+      setIdEmpleado(null); 
+      setSelectedEmployee(null);
+    }
+  };
+
   return (
-    <div style={{ marginTop: "5%" }}>
-      <h3 className="m-4">Datos del técnico</h3>
-      <div className="row">
+    <div style={{ width: "40vw", marginLeft: "2%", marginTop: "3%" }}>
+    <h3 className="m-4">Datos del técnico</h3>
+
+    {assignNow === null ? (
+      <div>
+        <p>¿Desea seleccionar un técnico ahora o dejarlo pendiente?</p>
+        <button onClick={() => setAssignNow(true)} className="btn btn-primary m-2">Seleccionar ahora</button>
+        <button onClick={() => setAssignNow(false)} className="btn btn-secondary m-2">Dejar pendiente</button>
+      </div>
+    ) : assignNow ? (
+      <div className="">
         <div className="col-md-6">
           <div className="mb-3 row align-items-center">
-            <label htmlFor="empleado" className="col-sm-3 col-form-label">
+            <label htmlFor="empleado" className="col-sm-4 col-form-label">
               Técnicos disponibles:
             </label>
             <div className="col-sm-8">
@@ -104,7 +123,7 @@ const NuevosDatosTecnico = ({ setIdEmpleado, cliente }) => {
           {selectedEmployee && (
             <>
               <div className="mb-3 row align-items-center">
-                <label htmlFor="nombre" className="col-sm-2 col-form-label">
+                <label htmlFor="nombre" className="col-sm-4 text-left">
                   Nombre:
                 </label>
                 <div className="col-sm-8">
@@ -118,7 +137,7 @@ const NuevosDatosTecnico = ({ setIdEmpleado, cliente }) => {
                 </div>
               </div>
               <div className="mb-3 row align-items-center">
-                <label htmlFor="apellido" className="col-sm-2 col-form-label">
+                <label htmlFor="apellido" className="col-sm-4 text-left">
                   Apellido:
                 </label>
                 <div className="col-sm-8">
@@ -132,7 +151,7 @@ const NuevosDatosTecnico = ({ setIdEmpleado, cliente }) => {
                 </div>
               </div>
               <div className="mb-3 row align-items-center">
-                <label htmlFor="legajo" className="col-sm-2 col-form-label">
+                <label htmlFor="legajo" className="col-sm-4 text-left">
                   Legajo:
                 </label>
                 <div className="col-sm-8">
@@ -148,6 +167,10 @@ const NuevosDatosTecnico = ({ setIdEmpleado, cliente }) => {
             </>
           )}
         </div>
+      </div>
+    ) : (
+      <p>Técnico pendiente de asignación.</p>
+    )}
         {/* <div className='col-md-6'>
           <h3>Tecnicos online</h3>
           <select id='empleado' className='form-control' onChange={handleSelectChange}>
@@ -161,8 +184,7 @@ const NuevosDatosTecnico = ({ setIdEmpleado, cliente }) => {
             ))}
           </select>
         </div> */}
-      </div>
-    </div>
+  </div>
   );
 };
 

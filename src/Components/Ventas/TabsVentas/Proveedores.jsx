@@ -1,11 +1,15 @@
 import "./Proveedores.css";
-import Grilla from "../../Grilla/Grilla";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Table } from "react-bootstrap";
+import { empleados } from "../../../services/empleadoService";
 
 const Proveedores = () => {
   const [proveedoresData, setProveedoresData] = useState([]);
+  const [empleadosData, setEmpleadosData] = useState([]);
+  const [searchDate, setSearchDate] = useState("");
+  const [searchProveedor, setSearchProveedor] = useState("");
+  const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
   const proveedoresDb = async () => {
     try {
@@ -22,6 +26,7 @@ const Proveedores = () => {
       try {
         const data = await proveedoresDb();
         setProveedoresData(data);
+        setFilteredData(data);
       } catch (error) {
         console.error("Error fetching proveedores data:", error);
         setProveedoresData([]);
@@ -29,153 +34,48 @@ const Proveedores = () => {
         setLoading(false);
       }
     };
+    const fetchEmpleadosData = async () => {
+      try {
+        const data = await empleados();
+        setEmpleadosData(data);
+      } catch (error) {
+        console.error("Error fetching empleados data:", error);
+        setEmpleadosData([]);
+      }
+    };
     fetchProveedoresData();
+    fetchEmpleadosData();
   }, []);
 
+  const getResponsable = (id) => {
+    const responsable = empleadosData.find((res) => res.id === id);
+    return responsable
+      ? responsable.nombre + " " + responsable.apellido
+      : "Desconocido";
+  };
+
+  const uniqueProveedores = [
+    ...new Set(proveedoresData.map((prov) => prov.Proveedore.nombre)),
+  ];
+
+  const formatSearchDate = (date) => {
+    const [year, month, day] = date.split("-");
+    return `${day}/${month}/${year}`;
+  };
+
+  useEffect(() => {
+    const formattedDate = searchDate ? formatSearchDate(searchDate) : "";
+    const filtered = proveedoresData.filter((prov) => {
+      const dateMatch = !searchDate || prov.fecha_ingreso === formattedDate;
+      const proveedorMatch =
+        !searchProveedor || prov.Proveedore.nombre === searchProveedor;
+      return dateMatch && proveedorMatch;
+    });
+    setFilteredData(filtered);
+  }, [searchDate, searchProveedor, proveedoresData]);
   if (loading) {
     return <div>Loading...</div>;
   }
-
-  const columnasStock = [
-    "Estado",
-    "Proveedor",
-    "Fecha",
-    "Importe",
-    "Caja",
-    "Op.",
-  ];
-  const itemsStock = [
-    {
-      estado: <strong style={{ color: "#40A63D" }}>Pago</strong>,
-      proveedor: "SALAZAR",
-      fecha: "27/01/2024",
-      importe: "$4325",
-      caja: 1,
-      op: "SALAZAR1234",
-      lotes: [
-        {
-          entrego: "Entregó",
-          numero: <strong>2</strong>,
-          unidades: "unidades de",
-          repuesto: <strong>Repuesto A</strong>,
-          precio: "Precio por unidad:",
-          unidad: <strong>$2000</strong>,
-        },
-        {
-          entrego: "Entregó",
-          numero: <strong>5</strong>,
-          unidades: "unidades de",
-          repuesto: <strong>Repuesto B</strong>,
-          precio: "Precio por unidad:",
-          unidad: <strong>$465</strong>,
-        },
-      ],
-    },
-    {
-      estado: <strong style={{ color: "#40A63D" }}>Pago</strong>,
-      proveedor: "SALAZAR",
-      fecha: "27/01/2024",
-      importe: "$4325",
-      caja: 1,
-      op: "SALAZAR1234",
-      lotes: [
-        {
-          entrego: "Entregó",
-          numero: <strong>2</strong>,
-          unidades: "unidades de",
-          repuesto: <strong>Repuesto A</strong>,
-          precio: "Precio por unidad:",
-          unidad: <strong>$2000</strong>,
-        },
-        {
-          entrego: "Entregó",
-          numero: <strong>5</strong>,
-          unidades: "unidades de",
-          repuesto: <strong>Repuesto B</strong>,
-          precio: "Precio por unidad:",
-          unidad: <strong>$465</strong>,
-        },
-      ],
-    },
-    {
-      estado: <strong style={{ color: "#40A63D" }}>Pago</strong>,
-      proveedor: "SALAZAR",
-      fecha: "27/01/2024",
-      importe: "$4325",
-      caja: 1,
-      op: "SALAZAR1234",
-      lotes: [
-        {
-          entrego: "Entregó",
-          numero: <strong>2</strong>,
-          unidades: "unidades de",
-          repuesto: <strong>Repuesto A</strong>,
-          precio: "Precio por unidad:",
-          unidad: <strong>$2000</strong>,
-        },
-        {
-          entrego: "Entregó",
-          numero: <strong>5</strong>,
-          unidades: "unidades de",
-          repuesto: <strong>Repuesto B</strong>,
-          precio: "Precio por unidad:",
-          unidad: <strong>$465</strong>,
-        },
-      ],
-    },
-    {
-      estado: <strong style={{ color: "#D4674A" }}>Debe</strong>,
-      proveedor: "SALAZAR",
-      fecha: "27/01/2024",
-      importe: "$4325",
-      caja: 1,
-      op: "SALAZAR1234",
-      lotes: [
-        {
-          entrego: "Entregó",
-          numero: <strong>2</strong>,
-          unidades: "unidades de",
-          repuesto: <strong>Repuesto A</strong>,
-          precio: "Precio por unidad:",
-          unidad: <strong>$2000</strong>,
-        },
-        {
-          entrego: "Entregó",
-          numero: <strong>5</strong>,
-          unidades: "unidades de",
-          repuesto: <strong>Repuesto B</strong>,
-          precio: "Precio por unidad:",
-          unidad: <strong>$465</strong>,
-        },
-      ],
-    },
-    {
-      estado: <strong style={{ color: "#40A63D" }}>Pago</strong>,
-      proveedor: "SALAZAR",
-      fecha: "27/01/2024",
-      importe: "$4325",
-      caja: 1,
-      op: "SALAZAR1234",
-      lotes: [
-        {
-          entrego: "Entregó",
-          numero: <strong>2</strong>,
-          unidades: "unidades de",
-          repuesto: <strong>Repuesto A</strong>,
-          precio: "Precio por unidad:",
-          unidad: <strong>$2000</strong>,
-        },
-        {
-          entrego: "Entregó",
-          numero: <strong>5</strong>,
-          unidades: "unidades de",
-          repuesto: <strong>Repuesto B</strong>,
-          precio: "Precio por unidad:",
-          unidad: <strong>$465</strong>,
-        },
-      ],
-    },
-  ];
 
   return (
     <div className="proveedores-container">
@@ -185,8 +85,17 @@ const Proveedores = () => {
         </div>
         <div className="proveedores-top-box">
           <div>
-            <select className="proveedores-select">
-              <option value="">Proveedores</option>
+            <select
+              className="proveedores-select"
+              value={searchProveedor}
+              onChange={(e) => setSearchProveedor(e.target.value)}
+            >
+              <option value="">Todos los proveedores</option>
+              {uniqueProveedores.map((proveedor, index) => (
+                <option key={index} value={proveedor}>
+                  {proveedor}
+                </option>
+              ))}
             </select>
           </div>
           <div>
@@ -194,17 +103,9 @@ const Proveedores = () => {
               className="proveedores-input"
               type="date"
               placeholder="dd/mm/aaaa"
+              value={searchDate}
+              onChange={(e) => setSearchDate(e.target.value)}
             />
-            <button className="proveedores-button-search">🔍︎</button>
-          </div>
-
-          <div>
-            <h4>
-              Saldo pendiente a la fecha:
-              <span style={{ color: "#D4674A", marginLeft: "15px" }}>
-                -$6565
-              </span>
-            </h4>
           </div>
         </div>
         <div className="proveedores-button-box">
@@ -221,34 +122,29 @@ const Proveedores = () => {
       </div>
       <div className="proveedores-excel-wrapper">
         <h2>Pagos efectuados</h2>
-        {/* <Grilla columnas={columnasStock} elementos={itemsStock} /> */}
         <div className="grilla-inventario">
           <Table hover className="grilla-proveedores">
             <thead>
               <tr>
-                <th>Estado</th>
-                <th>Proveedor</th>
+                <th>Nombre</th>
+                <th>Lote</th>
                 <th>Fecha</th>
+                <th>Estado de pago</th>
                 <th>Importe</th>
                 <th>Caja</th>
-                <th>Op.</th>
+                <th>Responsable</th>
               </tr>
             </thead>
             <tbody className="grilla-proveedores-body">
-              {proveedoresData.map((prov, index) => (
+              {filteredData.map((prov, index) => (
                 <tr key={index} className={index % 2 === 0 ? "" : "row-even"}>
-                  <td>
-                    {prov.estado?.length === 0
-                      ? "acá va el estado"
-                      : prov.estado}
-                  </td>
                   <td>{prov.Proveedore.nombre}</td>
+                  <td>{prov.lote}</td>
                   <td>{prov.fecha_ingreso}</td>
+                  <td>{prov.estado === 0 ? "No pagado" : "Pagado"}</td>
                   <td>{prov.importe}</td>
-                  <td>
-                    {prov.caja?.length === 0 ? "acá va la caja" : prov.caja}
-                  </td>
-                  <td>{prov.op?.length == 0 ? "no se que va aca" : prov.op}</td>
+                  <td>{prov.caja}</td>
+                  <td>{getResponsable(prov.id_responsable)}</td>
                 </tr>
               ))}
             </tbody>
