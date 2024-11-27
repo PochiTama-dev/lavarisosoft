@@ -50,6 +50,8 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
     "vite": "^5.1.4",
+    "vite-plugin-electron": "^0.29.0",
+    "vite-plugin-electron-renderer": "^0.14.6",
     "wait-on": "^7.0.1"
   },
   "build": {
@@ -61,6 +63,7 @@
     ],
     "win": {
       "target": "nsis"
-    }
+    },
+    "type": "module"
   }
 }

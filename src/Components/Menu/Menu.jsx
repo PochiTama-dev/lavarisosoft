@@ -130,6 +130,13 @@ const Menu = () => {
               </Link>
             </div>
           </div>
+          <div className='col-md-4'>
+            <div className='btn-group-vertical '>
+              <Link to='/taller' className='btn btn-lg btn-block menu-button'>
+                Taller
+              </Link>
+            </div>
+          </div>
         </div>
       ) : user?.tipoRol === 'Contable administrativo' ? (
         <div className='row menu-button-container'>
