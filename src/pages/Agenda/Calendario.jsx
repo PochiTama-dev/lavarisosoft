@@ -12,7 +12,7 @@ const Calendario = () => {
       try {
         const eventosResponse = await fetch('https://lv-back.online/agenda/lista');
         const eventosData = await eventosResponse.json();
-        
+
         const clientesResponse = await fetch('https://lv-back.online/clientes/lista');
         const clientesData = await clientesResponse.json();
 
@@ -20,9 +20,9 @@ const Calendario = () => {
           throw new Error('No se encontraron eventos o clientes');
         }
 
-        const clientesMap = new Map(clientesData.map(cliente => [cliente.id, cliente.nombre]));
+        const clientesMap = new Map(clientesData.map((cliente) => [cliente.id, cliente.nombre]));
 
-        const eventosConNombres = eventosData.map(evento => {
+        const eventosConNombres = eventosData.map((evento) => {
           const { fecha, hora, id_cliente, id_evento_agenda } = evento;
           const fechaObj = new Date(fecha);
           const diaSemana = dias[fechaObj.getDay()];
@@ -33,8 +33,8 @@ const Calendario = () => {
             nombreCliente,
             estado,
             dia: diaSemana,
-            fecha,  
-            horario: hora
+            fecha,
+            horario: hora,
           };
         });
 
@@ -59,12 +59,10 @@ const Calendario = () => {
   const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
   const dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
- 
   const fechaActual = new Date();
   const primerDiaSemana = new Date(fechaActual);
   const ultimoDiaSemana = new Date(fechaActual);
-  
- 
+
   primerDiaSemana.setDate(fechaActual.getDate() - (fechaActual.getDay() === 0 ? 6 : fechaActual.getDay() - 1));
   ultimoDiaSemana.setDate(primerDiaSemana.getDate() + 6);
 
@@ -86,22 +84,21 @@ const Calendario = () => {
   };
 
   const calcularPosicionYDuracion = (hora) => {
-    const [inicio, fin] = hora.split(' - ').map(h => {
+    const [inicio, fin] = hora.split(' - ').map((h) => {
       const [hora, minutos] = h.split(':').map(Number);
       return hora + minutos / 60;
     });
 
-    const top = (inicio - 8) * 40;  
+    const top = (inicio - 8) * 40;
     const height = (fin - inicio) * 40;
 
     return { top: `${top}px`, height: `${height}px` };
   };
 
- 
   const estadoEventoMap = {
     1: 'Agendado',
     2: 'Concluido',
-    3: 'Visitado'
+    3: 'Visitado',
   };
 
   return (
@@ -119,12 +116,11 @@ const Calendario = () => {
         </h3>
       </div>
 
-    
       <div className='d-flex justify-content-evenly dias-semana'>
         {dias.map((diaSemana, index) => {
           const fechaDiaActual = new Date(comienzoSemana);
-          fechaDiaActual.setDate(comienzoSemana.getDate() + index);  
-          
+          fechaDiaActual.setDate(comienzoSemana.getDate() + index);
+
           return (
             <div key={index} className='text-center'>
               <span className='dia-nombre'>
@@ -146,24 +142,22 @@ const Calendario = () => {
         <ul className='d-flex justify-content-evenly dias p-0'>
           {dias.map((diaSemana, index) => {
             const fechaDiaActual = new Date(comienzoSemana);
-            fechaDiaActual.setDate(comienzoSemana.getDate() + index -1); 
+            fechaDiaActual.setDate(comienzoSemana.getDate() + index - 1);
             return (
               <li key={index} className={'dia bg-light mx-2 text-center position-relative'}>
                 {eventos
                   .filter((evento) => {
                     const fechaEvento = new Date(evento.fecha);
                     fechaEvento.setHours(0, 0, 0, 0);
-                    return (
-                      fechaEvento.getFullYear() === fechaDiaActual.getFullYear() &&
-                      fechaEvento.getMonth() === fechaDiaActual.getMonth() &&
-                      fechaEvento.getDate() === fechaDiaActual.getDate()
-                    );
+                    return fechaEvento.getFullYear() === fechaDiaActual.getFullYear() && fechaEvento.getMonth() === fechaDiaActual.getMonth() && fechaEvento.getDate() === fechaDiaActual.getDate();
                   })
                   .map((evento, i) => {
                     const estilos = calcularPosicionYDuracion(evento.horario);
                     return (
                       <div key={i} className={`evento ${evento.estado} text-white position-absolute`} style={estilos}>
-                        <div><strong>{evento.nombreCliente}</strong></div>
+                        <div>
+                          <strong>{evento.nombreCliente}</strong>
+                        </div>
                         <div>{evento.horario}</div>
                       </div>
                     );
