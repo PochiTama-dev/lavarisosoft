@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Header from "../../../Header/Header";
-import { listaCajas } from "../../../../services/CajasService";
+import { listaCajas } from "../../../../services/cajasService";
 import Cajas from "./Cajas";
 import CajaSeleccionada from "./CajaSeleccionada";
 import DatosCaja from "./DatosCaja";
