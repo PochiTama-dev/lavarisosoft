@@ -163,7 +163,6 @@ const Ubicaciones = () => {
     nombre: "",
     direccion: "",
     telefono: "",
-    cuil: "",
   });
 
   const validateField = (name, value) => {
@@ -264,6 +263,7 @@ const Ubicaciones = () => {
     if (validateForm()) {
       const clientData = {
         ...newClient,
+        cuil: newClient.cuil || null,
         piso: newClient.piso || 0,
         departamento: newClient.departamento || "-",
       };
@@ -466,7 +466,7 @@ const Ubicaciones = () => {
   return (
     <div className="ventas-container">
       <Header text="Ubicaciones"></Header>
-      <div className="row w-100 p-5 mt-5">
+      <div className="row w-100 pt-5 mt-5">
         <div className="col-4">
           {/* Listado Clientes */}
           {(view === "clientesTecnicos" || view === "formClientes") && (
@@ -735,11 +735,6 @@ const Ubicaciones = () => {
                       onChange={handleInputChange}
                     />
                   </li>
-                  <li className="pb-1">
-                    {errors.cuil && (
-                      <div className="text-danger">{errors.cuil}</div>
-                    )}
-                  </li>
                 </ul>
                 <div className="d-flex justify-content-center mt-4">
                   <button
@@ -865,29 +860,32 @@ const Ubicaciones = () => {
             refClient={ref}
             tecniCoordinates={tecCoordinates}
           />
-          <div className="d-flex justify-content-end mt-4">
-            <button
-              className="bg-info rounded-pill py-1 px-2 text-white"
-              onClick={() =>
-                setView(
-                  view === "clientesTecnicos"
-                    ? "formClientes"
-                    : "clientesTecnicos"
-                )
-              }
+        </div>
+        <div
+          className="d-flex justify-content-end"
+          style={{ top: "-50px", position: "relative" }}
+        >
+          <button
+            className="bg-info rounded-pill py-1 px-2 text-white"
+            onClick={() =>
+              setView(
+                view === "clientesTecnicos"
+                  ? "formClientes"
+                  : "clientesTecnicos"
+              )
+            }
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="28"
+              height="28"
+              fill="currentColor"
+              className="bi bi-plus"
+              viewBox="0 0 16 16"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="28"
-                height="28"
-                fill="currentColor"
-                className="bi bi-plus"
-                viewBox="0 0 16 16"
-              >
-                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
-              </svg>
-            </button>
-          </div>
+              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+            </svg>
+          </button>
         </div>
       </div>
     </div>
