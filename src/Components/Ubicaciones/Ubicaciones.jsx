@@ -864,7 +864,7 @@ const Ubicaciones = () => {
         <div
           className="d-flex justify-content-end"
           style={{
-            top: "-150px",
+            top: "-120px",
             right: "15px",
             position: "relative",
             zIndex: "1",
