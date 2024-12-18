@@ -256,7 +256,6 @@ const NuevosDatosIncidente = ({ setIncidente }) => {
                     className="form-control input-small"
                     value={fechaVisita}
                     onChange={handleFechaVisitaChange}
-                    required
                   />
                 </div>
               </div>
@@ -279,8 +278,16 @@ const NuevosDatosIncidente = ({ setIncidente }) => {
                 open={isModalOpen}
                 onClose={handleCloseModal}
                 className="modal"
+                style={{}}
               >
-                <div className="modal-content">
+                <div
+                  className="modal-content"
+                  style={{
+                    width: "30%",
+                    height: "50%",
+                    overflowY: "hidden",
+                  }}
+                >
                   <div className="modal-header">
                     <h5 className="modal-title">
                       {isSelectingStartTime
@@ -321,7 +328,7 @@ const NuevosDatosIncidente = ({ setIncidente }) => {
                   <div className="modal-footer">
                     <Button
                       variant="contained"
-                      color="secondary"
+                      color="inherit"
                       onClick={() => {
                         setHoraInicioVisita(dayjs()); // Reset start time
                         setHoraFinVisita(dayjs()); // Reset end time

@@ -3,7 +3,7 @@ import Header from "../Header/Header";
 import "./CargarFactura.css";
 import { useNavigate } from "react-router-dom";
 import { listadoEmpleados } from "../../services/empleadoService";
-import { listaCajas } from "../../services/CajasService";
+import { listaCajas } from "../../services/cajasService";
 import { listaStockPrincipal } from "../../services/stockPrincipalService";
 import { listadoProveedores } from "../../services/proveedoresService";
 
