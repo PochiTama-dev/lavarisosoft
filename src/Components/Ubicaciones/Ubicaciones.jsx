@@ -863,7 +863,12 @@ const Ubicaciones = () => {
         </div>
         <div
           className="d-flex justify-content-end"
-          style={{ top: "-50px", position: "relative" }}
+          style={{
+            top: "-120px",
+            right: "15px",
+            position: "relative",
+            zIndex: "1",
+          }}
         >
           <button
             className="bg-info rounded-pill py-1 px-2 text-white"
