@@ -305,6 +305,17 @@ export const Provider = ({ children }) => {
     }
   };
 
+  // Liquidacion empleados
+  const getPresupuestos = async () => {
+    try {
+      const response = await fetch('https://lv-back.online/presupuestos');
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Problemas al obtener las liquidaciones: ', error);
+    }
+  };
+
   return (
     <Context.Provider
       value={{
@@ -338,6 +349,7 @@ export const Provider = ({ children }) => {
         marcarNotificacionVista,
         notifications,
         setNotifications,
+        getPresupuestos,
       }}
     >
       {children}
