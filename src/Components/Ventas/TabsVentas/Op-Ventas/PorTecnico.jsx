@@ -58,7 +58,7 @@ const PorTecnico = ({ data }) => {
                   sortedData.map((item, index) => (
                     <tr key={index} className={index % 2 === 0 ? '' : 'row-even'}>
                       <td>{new Date(item.created_at).toLocaleDateString()}</td>
-                      <td>{item.Empleado.legajo}</td>
+                      <td>{item.Empleado?.legajo}</td>
                       <td>{'Domicilio/Taller'}</td>
                       <td>{item.numero_orden}</td>
                       <td>{item.motivo}</td>
