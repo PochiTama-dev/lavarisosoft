@@ -89,7 +89,7 @@ const OpVentas = () => {
                 <Ventas data={filteredData} />
               </Tab>
               <Tab title='Por Técnico'>
-                <PorTecnico data={filteredData} />
+                <PorTecnico data={filteredData || ''} />
               </Tab>
               <Tab title='Por Producto'>
                 <PorProducto data={filteredData} />

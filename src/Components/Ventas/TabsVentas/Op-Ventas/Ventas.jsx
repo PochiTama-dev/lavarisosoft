@@ -60,7 +60,7 @@ const Ventas = ({ data }) => {
                         <td>{new Date(item.created_at).toLocaleDateString()}</td>
                         <td>{'Aca va algo'}</td>
                         <td>{item.numero_orden}</td>
-                        <td>{item.Empleado.legajo}</td>
+                        <td>{item.Empleado?.legajo}</td>
                         <td>{item.Cliente?.cuil}</td>
                         <td>{item.Presupuesto?.total}</td>
                         <td>{mediosPagos(item.Presupuesto?.id_medio_de_pago)}</td>
