@@ -463,6 +463,51 @@ const Ubicaciones = () => {
     { id_tecnico: "3", detalle: "Está de regreso", estado: "activo" },
   ];
 
+  const [updatedTechnicians, setUpdatedTechnicians] = useState(tecnicos || []); 
+  useEffect(() => {
+    const handleBroadcastLocation = (data) => {
+      console.log('Ubicaciones recibidas (broadcastLocation):', data);
+   
+      const [id, technicianData] = Object.entries(data)[0];
+  
+      setUpdatedTechnicians((prevTechnicians) => {
+        const existingTechnician = prevTechnicians.find((tecnico) => tecnico.id === parseInt(id));
+  
+  
+        if (
+          existingTechnician &&
+          existingTechnician.latitude === technicianData.latitude &&
+          existingTechnician.longitude === technicianData.longitude
+        ) {
+          return prevTechnicians;
+        }
+  
+        const updated = prevTechnicians.map((tecnico) =>
+          tecnico.id === parseInt(id)
+            ? { ...tecnico, ...technicianData, latitud: technicianData.latitude, longitud: technicianData.longitude }
+            : tecnico
+        );
+  
+        if (!updated.find((tecnico) => tecnico.id === parseInt(id))) {
+          updated.push({
+            id: parseInt(id),
+            nombre: technicianData.nombre,
+            latitud: technicianData.latitude,
+            longitud: technicianData.longitude,
+            status: technicianData.status,
+          });
+        }
+  
+        return updated;
+      });
+    };
+  
+    socket.on('broadcastLocation', handleBroadcastLocation);
+  
+    return () => {
+      socket.off('broadcastLocation', handleBroadcastLocation);
+    };
+  }, []);
   return (
     <div className="ventas-container">
       <Header text="Ubicaciones"></Header>
@@ -833,8 +878,8 @@ const Ubicaciones = () => {
                         </button>
                         <span className="mx-2">
                           {haversine(
-                            t.latitud,
-                            t.longitud,
+                            (updatedTechnicians.find(tech => tech.id === t.id)?.latitud || t.latitud),
+                            (updatedTechnicians.find(tech => tech.id === t.id)?.longitud || t.longitud),
                             selectedClient.latitud,
                             selectedClient.longitud
                           )}{" "}

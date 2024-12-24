@@ -41,6 +41,8 @@ const Menu = () => {
   };
   return (
     <div className='container-full-width' style={{ overflow: 'hidden' }}>
+      {user?.tipoRol === 'Super administrador' ? (
+        <div className='row menu-button-container'>
       <Header text='Menú Principal' showBackButton={false} />
       <h3
         style={{
@@ -55,8 +57,6 @@ const Menu = () => {
       >
         Sesión de: {user?.nombre}
       </h3>
-      {user?.tipoRol === 'Super administrador' ? (
-        <div className='row menu-button-container'>
           <div className='col-md-4'>
             <div className='btn-group-vertical '>
               <Link to='/agenda' className='btn btn-lg btn-block menu-button'>

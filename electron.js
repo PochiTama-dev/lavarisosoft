@@ -5,12 +5,11 @@ let mainWindow;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    resizable: true,
-    maximizable: false,
-    fullscreenable: false,
-    frame: true,
+    fullscreen: true,   
+    resizable: true,   
+    maximizable: true,  
+    fullscreenable: true, 
+    frame: true,  
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: true,
@@ -18,7 +17,7 @@ function createWindow() {
     },
   });
 
-  mainWindow.loadFile(path.join(__dirname, '../dist', 'index.html'));
+  mainWindow.loadFile(path.join(__dirname, './dist', 'index.html'));
   // mainWindow.loadURL('http://localhost:5173');
 }
 
