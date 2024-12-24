@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Header from "../../../Header/Header";
-import { listaCajas } from "../../../../services/CajasService";
+import { listaCajas } from "../../../../services/cajasService";
 import Cajas from "./Cajas";
 import CajaSeleccionada from "./CajaSeleccionada";
 import DatosCaja from "./DatosCaja";
@@ -43,18 +43,19 @@ const Totalizador = () => {
     setSelectedDate(date);
   };
 
-  const filteredCobros = cobros.filter((cobro) => {
-    const matchesCaja = selectedCajaId
-      ? cobro.id_caja === selectedCajaId
-      : true;
-    const createdAtFormatted = cobro.created_at.slice(0, 10);
-    const matchesDate = selectedDate
-      ? createdAtFormatted === selectedDate
-      : true;
+  const filteredCobros = Array.isArray(cobros)
+  ? cobros.filter((cobro) => {
+      const matchesCaja = selectedCajaId
+        ? cobro.id_caja === selectedCajaId
+        : true;
+      const createdAtFormatted = cobro.created_at.slice(0, 10);
+      const matchesDate = selectedDate
+        ? createdAtFormatted === selectedDate
+        : true;
 
-    return matchesCaja && matchesDate;
-  });
-
+      return matchesCaja && matchesDate;
+    })
+  : [];
   return (
     <div className="totalizadorContainer">
       <Header text="Totalizador" />
