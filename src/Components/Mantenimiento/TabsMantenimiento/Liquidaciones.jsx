@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
 import Table from 'react-bootstrap/Table';
-import { useNavigate } from 'react-router-dom';
 import '../mantenimiento.css';
 import { useCustomContext } from '../../../hooks/context';
+import Liquidacion from '../Liquidacion';
 
 const Liquidaciones = () => {
-  const navigate = useNavigate();
   const { getPresupuestos } = useCustomContext();
   const [expandedRow, setExpandedRow] = useState(null); // Estado para controlar la fila expandida
   const [datosLiquidaciones, setDatosLiquidaciones] = useState([]);
+  const [tecnicoSelected, setTecnicoSelected] = useState({});
+  const [modal, setModal] = useState(false);
 
   useEffect(() => {
     getCobrosOrdenes();
@@ -18,7 +19,7 @@ const Liquidaciones = () => {
     const cobros = await getPresupuestos();
     const empleadosOrdenes = transformarCobrosPorEmpleado(cobros);
     setDatosLiquidaciones(empleadosOrdenes);
-    console.log(empleadosOrdenes);
+    //console.log(empleadosOrdenes);
   };
   const transformarCobrosPorEmpleado = (cobros) => {
     return cobros.reduce((result, cobro) => {
@@ -51,9 +52,12 @@ const Liquidaciones = () => {
       return result;
     }, []);
   };
+  const handleSelecTecnico = (tecnico) => {
+    setTecnicoSelected(tecnico);
+  };
 
   const handleLiquidarClick = () => {
-    navigate('/liquidacion');
+    tecnicoSelected.lengt > 0 && setModal(!modal);
   };
 
   const handleExpandClick = (index) => {
@@ -75,7 +79,7 @@ const Liquidaciones = () => {
           {datosLiquidaciones &&
             datosLiquidaciones.map((liquidacion, index) => (
               <>
-                <tr className={expandedRow === index ? 'expanded-row' : ''} onClick={() => handleExpandClick(index)}>
+                <tr className={expandedRow === index ? 'expanded-row' : ''}>
                   <td>{liquidacion.nombre}</td>
                   <td>
                     {liquidacion.ordenes.map((orden) => (
@@ -83,7 +87,12 @@ const Liquidaciones = () => {
                     ))}
                   </td>
                   <td>{liquidacion.ordenes.reduce((acumulador, orden) => acumulador + parseFloat(orden.total || 0), 0).toFixed(2)}</td>
-                  <td>{expandedRow === index ? '\u25B2' : '\u25BC'}</td>
+                  <td className='pointer' onClick={() => handleExpandClick(index)}>
+                    {expandedRow === index ? '\u25B2' : '\u25BC'}
+                  </td>
+                  <td>
+                    <button onClick={() => handleSelecTecnico(liquidacion)}>{tecnicoSelected.nombre === liquidacion.nombre ? 'Seleccionado' : 'Seleccionar'}</button>
+                  </td>
                 </tr>
                 {expandedRow === index && (
                   <tr>
@@ -124,6 +133,11 @@ const Liquidaciones = () => {
         </tbody>
       </Table>
       <button onClick={handleLiquidarClick}>Liquidar</button>
+      {modal && (
+        <div className='modal'>
+          <Liquidacion tecnico={tecnicoSelected} setModal={setModal} />
+        </div>
+      )}
     </div>
   );
 };
