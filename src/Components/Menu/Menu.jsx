@@ -41,6 +41,8 @@ const Menu = () => {
   };
   return (
     <div className='container-full-width' style={{ overflow: 'hidden' }}>
+      {user?.tipoRol === 'Super administrador' ? (
+        <div className='row menu-button-container'>
       <Header text='Menú Principal' showBackButton={false} />
       <h3
         style={{
@@ -55,34 +57,27 @@ const Menu = () => {
       >
         Sesión de: {user?.nombre}
       </h3>
-      {user?.tipoRol === 'Super administrador' ? (
-        <div className='row menu-button-container'>
           <div className='col-md-4'>
             <div className='btn-group-vertical '>
               <Link to='/agenda' className='btn btn-lg btn-block menu-button'>
                 Agenda
               </Link>
             </div>
-              <div className='btn-group-vertical '>
+            <div className='btn-group-vertical '>
               <Link to='/feedback' className='btn btn-lg btn-block menu-button'>
                 Feedback
               </Link>
-              </div>
+            </div>
             <div className='btn-group-vertical '>
               <Link to='/notificaciones' className='btn btn-lg btn-block menu-button'>
                 Notificaciones
-              </Link>
-            </div>
-            <div className='btn-group-vertical '>
-              <Link to='/presupuestos' className='btn btn-lg btn-block menu-button'>
-                Presupuestos
               </Link>
             </div>
           </div>
           <div className='col-md-4'>
             <div className='btn-group-vertical '>
               <Link to='/ventas' className='btn btn-lg btn-block menu-button'>
-                Ventas
+                Compra/Venta
               </Link>
             </div>
             <div className='btn-group-vertical '>
@@ -97,11 +92,11 @@ const Menu = () => {
             </div>
           </div>
           <div className='col-md-4'>
-            <div className='btn-group-vertical '>
+            {/* <div className='btn-group-vertical '>
               <Link to='/chat' className='btn btn-lg btn-block menu-button'>
                 Chat
               </Link>
-            </div>
+            </div> */}
             <div className='btn-group-vertical '>
               <Link to='/location' className='btn btn-lg btn-block menu-button'>
                 Ubicaciones tiempo real
@@ -110,6 +105,11 @@ const Menu = () => {
             <div className='btn-group-vertical'>
               <Link to='/ordenes' className='btn btn-lg btn-block menu-button'>
                 Ordenes
+              </Link>
+            </div>
+            <div className='btn-group-vertical '>
+              <Link to='/presupuestos' className='btn btn-lg btn-block menu-button'>
+                Presupuestos
               </Link>
             </div>
           </div>
@@ -127,6 +127,13 @@ const Menu = () => {
             <div className='btn-group-vertical '>
               <Link to='/notificaciones' className='btn btn-lg btn-block menu-button'>
                 Notificaciones
+              </Link>
+            </div>
+          </div>
+          <div className='col-md-4'>
+            <div className='btn-group-vertical '>
+              <Link to='/taller' className='btn btn-lg btn-block menu-button'>
+                Taller
               </Link>
             </div>
           </div>
@@ -168,9 +175,9 @@ const Menu = () => {
             </div>
           </div>
           <div className='col-md-4'>
-            <Link to='/chat' className='btn btn-lg btn-block menu-button'>
+            {/* <Link to='/chat' className='btn btn-lg btn-block menu-button'>
               Chat
-            </Link>
+            </Link> */}
             <Link to='/notificaciones' className='btn btn-lg btn-block menu-button'>
               Notificaciones
             </Link>
@@ -178,7 +185,7 @@ const Menu = () => {
           </div>
           <div className='col-md-4'>
             <Link to='/ventas' className='btn btn-lg btn-block menu-button'>
-              Ventas
+              Compra/Venta
             </Link>
             <div className='btn-group-vertical '></div>
           </div>
@@ -200,9 +207,9 @@ const Menu = () => {
           </div>
           <div className='col-md-4'>
             <div className='btn-group-vertical '>
-              <Link to='/chat' className='btn btn-lg btn-block menu-button'>
+              {/* <Link to='/chat' className='btn btn-lg btn-block menu-button'>
                 Chat
-              </Link>
+              </Link> */}
               <Link to='/location' className='btn btn-lg btn-block menu-button'>
                 Ubicaciones tiempo real
               </Link>

@@ -1,0 +1,15 @@
+.facturas-ctn {
+  width: 70vw;
+  margin-left: -50px;
+  margin-top: 10px;
+}
+
+.facturas-ctn th,
+.facturas-ctn td {
+  color: #283959;
+}
+
+.facturas-ctn th {
+  font-size: large;
+  font-weight: bold;
+}

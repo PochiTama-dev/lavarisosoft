@@ -1,10 +1,11 @@
-import React from 'react';
-import Table from 'react-bootstrap/Table';
-import datosFacturas from './DatosFacturas'; 
- 
+import React from "react";
+import Table from "react-bootstrap/Table";
+import datosFacturas from "./DatosFacturas";
+import "./Facturas.css";
+
 const Facturas = () => {
   return (
-    <div className='facturas-ctn'>
+    <div className="facturas-ctn">
       <Table striped hover>
         <thead>
           <tr>
@@ -32,7 +33,7 @@ const Facturas = () => {
                 <img
                   src={factura.icon}
                   alt="Ver factura"
-                  style={{ width: '24px', height: '24px', cursor: 'pointer' }}
+                  style={{ width: "24px", height: "24px", cursor: "pointer" }}
                   onClick={() => verFactura(factura.id)}
                 />
               </td>

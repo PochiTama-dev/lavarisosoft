@@ -3,25 +3,6 @@
   display: flex;
   align-items: center;
 }
-.titles {
-  text-transform: uppercase;
-  color: white;
-  padding: 20px;
-  width: 90%;
-  margin-left: 5%;
-}
-
-.header-title-container {
-  min-width: 30vw;
-}
-
-.titles h2 {
-  border-bottom-left-radius: 5px;
-  width: 100%;
-  margin: 0;
-  text-align: center;
-  padding-top: 5px;
-}
 
 .flechita {
   cursor: pointer;
@@ -32,5 +13,43 @@
   display: flex;
   align-items: center;
   cursor: pointer;
-  margin-left: 60%;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+.header-right img {
+  margin-left: 10px;
+}
+
+.logout {
+  margin-left: 10px;
+  color: aliceblue;
+}
+
+.flechita {
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.titles {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.header-title-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.header-title-container  h2 {
+  margin: 0;
+  text-align: center;
+  color: aliceblue;
 }

@@ -25,7 +25,7 @@ const Totalizador = () => {
     const fetchCobrosData = async () => {
       try {
         const data = await listaCobros();
-        setCobros(data);
+        data !== false && setCobros(data);
       } catch (error) {
         console.error("Error fetching cobros data:", error);
         setCobros([]);

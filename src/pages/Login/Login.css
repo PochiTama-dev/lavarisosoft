@@ -3,7 +3,7 @@ body{
     font-family: "Raleway", sans-serif;
 }
 .titleLogin{
-    font-size:80px;
+ 
     text-align: center;
 }
 .subtitleLogin{
@@ -80,14 +80,14 @@ body{
         width:51vw;
     }
     .leftContainer .titleLogin{
-        font-size:7vw;
+        font-size:50px;
     }
     .leftContainer .subtitleLogin{
-        font-size: 2vw;
+        font-size: 28px;
         text-align: center;
     }
     .leftContainer .messageTitle{
-        font-size: 2vw;
+        font-size: 28px;
     }
     .leftContainer .inputsLogin{
         width: 70%;
@@ -104,9 +104,9 @@ body{
 @media(min-width:1200px){
     
     .leftContainer .inputsLogin{
-        font-size: 2vw;
+        font-size: 1vw;
     }
     .leftContainer .loginButton{
-        font-size: 2vw;
+        font-size: 1vw;
     }
 }
