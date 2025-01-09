@@ -6,8 +6,12 @@ import editar from "../../../images/editar.webp";
 
 const PlanCuentas = () => {
   const [data, setData] = useState([
-    { id: "1", name: "Activo", children: [] },
-    { id: "2", name: "Pasivo", children: [] },
+    {
+      id: "1",
+      name: "ACTIVO",
+      children: [{ id: "1.1", name: "ACTIVO CORRIENTE", children: [] }],
+    },
+    { id: "2", name: "PASIVO", children: [] },
   ]);
   const [selectedNode, setSelectedNode] = useState(null);
   const [editingNode, setEditingNode] = useState(null);
@@ -134,6 +138,8 @@ const PlanCuentas = () => {
                 margin: "2px",
                 width: "25px",
                 backgroundColor: "transparent",
+                position: "relative",
+                top: "8px",
               }}
             >
               <img
