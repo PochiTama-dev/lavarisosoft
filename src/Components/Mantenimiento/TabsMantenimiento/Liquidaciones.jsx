@@ -57,7 +57,7 @@ const Liquidaciones = () => {
   };
 
   const handleLiquidarClick = () => {
-    tecnicoSelected.lengt > 0 && setModal(!modal);
+    tecnicoSelected.nombre && setModal(!modal);
   };
 
   const handleExpandClick = (index) => {
