@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import Table from 'react-bootstrap/Table';
+import EditEmpleado from './EditEmpleado';
 
 const Empleados = () => {
   const [empleadosData, setEmpleadosData] = useState([]);
+  const [modal, setModal] = useState(false);
+  const [empleadoSelected, setEmpleadoSelected] = useState({});
 
   useEffect(() => {
     const fetchEmpleados = async () => {
@@ -16,7 +19,11 @@ const Empleados = () => {
     };
 
     fetchEmpleados();
-  }, []); // Empty dependency array means this effect runs once on mount
+  }, [modal]);
+  const handleEditEmpleado = (empleado) => {
+    setEmpleadoSelected(empleado);
+    setModal(!modal);
+  };
   return (
     <div className='clientes-ctn'>
       <Table striped hover>
@@ -29,6 +36,7 @@ const Empleados = () => {
             <th>Email</th>
             <th>CUIL</th>
             <th>Automóvil</th>
+            <th>Porcentaje de arreglo</th>
           </tr>
         </thead>
         <tbody>
@@ -41,8 +49,19 @@ const Empleados = () => {
               <td>{empleado.email}</td>
               <td>{empleado.cuil}</td>
               <td>{empleado.automovil}</td>
+              <td>{empleado.TiposRole.tipo_rol === 'Técnico' ? `${empleado.porcentaje_arreglo * 100}%` : ''}</td>
+              {empleado.TiposRole.tipo_rol === 'Técnico' && (
+                <button className='rounded' onClick={() => handleEditEmpleado(empleado)}>
+                  Agregar/Cambiar porcentaje arreglo
+                </button>
+              )}
             </tr>
           ))}
+          {modal && empleadoSelected && (
+            <div className='modal'>
+              <EditEmpleado empleado={empleadoSelected} setModal={setModal} />
+            </div>
+          )}
         </tbody>
       </Table>
     </div>

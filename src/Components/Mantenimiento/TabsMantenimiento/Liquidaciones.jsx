@@ -17,9 +17,10 @@ const Liquidaciones = () => {
 
   const getCobrosOrdenes = async () => {
     const cobros = await getPresupuestos();
+    console.log(cobros);
     const empleadosOrdenes = transformarCobrosPorEmpleado(cobros);
     setDatosLiquidaciones(empleadosOrdenes);
-    //console.log(empleadosOrdenes);
+    console.log(empleadosOrdenes);
   };
   const transformarCobrosPorEmpleado = (cobros) => {
     return cobros.reduce((result, cobro) => {
@@ -34,6 +35,7 @@ const Liquidaciones = () => {
         EstadosPresupuesto: cobro.Estados_presupuesto,
         Diagnosticos: cobro.Diagnosticos,
         total: cobro.total,
+        dpg: cobro.dpg,
       };
 
       if (empleadoExistente) {
@@ -57,7 +59,7 @@ const Liquidaciones = () => {
   };
 
   const handleLiquidarClick = () => {
-    tecnicoSelected.lengt > 0 && setModal(!modal);
+    tecnicoSelected.nombre && setModal(!modal);
   };
 
   const handleExpandClick = (index) => {

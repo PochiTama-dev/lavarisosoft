@@ -86,6 +86,26 @@ export const Provider = ({ children }) => {
     }
   };
 
+  const editPorcentajeEmpleado = async (id, empleado) => {
+    try {
+      const data = await fetch(`https://lv-back.online/empleados/modificar/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ porcentaje_arreglo: empleado.porcentaje_arreglo }),
+      });
+      const result = await data.json();
+      if (result) {
+        console.log('Porcentaje de arreglo agregado con exito!!!');
+        return true;
+      } else {
+        console.log('Se produjo un error, el Porcentaje no pudo ser registrado');
+        return false;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   //CLIENTES
   const listaClientes = async () => {
     try {
@@ -328,6 +348,7 @@ export const Provider = ({ children }) => {
         //empleados
         getEmpleadosLista,
         getEmpleadosListaCompleta,
+        editPorcentajeEmpleado,
         //clientes
         getClienteById,
         listaClientes,
