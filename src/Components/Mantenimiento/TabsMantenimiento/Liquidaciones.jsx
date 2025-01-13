@@ -88,7 +88,7 @@ const Liquidaciones = () => {
                       <div key={orden.id}>{new Date(orden.created_at).toLocaleDateString()}</div>
                     ))}
                   </td>
-                  <td>{liquidacion.ordenes.reduce((acumulador, orden) => acumulador + parseFloat(orden.total || 0), 0).toFixed(2)}</td>
+                  <td>{liquidacion.ordenes.reduce((acumulador, orden) => acumulador + parseFloat(orden.total - (orden.total - orden.dpg) * orden.Empleado.porcentaje_arreglo || 0), 0).toFixed(2)}</td>
                   <td className='pointer' onClick={() => handleExpandClick(index)}>
                     {expandedRow === index ? '\u25B2' : '\u25BC'}
                   </td>
@@ -122,7 +122,7 @@ const Liquidaciones = () => {
                               <td>{orden.PlazosReparacion?.plazo_reparacion}</td>
                               <td>{orden.MediosDePago?.medio_de_pago}</td>
                               <td>{orden.EstadosPresupuesto?.estado_presupuesto}</td>
-                              <td>{orden.total}</td>
+                              <td>{orden.total - (orden.total - orden.dpg) * orden.Empleado.porcentaje_arreglo}</td>
                             </tr>
                           ))}
                         </tbody>
