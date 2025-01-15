@@ -15,7 +15,6 @@ import Cobrar from './pages/Orders/Cobrar';
 import AumentosGlobal from './pages/Orders/AumentosGlobal';
 import Presupuestos from './Components/Presupuestos/Presupuestos';
 import LiquidacionPresupuestos from './Components/Presupuestos/LiquidacionPresupuestos';
-/* Ventas */
 import Ventas from './pages/Ventas/Ventas.jsx';
 import EditarStockRespuestos from './Components/Ventas/EditarStockRepuestos/EditarStockRepuestos.jsx';
 import EditarProducto from './Components/Ventas/EditarStockRepuestos/EditarProducto.jsx';
@@ -24,7 +23,6 @@ import AddLoteExcel from './Components/Ventas/AddLoteExcel';
 import CargarFactura from './Components/Ventas/CargarFactura';
 import Gastos from './Components/Ventas/Gastos';
 import RemitoVentas from './Components/Ventas/RemitoVentas';
-
 import Mantenimiento from './Components/Mantenimiento/Mantenimiento';
 import CajasBancos from './Components/Mantenimiento/CajasBancos';
 import CargarCuenta from './Components/Mantenimiento/CargarCuenta';
@@ -42,9 +40,7 @@ import Notificaciones from './Components/Notificaciones/Notificaciones';
 import Feedback from './Components/Feedback/Feedback';
 import PrivateRoute from './Components/ProtectedRoute/ProtectedRoute.jsx';
 import RemitoOrden from './Components/Orders/OrdenDetalle/RemitoOrden.jsx';
-
 import AddFactura from './Components/Ventas/FileUploader/AddFactura.jsx';
-
 import FeedbackEmpleado from './Components/Feedback/FeedbackEmpleado.jsx';
 import Taller from './Components/Mantenimiento/TabsMantenimiento/Taller.jsx';
 
