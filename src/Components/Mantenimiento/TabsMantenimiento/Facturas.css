@@ -1,0 +1,30 @@
+.facturas-ctn {
+  width: 70vw;
+  margin-left: -50px;
+  margin-top: 10px;
+}
+
+.facturas-ctn th,
+.facturas-ctn td {
+  color: #283959;
+  text-align: center;
+}
+
+.row-white {
+  background-color: white !important;
+}
+
+.row-even {
+  background-color: #c8cfda !important;
+}
+
+.tabs2 a {
+  font-weight: bold;
+  font-size: x-large;
+  color: #283959;
+  width: 50%;
+}
+
+.modal-imagen-comprobante .modal-content {
+  overflow: hidden;
+}
