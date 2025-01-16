@@ -3,30 +3,24 @@ import { object, func } from 'prop-types';
 //import cash from '../../assets/cash-circulo.png';
 //import edit from '../../assets/edit.png';
 const Liquidacion = ({ tecnico, setModal }) => {
-  console.log(tecnico);
   const handleLiquidate = () => {
     // Lógica para manejar la liquidación
   };
 
   return (
     <div className='liquidacion rounded'>
-      <div className='d-flex justify-content-between'>
+      <div className='d-flex justify-content-around'>
         <h1>Liquidación {tecnico.nombre}</h1>
-        <h2 className='pointer' onClick={() => setModal(false)}>
+        <h1 className='pointer' onClick={() => setModal(false)}>
           x
-        </h2>
+        </h1>
       </div>
-      <div className='liq-table'>
+      <div className='liq-table d-flex justify-content-evenly'>
         <div>
-          <span>Total:</span>
-          <span>Técnico domicilio:</span>
-          <span>Técnico taller:</span>
-          <span>Técnico entrega:</span>
+          <h2>Total:</h2>
         </div>
         <div>
-          <input type='text' value={tecnico.ordenes.reduce((acumulador, orden) => acumulador + parseFloat(orden.total || 0), 0).toFixed(2)} />
-          <input type='text' />
-          <input type='text' />
+          <h3>{tecnico.total}</h3>
         </div>
       </div>
       <button onClick={handleLiquidate}>Liquidar</button>

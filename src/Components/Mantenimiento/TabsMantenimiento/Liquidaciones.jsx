@@ -17,16 +17,15 @@ const Liquidaciones = () => {
 
   const getCobrosOrdenes = async () => {
     const cobros = await getPresupuestos();
-    console.log(cobros);
+    //console.log(cobros);
     const empleadosOrdenes = transformarCobrosPorEmpleado(cobros);
     setDatosLiquidaciones(empleadosOrdenes);
-    console.log(empleadosOrdenes);
+    //console.log(empleadosOrdenes);
   };
   const transformarCobrosPorEmpleado = (cobros) => {
     return cobros.reduce((result, cobro) => {
       const { Empleado } = cobro.Ordene; // Extrae el empleado de la orden
       const empleadoExistente = result.find((item) => item.empleadoId === Empleado.id);
-
       const orden = {
         ...cobro.Ordene,
         presupuestoId: cobro.id, // Puedes agregar el ID del presupuesto si es relevante
@@ -34,8 +33,8 @@ const Liquidaciones = () => {
         MediosDePago: cobro.MediosDePago,
         EstadosPresupuesto: cobro.Estados_presupuesto,
         Diagnosticos: cobro.Diagnosticos,
-        total: cobro.total,
         dpg: cobro.dpg,
+        total: cobro.total - (cobro.total - cobro.dpg) * cobro.Ordene.Empleado.porcentaje_arreglo,
       };
 
       if (empleadoExistente) {
@@ -55,6 +54,11 @@ const Liquidaciones = () => {
     }, []);
   };
   const handleSelecTecnico = (tecnico) => {
+    tecnico = {
+      ...tecnico,
+      porcentaje_arreglo: tecnico.ordenes[0].Empleado.porcentaje_arreglo,
+      total: tecnico.ordenes.reduce((acumulador, orden) => acumulador + parseFloat(orden.total - (orden.total - orden.dpg) * orden.Empleado.porcentaje_arreglo || 0), 0).toFixed(2),
+    };
     setTecnicoSelected(tecnico);
   };
 
@@ -122,7 +126,7 @@ const Liquidaciones = () => {
                               <td>{orden.PlazosReparacion?.plazo_reparacion}</td>
                               <td>{orden.MediosDePago?.medio_de_pago}</td>
                               <td>{orden.EstadosPresupuesto?.estado_presupuesto}</td>
-                              <td>{orden.total - (orden.total - orden.dpg) * orden.Empleado.porcentaje_arreglo}</td>
+                              <td>{parseFloat(orden.total - (orden.total - orden.dpg) * orden.Empleado.porcentaje_arreglo).toFixed(2)}</td>
                             </tr>
                           ))}
                         </tbody>
