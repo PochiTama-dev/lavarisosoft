@@ -1,45 +1,35 @@
- 
-import React, { useState } from 'react';
-import './mantenimiento.css'
-import cash from '../../assets/cash-circulo.png'
-import edit from '../../assets/edit.png'
-const Liquidacion = () => {
-  const [total, setTotal] = useState( );
-  const [tecnicoHome, setTecnicoHome] = useState( );
-  const [tecnicoTaller, setTecnicoTaller] = useState( );
-  const [tecnicoEntrega, setTecnicoEntrega] = useState( );
-
-  // Funciones para manejar la edición y eliminación aquí
-
+import './mantenimiento.css';
+import { object, func } from 'prop-types';
+//import cash from '../../assets/cash-circulo.png';
+//import edit from '../../assets/edit.png';
+const Liquidacion = ({ tecnico, setModal }) => {
   const handleLiquidate = () => {
     // Lógica para manejar la liquidación
   };
 
   return (
-    <div className='liquidacion'>
-      <h1>Liquidación Alan Almendra</h1>
-      <div className='liq-table'>
-
-     
-      <div>
-        <span>Total:</span>
-        <span>Técnico domicilio:</span>
-        <span>Técnico taller:</span>
-        <span>Técnico entrega:</span>
- 
+    <div className='liquidacion rounded'>
+      <div className='d-flex justify-content-around'>
+        <h1>Liquidación {tecnico.nombre}</h1>
+        <h1 className='pointer' onClick={() => setModal(false)}>
+          x
+        </h1>
       </div>
-      <div>
-      <input type="text" /> 
-      <input type="text" />
-      <input type="text" />
-      <input type="text" />
+      <div className='liq-table d-flex justify-content-evenly'>
+        <div>
+          <h2>Total:</h2>
+        </div>
+        <div>
+          <h3>{tecnico.total}</h3>
+        </div>
       </div>
-      </div>
-      <button  onClick={handleLiquidate}>
-        Liquidar
-      </button>
+      <button onClick={handleLiquidate}>Liquidar</button>
     </div>
   );
+};
+Liquidacion.propTypes = {
+  tecnico: object,
+  setModal: func,
 };
 
 export default Liquidacion;

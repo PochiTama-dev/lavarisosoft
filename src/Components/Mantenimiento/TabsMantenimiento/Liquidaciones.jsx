@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
 import Table from 'react-bootstrap/Table';
-import { useNavigate } from 'react-router-dom';
 import '../mantenimiento.css';
 import { useCustomContext } from '../../../hooks/context';
+import Liquidacion from '../Liquidacion';
 
 const Liquidaciones = () => {
-  const navigate = useNavigate();
   const { getPresupuestos } = useCustomContext();
   const [expandedRow, setExpandedRow] = useState(null); // Estado para controlar la fila expandida
   const [datosLiquidaciones, setDatosLiquidaciones] = useState([]);
+  const [tecnicoSelected, setTecnicoSelected] = useState({});
+  const [modal, setModal] = useState(false);
 
   useEffect(() => {
     getCobrosOrdenes();
@@ -16,15 +17,15 @@ const Liquidaciones = () => {
 
   const getCobrosOrdenes = async () => {
     const cobros = await getPresupuestos();
+    //console.log(cobros);
     const empleadosOrdenes = transformarCobrosPorEmpleado(cobros);
     setDatosLiquidaciones(empleadosOrdenes);
-    console.log(empleadosOrdenes);
+    //console.log(empleadosOrdenes);
   };
   const transformarCobrosPorEmpleado = (cobros) => {
     return cobros.reduce((result, cobro) => {
       const { Empleado } = cobro.Ordene; // Extrae el empleado de la orden
       const empleadoExistente = result.find((item) => item.empleadoId === Empleado.id);
-
       const orden = {
         ...cobro.Ordene,
         presupuestoId: cobro.id, // Puedes agregar el ID del presupuesto si es relevante
@@ -32,7 +33,8 @@ const Liquidaciones = () => {
         MediosDePago: cobro.MediosDePago,
         EstadosPresupuesto: cobro.Estados_presupuesto,
         Diagnosticos: cobro.Diagnosticos,
-        total: cobro.total,
+        dpg: cobro.dpg,
+        total: cobro.total - (cobro.total - cobro.dpg) * cobro.Ordene.Empleado.porcentaje_arreglo,
       };
 
       if (empleadoExistente) {
@@ -51,9 +53,17 @@ const Liquidaciones = () => {
       return result;
     }, []);
   };
+  const handleSelecTecnico = (tecnico) => {
+    tecnico = {
+      ...tecnico,
+      porcentaje_arreglo: tecnico.ordenes[0].Empleado.porcentaje_arreglo,
+      total: tecnico.ordenes.reduce((acumulador, orden) => acumulador + parseFloat(orden.total - (orden.total - orden.dpg) * orden.Empleado.porcentaje_arreglo || 0), 0).toFixed(2),
+    };
+    setTecnicoSelected(tecnico);
+  };
 
   const handleLiquidarClick = () => {
-    navigate('/liquidacion');
+    tecnicoSelected.nombre && setModal(!modal);
   };
 
   const handleExpandClick = (index) => {
@@ -75,15 +85,20 @@ const Liquidaciones = () => {
           {datosLiquidaciones &&
             datosLiquidaciones.map((liquidacion, index) => (
               <>
-                <tr className={expandedRow === index ? 'expanded-row' : ''} onClick={() => handleExpandClick(index)}>
+                <tr className={expandedRow === index ? 'expanded-row' : ''}>
                   <td>{liquidacion.nombre}</td>
                   <td>
                     {liquidacion.ordenes.map((orden) => (
                       <div key={orden.id}>{new Date(orden.created_at).toLocaleDateString()}</div>
                     ))}
                   </td>
-                  <td>{liquidacion.ordenes.reduce((acumulador, orden) => acumulador + parseFloat(orden.total || 0), 0).toFixed(2)}</td>
-                  <td>{expandedRow === index ? '\u25B2' : '\u25BC'}</td>
+                  <td>{liquidacion.ordenes.reduce((acumulador, orden) => acumulador + parseFloat(orden.total - (orden.total - orden.dpg) * orden.Empleado.porcentaje_arreglo || 0), 0).toFixed(2)}</td>
+                  <td className='pointer' onClick={() => handleExpandClick(index)}>
+                    {expandedRow === index ? '\u25B2' : '\u25BC'}
+                  </td>
+                  <td>
+                    <button onClick={() => handleSelecTecnico(liquidacion)}>{tecnicoSelected.nombre === liquidacion.nombre ? 'Seleccionado' : 'Seleccionar'}</button>
+                  </td>
                 </tr>
                 {expandedRow === index && (
                   <tr>
@@ -111,7 +126,7 @@ const Liquidaciones = () => {
                               <td>{orden.PlazosReparacion?.plazo_reparacion}</td>
                               <td>{orden.MediosDePago?.medio_de_pago}</td>
                               <td>{orden.EstadosPresupuesto?.estado_presupuesto}</td>
-                              <td>{orden.total}</td>
+                              <td>{parseFloat(orden.total - (orden.total - orden.dpg) * orden.Empleado.porcentaje_arreglo).toFixed(2)}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -124,6 +139,11 @@ const Liquidaciones = () => {
         </tbody>
       </Table>
       <button onClick={handleLiquidarClick}>Liquidar</button>
+      {modal && (
+        <div className='modal'>
+          <Liquidacion tecnico={tecnicoSelected} setModal={setModal} />
+        </div>
+      )}
     </div>
   );
 };
