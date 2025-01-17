@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
-import Header from "../../../Header/Header";
-import { listaCajas } from "../../../../services/cajasService";
-import Cajas from "./Cajas";
-import CajaSeleccionada from "./CajaSeleccionada";
-import DatosCaja from "./DatosCaja";
-import { listaCobros } from "../../../../services/CobrosService";
+ 
+import { useEffect, useState } from 'react';
+import Header from '../../../Header/Header';
+import { listaCajas } from '../../../../services/cajasService';
+import Cajas from './Cajas';
+import CajaSeleccionada from './CajaSeleccionada';
+import DatosCaja from './DatosCaja';
+import { listaCobros } from '../../../../services/CobrosService';
+ 
 
 const Totalizador = () => {
   const [caja, setCaja] = useState([]);
