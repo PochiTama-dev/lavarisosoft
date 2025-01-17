@@ -1,25 +1,29 @@
-import { useState } from "react";
-import { jsPDF } from "jspdf";
-import cargar from "../../../images/cargarExcel.webp";
-import descargar from "../../../images/descargarExcel.webp";
-import editar from "../../../images/editar.webp";
+import { useEffect, useState } from "react";
+import {
+  listaPlanCuentas,
+  guardarPlanCuentas,
+} from "../../../services/planCuentasService";
 
 const PlanCuentas = () => {
-  const [data, setData] = useState([
-    {
-      id: "1",
-      name: "ACTIVO",
-      children: [{ id: "1.1", name: "ACTIVO CORRIENTE", children: [] }],
-    },
-    { id: "2", name: "PASIVO", children: [] },
-  ]);
-  const [selectedNode, setSelectedNode] = useState(null);
-  const [editingNode, setEditingNode] = useState(null);
-  const [newName, setNewName] = useState("");
+  const [data, setData] = useState([]);
   const [visibleNodes, setVisibleNodes] = useState({});
-  const [show, setShow] = useState(false);
+  const [selectedNodeId, setSelectedNodeId] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [newChildName, setNewChildName] = useState("");
+  const [parentForNewChild, setParentForNewChild] = useState(null);
 
-  const handleShow = () => setShow(!show);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await listaPlanCuentas();
+        setData(response);
+      } catch (error) {
+        console.error("Error al cargar datos:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const toggleVisibility = (nodeId) => {
     setVisibleNodes((prevState) => ({
@@ -28,134 +32,108 @@ const PlanCuentas = () => {
     }));
   };
 
-  const addNode = (parentId, name) => {
-    const addToTree = (nodes) => {
-      return nodes.map((node) => {
-        if (node.id === parentId) {
-          const newId = `${parentId}.${node.children.length + 1}`;
-          return {
-            ...node,
-            children: [...node.children, { id: newId, name, children: [] }],
-          };
-        }
-        if (node.children) {
-          return { ...node, children: addToTree(node.children) };
-        }
-        return node;
-      });
-    };
+  const getRootNodes = () => data.filter((node) => !node.parent_id);
 
-    setData(addToTree(data));
-    setVisibleNodes((prevState) => ({
-      ...prevState,
-      [parentId]: true,
-    }));
+  const getChildrenNodes = (parentId) =>
+    data.filter((node) => node.parent_id === parentId);
+
+  const addChildNode = async () => {
+    if (!newChildName.trim()) {
+      alert("El nombre del nuevo nodo no puede estar vacío.");
+      return;
+    }
+
+    try {
+      const parentChildren = getChildrenNodes(parentForNewChild);
+
+      const parentNode = data.find((node) => node.id === parentForNewChild);
+      const parentCode = parentNode?.codigo || "";
+
+      let newCode;
+      if (parentChildren.length > 0) {
+        const lastChildCode = parentChildren
+          .map((child) => child.codigo)
+          .sort()
+          .pop();
+
+        const parts = lastChildCode.split(".");
+        parts[parts.length - 1] = parseInt(parts[parts.length - 1], 10) + 1;
+        newCode = parts.join(".");
+      } else {
+        newCode = `${parentCode}.1`;
+      }
+
+      await guardarPlanCuentas({
+        parent_id: parentForNewChild,
+        nombre: newChildName,
+        codigo: newCode,
+      });
+
+      setModalVisible(false);
+      setNewChildName("");
+      alert(
+        "Nuevo nivel agregado correctamente. Recarga la página para ver los cambios."
+      );
+    } catch (error) {
+      console.error("Error al guardar el nuevo nodo:", error);
+      alert("Hubo un error al guardar el nuevo nodo.");
+    }
   };
 
-  const updateNodeName = (nodeId, name) => {
-    const updateTree = (nodes) => {
-      return nodes.map((node) => {
-        if (node.id === nodeId) {
-          return { ...node, name };
-        }
-        if (node.children) {
-          return { ...node, children: updateTree(node.children) };
-        }
-        return node;
-      });
-    };
-
-    setData(updateTree(data));
-    setEditingNode(null);
-  };
-
-  const exportToPDF = () => {
-    const doc = new jsPDF();
-
-    const traverseTree = (nodes, level = 0) => {
-      nodes.forEach((node) => {
-        doc.text(
-          `${"  ".repeat(level)}${node.id} - ${node.name}`,
-          10,
-          doc.autoTableEndPosY() + 10
-        );
-        if (node.children.length > 0) {
-          traverseTree(node.children, level + 1);
-        }
-      });
-    };
-
-    doc.text("Plan de Cuentas", 10, 10);
-    traverseTree(data);
-    doc.save("PlanDeCuentas.pdf");
-  };
-
-  const renderTree = (nodes) => {
+  const renderTree = (nodes, level = 0) => {
     return (
-      <ul>
+      <ul
+        style={{
+          listStyleType: "none",
+          margin: 0,
+          padding: 0,
+          display: "flex",
+          flexDirection: "column",
+          gap: "15px",
+        }}
+      >
         {nodes.map((node) => (
-          <li
-            key={node.id}
-            style={{ marginLeft: `${node.id.split(".").length * 10}px` }}
-          >
-            {editingNode === node.id ? (
-              <input
-                type="text"
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                onBlur={() => updateNodeName(node.id, newName)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    updateNodeName(node.id, newName);
-                  }
-                }}
-                autoFocus
-              />
-            ) : (
+          <li key={node.id} style={{ paddingLeft: `${level * 20}px` }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <span
                 onClick={() => {
-                  setSelectedNode(node);
+                  setSelectedNodeId(node.id);
                   toggleVisibility(node.id);
                 }}
                 style={{
                   cursor: "pointer",
-                  fontWeight: selectedNode === node ? "bold" : "normal",
+                  fontWeight: "500",
+                  fontSize: "20px",
                 }}
               >
-                {node.id} - {node.name}
+                {node.codigo} - {node.nombre}
               </span>
-            )}
-            <button
-              onClick={() => {
-                setEditingNode(node.id);
-                setNewName(node.name);
-              }}
-              style={{
-                border: "none",
-                cursor: "pointer",
-                fontWeight: "bold",
-                marginLeft: "10px",
-                margin: "2px",
-                width: "25px",
-                backgroundColor: "transparent",
-                position: "relative",
-                top: "8px",
-              }}
-            >
-              <img
-                src={editar}
-                alt="editar"
+
+              <button
+                onClick={() => {
+                  setParentForNewChild(node.id);
+                  setModalVisible(true);
+                }}
                 style={{
+                  backgroundColor: "transparent",
+                  color: "#69688c",
+                  border: "1px solid #69688c",
+                  borderRadius: "50%",
                   width: "30px",
                   height: "30px",
                   display: "flex",
+                  alignItems: "center",
                   justifyContent: "center",
+                  cursor: "pointer",
+                  fontSize: "30px",
                 }}
-              />
-            </button>
+              >
+                +
+              </button>
+            </div>
+
             {visibleNodes[node.id] &&
-              node.children.length > 0 &&
-              renderTree(node.children)}
+              renderTree(getChildrenNodes(node.id), level + 1)}
           </li>
         ))}
       </ul>
@@ -163,70 +141,85 @@ const PlanCuentas = () => {
   };
 
   return (
-    <div style={{ display: "flex", width: "70vw", height: "82vh" }}>
-      <div style={{ flex: 1, overflowY: "auto" }}>
-        <h1 style={{ color: "#283959", fontWeight: "bold", paddingTop: "3%" }}>
-          Plan de Cuentas
-        </h1>
-        {renderTree(data)}
-        {selectedNode && (
-          <div>
-            <h3>Gestionar: {selectedNode.name}</h3>
+    <div>
+      <h1 style={{ marginTop: "40px", marginBottom: "40px" }}>
+        Plan de Cuentas
+      </h1>
+      {data.length > 0 ? renderTree(getRootNodes()) : <p>Cargando datos...</p>}
+
+      {modalVisible && (
+        <div
+          style={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            backgroundColor: "white",
+            border: "1px solid #ccc",
+            borderRadius: "5px",
+            padding: "20px",
+            zIndex: 1000,
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+          }}
+        >
+          <h3>Agregar Nuevo Nivel</h3>
+          <input
+            type="text"
+            placeholder="Nombre del nuevo nivel"
+            value={newChildName}
+            onChange={(e) => setNewChildName(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "10px",
+              marginBottom: "10px",
+              borderRadius: "5px",
+              border: "1px solid #ccc",
+            }}
+          />
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
             <button
-              onClick={() =>
-                addNode(
-                  selectedNode.id,
-                  `Nuevo Nivel ${selectedNode.children.length + 1}`
-                )
-              }
+              onClick={addChildNode}
               style={{
-                borderRadius: "5px",
                 backgroundColor: "#69688c",
                 color: "white",
+                padding: "10px 10px",
+                border: "none",
+                borderRadius: "5px",
                 cursor: "pointer",
-                fontWeight: "bold",
-                marginBottom: "2%",
-                padding: "5px 10px",
               }}
             >
-              Agregar Nivel
+              Guardar
+            </button>
+            <button
+              onClick={() => setModalVisible(false)}
+              style={{
+                backgroundColor: "gray",
+                color: "white",
+                padding: "10px 10px",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              Cancelar
             </button>
           </div>
-        )}
-        <ul className="d-flex justify-content-left imagenes">
-          <div className="text-end">
-            <button className="boton3Puntos" onClick={handleShow}>
-              <span></span>
-              <span></span>
-              <span></span>
-            </button>
-          </div>
-          {show && (
-            <div className="d-flex inventario-botones">
-              <li>
-                <img src={editar} alt="editar" />
-                <span>Editar</span>
-              </li>
-              <li onClick={exportToPDF}>
-                <img src={descargar} alt="Descargar el excel" />
-                <span>Descargar PDF</span>
-              </li>
-              <li>
-                <img src={cargar} alt="Carga de excel" />
-                <span>Descarga de Excel</span>
-              </li>
-              <li className="d-flex">
-                <div className="divMas">
-                  <span className="spanMas">+</span>
-                </div>
-                <span style={{ paddingLeft: "4%", minWidth: "160px" }}>
-                  Carga de Excel
-                </span>
-              </li>
-            </div>
-          )}
-        </ul>
-      </div>
+        </div>
+      )}
+      {modalVisible && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.3)",
+            zIndex: 999,
+          }}
+          onClick={() => setModalVisible(false)}
+        ></div>
+      )}
     </div>
   );
 };
