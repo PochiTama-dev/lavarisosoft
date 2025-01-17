@@ -20,17 +20,17 @@ const Facturas = () => {
         const [
           // compras,
           ventas,
-          proveedores,
+          // proveedores,
         ] = await Promise.all([
           // listaFacturasCompras(),
           listaFacturasVentas(),
-          listaFacturasProveedores(),
+          // listaFacturasProveedores(),
         ]);
 
         setFacturas([
           // ...compras,
           ...ventas,
-          ...proveedores,
+          // ...proveedores,
         ]);
       } catch (err) {
         console.error("Error fetching facturas data:", err);
@@ -78,8 +78,6 @@ const Facturas = () => {
           <tr>
             <th>Fecha</th>
             <th>N° de orden</th>
-            <th>Técnico D.</th>
-            <th>Técnico T.</th>
             <th>Cliente</th>
             <th>Monto</th>
             <th>Medio de pago</th>
@@ -96,8 +94,6 @@ const Facturas = () => {
                 {factura.fecha_ingreso || factura.created_at.slice(0, 10)}
               </td>
               <td>{factura.nro_comprobante || factura.id}</td>
-              <td>{factura.tecnicoD}</td>
-              <td>{factura.tecnicoT}</td>
               <td>
                 {factura.Cliente
                   ? factura.Cliente.nombre + " " + factura.Cliente?.apellido

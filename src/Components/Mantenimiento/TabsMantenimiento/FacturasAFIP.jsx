@@ -12,15 +12,13 @@ const FacturasAFIP = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
+  /*Lo dejo armado así por si se tienen que agregar más fetch de otras tablas de facturas*/
   useEffect(() => {
     const fetchFacturas = async () => {
       try {
-        const [ventas, proveedores] = await Promise.all([
-          listaFacturasVentas(),
-          listaFacturasProveedores(),
-        ]);
+        const [facturas] = await Promise.all([listaFacturasVentas()]);
 
-        const facturasFiltradas = [...ventas, ...proveedores].filter(
+        const facturasFiltradas = [...facturas].filter(
           (factura) => factura?.caja === 7
         );
 
@@ -86,7 +84,7 @@ const FacturasAFIP = () => {
               <td>{factura.id}</td>
               <td>{factura.Proveedore?.nombre}</td>
               <td>{factura.domicilio}</td>
-              <td>{factura.cuitCuilCdi}</td>
+              <td>{factura.cuit_cliente}</td>
               <td>{factura.importe || factura.total}</td>
               <td>
                 {factura.imagen_comprobante ? (
