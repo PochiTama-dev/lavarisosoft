@@ -26,6 +26,7 @@ const Ubicaciones = () => {
   const ref = useRef();
 
   const [tecnicosStatus, setTecnicosStatus] = useState({});
+  // eslint-disable-next-line no-unused-vars
   const [loggedInUsers, setLoggedInUsers] = useState(new Set());
   const [tecCoordinates, setTecCoordinates] = useState();
 

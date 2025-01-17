@@ -5,7 +5,7 @@
 .ventas-tabs {
   display: flex;
   flex-direction: row;
-  gap: 5%;
+ 
   padding: 20px;
   margin-top: 5%;
 }
