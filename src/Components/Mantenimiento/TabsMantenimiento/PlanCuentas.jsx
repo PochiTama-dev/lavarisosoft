@@ -7,21 +7,20 @@ import {
 const PlanCuentas = () => {
   const [data, setData] = useState([]);
   const [visibleNodes, setVisibleNodes] = useState({});
-  const [selectedNodeId, setSelectedNodeId] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [newChildName, setNewChildName] = useState("");
   const [parentForNewChild, setParentForNewChild] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await listaPlanCuentas();
-        setData(response);
-      } catch (error) {
-        console.error("Error al cargar datos:", error);
-      }
-    };
+  const fetchData = async () => {
+    try {
+      const response = await listaPlanCuentas();
+      setData(response);
+    } catch (error) {
+      console.error("Error al cargar datos:", error);
+    }
+  };
 
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -44,23 +43,36 @@ const PlanCuentas = () => {
     }
 
     try {
-      const parentChildren = getChildrenNodes(parentForNewChild);
-
-      const parentNode = data.find((node) => node.id === parentForNewChild);
-      const parentCode = parentNode?.codigo || "";
-
       let newCode;
-      if (parentChildren.length > 0) {
-        const lastChildCode = parentChildren
-          .map((child) => child.codigo)
-          .sort()
-          .pop();
+      if (parentForNewChild === null) {
+        const rootNodes = getRootNodes();
+        if (rootNodes.length > 0) {
+          const lastRootCode = rootNodes
+            .map((node) => node.codigo)
+            .sort()
+            .pop();
 
-        const parts = lastChildCode.split(".");
-        parts[parts.length - 1] = parseInt(parts[parts.length - 1], 10) + 1;
-        newCode = parts.join(".");
+          newCode = (parseInt(lastRootCode, 10) + 1).toString();
+        } else {
+          newCode = "1";
+        }
       } else {
-        newCode = `${parentCode}.1`;
+        const parentChildren = getChildrenNodes(parentForNewChild);
+        const parentNode = data.find((node) => node.id === parentForNewChild);
+        const parentCode = parentNode?.codigo || "";
+
+        if (parentChildren.length > 0) {
+          const lastChildCode = parentChildren
+            .map((child) => child.codigo)
+            .sort()
+            .pop();
+
+          const parts = lastChildCode.split(".");
+          parts[parts.length - 1] = parseInt(parts[parts.length - 1], 10) + 1;
+          newCode = parts.join(".");
+        } else {
+          newCode = `${parentCode}.1`;
+        }
       }
 
       await guardarPlanCuentas({
@@ -71,9 +83,8 @@ const PlanCuentas = () => {
 
       setModalVisible(false);
       setNewChildName("");
-      alert(
-        "Nuevo nivel agregado correctamente. Recarga la página para ver los cambios."
-      );
+
+      await fetchData();
     } catch (error) {
       console.error("Error al guardar el nuevo nodo:", error);
       alert("Hubo un error al guardar el nuevo nodo.");
@@ -96,10 +107,7 @@ const PlanCuentas = () => {
           <li key={node.id} style={{ paddingLeft: `${level * 20}px` }}>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <span
-                onClick={() => {
-                  setSelectedNodeId(node.id);
-                  toggleVisibility(node.id);
-                }}
+                onClick={() => toggleVisibility(node.id)}
                 style={{
                   cursor: "pointer",
                   fontWeight: "500",
@@ -145,8 +153,26 @@ const PlanCuentas = () => {
       <h1 style={{ marginTop: "40px", marginBottom: "40px" }}>
         Plan de Cuentas
       </h1>
+
       {data.length > 0 ? renderTree(getRootNodes()) : <p>Cargando datos...</p>}
 
+      <button
+        onClick={() => {
+          setParentForNewChild(null);
+          setModalVisible(true);
+        }}
+        style={{
+          backgroundColor: "#69688c",
+          color: "white",
+          padding: "10px 20px",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+          marginTop: "20px",
+        }}
+      >
+        Agregar Plan de Cuentas Principal
+      </button>
       {modalVisible && (
         <div
           style={{
@@ -162,7 +188,11 @@ const PlanCuentas = () => {
             boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
           }}
         >
-          <h3>Agregar Nuevo Nivel</h3>
+          <h3>
+            {parentForNewChild === null
+              ? "Agregar Plan de Cuentas Principal"
+              : "Agregar Nuevo Nivel"}
+          </h3>
           <input
             type="text"
             placeholder="Nombre del nuevo nivel"
