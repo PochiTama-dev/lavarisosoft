@@ -158,21 +158,21 @@ const LibroIVA = () => {
           </thead>
           <tbody>
             {sortedData(activeTab === "proveedores" ? facturasCompra : facturasVenta).map((item, index) => (
-              <tr key={index}>
-<td>
-  {dayjs(item.created_at).format('DD/MM/YYYY')}
-</td>       
-<td>{activeTab === "proveedores" ? item.comprobante : item.tipo_comprobante} </td>
-             <td>{activeTab === "proveedores" ? item.comprobante : item.nro_comprobante} </td>
-                <td>{activeTab === "proveedores" ? item.Proveedore.nombre : `${item.Cliente?.nombre || ''} ${item.Cliente?.apellido || ''}`.trim()}</td>
-                <td>{activeTab === "proveedores" ? item.Proveedore.cuit : item.cuit_cliente}</td>
-                <td>{item.descripcion}</td>
-                <td>{activeTab === "proveedores" ? item.importe : item.importe} </td>
-                <td>{activeTab === "proveedores" ? item.iva_alicuota : item.iva_alicuota}% </td>
-
-                <td>${activeTab === "proveedores" ? item.iva_alicuota : (item.importe * (item.iva_alicuota /100))} </td>
-                <td>${activeTab === "proveedores" ? item.importe : item.total} </td>
-              </tr>
+   <tr key={index}>
+   <td>
+     {dayjs(item.created_at).format('DD/MM/YYYY')}
+   </td>       
+   <td>{activeTab === "proveedores" ? item.comprobante : item.tipo_comprobante} </td>
+                <td>{activeTab === "proveedores" ? item.comprobante : item.nro_comprobante} </td>
+                   <td>{activeTab === "proveedores" ? item.Proveedore.nombre : `${item.Cliente?.nombre || ''} ${item.Cliente?.apellido || ''}`.trim()}</td>
+                   <td>{activeTab === "proveedores" ? item.Proveedore.cuit : item.cuit_cliente}</td>
+                   <td>{item.descripcion}</td>
+                   <td>{activeTab === "proveedores" ? item.importe : item.importe} </td>
+                   <td>{activeTab === "proveedores" ? item.iva_alicuota : item.iva_alicuota}% </td>
+   
+                   <td>${activeTab === "proveedores" ? item.iva_alicuota : (item.importe * (item.iva_alicuota /100))} </td>
+                   <td>${activeTab === "proveedores" ? item.importe : item.total} </td>
+                 </tr>
             ))}
           </tbody>
         </table>
