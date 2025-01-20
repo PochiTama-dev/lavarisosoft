@@ -19,7 +19,7 @@ const FacturasAFIP = () => {
         const [facturas] = await Promise.all([listaFacturasVentas()]);
 
         const facturasFiltradas = [...facturas].filter(
-          (factura) => factura?.caja === 7
+          (factura) => factura?.id_caja === 7
         );
 
         setFacturas(facturasFiltradas);
@@ -68,7 +68,6 @@ const FacturasAFIP = () => {
         <thead>
           <tr>
             <th>N° de orden</th>
-            <th>Nombre del proveedor</th>
             <th>Domicilio</th>
             <th>CUIT/CUIL/CDI</th>
             <th>Monto</th>
@@ -82,9 +81,8 @@ const FacturasAFIP = () => {
               className={index % 2 === 0 ? "row-even" : "row-white"}
             >
               <td>{factura.id}</td>
-              <td>{factura.Proveedore?.nombre}</td>
-              <td>{factura.domicilio}</td>
-              <td>{factura.cuit_cliente}</td>
+              <td>{factura.Cliente?.direccion}</td>
+              <td>{factura.Cliente?.cuil}</td>
               <td>{factura.importe || factura.total}</td>
               <td>
                 {factura.imagen_comprobante ? (
