@@ -1,29 +1,39 @@
 import './mantenimiento.css';
 import { object, func } from 'prop-types';
-//import cash from '../../assets/cash-circulo.png';
-//import edit from '../../assets/edit.png';
+import RemitoLiquidacion from './RemitoLiquidacion';
+import { useState } from 'react';
 const Liquidacion = ({ tecnico, setModal }) => {
-  const handleLiquidate = () => {
-    // Lógica para manejar la liquidación
-  };
+  const [newModal, setNewModal] = useState(false);
 
+  const handleLiquidate = () => {
+    setNewModal(!newModal);
+  };
   return (
     <div className='liquidacion rounded'>
-      <div className='d-flex justify-content-around'>
-        <h1>Liquidación {tecnico.nombre}</h1>
-        <h1 className='pointer' onClick={() => setModal(false)}>
-          x
-        </h1>
-      </div>
-      <div className='liq-table d-flex justify-content-evenly'>
+      {!newModal && (
+        <>
+          <div className='d-flex justify-content-around'>
+            <h1>Liquidación {tecnico.nombre}</h1>
+            <h1 className='pointer' onClick={() => setModal(false)}>
+              x
+            </h1>
+          </div>
+          <div className='liq-table d-flex justify-content-evenly'>
+            <div>
+              <h2>Total:</h2>
+            </div>
+            <div>
+              <h3>{tecnico.total}</h3>
+            </div>
+          </div>
+          <button onClick={handleLiquidate}>Liquidar</button>
+        </>
+      )}
+      {newModal && (
         <div>
-          <h2>Total:</h2>
+          <RemitoLiquidacion tecnico={tecnico} setModal={setNewModal} />
         </div>
-        <div>
-          <h3>{tecnico.total}</h3>
-        </div>
-      </div>
-      <button onClick={handleLiquidate}>Liquidar</button>
+      )}
     </div>
   );
 };
