@@ -9,8 +9,10 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import expandIcon from "../../../assets/expand_icon.png";
 import collapseIcon from "../../../assets/collapse_icon.png";
+import { useCustomContext } from "../../../hooks/context";
 
 const PlanCuentas = () => {
+  const { handleNavigate } = useCustomContext();
   const [data, setData] = useState([]);
   const [visibleNodes, setVisibleNodes] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
@@ -312,6 +314,19 @@ const PlanCuentas = () => {
           }}
         >
           Exportar a PDF
+        </button>
+        <button
+          onClick={() => handleNavigate("agregarPlanCuentasExcel")}
+          style={{
+            backgroundColor: "#69688c",
+            color: "white",
+            padding: "10px 20px",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          Agregar datos mediante PDF
         </button>
       </div>
 
