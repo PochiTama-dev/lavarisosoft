@@ -71,7 +71,7 @@ const FacturasAFIP = () => {
             <th>Domicilio</th>
             <th>CUIT/CUIL/CDI</th>
             <th>Monto</th>
-            <th>Factura</th>
+            {/* <th>Factura</th> */}
           </tr>
         </thead>
         <tbody>
@@ -80,11 +80,11 @@ const FacturasAFIP = () => {
               key={index}
               className={index % 2 === 0 ? "row-even" : "row-white"}
             >
-              <td>{factura.id}</td>
+              <td>#{factura.nro_comprobante || factura.id}</td>
               <td>{factura.Cliente?.direccion}</td>
               <td>{factura.Cliente?.cuil}</td>
               <td>{factura.importe || factura.total}</td>
-              <td>
+              {/* <td>
                 {factura.imagen_comprobante ? (
                   <img
                     src={`data:image/png;base64,${bufferToBase64(
@@ -101,7 +101,7 @@ const FacturasAFIP = () => {
                 ) : (
                   "No hay imagen disponible"
                 )}
-              </td>
+              </td> */}
             </tr>
           ))}
         </tbody>
