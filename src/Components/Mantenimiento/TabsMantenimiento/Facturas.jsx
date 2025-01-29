@@ -76,12 +76,12 @@ const Facturas = () => {
       <Table>
         <thead>
           <tr>
+            <th>Operación</th>
             <th>Fecha</th>
             <th>N° de orden</th>
             <th>Cliente</th>
             <th>Monto</th>
-            <th>Medio de pago</th>
-            <th>Factura</th>
+            {/* <th>Factura</th> */}
           </tr>
         </thead>
         <tbody>
@@ -90,18 +90,18 @@ const Facturas = () => {
               key={index}
               className={index % 2 === 0 ? "row-even" : "row-white"}
             >
+              <td>{factura.descripcion}</td>
               <td>
                 {factura.fecha_ingreso || factura.created_at.slice(0, 10)}
               </td>
-              <td>{factura.nro_comprobante || factura.id}</td>
+              <td>#{factura.nro_comprobante || factura.id}</td>
               <td>
                 {factura.Cliente
                   ? factura.Cliente.nombre + " " + factura.Cliente?.apellido
                   : "Factura de proveedor"}
               </td>
               <td>{factura.importe || factura.total}</td>
-              <td>{factura.medioPago}</td>
-              <td>
+              {/* <td>
                 {factura.imagen_comprobante ? (
                   <img
                     src={`data:image/png;base64,${bufferToBase64(
@@ -118,7 +118,7 @@ const Facturas = () => {
                 ) : (
                   "No hay imagen disponible"
                 )}
-              </td>
+              </td> */}
             </tr>
           ))}
         </tbody>
