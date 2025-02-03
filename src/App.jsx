@@ -31,7 +31,7 @@ import EditProveedor from "./Components/Mantenimiento/EditProveedor";
 import Liquidacion from "./Components/Mantenimiento/Liquidacion";
 import MantEditRemito from "./Components/Mantenimiento/MantEditRemito";
 import MantFacturas from "./Components/Mantenimiento/MantFacturas";
-import MantRemito from "./Components/Mantenimiento/MantRemito";
+import FacturasRemito from "./Components/Mantenimiento/FacturasRemito";
 import NuevaCaja from "./Components/Mantenimiento/NuevaCaja";
 import NuevoProveedor from "./Components/Mantenimiento/NuevoProveedor";
 import Agenda from "./pages/Agenda/Agenda.jsx";
@@ -90,7 +90,7 @@ function App() {
         <Route path="/ventas/cargarFactura" element={<CargarFactura />} />
         <Route path="/gastos" element={<Gastos />} />
         <Route path="/VentasRemito" element={<RemitoVentas />} />
-        <Route path="/mantRemito" element={<MantRemito />} />
+        <Route path="/facturasremito" element={<FacturasRemito />} />
         <Route path="/mantEditRemito" element={<MantEditRemito />} />
         <Route path="/remitoOrden" element={<RemitoOrden />} />
         <Route path="/mantFactura" element={<MantFacturas />} />
