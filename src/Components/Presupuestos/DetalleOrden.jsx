@@ -1,52 +1,86 @@
-const DetalleOrden = ({ comisiones, cajas }) => {
-  console.log('comisiones:', comisiones);
-  console.log('cajas:', cajas);
+const DetalleOrdenPresupuesto = ({ orden, cajaSeleccionada, onCajaSelect }) => {
+  if (!orden) {
+    return (
+      <div className="detalle-placeholder">
+        Selecciona una orden para ver los detalles
+      </div>
+    );
+  }
 
   return (
-    <div className="col-10">
-      <ul>
-        {Object.keys(comisiones).map((key) =>
-          comisiones[key] ? (
-            <li key={key} className="d-flex justify-content-between py-2 grey-text">
-              <span>{key}:</span>
-              <input type="text" value="$85790" disabled className="rounded text-center grey-text" />
-            </li>
-          ) : null
-        )}
-      </ul>
-      <hr className="custom-hr" />
-      <ul>
-        <li className="d-flex justify-content-between py-2 grey-text">
-          <span>Total:</span>
-          <input type="text" value='$105790' disabled className="rounded text-center grey-text" />
-        </li>
-        {Object.keys(cajas).map((key) =>
-          cajas[key] ? (
-            <li key={key} className="d-flex justify-content-between py-2 grey-text">
-              <span>{key}:</span>
-              <input type="text" value="$85790" disabled className="rounded text-center grey-text" />
-            </li>
-          ) : null
-        )}
-        <li className="d-flex justify-content-between py-2 grey-text">
-          <span>Codigo de imp.:</span>
-          <input type="text" value='$1.111.111' disabled className="rounded text-center grey-text" />
-        </li>
-        <li className="d-flex justify-content-between py-2 grey-text">
-          <span>Técnico domicilio:</span>
-          <input type="text" value='$105790' disabled className="rounded text-center grey-text" />
-        </li>
-        <li className="d-flex justify-content-between py-2 grey-text">
-          <span>Técnico taller:</span>
-          <input type="text" value='$84632' disabled className="rounded text-center grey-text" />
-        </li>
-        <li className="d-flex justify-content-between py-2 grey-text">
-          <span>Técnico entrega:</span>
-          <input type="text" value='$5631' disabled className="rounded text-center grey-text" />
-        </li>
-      </ul>
+    <div className="detalle-orden-container">
+      <div className="detalle-header">
+        <h3>Orden #{orden.numero_orden}</h3>
+        <span className="estado-orden">{orden.TiposEstado?.tipo_estado}</span>
+      </div>
+
+      <div className="detalle-secciones">
+        <section className="seccion-cliente">
+          <h4>Datos del Cliente</h4>
+          <div className="datos-grid">
+            <p>
+              <strong>Nombre:</strong> {orden.Cliente?.nombre}{" "}
+              {orden.Cliente?.apellido}
+            </p>
+            <p>
+              <strong>CUIL/CUIT:</strong> {orden.Cliente?.cuil}
+            </p>
+            <p>
+              <strong>Teléfono:</strong> {orden.Cliente?.telefono}
+            </p>
+            <p>
+              <strong>Email:</strong> {orden.Cliente?.email}
+            </p>
+          </div>
+        </section>
+
+        <section className="seccion-equipo">
+          <h4>Datos del Equipo</h4>
+          <div className="datos-grid">
+            <p>
+              <strong>Equipo:</strong> {orden.equipo}
+            </p>
+            <p>
+              <strong>Marca:</strong> {orden.marca}
+            </p>
+            <p>
+              <strong>Modelo:</strong> {orden.modelo}
+            </p>
+            <p>
+              <strong>Diagnóstico:</strong> {orden.diagnostico}
+            </p>
+          </div>
+        </section>
+
+        <section className="seccion-facturacion">
+          <h4>Datos de Facturación</h4>
+          <div className="caja-selector">
+            <p>
+              <strong>Caja Seleccionada:</strong>
+            </p>
+            {cajaSeleccionada ? (
+              <div className="caja-info">
+                <span>{cajaSeleccionada.denominacion}</span>
+                <button
+                  className="btn-generar-factura"
+                  onClick={() => onCajaSelect(null)}
+                >
+                  Cambiar Caja
+                </button>
+              </div>
+            ) : (
+              <p className="sin-caja">
+                Selecciona una caja para generar la factura
+              </p>
+            )}
+          </div>
+          <button className="btn-generar-factura" disabled={!cajaSeleccionada}>
+            Generar Factura
+          </button>
+        </section>
+      </div>
     </div>
   );
 };
 
-export default DetalleOrden;
+export default DetalleOrdenPresupuesto;
