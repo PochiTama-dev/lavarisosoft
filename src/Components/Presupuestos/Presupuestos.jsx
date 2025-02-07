@@ -106,9 +106,9 @@ const Presupuestos = () => {
   };
 
   const handleOrdenSelect = (orden) => {
-    console.log("Orden seleccionada:", orden);
-    setOrdenSeleccionada(orden);
-    // Limpiar caja seleccionada al cambiar de orden
+    const ordenCompleta = ordenes.find((o) => o.id === orden.id);
+    console.log("Orden seleccionada:", ordenCompleta);
+    setOrdenSeleccionada(ordenCompleta);
     setCajaSeleccionada(null);
   };
 
@@ -199,16 +199,15 @@ const Presupuestos = () => {
                     >
                       {orden.TiposEstado?.tipo_estado}
                     </span>
-                    {orden.TiposEstado?.tipo_estado === "Aprobada" && (
+                    {/* {orden.TiposEstado?.tipo_estado === "Aprobada" && (
                       <span className="edit-icon">✎</span>
-                    )}
+                    )} */}
                   </div>
                 ))}
               </div>
             </div>
           </div>
         </div>
-        {/* End Listas */}
         {/* Form */}
         <div className="col-5">
           <div className="row align-items-center">
@@ -242,39 +241,42 @@ const Presupuestos = () => {
             </button>
           </div> */}
         </div>
-        {/* End Form */}
         {/* Desplegables */}
         <div className="col-3">
           <div className="presupuestos-right-container">
-            <h3>Comisiones</h3>
-            {Object.keys(comisiones).map((comision) => (
-              <div
-                key={comision}
-                className={`item ${comisiones[comision] ? "active" : ""}`}
-              >
-                <span>{comision}</span>
-                <button onClick={() => toggleComision(comision)}>
-                  {comisiones[comision] ? "-" : "+"}
-                </button>
-              </div>
-            ))}
-
-            <h3>Cajas</h3>
-            {cajas?.map((caja) => (
-              <div
-                key={caja.id}
-                className={`item ${
-                  cajaSeleccionada?.id === caja.id ? "active" : ""
-                }`}
-                onClick={() => handleCajaSelect(caja)}
-              >
-                <span>{caja.denominacion}</span>
-                <button>{cajaSeleccionada?.id === caja.id ? "-" : "+"}</button>
-              </div>
-            ))}
+            <div className="presupuestos-right-container-top">
+              <h3 className="list-heading">Comisiones</h3>
+              {Object.keys(comisiones).map((comision) => (
+                <div
+                  key={comision}
+                  className={`item ${comisiones[comision] ? "active" : ""}`}
+                >
+                  <span>{comision}</span>
+                  <button onClick={() => toggleComision(comision)}>
+                    {comisiones[comision] ? "-" : "+"}
+                  </button>
+                </div>
+              ))}
+            </div>
+            <div className="presupuestos-right-container-bottom">
+              <h3 className="list-heading">Cajas</h3>
+              {cajas?.map((caja) => (
+                <div
+                  key={caja.id}
+                  className={`item ${
+                    cajaSeleccionada?.id === caja.id ? "active" : ""
+                  }`}
+                  onClick={() => handleCajaSelect(caja)}
+                >
+                  <span>{caja.denominacion}</span>
+                  <button>
+                    {cajaSeleccionada?.id === caja.id ? "-" : "+"}
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-        {/* End Desplegables */}
       </div>
     </div>
   );

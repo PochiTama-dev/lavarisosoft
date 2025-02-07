@@ -25,19 +25,33 @@ const DetalleOrdenPresupuesto = ({ orden, cajaSeleccionada }) => {
 
         <div className="campo">
           <label>Viáticos:</label>
-          <input type="text" value={orden.viaticos || "$400"} readOnly />
+          <input
+            type="text"
+            value={orden.Presupuesto?.viaticos || "$400"}
+            readOnly
+          />
         </div>
 
         <div className="separador"></div>
 
         <div className="campo">
           <label>Total:</label>
-          <input type="text" value={orden.total || "$105790"} readOnly />
+          <input
+            type="text"
+            value={orden.Presupuesto?.total || "$105790"}
+            readOnly
+          />
         </div>
 
         <div className="campo">
-          <label>Caja 1:</label>
-          <input type="text" value={orden.caja1 || "$84632"} readOnly />
+          <label>
+            {cajaSeleccionada?.denominacion ? "Caja:" : "Seleccionar una caja"}
+          </label>
+          <input
+            type="text"
+            value={cajaSeleccionada?.denominacion || ""}
+            readOnly
+          />
         </div>
 
         <div className="campo">
