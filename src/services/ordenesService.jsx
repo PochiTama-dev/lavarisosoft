@@ -7,30 +7,36 @@ export const ordenes = async () => {
     if (ordenes[0] !== undefined) {
       return ordenes;
     } else {
-      console.log('Aún no se registra ninguna orden...');
+      console.log("Aún no se registra ninguna orden...");
       return false;
     }
   } catch (error) {
-    console.error("Error, no se encontraron ordenes en la base de datos....", error);
+    console.error(
+      "Error, no se encontraron ordenes en la base de datos....",
+      error
+    );
   }
-  };
-  
+};
+
 export const listadoOrdenes = async () => {
   try {
-    const response = await fetch(`${API_URL}/ordenes/listado`);
+    const response = await fetch(`${API_URL}/ordenes`);
     const ordenes = await response.json();
     if (ordenes[0] !== undefined) {
       console.log(`Se encontró un listado con ${ordenes.length} ordenes!!`);
       return ordenes;
     } else {
-      console.log('Aún no se registra ninguna ordene...');
+      console.log("Aún no se registra ninguna ordene...");
       return false;
     }
   } catch (error) {
-    console.error("Error, no se encontraron ordenes en la base de datos....", error);
+    console.error(
+      "Error, no se encontraron ordenes en la base de datos....",
+      error
+    );
   }
 };
-  
+
 export const obtenerOrden = async (id) => {
   try {
     const response = await fetch(`${API_URL}/ordenes/${id}`);
@@ -49,14 +55,14 @@ export const obtenerOrden = async (id) => {
 
 export const guardarOrden = async (orden) => {
   try {
-    console.log('orden:', orden);
+    console.log("orden:", orden);
     const response = await fetch(`${API_URL}/ordenes/guardar`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(orden)
+      body: JSON.stringify(orden),
     });
-    console.log('response: ', response);
-    console.log('json orden: ', JSON.stringify(orden));
+    console.log("response: ", response);
+    console.log("json orden: ", JSON.stringify(orden));
     const result = await response.json();
     if (result) {
       console.log("Orden guardada con exito");
