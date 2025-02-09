@@ -4,6 +4,8 @@ import { listaFacturasProveedores } from "../../../services/facturaProveedoresSe
 import Table from "react-bootstrap/Table";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import { useNavigate } from "react-router-dom";
+import eye from "../../../assets/eye.svg";
 
 const FacturasAFIP = () => {
   const [facturas, setFacturas] = useState([]);
@@ -11,17 +13,16 @@ const FacturasAFIP = () => {
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const navigate = useNavigate();
 
+  /*Lo dejo armado así por si se tienen que agregar más fetch de otras tablas de facturas*/
   useEffect(() => {
     const fetchFacturas = async () => {
       try {
-        const [ventas, proveedores] = await Promise.all([
-          listaFacturasVentas(),
-          listaFacturasProveedores(),
-        ]);
+        const [facturas] = await Promise.all([listaFacturasVentas()]);
 
-        const facturasFiltradas = [...ventas, ...proveedores].filter(
-          (factura) => factura?.caja === 7
+        const facturasFiltradas = [...facturas].filter(
+          (factura) => factura?.id_caja === 7
         );
 
         setFacturas(facturasFiltradas);
@@ -36,24 +37,8 @@ const FacturasAFIP = () => {
     fetchFacturas();
   }, []);
 
-  const bufferToBase64 = (buffer) => {
-    return btoa(
-      new Uint8Array(buffer).reduce(
-        (data, byte) => data + String.fromCharCode(byte),
-        ""
-      )
-    );
-  };
-
-  const verFactura = (buffer) => {
-    const base64Image = `data:image/jpeg;base64,${bufferToBase64(buffer)}`;
-    setSelectedImage(base64Image);
-    setShowModal(true);
-  };
-
-  const cerrarModal = () => {
-    setShowModal(false);
-    setSelectedImage(null);
+  const verFactura = (factura) => {
+    navigate("/facturasremito", { state: { factura } });
   };
 
   if (loading) {
@@ -70,7 +55,6 @@ const FacturasAFIP = () => {
         <thead>
           <tr>
             <th>N° de orden</th>
-            <th>Nombre del proveedor</th>
             <th>Domicilio</th>
             <th>CUIT/CUIL/CDI</th>
             <th>Monto</th>
@@ -83,59 +67,26 @@ const FacturasAFIP = () => {
               key={index}
               className={index % 2 === 0 ? "row-even" : "row-white"}
             >
-              <td>{factura.id}</td>
-              <td>{factura.Proveedore?.nombre}</td>
-              <td>{factura.domicilio}</td>
-              <td>{factura.cuitCuilCdi}</td>
-              <td>{factura.importe || factura.total}</td>
+              <td>#{factura.nro_comprobante || factura.id}</td>
+              <td>{factura.Cliente?.direccion}</td>
+              <td>{factura.Cliente?.cuil}</td>
+              <td>{factura.total}</td>
               <td>
-                {factura.imagen_comprobante ? (
-                  <img
-                    src={`data:image/png;base64,${bufferToBase64(
-                      factura.imagen_comprobante?.data
-                    )}`}
-                    alt="Ver factura"
-                    style={{
-                      width: "32px",
-                      height: "32px",
-                      cursor: "pointer",
-                    }}
-                    onClick={() => verFactura(factura.imagen_comprobante?.data)}
-                  />
-                ) : (
-                  "No hay imagen disponible"
-                )}
+                <img
+                  src={eye}
+                  alt="Ver factura"
+                  style={{
+                    width: "32px",
+                    height: "32px",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => verFactura(factura)}
+                />
               </td>
             </tr>
           ))}
         </tbody>
       </Table>
-      <Modal
-        className="modal-imagen-comprobante"
-        show={showModal}
-        onHide={cerrarModal}
-        centered
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Imagen del Comprobante</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {selectedImage ? (
-            <img
-              src={selectedImage}
-              alt="Comprobante"
-              style={{ width: "100%" }}
-            />
-          ) : (
-            <p>No se pudo cargar la imagen.</p>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={cerrarModal}>
-            Cerrar
-          </Button>
-        </Modal.Footer>
-      </Modal>
     </div>
   );
 };

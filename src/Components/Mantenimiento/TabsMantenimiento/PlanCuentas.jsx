@@ -1,21 +1,39 @@
-import { useState } from "react";
-import { jsPDF } from "jspdf";
-import cargar from "../../../images/cargarExcel.webp";
-import descargar from "../../../images/descargarExcel.webp";
-import editar from "../../../images/editar.webp";
+import { useEffect, useState } from "react";
+import {
+  listaPlanCuentas,
+  guardarPlanCuentas,
+  modificarPlanCuentas,
+  eliminarPlanCuentas,
+} from "../../../services/planCuentasService";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import expandIcon from "../../../assets/expand_icon.png";
+import collapseIcon from "../../../assets/collapse_icon.png";
+import { useCustomContext } from "../../../hooks/context";
 
 const PlanCuentas = () => {
-  const [data, setData] = useState([
-    { id: "1", name: "Activo", children: [] },
-    { id: "2", name: "Pasivo", children: [] },
-  ]);
-  const [selectedNode, setSelectedNode] = useState(null);
-  const [editingNode, setEditingNode] = useState(null);
-  const [newName, setNewName] = useState("");
+  const { handleNavigate } = useCustomContext();
+  const [data, setData] = useState([]);
   const [visibleNodes, setVisibleNodes] = useState({});
-  const [show, setShow] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [newChildName, setNewChildName] = useState("");
+  const [parentForNewChild, setParentForNewChild] = useState(null);
+  const [editNode, setEditNode] = useState(null);
+  const [editNodeName, setEditNodeName] = useState("");
+  const [allExpanded, setAllExpanded] = useState(false);
 
-  const handleShow = () => setShow(!show);
+  const fetchData = async () => {
+    try {
+      const response = await listaPlanCuentas();
+      setData(response);
+    } catch (error) {
+      console.error("Error al cargar datos:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const toggleVisibility = (nodeId) => {
     setVisibleNodes((prevState) => ({
@@ -24,132 +42,239 @@ const PlanCuentas = () => {
     }));
   };
 
-  const addNode = (parentId, name) => {
-    const addToTree = (nodes) => {
-      return nodes.map((node) => {
-        if (node.id === parentId) {
-          const newId = `${parentId}.${node.children.length + 1}`;
-          return {
-            ...node,
-            children: [...node.children, { id: newId, name, children: [] }],
-          };
-        }
-        if (node.children) {
-          return { ...node, children: addToTree(node.children) };
-        }
-        return node;
-      });
-    };
-
-    setData(addToTree(data));
-    setVisibleNodes((prevState) => ({
-      ...prevState,
-      [parentId]: true,
-    }));
+  const toggleAllNodes = () => {
+    const newVisibleNodes = {};
+    data.forEach((node) => {
+      newVisibleNodes[node.id] = !allExpanded;
+    });
+    setVisibleNodes(newVisibleNodes);
+    setAllExpanded(!allExpanded);
   };
 
-  const updateNodeName = (nodeId, name) => {
-    const updateTree = (nodes) => {
-      return nodes.map((node) => {
-        if (node.id === nodeId) {
-          return { ...node, name };
-        }
-        if (node.children) {
-          return { ...node, children: updateTree(node.children) };
-        }
-        return node;
-      });
-    };
+  const getRootNodes = () => data.filter((node) => !node.parent_id);
 
-    setData(updateTree(data));
-    setEditingNode(null);
+  const getChildrenNodes = (parentId) =>
+    data.filter((node) => node.parent_id === parentId);
+
+  const addChildNode = async () => {
+    if (!newChildName.trim()) {
+      alert("El nombre del nuevo nodo no puede estar vacío.");
+      return;
+    }
+
+    try {
+      let newCode;
+      if (parentForNewChild === null) {
+        const rootNodes = getRootNodes();
+        if (rootNodes.length > 0) {
+          const lastRootCode = rootNodes
+            .map((node) => node.codigo)
+            .sort()
+            .pop();
+
+          newCode = (parseInt(lastRootCode, 10) + 1).toString();
+        } else {
+          newCode = "1";
+        }
+      } else {
+        const parentChildren = getChildrenNodes(parentForNewChild);
+        const parentNode = data.find((node) => node.id === parentForNewChild);
+        const parentCode = parentNode?.codigo || "";
+
+        if (parentChildren.length > 0) {
+          const lastChildCode = parentChildren
+            .map((child) => child.codigo)
+            .sort()
+            .pop();
+
+          const parts = lastChildCode.split(".");
+          parts[parts.length - 1] = parseInt(parts[parts.length - 1], 10) + 1;
+          newCode = parts.join(".");
+        } else {
+          newCode = `${parentCode}.1`;
+        }
+      }
+
+      await guardarPlanCuentas({
+        parent_id: parentForNewChild,
+        nombre: newChildName,
+        codigo: newCode,
+      });
+
+      setModalVisible(false);
+      setNewChildName("");
+
+      await fetchData();
+    } catch (error) {
+      console.error("Error al guardar el nuevo nodo:", error);
+      alert("Hubo un error al guardar el nuevo nodo.");
+    }
+  };
+
+  const handleEditNode = async () => {
+    if (!editNodeName.trim()) {
+      alert("El nombre del nodo no puede estar vacío.");
+      return;
+    }
+
+    try {
+      await modificarPlanCuentas(editNode.id, { nombre: editNodeName });
+      setEditNode(null);
+      setEditNodeName("");
+      await fetchData();
+    } catch (error) {
+      console.error("Error al modificar el nodo:", error);
+      alert("Hubo un error al modificar el nodo.");
+    }
+  };
+
+  const handleDeleteNode = async (nodeId) => {
+    if (window.confirm("¿Estás seguro de que deseas eliminar este nodo?")) {
+      try {
+        await eliminarPlanCuentas(nodeId);
+        await fetchData();
+      } catch (error) {
+        console.error("Error al eliminar el nodo:", error);
+        alert("Hubo un error al eliminar el nodo.");
+      }
+    }
+  };
+
+  const getOrderedData = (nodes, level = 0) => {
+    let orderedData = [];
+    nodes.forEach((node) => {
+      orderedData.push({
+        codigo: node.codigo,
+        nombre: node.nombre,
+        tipo: node.parent_id ? "Subnivel" : "Nivel Principal",
+      });
+      const children = getChildrenNodes(node.id);
+      if (children.length > 0) {
+        orderedData = orderedData.concat(getOrderedData(children, level + 1));
+      }
+    });
+    return orderedData;
   };
 
   const exportToPDF = () => {
     const doc = new jsPDF();
+    const orderedData = getOrderedData(getRootNodes());
+    const tableData = orderedData.map((item) => [
+      item.codigo,
+      item.nombre,
+      item.tipo,
+    ]);
 
-    const traverseTree = (nodes, level = 0) => {
-      nodes.forEach((node) => {
-        doc.text(
-          `${"  ".repeat(level)}${node.id} - ${node.name}`,
-          10,
-          doc.autoTableEndPosY() + 10
-        );
-        if (node.children.length > 0) {
-          traverseTree(node.children, level + 1);
-        }
-      });
-    };
+    doc.text("Plan de Cuentas", 14, 10);
+    doc.text(
+      `Fecha de generación: ${new Date().toLocaleDateString("es-ES")}`,
+      14,
+      20
+    );
 
-    doc.text("Plan de Cuentas", 10, 10);
-    traverseTree(data);
-    doc.save("PlanDeCuentas.pdf");
+    doc.autoTable({
+      startY: 30,
+      head: [["Código", "Nombre", "Tipo"]],
+      body: tableData,
+      margin: { top: 30, left: 10, right: 10 },
+      styles: { fontSize: 10 },
+    });
+
+    doc.save("plan_de_cuentas.pdf");
   };
 
-  const renderTree = (nodes) => {
+  const renderTree = (nodes, level = 0) => {
     return (
-      <ul>
+      <ul
+        style={{
+          listStyleType: "none",
+          margin: 0,
+          padding: 0,
+          display: "flex",
+          flexDirection: "column",
+          gap: "15px",
+        }}
+      >
         {nodes.map((node) => (
-          <li
-            key={node.id}
-            style={{ marginLeft: `${node.id.split(".").length * 10}px` }}
-          >
-            {editingNode === node.id ? (
-              <input
-                type="text"
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                onBlur={() => updateNodeName(node.id, newName)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    updateNodeName(node.id, newName);
-                  }
-                }}
-                autoFocus
-              />
-            ) : (
+          <li key={node.id} style={{ paddingLeft: `${level * 20}px` }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <span
-                onClick={() => {
-                  setSelectedNode(node);
-                  toggleVisibility(node.id);
-                }}
+                onClick={() => toggleVisibility(node.id)}
                 style={{
                   cursor: "pointer",
-                  fontWeight: selectedNode === node ? "bold" : "normal",
+                  fontWeight: "500",
+                  fontSize: "20px",
                 }}
               >
-                {node.id} - {node.name}
+                {node.codigo} - {node.nombre}
               </span>
-            )}
-            <button
-              onClick={() => {
-                setEditingNode(node.id);
-                setNewName(node.name);
-              }}
-              style={{
-                border: "none",
-                cursor: "pointer",
-                fontWeight: "bold",
-                marginLeft: "10px",
-                margin: "2px",
-                width: "25px",
-                backgroundColor: "transparent",
-              }}
-            >
-              <img
-                src={editar}
-                alt="editar"
+
+              <button
+                onClick={() => {
+                  setParentForNewChild(node.id);
+                  setModalVisible(true);
+                }}
                 style={{
+                  backgroundColor: "transparent",
+                  color: "#69688c",
+                  border: "1px solid #69688c",
+                  borderRadius: "50%",
                   width: "30px",
                   height: "30px",
                   display: "flex",
+                  alignItems: "center",
                   justifyContent: "center",
+                  cursor: "pointer",
+                  fontSize: "30px",
                 }}
-              />
-            </button>
+              >
+                +
+              </button>
+
+              <button
+                onClick={() => {
+                  setEditNode(node);
+                  setEditNodeName(node.nombre);
+                }}
+                style={{
+                  backgroundColor: "transparent",
+                  color: "#69688c",
+                  border: "1px solid #69688c",
+                  borderRadius: "50%",
+                  width: "30px",
+                  height: "30px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  fontSize: "20px",
+                }}
+              >
+                ✎
+              </button>
+
+              <button
+                onClick={() => handleDeleteNode(node.id)}
+                style={{
+                  backgroundColor: "transparent",
+                  color: "red",
+                  border: "1px solid red",
+                  borderRadius: "50%",
+                  width: "30px",
+                  height: "30px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  fontSize: "20px",
+                }}
+              >
+                🗑
+              </button>
+            </div>
+
             {visibleNodes[node.id] &&
-              node.children.length > 0 &&
-              renderTree(node.children)}
+              renderTree(getChildrenNodes(node.id), level + 1)}
           </li>
         ))}
       </ul>
@@ -157,70 +282,209 @@ const PlanCuentas = () => {
   };
 
   return (
-    <div style={{ display: "flex", width: "70vw", height: "82vh" }}>
-      <div style={{ flex: 1, overflowY: "auto" }}>
-        <h1 style={{ color: "#283959", fontWeight: "bold", paddingTop: "3%" }}>
-          Plan de Cuentas
-        </h1>
-        {renderTree(data)}
-        {selectedNode && (
-          <div>
-            <h3>Gestionar: {selectedNode.name}</h3>
+    <div>
+      <h1 style={{ marginTop: "40px", marginBottom: "40px" }}>
+        Plan de Cuentas
+      </h1>
+
+      <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
+        <button
+          onClick={toggleAllNodes}
+          style={{
+            backgroundColor: "transparent",
+            border: "none",
+            cursor: "pointer",
+          }}
+        >
+          <img
+            src={allExpanded ? collapseIcon : expandIcon}
+            alt={allExpanded ? "Colapsar Todo" : "Desplegar Todo"}
+            style={{ width: "30px", height: "30px" }}
+          />
+        </button>
+        <button
+          onClick={exportToPDF}
+          style={{
+            backgroundColor: "#69688c",
+            color: "white",
+            padding: "10px 20px",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          Exportar a PDF
+        </button>
+        <button
+          onClick={() => handleNavigate("agregarPlanCuentasExcel")}
+          style={{
+            backgroundColor: "#69688c",
+            color: "white",
+            padding: "10px 20px",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          Agregar datos mediante PDF
+        </button>
+      </div>
+
+      {data.length > 0 ? renderTree(getRootNodes()) : <p>Cargando datos...</p>}
+
+      <button
+        onClick={() => {
+          setParentForNewChild(null);
+          setModalVisible(true);
+        }}
+        style={{
+          backgroundColor: "#69688c",
+          color: "white",
+          padding: "10px 20px",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+          marginTop: "20px",
+        }}
+      >
+        Agregar Plan de Cuentas Principal
+      </button>
+      {modalVisible && (
+        <div
+          style={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            backgroundColor: "white",
+            border: "1px solid #ccc",
+            borderRadius: "5px",
+            padding: "20px",
+            zIndex: 1000,
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+          }}
+        >
+          <h3>
+            {parentForNewChild === null
+              ? "Agregar Plan de Cuentas Principal"
+              : "Agregar Nuevo Nivel"}
+          </h3>
+          <input
+            type="text"
+            placeholder="Nombre del nuevo nivel"
+            value={newChildName}
+            onChange={(e) => setNewChildName(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "10px",
+              marginBottom: "10px",
+              borderRadius: "5px",
+              border: "1px solid #ccc",
+            }}
+          />
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
             <button
-              onClick={() =>
-                addNode(
-                  selectedNode.id,
-                  `Nuevo Nivel ${selectedNode.children.length + 1}`
-                )
-              }
+              onClick={addChildNode}
               style={{
-                borderRadius: "5px",
                 backgroundColor: "#69688c",
                 color: "white",
+                padding: "10px 10px",
+                border: "none",
+                borderRadius: "5px",
                 cursor: "pointer",
-                fontWeight: "bold",
-                marginBottom: "2%",
-                padding: "5px 10px",
               }}
             >
-              Agregar Nivel
+              Guardar
+            </button>
+            <button
+              onClick={() => setModalVisible(false)}
+              style={{
+                backgroundColor: "gray",
+                color: "white",
+                padding: "10px 10px",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              Cancelar
             </button>
           </div>
-        )}
-        <ul className="d-flex justify-content-left imagenes">
-          <div className="text-end">
-            <button className="boton3Puntos" onClick={handleShow}>
-              <span></span>
-              <span></span>
-              <span></span>
+        </div>
+      )}
+      {modalVisible && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.3)",
+            zIndex: 999,
+          }}
+          onClick={() => setModalVisible(false)}
+        ></div>
+      )}
+      {editNode && (
+        <div
+          style={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            backgroundColor: "white",
+            border: "1px solid #ccc",
+            borderRadius: "5px",
+            padding: "20px",
+            zIndex: 1000,
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+          }}
+        >
+          <h3>Editar Nombre</h3>
+          <input
+            type="text"
+            placeholder="Nombre del nodo"
+            value={editNodeName}
+            onChange={(e) => setEditNodeName(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "10px",
+              marginBottom: "10px",
+              borderRadius: "5px",
+              border: "1px solid #ccc",
+            }}
+          />
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <button
+              onClick={handleEditNode}
+              style={{
+                backgroundColor: "#69688c",
+                color: "white",
+                padding: "10px 10px",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              Guardar
+            </button>
+            <button
+              onClick={() => setEditNode(null)}
+              style={{
+                backgroundColor: "gray",
+                color: "white",
+                padding: "10px 10px",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              Cancelar
             </button>
           </div>
-          {show && (
-            <div className="d-flex inventario-botones">
-              <li>
-                <img src={editar} alt="editar" />
-                <span>Editar</span>
-              </li>
-              <li onClick={exportToPDF}>
-                <img src={descargar} alt="Descargar el excel" />
-                <span>Descargar PDF</span>
-              </li>
-              <li>
-                <img src={cargar} alt="Carga de excel" />
-                <span>Descarga de Excel</span>
-              </li>
-              <li className="d-flex">
-                <div className="divMas">
-                  <span className="spanMas">+</span>
-                </div>
-                <span style={{ paddingLeft: "4%", minWidth: "160px" }}>
-                  Carga de Excel
-                </span>
-              </li>
-            </div>
-          )}
-        </ul>
-      </div>
+        </div>
+      )}
     </div>
   );
 };

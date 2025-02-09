@@ -3,21 +3,19 @@
   width: 70vw;
   height: 80vh;
   margin-top: 2.5%;
+ 
+  
 }
 
 .libro-header-container {
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  
 }
 
-.libro-header-left {
-  width: 50%;
-}
-
-.libro-header-right {
-  width: 50%;
-}
-
+ 
 .libro-heading {
   font-weight: bold;
   color: #283959;
@@ -26,6 +24,7 @@
   font-weight: bold;
   padding-left: 40px;
   padding-top: 40px;
+  
 }
 
 .libro-heading-button-container {
@@ -48,6 +47,10 @@
 .libro-input-container {
   display: flex;
   padding-top: 10%;
+}
+.libro-input-container select, .libro-input-container button , .libro-input-container input{
+ 
+  height: 50px;
 }
 
 .libro-input-text {
@@ -76,29 +79,46 @@
   max-width: 5vh;
 }
 
-.table {
+.libro-container .table {
   overflow-y: auto;
   overflow-x: auto;
   color: #283959;
   --bs-table-bg: var(--bs-table-bg);
+  overflow-x: scroll;
+
+  width: 2000px;
 }
 .libro-excel-wrapper {
   max-height: 40vh;
   overflow-y: auto;
+ 
   margin-top: 2.5%;
 }
 .libro-excel-wrapper th {
   text-align: center !important;
   color: #283959;
   font-weight: bold;
+  
 }
 
 .libro-excel-wrapper tbody {
   text-align: center !important;
+  
+}
+.libro-tabs{
+  display: flex;
+  margin: 20px auto;
+  justify-content: center;
+
 }
 
+.libro-tabs button{
+margin: 10px;
+
+} 
 .libro-excel-wrapper td {
   color: #283959;
+  
 }
 
 .row-even {
@@ -107,7 +127,8 @@
 
 .libro-export-button-container {
   display: flex;
-  justify-content: end;
+  margin-top: 5%;
+  justify-content: center;
   margin-right: 2%;
 }
 
@@ -115,6 +136,9 @@
   background-color: #69688c;
   border-radius: 100px;
   border: none;
+  margin-left: 10px;
+  color:#fff;
+  padding:10px
 }
 
 .libro-export-button svg {

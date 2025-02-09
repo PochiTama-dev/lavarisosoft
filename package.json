@@ -13,7 +13,7 @@
     "dist": "electron-builder",
     "dev": "concurrently \"npm run start\" \"npm run electron\""
   },
-"main": "./electron.js",
+  "main": "./electron.js",
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
@@ -34,7 +34,8 @@
     "react-router-dom": "^6.22.3",
     "react-social-login-buttons": "^4.1.0",
     "reactjs-social-login": "^2.6.3",
-    "socket.io-client": "^4.7.5"
+    "socket.io-client": "^4.7.5",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@babel/plugin-syntax-top-level-await": "^7.14.5",
@@ -54,17 +55,17 @@
     "vite-plugin-electron-renderer": "^0.14.6",
     "wait-on": "^7.0.1"
   },
-"build": {
-  "files": [
-    "dist/**/*",
-    "./electron.js",
-    "./preload.js"
-  ],
-  "directories": {
-    "output": "dist"
-  },
-  "win": {
-    "target": "nsis"
+  "build": {
+    "files": [
+      "dist/**/*",
+      "./electron.js",
+      "./preload.js"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis"
+    }
   }
-}
 }
