@@ -63,7 +63,7 @@ const DetalleOrdenPresupuesto = ({ orden, cajaSeleccionada }) => {
           <label>Técnico domicilio:</label>
           <input
             type="text"
-            value={orden.tecnico_domicilio || "$105790"}
+            value={orden.Presupuesto?.comision_visita || "$105790"}
             readOnly
           />
         </div>

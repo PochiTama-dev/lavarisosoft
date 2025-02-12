@@ -53,7 +53,8 @@ const Presupuestos = () => {
     };
     const fetchOrdenes = async () => {
       const response = await listadoOrdenes();
-      setOrdenes(response);
+      const ordenesFiltradas = response.filter((orden) => orden.Entrega?.id);
+      setOrdenes(ordenesFiltradas);
     };
     const fetchCajas = async () => {
       const response = await listaCajas();
