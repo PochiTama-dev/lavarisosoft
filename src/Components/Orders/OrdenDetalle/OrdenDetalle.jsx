@@ -217,7 +217,7 @@ const OrdenDetalle = ({ orden, onUpdateOrden }) => {
             </button>
           </div>
         )}
-        {TiposEstado.tipo_estado === "Cerrada" && (
+        {TiposEstado.tipo_estado === "Aprobada" && (
           <div className="orders-btn">
             <button
               className="bg-success rounded-pill text-white"

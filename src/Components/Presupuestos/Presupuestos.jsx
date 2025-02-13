@@ -5,6 +5,7 @@ import "./Presupuestos.css";
 import { empleados } from "../../services/empleadoService";
 import { listadoOrdenes } from "../../services/ordenesService";
 import { listaCajas } from "../../services/cajasService";
+import { ordenesRepuestos } from "../../services/ordenRepuestosService";
 import DetalleOrdenPresupuesto from "./DetalleOrdenPresupuesto";
 
 const Presupuestos = () => {
@@ -28,6 +29,7 @@ const Presupuestos = () => {
     "Gasto impositivo": false,
   });
   const [expandedTecnico, setExpandedTecnico] = useState(null);
+  const [repuestosOrdenes, setRepuestosOrdenes] = useState([]);
 
   useEffect(() => {
     const fetchTecnicos = async () => {
@@ -60,9 +62,16 @@ const Presupuestos = () => {
       const response = await listaCajas();
       setCajas(response);
     };
+    const fetchRepuestos = async () => {
+      const response = await ordenesRepuestos();
+      if (response) {
+        setRepuestosOrdenes(response);
+      }
+    };
     fetchTecnicos();
     fetchOrdenes();
     fetchCajas();
+    fetchRepuestos();
   }, []);
 
   const handleShowOrder = (nombre) => {
@@ -108,8 +117,12 @@ const Presupuestos = () => {
 
   const handleOrdenSelect = (orden) => {
     const ordenCompleta = ordenes.find((o) => o.id === orden.id);
+    const repuestosOrden = repuestosOrdenes.filter(
+      (r) => r.id_orden === orden.id
+    );
     console.log("Orden seleccionada:", ordenCompleta);
-    setOrdenSeleccionada(ordenCompleta);
+    console.log("Repuestos de la orden:", repuestosOrden);
+    setOrdenSeleccionada({ ...ordenCompleta, repuestos: repuestosOrden });
     setCajaSeleccionada(null);
   };
 
@@ -144,29 +157,48 @@ const Presupuestos = () => {
 
                     {expandedTecnico === tecnico.id && tecnico.Ordenes && (
                       <div className="ordenes-list">
-                        {tecnico.Ordenes.length > 0 ? (
-                          tecnico.Ordenes.map((orden) => (
-                            <div
-                              key={orden.id}
-                              className={`orden-item ${
-                                ordenSeleccionada?.id === orden.id
-                                  ? "selected"
-                                  : ""
-                              }`}
-                              onClick={() => handleOrdenSelect(orden)}
-                            >
-                              <span className="orden-dot">●</span>
-                              <span
-                                style={{ color: "#283959", fontWeight: "500" }}
+                        {tecnico.Ordenes.filter((ordenTecnico) =>
+                          ordenes.some(
+                            (orden) =>
+                              orden.id === ordenTecnico.id && orden.Entrega?.id
+                          )
+                        ).length > 0 ? (
+                          tecnico.Ordenes.filter((ordenTecnico) =>
+                            ordenes.some(
+                              (orden) =>
+                                orden.id === ordenTecnico.id &&
+                                orden.Entrega?.id
+                            )
+                          ).map((ordenTecnico) => {
+                            const ordenCompleta = ordenes.find(
+                              (o) => o.id === ordenTecnico.id
+                            );
+                            return (
+                              <div
+                                key={ordenTecnico.id}
+                                className={`orden-item ${
+                                  ordenSeleccionada?.id === ordenTecnico.id
+                                    ? "selected"
+                                    : ""
+                                }`}
+                                onClick={() => handleOrdenSelect(ordenCompleta)}
                               >
-                                Orden #{orden.id}
-                              </span>
-                              <a className="ver-detalles">Ver detalles</a>
-                            </div>
-                          ))
+                                <span className="orden-dot">●</span>
+                                <span
+                                  style={{
+                                    color: "#283959",
+                                    fontWeight: "500",
+                                  }}
+                                >
+                                  Orden #{ordenTecnico.id}
+                                </span>
+                                <a className="ver-detalles">Ver detalles</a>
+                              </div>
+                            );
+                          })
                         ) : (
                           <div className="orden-item empty">
-                            No hay órdenes asignadas
+                            No hay órdenes con entrega asignadas
                           </div>
                         )}
                       </div>

@@ -44,6 +44,7 @@ import AddFactura from "./Components/Ventas/FileUploader/AddFactura.jsx";
 import FeedbackEmpleado from "./Components/Feedback/FeedbackEmpleado.jsx";
 import Taller from "./Components/Mantenimiento/TabsMantenimiento/Taller.jsx";
 import AddPlanCuentasExcel from "./Components/Mantenimiento/AddPlanCuentasExcel.jsx";
+import FacturaOrden from "./Components/Presupuestos/FacturaOrden.jsx";
 
 function App() {
   return (
@@ -103,6 +104,7 @@ function App() {
         <Route path="/proveedorEdit/:id" element={<EditProveedor />} />
         <Route path="/presupuestos" element={<Presupuestos />} />
         <Route path="/addFactura" element={<AddFactura />} />
+        <Route path="/facturaOrden" element={<FacturaOrden />} />
       </Route>
       <Route
         element={
