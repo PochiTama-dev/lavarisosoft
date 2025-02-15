@@ -1,0 +1,186 @@
+.factura-container {
+  width: 90%;
+}
+
+.factura-container-content {
+  display: flex;
+  flex-direction: column;
+  margin-left: 5%;
+  margin-top: 7.5%;
+  color: #283959;
+}
+
+.factura-container-content h2 {
+  font-weight: bold;
+}
+
+.factura-container-top {
+  margin-bottom: 1%;
+}
+
+.factura-container-top div {
+  display: flex;
+  flex-direction: row;
+  gap: 5%;
+}
+
+.factura-container-bottom {
+  margin-bottom: 1%;
+}
+
+.factura-container-bottom div {
+  display: flex;
+  flex-direction: row;
+  gap: 15%;
+}
+
+.factura-container-detalles {
+  margin-top: 1%;
+}
+
+.detalles-grid {
+  display: flex;
+  gap: 5%;
+  margin: 20px 0;
+}
+
+.detalle-item {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 6px;
+  flex: 1;
+}
+
+.detalle-item h4 {
+  margin: 0;
+  font-weight: 500;
+}
+
+.detalle-item p {
+  margin: 5px 0 0;
+  font-weight: bold;
+  color: #283959;
+}
+
+.repuestos-section {
+  margin: 30px 0;
+}
+
+.repuestos-section table {
+  width: 40%;
+  margin-left: 2%;
+  margin-top: 1%;
+}
+
+.repuestos-section th {
+  font-weight: 800;
+  font-size: larger;
+  text-align: left;
+  padding: 10px;
+  color: #283959;
+}
+
+.repuestos-section td {
+  font-weight: 500;
+  font-size: large;
+  padding: 10px;
+}
+
+.factura-totales {
+  margin-top: 30px;
+  width: 80%;
+  margin-left: auto;
+  margin-right: 2%;
+}
+
+.total-item {
+  display: flex;
+  justify-content: end;
+  gap: 5%;
+  margin: 10px 0;
+}
+
+.total-item h4 {
+  margin: 0;
+  font-weight: 500;
+}
+
+.total-item p {
+  margin: 0;
+  font-weight: bold;
+  min-width: 100px;
+  text-align: right;
+}
+
+.total-final {
+  font-size: 1.2em;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid #8ea3bf;
+}
+
+.factura-button-container {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 2%;
+  padding-bottom: 2%;
+}
+
+.factura-button-container button {
+  background-color: #69688c;
+  color: white;
+  border-radius: 20px;
+  border: none;
+  padding: 3px;
+  cursor: pointer;
+  width: auto;
+  min-width: 120px;
+}
+
+.editable-input {
+  width: 100px;
+  padding: 4px 8px;
+  border: 1px solid #8ea3bf;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #283959;
+}
+
+.editable-input:focus {
+  outline: none;
+  border-color: #69688c;
+  box-shadow: 0 0 0 2px rgba(105, 104, 140, 0.2);
+}
+
+@media print {
+  body {
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+  }
+
+  .factura-container {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+  }
+
+  .factura-container-content {
+    width: 100%;
+    padding: 0;
+  }
+
+  .factura-button-container,
+  .logout,
+  header {
+    display: none;
+  }
+
+  .editable-input {
+    border: none;
+    padding: 0;
+    font-size: inherit;
+  }
+}
