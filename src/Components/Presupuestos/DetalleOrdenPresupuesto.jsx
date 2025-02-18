@@ -2,10 +2,13 @@ import "./DetalleOrdenPresupuesto.css";
 import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import { guardarFacturaVenta } from "../../services/facturaVentasService";
+import { modificarPresupuesto } from "../../services/presupuestosService";
 
 const DetalleOrdenPresupuesto = ({ orden, cajaSeleccionada }) => {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
+  const [editingField, setEditingField] = useState(null);
+  const [editValues, setEditValues] = useState({});
 
   if (!orden) {
     return <div className="detalle-placeholder">Seleccione una orden</div>;
@@ -23,9 +26,7 @@ const DetalleOrdenPresupuesto = ({ orden, cajaSeleccionada }) => {
   };
 
   const handleConsolidar = () => {
-    console.log("Botón consolidar clickeado");
     setShowModal(true);
-    console.log("Estado showModal:", showModal);
   };
 
   const handleConfirmConsolidar = async () => {
@@ -47,10 +48,6 @@ const DetalleOrdenPresupuesto = ({ orden, cajaSeleccionada }) => {
         created_at: new Date().toISOString().split("T")[0],
       };
 
-      console.log("Datos a enviar:", facturaData);
-      console.log("Tipo de importe:", typeof facturaData.importe);
-      console.log("Valor importe:", facturaData.importe);
-
       const result = await guardarFacturaVenta(facturaData);
 
       if (result === true) {
@@ -65,8 +62,135 @@ const DetalleOrdenPresupuesto = ({ orden, cajaSeleccionada }) => {
     }
   };
 
-  console.log("Estado actual showModal:", showModal);
-  console.log("Caja seleccionada:", cajaSeleccionada);
+  const handleEdit = (field, value) => {
+    setEditingField(field);
+    setEditValues({ ...editValues, [field]: value });
+  };
+
+  const handleSaveEdit = async (field) => {
+    try {
+      let valorAEnviar = editValues[field];
+      if (field === "viaticos" || field === "total" || field === "dpg") {
+        valorAEnviar = parseFloat(editValues[field]);
+        if (isNaN(valorAEnviar)) {
+          alert("Por favor ingrese un valor numérico válido");
+          return;
+        }
+      }
+
+      const presupuestoActualizado = {
+        [field]: valorAEnviar,
+      };
+
+      const result = await modificarPresupuesto(
+        orden.Presupuesto.id,
+        presupuestoActualizado
+      );
+
+      if (result) {
+        alert("Presupuesto actualizado con éxito");
+        setEditingField(null);
+        setEditValues({});
+        window.location.reload();
+      } else {
+        alert("Error al actualizar el presupuesto");
+        setEditingField(null);
+        setEditValues({});
+      }
+    } catch (error) {
+      console.error("Error al actualizar:", error);
+      alert("Error al guardar los cambios");
+      setEditingField(null);
+      setEditValues({});
+    }
+  };
+
+  const handleCancelEdit = (field) => {
+    setEditingField(null);
+    setEditValues({});
+  };
+
+  const renderInput = (label, value, field) => {
+    return (
+      <div className="campo">
+        <label>{label}:</label>
+        <div className="input-container">
+          {editingField === field ? (
+            <>
+              <input
+                type="text"
+                value={editValues[field] || value}
+                onChange={(e) =>
+                  setEditValues({
+                    ...editValues,
+                    [field]: e.target.value,
+                  })
+                }
+              />
+              <button
+                onClick={() => handleSaveEdit(field)}
+                style={{
+                  backgroundColor: "transparent",
+                  color: "#69688c",
+                  border: "1px solid #69688c",
+                  borderRadius: "50%",
+                  width: "30px",
+                  height: "30px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  fontSize: "20px",
+                }}
+              >
+                ✓
+              </button>
+              <button
+                onClick={() => handleCancelEdit(field)}
+                style={{
+                  backgroundColor: "transparent",
+                  color: "red",
+                  border: "1px solid red",
+                  borderRadius: "50%",
+                  width: "30px",
+                  height: "30px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  fontSize: "20px",
+                }}
+              >
+                ✕
+              </button>
+            </>
+          ) : (
+            <>
+              <input type="text" value={value} readOnly />
+              <button
+                onClick={() => handleEdit(field, value)}
+                style={{
+                  backgroundColor: "transparent",
+                  color: "#69688c",
+                  border: "1px solid #69688c",
+                  borderRadius: "50%",
+                  width: "30px",
+                  height: "30px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  fontSize: "20px",
+                }}
+              >
+                ✎
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="detalle-orden-container">
@@ -76,39 +200,17 @@ const DetalleOrdenPresupuesto = ({ orden, cajaSeleccionada }) => {
       </div>
 
       <div className="campos-container">
-        <div className="campo">
-          <label>Seguro:</label>
-          <input
-            type="text"
-            value={orden.Presupuesto?.dpg || "$85790"}
-            readOnly
-          />
-        </div>
-
-        <div className="campo">
-          <label>Repuestos:</label>
-          <input type="text" value={`${calcularTotalRepuestos()}`} readOnly />
-        </div>
-
-        <div className="campo">
-          <label>Viáticos:</label>
-          <input
-            type="text"
-            value={orden.Presupuesto?.viaticos || "$400"}
-            readOnly
-          />
-        </div>
+        {renderInput("Seguro", orden.Presupuesto?.dpg || "$85790", "dpg")}
+        {renderInput("Repuestos", calcularTotalRepuestos(), "repuestos")}
+        {renderInput(
+          "Viáticos",
+          orden.Presupuesto?.viaticos || "$400",
+          "viaticos"
+        )}
 
         <div className="separador"></div>
 
-        <div className="campo">
-          <label>Total:</label>
-          <input
-            type="text"
-            value={orden.Presupuesto?.total || "$105790"}
-            readOnly
-          />
-        </div>
+        {renderInput("Total", orden.Presupuesto?.total || "$105790", "total")}
 
         <div className="campo">
           <label>
@@ -118,36 +220,30 @@ const DetalleOrdenPresupuesto = ({ orden, cajaSeleccionada }) => {
             type="text"
             value={cajaSeleccionada?.denominacion || ""}
             readOnly
+            style={{ minWidth: "188px" }}
           />
         </div>
 
-        <div className="campo">
-          <label>Código de imp.:</label>
-          <input type="text" value={orden.codigo_imp || "1.111.111"} readOnly />
-        </div>
-
-        <div className="campo">
-          <label>Técnico domicilio:</label>
-          <input
-            type="text"
-            value={orden.Presupuesto?.comision_visita || "$105790"}
-            readOnly
-          />
-        </div>
+        {renderInput(
+          "Código de imp.",
+          orden.codigo_imp || "1.111.111",
+          "codigo_imp"
+        )}
+        {renderInput(
+          "Técnico domicilio",
+          orden.Presupuesto?.comision_visita || "$105790",
+          "comision_visita"
+        )}
       </div>
 
       <div className="d-flex justify-content-around div-botones">
         <button
           className="bg-info rounded-pill py-1 px-4 text-white"
           onClick={() => {
-            console.log("Click en consolidar");
             handleConsolidar();
           }}
         >
           Consolidar
-        </button>
-        <button className="bg-info rounded-pill py-1 px-4 text-white">
-          Liq. inmediata
         </button>
         <button
           className="bg-info rounded-pill py-1 px-4 text-white"
