@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { guardarFacturaVenta } from "../../services/facturaVentasService";
 import { modificarPresupuesto } from "../../services/presupuestosService";
 
-const DetalleOrdenPresupuesto = ({ orden, cajaSeleccionada }) => {
+const DetalleOrdenPresupuesto = ({ orden, cajaSeleccionada, comisiones }) => {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [editingField, setEditingField] = useState(null);
@@ -111,6 +111,20 @@ const DetalleOrdenPresupuesto = ({ orden, cajaSeleccionada }) => {
   };
 
   const renderInput = (label, value, field) => {
+    if (
+      [
+        "repuestos",
+        "viaticos",
+        "descuentos_referidos",
+        "comision_reparacion",
+        "comision_entrega",
+        "gasto_impositivo",
+      ].includes(field) &&
+      !comisiones[label]
+    ) {
+      return null;
+    }
+
     return (
       <div className="campo">
         <label>{label}:</label>
@@ -208,6 +222,27 @@ const DetalleOrdenPresupuesto = ({ orden, cajaSeleccionada }) => {
           "viaticos"
         )}
 
+        {renderInput(
+          "Descuento referidos",
+          orden.Presupuesto?.descuentos_referidos || "0%",
+          "descuentos_referidos"
+        )}
+        {renderInput(
+          "Comisión reparación",
+          orden.Presupuesto?.comision_reparacion || "0",
+          "comision_reparacion"
+        )}
+        {renderInput(
+          "Comisión entrega",
+          orden.Presupuesto?.comision_entrega || "0",
+          "comision_entrega"
+        )}
+        {renderInput(
+          "Gasto impositivo",
+          orden.Presupuesto?.gasto_impositivo || "0",
+          "gasto_impositivo"
+        )}
+
         <div className="separador"></div>
 
         {renderInput("Total", orden.Presupuesto?.total || "$105790", "total")}
@@ -224,11 +259,11 @@ const DetalleOrdenPresupuesto = ({ orden, cajaSeleccionada }) => {
           />
         </div>
 
-        {renderInput(
+        {/*  {renderInput(
           "Código de imp.",
           orden.codigo_imp || "1.111.111",
           "codigo_imp"
-        )}
+        )} */}
         {renderInput(
           "Técnico domicilio",
           orden.Presupuesto?.comision_visita || "$105790",

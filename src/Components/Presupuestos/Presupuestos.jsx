@@ -17,15 +17,11 @@ const Presupuestos = () => {
   const [cajas, setCajas] = useState([]);
   const [cajaSeleccionada, setCajaSeleccionada] = useState(null);
   const [comisiones, setComisiones] = useState({
-    Servicio: true,
     Repuestos: true,
-
     Viáticos: true,
     "Descuento referidos": false,
-    "Comisión visita": false,
     "Comisión reparación": false,
     "Comisión entrega": false,
-    "Comisión rep. domicilio": false,
     "Gasto impositivo": false,
   });
   const [expandedTecnico, setExpandedTecnico] = useState(null);
@@ -82,10 +78,10 @@ const Presupuestos = () => {
   };
 
   const toggleComision = (comision) => {
-    setComisiones({
-      ...comisiones,
-      [comision]: !comisiones[comision],
-    });
+    setComisiones((prevComisiones) => ({
+      ...prevComisiones,
+      [comision]: !prevComisiones[comision],
+    }));
   };
 
   const toggleCaja = (caja) => {
@@ -232,9 +228,6 @@ const Presupuestos = () => {
                     >
                       {orden.TiposEstado?.tipo_estado}
                     </span>
-                    {/* {orden.TiposEstado?.tipo_estado === "Aprobada" && (
-                      <span className="edit-icon">✎</span>
-                    )} */}
                   </div>
                 ))}
               </div>
@@ -257,22 +250,9 @@ const Presupuestos = () => {
               orden={ordenSeleccionada}
               cajaSeleccionada={cajaSeleccionada}
               onCajaSelect={handleCajaSelect}
+              comisiones={comisiones}
             />
           </div>
-          {/* <div className="d-flex justify-content-between div-botones">
-            <button className="bg-info rounded-pill py-1 px-4 text-white">
-              Consolidar
-            </button>
-            <button
-              onClick={handleClickLiquidacion}
-              className="bg-info rounded-pill py-1 px-4 text-white"
-            >
-              Liq.Inmediata
-            </button>
-            <button className="bg-info rounded-pill py-1 px-4 text-white">
-              Imprimir factura
-            </button>
-          </div> */}
         </div>
         {/* Desplegables */}
         <div className="col-3">
@@ -283,11 +263,10 @@ const Presupuestos = () => {
                 <div
                   key={comision}
                   className={`item ${comisiones[comision] ? "active" : ""}`}
+                  onClick={() => toggleComision(comision)}
                 >
                   <span>{comision}</span>
-                  <button onClick={() => toggleComision(comision)}>
-                    {comisiones[comision] ? "-" : "+"}
-                  </button>
+                  <button>{comisiones[comision] ? "-" : "+"}</button>
                 </div>
               ))}
             </div>
