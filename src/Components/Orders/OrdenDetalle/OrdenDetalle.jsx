@@ -52,7 +52,7 @@ const OrdenDetalle = ({ orden, onUpdateOrden }) => {
   }
 
   const {
-    numero_orden,
+    id,
     equipo,
     modelo,
     antiguedad,
@@ -129,7 +129,7 @@ const OrdenDetalle = ({ orden, onUpdateOrden }) => {
   return (
     <div className="contentDetail">
       <div>
-        <h1>Orden #{numero_orden}</h1>
+        <h1>Orden #{id}</h1>
         <span>Estado: {TiposEstado.tipo_estado}</span>
       </div>
       {orden.Empleado ? (

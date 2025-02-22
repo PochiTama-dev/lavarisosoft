@@ -1,35 +1,32 @@
-.ordenTecnico li{
-    list-style: disclosure-open;
+.ordenTecnico li {
+  list-style: disclosure-open;
 }
 
-.ordenes li{
-    list-style: disc;
+.ordenes li {
+  list-style: disc;
 }
-.tecnico h2{
-    font-weight: bold;
-    margin-bottom: 25px;
-  
+.tecnico h2 {
+  font-weight: bold;
+  margin-bottom: 25px;
 }
-.tecnico{
-  
- 
-    width: 350px;
-    padding: 20px;
+.tecnico {
+  overflow-x: hidden !important;
+  width: 350px;
+  padding: 20px;
 }
-.ordenes-tecnico h3{
-    font-size: 1.3rem;
-    font-weight: 400;
+.ordenes-tecnico h3 {
+  font-size: 1.3rem;
+  font-weight: 400;
 }
-.badge-aprobada{
-    background-color: #40A63D;
+.badge-aprobada {
+  background-color: #40a63d;
 }
-.badge-cancelada{
-    background-color: #A6A6A6;
+.badge-cancelada {
+  background-color: #a6a6a6;
 }
-.badge-cerrada{
-    background-color: #A6A6A6;
+.badge-cerrada {
+  background-color: #a6a6a6;
 }
-.badge-pendiente{
-    background-color: #E58769;
+.badge-pendiente {
+  background-color: #e58769;
 }
- 

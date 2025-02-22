@@ -1,20 +1,42 @@
-.orderNum{
-    height: 500px;
-    padding: 20px;
+.orderNum {
+  height: 500px;
+  padding: 20px;
+  overflow-x: hidden !important;
 }
-.numOrden li{
-    list-style: none;
-   display: flex;
- margin-left: -80px;
+.numOrden li {
+  list-style: none;
+  display: flex;
+  gap: 25%;
+  text-align: center;
+  margin: 5px;
 }
 
-.orderNum h3{
-   font-weight: bold;
+.numOrden span {
+  display: flex;
+  align-items: center;
 }
 
-.text-aprobado{
-    color: #40A63D;
+.orderNum h3 {
+  font-weight: bold;
 }
-.text-pendiente{
-    color: #E58769;
+
+.text-aprobado {
+  color: gray;
+}
+
+.search-input {
+  width: 300px;
+  height: 30px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  padding: 5px;
+  margin: 5px;
+}
+
+.text-entregado {
+  color: green;
+}
+
+.text-presupuestado {
+  color: orange;
 }

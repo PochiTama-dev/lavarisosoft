@@ -26,6 +26,7 @@ const Presupuestos = () => {
   });
   const [expandedTecnico, setExpandedTecnico] = useState(null);
   const [repuestosOrdenes, setRepuestosOrdenes] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchTecnicos = async () => {
@@ -127,6 +128,10 @@ const Presupuestos = () => {
     setCajaSeleccionada((prevCaja) => (prevCaja?.id === caja.id ? null : caja));
   };
 
+  const filteredOrdenes = ordenes.filter((orden) =>
+    orden.id.toString().includes(searchTerm)
+  );
+
   return (
     <div className="p-3 presupuestos">
       <Header text="GESTION DE PRESUPUESTOS" />
@@ -207,8 +212,15 @@ const Presupuestos = () => {
             {/* Lista por número de orden */}
             <div className="container-lists">
               <h2 className="list-heading">Por número de orden</h2>
+              <input
+                type="text"
+                placeholder="Buscar por número de orden"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="search-input"
+              />
               <div className="scrollable-container">
-                {ordenes.map((orden) => (
+                {filteredOrdenes.map((orden) => (
                   <div
                     key={orden.id}
                     className={`orden-numero-item ${
@@ -226,7 +238,7 @@ const Presupuestos = () => {
                           : ""
                       }
                     >
-                      {orden.TiposEstado?.tipo_estado}
+                      Entregada
                     </span>
                   </div>
                 ))}
