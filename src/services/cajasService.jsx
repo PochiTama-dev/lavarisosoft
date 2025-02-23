@@ -13,7 +13,10 @@ export const listaCajas = async () => {
       return false;
     }
   } catch (error) {
-    console.error("Error, no se encontraron cajas en la base de datos....", error);
+    console.error(
+      "Error, no se encontraron cajas en la base de datos....",
+      error
+    );
   }
 };
 
@@ -36,14 +39,20 @@ export const obtenerCaja = async (id) => {
 
 export const denominacionCaja = async (denominacion) => {
   try {
-    const response = await fetch(`${API_URL}cajas/denominacion/${denominacion}`);
+    const response = await fetch(
+      `${API_URL}cajas/denominacion/${denominacion}`
+    );
     const cajas = await response.json();
     if (cajas[0] !== undefined) {
-      console.log(`Se encontró ${cajas.length} caja(s) asociada a la denominación "${denominacion}"`);
+      console.log(
+        `Se encontró ${cajas.length} caja(s) asociada a la denominación "${denominacion}"`
+      );
       console.log(cajas);
       return cajas;
     } else {
-      console.log(`No se encontró ninguna caja con la denominación ${denominacion}`);
+      console.log(
+        `No se encontró ninguna caja con la denominación ${denominacion}`
+      );
       return false;
     }
   } catch (error) {
@@ -110,7 +119,6 @@ export const eliminarCaja = async (id) => {
   }
 };
 
-
 export const listaCobros = async () => {
   try {
     const response = await fetch(`${API_URL}/cobros/lista`);
@@ -120,10 +128,13 @@ export const listaCobros = async () => {
       console.log(cobros);
       return cobros;
     } else {
-      console.log('Aún no se registra ningún cobro...');
+      console.log("Aún no se registra ningún cobro...");
       return false;
     }
   } catch (error) {
-    console.error("Error, no se encontraron cobros en la base de datos....", error);
+    console.error(
+      "Error, no se encontraron cobros en la base de datos....",
+      error
+    );
   }
 };

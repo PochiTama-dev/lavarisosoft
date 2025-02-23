@@ -44,6 +44,11 @@ export const guardarFacturaVenta = async (facturaventa) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(facturaventa),
     });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
     const result = await response.json();
     if (result) {
       console.log("Factura de venta registrada con éxito!!!");
@@ -56,6 +61,7 @@ export const guardarFacturaVenta = async (facturaventa) => {
     }
   } catch (error) {
     console.error("Error al registrar la factura de venta.", error);
+    return false;
   }
 };
 
