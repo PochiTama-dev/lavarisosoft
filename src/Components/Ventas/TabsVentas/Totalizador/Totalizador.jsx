@@ -54,7 +54,7 @@ const Totalizador = () => {
     getCobrosOrdenes();
   }, []);
 
-  // GASTOS OPERATIVOS (agregar desde factura proveedores, una columna mas, true o false)
+  // GASTOS OPERATIVOS (agregar desde factura compra, una columna mas, true o false)
   // GANANCIA NETA margen bruto - gastos operativos
   // FAC PEND DE COBRO
 
@@ -92,7 +92,7 @@ const Totalizador = () => {
       const empleadoExistente = result.find((item) => item.empleadoId === Empleado.id);
       const orden = {
         ...cobro.Ordene,
-        presupuestoId: cobro.id, // Puedes agregar el ID del presupuesto si es relevante
+        presupuestoId: cobro.id,
         PlazosReparacion: cobro.PlazosReparacion,
         MediosDePago: cobro.MediosDePago,
         EstadosPresupuesto: cobro.Estados_presupuesto,

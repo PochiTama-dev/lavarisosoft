@@ -14,13 +14,23 @@ const CajaSeleccionada = ({ onDateChange }) => {
     <div>
       <div className='d-flex justify-content-evenly my-2'>
         <label className='text-primary' htmlFor=''>
-          Filtrar por fecha
+          Filtrar por período
         </label>
         <div className='d-flex'>
-          <span>Desde</span>
-          <input className='rounded-pill mx-4' type='date' onChange={handleDateInput} />
-          <span>Hasta</span>
-          <input className='rounded-pill mx-4' type='date' onChange={handleDateInput} />
+          {/* Selector de Año */}
+          <span>Año</span>
+          <input className='rounded-pill mx-4' type='number' min='1900' max={new Date().getFullYear()} placeholder='YYYY' onChange={handleDateInput} />
+
+          {/* Selector de Mes */}
+          <span>Mes</span>
+          <select className='rounded-pill mx-4' onChange={handleDateInput}>
+            <option value=''>Selecciona un mes</option>
+            {Array.from({ length: 12 }, (_, i) => (
+              <option key={i + 1} value={i + 1}>
+                {new Date(0, i).toLocaleString('es', { month: 'long' })}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
       <ul className='row'>

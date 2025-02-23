@@ -7,7 +7,7 @@ const DatosCaja = ({ cobros, selectedDate, totalFacturado, totalPagado, margenBr
         return formattedDate === selectedDate;
       })
     : cobros;
-
+  //console.log(filteredCobros);
   return (
     <div>
       {filteredCobros.map((datos, index) => (
