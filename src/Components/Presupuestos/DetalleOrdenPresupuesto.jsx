@@ -70,10 +70,22 @@ const DetalleOrdenPresupuesto = ({ orden, cajaSeleccionada, comisiones }) => {
   const handleSaveEdit = async (field) => {
     try {
       let valorAEnviar = editValues[field];
-      if (field === "viaticos" || field === "total" || field === "dpg") {
+      if (
+        field === "viaticos" ||
+        field === "total" ||
+        field === "dpg" ||
+        field === "monto_pagado"
+      ) {
         valorAEnviar = parseFloat(editValues[field]);
         if (isNaN(valorAEnviar)) {
           alert("Por favor ingrese un valor numérico válido");
+          return;
+        }
+        if (
+          field === "monto_pagado" &&
+          valorAEnviar > parseFloat(orden.Presupuesto?.total || "0")
+        ) {
+          alert("El monto pagado no puede ser mayor que el total");
           return;
         }
       }
@@ -258,16 +270,15 @@ const DetalleOrdenPresupuesto = ({ orden, cajaSeleccionada, comisiones }) => {
             style={{ minWidth: "188px" }}
           />
         </div>
-
-        {/*  {renderInput(
-          "Código de imp.",
-          orden.codigo_imp || "1.111.111",
-          "codigo_imp"
-        )} */}
         {renderInput(
           "Técnico domicilio",
           orden.Presupuesto?.comision_visita || "$105790",
           "comision_visita"
+        )}
+        {renderInput(
+          "Monto pagado",
+          orden.Presupuesto?.monto_pagado || "0",
+          "monto_pagado"
         )}
       </div>
 
