@@ -69,7 +69,6 @@ const Liquidaciones = () => {
   const handleExpandClick = (index) => {
     setExpandedRow(expandedRow === index ? null : index);
   };
-
   return (
     <div className='liquidaciones-ctn'>
       <h1>Técnicos a liquidar</h1>

@@ -336,6 +336,25 @@ export const Provider = ({ children }) => {
     }
   };
 
+  const listaFacturasCompra = async () => {
+    try {
+      const response = await fetch('https://lv-back.online/facturascompra/lista');
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('error en el servidor revisar ruta', error);
+    }
+  };
+  const listaFacturasVenta = async () => {
+    try {
+      const response = await fetch('https://lv-back.online/facturasventa/lista');
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('error en el servidor, revisar rutas', error);
+    }
+  };
+
   return (
     <Context.Provider
       value={{
@@ -370,6 +389,10 @@ export const Provider = ({ children }) => {
         marcarNotificacionVista,
         notifications,
         setNotifications,
+        //Facturas
+        listaFacturasCompra,
+        listaFacturasVenta,
+        //Liquidaciones
         getPresupuestos,
       }}
     >
