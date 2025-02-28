@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
-import Table from 'react-bootstrap/Table';
-import '../mantenimiento.css';
-import { useCustomContext } from '../../../hooks/context';
-import Liquidacion from '../Liquidacion';
+import { useEffect, useState } from "react";
+import Table from "react-bootstrap/Table";
+import "../mantenimiento.css";
+import { useCustomContext } from "../../../hooks/context";
+import Liquidacion from "../Liquidacion";
+import Adelantos from "../Adelantos";
 
 const Liquidaciones = () => {
   const { getPresupuestos } = useCustomContext();
@@ -10,6 +11,7 @@ const Liquidaciones = () => {
   const [datosLiquidaciones, setDatosLiquidaciones] = useState([]);
   const [tecnicoSelected, setTecnicoSelected] = useState({});
   const [modal, setModal] = useState(false);
+  const [adelantosModal, setAdelantosModal] = useState(false);
 
   useEffect(() => {
     getCobrosOrdenes();
@@ -17,24 +19,27 @@ const Liquidaciones = () => {
 
   const getCobrosOrdenes = async () => {
     const cobros = await getPresupuestos();
-    //console.log(cobros);
     const empleadosOrdenes = transformarCobrosPorEmpleado(cobros);
     setDatosLiquidaciones(empleadosOrdenes);
-    //console.log(empleadosOrdenes);
   };
+
   const transformarCobrosPorEmpleado = (cobros) => {
     return cobros.reduce((result, cobro) => {
-      const { Empleado } = cobro.Ordene; // Extrae el empleado de la orden
-      const empleadoExistente = result.find((item) => item.empleadoId === Empleado.id);
+      const { Empleado } = cobro.Ordene;
+      const empleadoExistente = result.find(
+        (item) => item.empleadoId === Empleado.id
+      );
       const orden = {
         ...cobro.Ordene,
-        presupuestoId: cobro.id, // Puedes agregar el ID del presupuesto si es relevante
+        presupuestoId: cobro.id,
         PlazosReparacion: cobro.PlazosReparacion,
         MediosDePago: cobro.MediosDePago,
         EstadosPresupuesto: cobro.Estados_presupuesto,
         Diagnosticos: cobro.Diagnosticos,
         dpg: cobro.dpg,
-        total: cobro.total - (cobro.total - cobro.dpg) * cobro.Ordene.Empleado.porcentaje_arreglo,
+        total:
+          cobro.total -
+          (cobro.total - cobro.dpg) * cobro.Ordene.Empleado.porcentaje_arreglo,
       };
 
       if (empleadoExistente) {
@@ -53,11 +58,23 @@ const Liquidaciones = () => {
       return result;
     }, []);
   };
+
   const handleSelecTecnico = (tecnico) => {
     tecnico = {
       ...tecnico,
       porcentaje_arreglo: tecnico.ordenes[0].Empleado.porcentaje_arreglo,
-      total: tecnico.ordenes.reduce((acumulador, orden) => acumulador + parseFloat(orden.total - (orden.total - orden.dpg) * orden.Empleado.porcentaje_arreglo || 0), 0).toFixed(2),
+      total: tecnico.ordenes
+        .reduce(
+          (acumulador, orden) =>
+            acumulador +
+            parseFloat(
+              orden.total -
+                (orden.total - orden.dpg) * orden.Empleado.porcentaje_arreglo ||
+                0
+            ),
+          0
+        )
+        .toFixed(2),
     };
     setTecnicoSelected(tecnico);
   };
@@ -66,11 +83,16 @@ const Liquidaciones = () => {
     tecnicoSelected.nombre && setModal(!modal);
   };
 
+  const handleAdelantosClick = () => {
+    tecnicoSelected.nombre && setAdelantosModal(true);
+  };
+
   const handleExpandClick = (index) => {
     setExpandedRow(expandedRow === index ? null : index);
   };
+
   return (
-    <div className='liquidaciones-ctn'>
+    <div className="liquidaciones-ctn">
       <h1>Técnicos a liquidar</h1>
       <Table hover>
         <thead>
@@ -84,24 +106,46 @@ const Liquidaciones = () => {
           {datosLiquidaciones &&
             datosLiquidaciones.map((liquidacion, index) => (
               <>
-                <tr className={expandedRow === index ? 'expanded-row' : ''}>
+                <tr className={expandedRow === index ? "expanded-row" : ""}>
                   <td>{liquidacion.nombre}</td>
                   <td>
                     {liquidacion.ordenes.map((orden) => (
-                      <div key={orden.id}>{new Date(orden.created_at).toLocaleDateString()}</div>
+                      <div key={orden.id}>
+                        {new Date(orden.created_at).toLocaleDateString()}
+                      </div>
                     ))}
                   </td>
-                  <td>{liquidacion.ordenes.reduce((acumulador, orden) => acumulador + parseFloat(orden.total - (orden.total - orden.dpg) * orden.Empleado.porcentaje_arreglo || 0), 0).toFixed(2)}</td>
-                  <td className='pointer' onClick={() => handleExpandClick(index)}>
-                    {expandedRow === index ? '\u25B2' : '\u25BC'}
+                  <td>
+                    {liquidacion.ordenes
+                      .reduce(
+                        (acumulador, orden) =>
+                          acumulador +
+                          parseFloat(
+                            orden.total -
+                              (orden.total - orden.dpg) *
+                                orden.Empleado.porcentaje_arreglo || 0
+                          ),
+                        0
+                      )
+                      .toFixed(2)}
+                  </td>
+                  <td
+                    className="pointer"
+                    onClick={() => handleExpandClick(index)}
+                  >
+                    {expandedRow === index ? "\u25B2" : "\u25BC"}
                   </td>
                   <td>
-                    <button onClick={() => handleSelecTecnico(liquidacion)}>{tecnicoSelected.nombre === liquidacion.nombre ? 'Seleccionado' : 'Seleccionar'}</button>
+                    <button onClick={() => handleSelecTecnico(liquidacion)}>
+                      {tecnicoSelected.nombre === liquidacion.nombre
+                        ? "Seleccionado"
+                        : "Seleccionar"}
+                    </button>
                   </td>
                 </tr>
                 {expandedRow === index && (
                   <tr>
-                    <td colSpan='5'>
+                    <td colSpan="5">
                       <Table striped bordered hover>
                         <thead>
                           <tr>
@@ -122,10 +166,20 @@ const Liquidaciones = () => {
                               <td>{orden.numero_orden}</td>
                               <td>{orden.equipo}</td>
                               <td>{orden.motivo}</td>
-                              <td>{orden.PlazosReparacion?.plazo_reparacion}</td>
+                              <td>
+                                {orden.PlazosReparacion?.plazo_reparacion}
+                              </td>
                               <td>{orden.MediosDePago?.medio_de_pago}</td>
-                              <td>{orden.EstadosPresupuesto?.estado_presupuesto}</td>
-                              <td>{parseFloat(orden.total - (orden.total - orden.dpg) * orden.Empleado.porcentaje_arreglo).toFixed(2)}</td>
+                              <td>
+                                {orden.EstadosPresupuesto?.estado_presupuesto}
+                              </td>
+                              <td>
+                                {parseFloat(
+                                  orden.total -
+                                    (orden.total - orden.dpg) *
+                                      orden.Empleado.porcentaje_arreglo
+                                ).toFixed(2)}
+                              </td>
                             </tr>
                           ))}
                         </tbody>
@@ -137,10 +191,18 @@ const Liquidaciones = () => {
             ))}
         </tbody>
       </Table>
-      <button onClick={handleLiquidarClick}>Liquidar</button>
+      <div style={{ display: "flex" }}>
+        <button onClick={handleLiquidarClick}>Liquidar</button>
+        <button onClick={handleAdelantosClick}>Adelantos</button>
+      </div>
       {modal && (
-        <div className='modal'>
+        <div className="modal">
           <Liquidacion tecnico={tecnicoSelected} setModal={setModal} />
+        </div>
+      )}
+      {adelantosModal && (
+        <div className="modal">
+          <Adelantos tecnico={tecnicoSelected} setModal={setAdelantosModal} />
         </div>
       )}
     </div>
