@@ -355,6 +355,41 @@ export const Provider = ({ children }) => {
     }
   };
 
+  const PostSaldosPendientes = async (dataBody) => {
+    const { caja, presupuesto, facturaCompra, tecnico, monto, tipo } = await dataBody;
+    try {
+      const response = await fetch('https://lv-back.online/saldosPendientes/guardar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id_caja: caja,
+          id_presupuesto: presupuesto,
+          id_factura_compra: facturaCompra,
+          id_tecnico: tecnico,
+          monto: monto,
+          tipo: tipo,
+        }),
+      });
+      const data = await response.json();
+      return {
+        message: 'Saldos Pendientes guardados con exito',
+        data,
+      };
+    } catch (error) {
+      console.error('error en el servidor, revisar rutas', error);
+    }
+  };
+
+  const getSaldosPendientes = async () => {
+    try {
+      const response = await fetch('https://lv-back.online/saldosPendientes/lista');
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('error en el servidor, revisar rutas', error);
+    }
+  };
+
   return (
     <Context.Provider
       value={{
@@ -394,6 +429,9 @@ export const Provider = ({ children }) => {
         listaFacturasVenta,
         //Liquidaciones
         getPresupuestos,
+        //Saldos Pendientes
+        PostSaldosPendientes,
+        getSaldosPendientes,
       }}
     >
       {children}

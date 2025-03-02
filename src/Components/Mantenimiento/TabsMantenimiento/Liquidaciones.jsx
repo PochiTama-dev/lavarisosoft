@@ -5,7 +5,7 @@ import { useCustomContext } from '../../../hooks/context';
 import Liquidacion from '../Liquidacion';
 
 const Liquidaciones = () => {
-  const { getPresupuestos } = useCustomContext();
+  const { getPresupuestos, getSaldosPendientes } = useCustomContext();
   const [expandedRow, setExpandedRow] = useState(null); // Estado para controlar la fila expandida
   const [datosLiquidaciones, setDatosLiquidaciones] = useState([]);
   const [tecnicoSelected, setTecnicoSelected] = useState({});
@@ -17,10 +17,15 @@ const Liquidaciones = () => {
 
   const getCobrosOrdenes = async () => {
     const cobros = await getPresupuestos();
+    const saldosPendientes = await getSaldosPendientes();
     //console.log(cobros);
     const empleadosOrdenes = transformarCobrosPorEmpleado(cobros);
+    //console.log(saldosPendientes);
+    empleadosOrdenes.forEach((empleado) => {
+      const datosLiqTecnico = saldosPendientes.filter((liq) => liq.id_tecnico === empleado.empleadoId);
+      empleado.adelanto = datosLiqTecnico.reduce((acumulador, liq) => acumulador + parseFloat(liq.monto), 0);
+    });
     setDatosLiquidaciones(empleadosOrdenes);
-    //console.log(empleadosOrdenes);
   };
   const transformarCobrosPorEmpleado = (cobros) => {
     return cobros.reduce((result, cobro) => {
@@ -60,6 +65,9 @@ const Liquidaciones = () => {
       total: tecnico.ordenes.reduce((acumulador, orden) => acumulador + parseFloat(orden.total - (orden.total - orden.dpg) * orden.Empleado.porcentaje_arreglo || 0), 0).toFixed(2),
     };
     setTecnicoSelected(tecnico);
+    /* const datosLiqTecnico = liqPendiente.filter((liq) => liq.id_tecnico === tecnico.empleadoId);
+    setLiqPendiente(datosLiqTecnico);
+    console.log(datosLiqTecnico); */
   };
 
   const handleLiquidarClick = () => {
@@ -78,6 +86,7 @@ const Liquidaciones = () => {
             <th>Nombre</th>
             <th>Fecha</th>
             <th>Monto</th>
+            <th>Adelanto</th>
           </tr>
         </thead>
         <tbody>
@@ -92,6 +101,7 @@ const Liquidaciones = () => {
                     ))}
                   </td>
                   <td>{liquidacion.ordenes.reduce((acumulador, orden) => acumulador + parseFloat(orden.total - (orden.total - orden.dpg) * orden.Empleado.porcentaje_arreglo || 0), 0).toFixed(2)}</td>
+                  <td>{liquidacion.adelanto}</td>
                   <td className='pointer' onClick={() => handleExpandClick(index)}>
                     {expandedRow === index ? '\u25B2' : '\u25BC'}
                   </td>
