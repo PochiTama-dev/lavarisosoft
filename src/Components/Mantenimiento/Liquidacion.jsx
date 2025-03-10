@@ -4,9 +4,30 @@ import RemitoLiquidacion from './RemitoLiquidacion';
 import { useState } from 'react';
 const Liquidacion = ({ tecnico, setModal }) => {
   const [newModal, setNewModal] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
+  const [liqParcial, setLiqParcial] = useState('');
 
   const handleLiquidate = () => {
     setNewModal(!newModal);
+  };
+
+  const handleInputChange = (event) => {
+    const value = event.target.value;
+    setLiqParcial(value);
+
+    if (value) {
+      setIsDisabled(true);
+    } else {
+      setIsDisabled(false);
+    }
+  };
+  const handleKeyPress = (event) => {
+    const key = event.key;
+    const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', '.', 'Shift', 'ArrowLeft', 'Home', 'Delete', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
+    //console.log(key);
+    if (!/[0-9]/.test(key) && !allowedKeys.includes(key)) {
+      event.preventDefault();
+    }
   };
   return (
     <div className='liquidacion rounded'>
@@ -20,10 +41,25 @@ const Liquidacion = ({ tecnico, setModal }) => {
           </div>
           <div className='liq-table d-flex justify-content-evenly'>
             <div>
-              <h2>Total:</h2>
+              <h2 style={{ color: isDisabled ? 'gray' : 'initial', border: isDisabled ? '1px solid gray' : 'initial', textDecoration: isDisabled ? 'line-through' : 'initial' }}>Total:</h2>
+              <label htmlFor='adelanto'>
+                <h2>Liquidacion parcial</h2>
+              </label>
             </div>
             <div>
-              <h3>{tecnico.total}</h3>
+              <h3 style={{ color: isDisabled ? 'gray' : 'initial', border: isDisabled ? '1px solid gray' : 'initial', textDecoration: isDisabled ? 'line-through' : 'initial' }}>
+                {tecnico.total - tecnico.adelanto}
+              </h3>
+              <input
+                className='m-auto '
+                style={{ height: '40px', fontSize: '30px' }}
+                type='number'
+                name=''
+                id='adelanto'
+                max={tecnico.total - tecnico.adelanto}
+                onChange={handleInputChange}
+                onKeyDownCapture={handleKeyPress}
+              />
             </div>
           </div>
           <button onClick={handleLiquidate}>Liquidar</button>
@@ -31,7 +67,7 @@ const Liquidacion = ({ tecnico, setModal }) => {
       )}
       {newModal && (
         <div>
-          <RemitoLiquidacion tecnico={tecnico} setModal={setNewModal} />
+          <RemitoLiquidacion tecnico={tecnico} setModal={setNewModal} liqParcial={liqParcial} />
         </div>
       )}
     </div>

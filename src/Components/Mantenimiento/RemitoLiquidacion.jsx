@@ -1,10 +1,18 @@
 import jsPDF from 'jspdf';
-import { func, object } from 'prop-types';
-const RemitoLiquidacion = ({ tecnico, setModal }) => {
+import { any, func, object } from 'prop-types';
+import { useCustomContext } from '../../hooks/context';
+const RemitoLiquidacion = ({ tecnico, setModal, liqParcial }) => {
+  const { PostSaldosPendientes } = useCustomContext();
   const handleModal = () => {
     setModal(false);
   };
 
+  const sendToPrinter = async () => {
+    exportToPDF();
+    const dataBody = { caja: 8, presupuesto: null, facturaCompra: null, tecnico: tecnico.empleadoId, monto: liqParcial ? liqParcial : tecnico.total, tipo: 'liquidacion' };
+    //console.log(dataBody);
+    await PostSaldosPendientes(dataBody);
+  };
   const exportToPDF = () => {
     const doc = new jsPDF();
 
@@ -14,7 +22,7 @@ const RemitoLiquidacion = ({ tecnico, setModal }) => {
 
     // Información superior
     doc.setFontSize(12);
-    doc.text(`No.: #25647`, 10, 20);
+    //doc.text(`No.: #25647`, 10, 20);
     doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 10, 30);
     doc.text(`CUIT/CUIL: ${tecnico.ordenes[0]?.Empleado?.cuil || 'N/A'}`, 10, 40);
 
@@ -30,11 +38,11 @@ const RemitoLiquidacion = ({ tecnico, setModal }) => {
     // Tabla de órdenes
     let startY = 70;
     doc.setFontSize(12);
-    doc.text('Ordenes:', 10, startY);
+    doc.text('ORDENES:', 50, startY);
 
-    const tableHeaders = ['Nro', 'Fecha', 'Descripción', 'Seguro', 'Precio total'];
-    const columnWidths = [15, 45, 75, 25, 30]; // Ancho de cada columna
-    const tableData = tecnico.ordenes.map((orden) => [orden.numero_orden, new Date(orden.created_at).toLocaleDateString(), orden.diagnostico, `$${orden.dpg}`, `$${orden.total}`]);
+    const tableHeaders = ['Nro', 'Fecha', 'Seguro', 'Precio total'];
+    const columnWidths = [15, 45, 25, 30]; // Ancho de cada columna
+    const tableData = tecnico.ordenes.map((orden) => [orden.numero_orden, new Date(orden.created_at).toLocaleDateString(), `$${orden.dpg}`, `$${orden.total}`]);
     // Agregar encabezados de la tabla
     let colX = 10;
     tableHeaders.forEach((header, index) => {
@@ -48,17 +56,18 @@ const RemitoLiquidacion = ({ tecnico, setModal }) => {
       let cellX = 10;
       row.forEach((cell, index) => {
         doc.text(cell.toString(), cellX, startY);
-        console.log(index);
         index === 0 ? (cellX -= 15) : (cellX += 1); // Ajustar espacio entre columnas
-        index === 1 ? (cellX += 10) : (cellX += 15); // Ajustar espacio entre columnas
-        index === 2 ? (cellX += 80) : (cellX += 15); // Ajustar espacio entre columnas
+        index === 1 ? (cellX += 30) : (cellX += 15); // Ajustar espacio entre columnas
+        index === 2 ? (cellX += 8) : (cellX += 15); // Ajustar espacio entre columnas
       });
       startY += 10;
     });
 
     // Total
     doc.setFontSize(14);
-    doc.text(`Total: $${tecnico.total}`, 10, startY + 10);
+    liqParcial
+      ? [doc.text(`Liquidacion Parcial: ${liqParcial}`, 10, startY + 10), doc.text(`Debe: ${parseFloat(tecnico.total - liqParcial).toFixed(2)}`, 10, startY + 20)]
+      : doc.text(`Total: $${tecnico.total}`, 10, startY + 10);
 
     // Guardar el archivo
     // Crear un Blob URL para mostrar el PDF
@@ -123,13 +132,18 @@ const RemitoLiquidacion = ({ tecnico, setModal }) => {
             </tbody>
           </table>
           <div className='remito-container-total'>
-            <h4>
+            <h4 className='d-flex flex-column'>
               <strong>Total:</strong>
+              {liqParcial && <strong>Liquidacion parcial:</strong>}
             </h4>
-            <h4> ${tecnico.total}</h4>
+            <div className='d-flex flex-column'>
+              <h4>${tecnico.total}</h4>
+
+              {liqParcial && <h4>${liqParcial}</h4>}
+            </div>
           </div>
           <div className='remito-button-container'>
-            <button onClick={exportToPDF}>Imprimir</button>
+            <button onClick={sendToPrinter}>Imprimir</button>
           </div>
         </div>
       </div>
@@ -140,6 +154,7 @@ const RemitoLiquidacion = ({ tecnico, setModal }) => {
 RemitoLiquidacion.propTypes = {
   tecnico: object,
   setModal: func,
+  liqParcial: any,
 };
 
 export default RemitoLiquidacion;

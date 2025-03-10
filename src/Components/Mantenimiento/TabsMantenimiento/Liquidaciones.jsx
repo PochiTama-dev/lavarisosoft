@@ -3,13 +3,15 @@ import Table from 'react-bootstrap/Table';
 import '../mantenimiento.css';
 import { useCustomContext } from '../../../hooks/context';
 import Liquidacion from '../Liquidacion';
+import Adelantos from '../Adelantos';
 
 const Liquidaciones = () => {
-  const { getPresupuestos } = useCustomContext();
+  const { getPresupuestos, getSaldosPendientes } = useCustomContext();
   const [expandedRow, setExpandedRow] = useState(null); // Estado para controlar la fila expandida
   const [datosLiquidaciones, setDatosLiquidaciones] = useState([]);
   const [tecnicoSelected, setTecnicoSelected] = useState({});
   const [modal, setModal] = useState(false);
+  const [adelantosModal, setAdelantosModal] = useState(false);
 
   useEffect(() => {
     getCobrosOrdenes();
@@ -17,18 +19,24 @@ const Liquidaciones = () => {
 
   const getCobrosOrdenes = async () => {
     const cobros = await getPresupuestos();
+    const saldosPendientes = await getSaldosPendientes();
     //console.log(cobros);
     const empleadosOrdenes = transformarCobrosPorEmpleado(cobros);
+    //console.log(saldosPendientes);
+    empleadosOrdenes.forEach((empleado) => {
+      const datosLiqTecnico = saldosPendientes.filter((liq) => liq.id_tecnico === empleado.empleadoId);
+      empleado.adelanto = datosLiqTecnico.reduce((acumulador, liq) => acumulador + parseFloat(liq.monto), 0);
+    });
     setDatosLiquidaciones(empleadosOrdenes);
-    //console.log(empleadosOrdenes);
   };
+
   const transformarCobrosPorEmpleado = (cobros) => {
     return cobros.reduce((result, cobro) => {
-      const { Empleado } = cobro.Ordene; // Extrae el empleado de la orden
+      const { Empleado } = cobro.Ordene;
       const empleadoExistente = result.find((item) => item.empleadoId === Empleado.id);
       const orden = {
         ...cobro.Ordene,
-        presupuestoId: cobro.id, // Puedes agregar el ID del presupuesto si es relevante
+        presupuestoId: cobro.id,
         PlazosReparacion: cobro.PlazosReparacion,
         MediosDePago: cobro.MediosDePago,
         EstadosPresupuesto: cobro.Estados_presupuesto,
@@ -53,6 +61,7 @@ const Liquidaciones = () => {
       return result;
     }, []);
   };
+
   const handleSelecTecnico = (tecnico) => {
     tecnico = {
       ...tecnico,
@@ -60,15 +69,23 @@ const Liquidaciones = () => {
       total: tecnico.ordenes.reduce((acumulador, orden) => acumulador + parseFloat(orden.total - (orden.total - orden.dpg) * orden.Empleado.porcentaje_arreglo || 0), 0).toFixed(2),
     };
     setTecnicoSelected(tecnico);
+    /* const datosLiqTecnico = liqPendiente.filter((liq) => liq.id_tecnico === tecnico.empleadoId);
+    setLiqPendiente(datosLiqTecnico);
+    console.log(datosLiqTecnico); */
   };
 
   const handleLiquidarClick = () => {
     tecnicoSelected.nombre && setModal(!modal);
   };
 
+  const handleAdelantosClick = () => {
+    tecnicoSelected.nombre && setAdelantosModal(true);
+  };
+
   const handleExpandClick = (index) => {
     setExpandedRow(expandedRow === index ? null : index);
   };
+
   return (
     <div className='liquidaciones-ctn'>
       <h1>Técnicos a liquidar</h1>
@@ -78,6 +95,7 @@ const Liquidaciones = () => {
             <th>Nombre</th>
             <th>Fecha</th>
             <th>Monto</th>
+            <th>Adelanto</th>
           </tr>
         </thead>
         <tbody>
@@ -90,6 +108,11 @@ const Liquidaciones = () => {
                     {liquidacion.ordenes.map((orden) => (
                       <div key={orden.id}>{new Date(orden.created_at).toLocaleDateString()}</div>
                     ))}
+                  </td>
+                  <td>{liquidacion.ordenes.reduce((acumulador, orden) => acumulador + parseFloat(orden.total - (orden.total - orden.dpg) * orden.Empleado.porcentaje_arreglo || 0), 0).toFixed(2)}</td>
+                  <td>{liquidacion.adelanto}</td>
+                  <td className='pointer' onClick={() => handleExpandClick(index)}>
+                    {expandedRow === index ? '\u25B2' : '\u25BC'}
                   </td>
                   <td>{liquidacion.ordenes.reduce((acumulador, orden) => acumulador + parseFloat(orden.total - (orden.total - orden.dpg) * orden.Empleado.porcentaje_arreglo || 0), 0).toFixed(2)}</td>
                   <td className='pointer' onClick={() => handleExpandClick(index)}>
@@ -137,10 +160,18 @@ const Liquidaciones = () => {
             ))}
         </tbody>
       </Table>
-      <button onClick={handleLiquidarClick}>Liquidar</button>
+      <div style={{ display: 'flex' }}>
+        <button onClick={handleLiquidarClick}>Liquidar</button>
+        <button onClick={handleAdelantosClick}>Adelantos</button>
+      </div>
       {modal && (
         <div className='modal'>
           <Liquidacion tecnico={tecnicoSelected} setModal={setModal} />
+        </div>
+      )}
+      {adelantosModal && (
+        <div className='modal'>
+          <Adelantos tecnico={tecnicoSelected} setModal={setAdelantosModal} />
         </div>
       )}
     </div>
