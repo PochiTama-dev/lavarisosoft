@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-const DatosCaja = ({ cobros, selectedDate, totalFacturado, totalPagado, margenBruto }) => {
+const DatosCaja = ({ cobros, selectedDate, totalFacturado, totalPagado, margenBruto, saldosPendientes }) => {
   const filteredCobros = selectedDate
     ? cobros.filter((cobro) => {
         const formattedDate = cobro.created_at.split('T')[0];
@@ -18,7 +18,7 @@ const DatosCaja = ({ cobros, selectedDate, totalFacturado, totalPagado, margenBr
           <li className='col text-center'>{margenBruto}</li>
           <li className='col text-center'>{datos.cantidad}</li>
           <li className='col text-center'>{datos.total}</li>
-          <li className='col text-center'>{datos.total}</li>
+          <li className='col text-center'>{saldosPendientes}</li>
         </div>
       ))}
     </div>

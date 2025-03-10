@@ -1,28 +1,53 @@
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import "./NumOrden.css";
 
 const NumOrden = ({ ordenes, onSelectOrden }) => {
-  const resultadoOrden = ["text-aprobado", "text-pendiente", "text-secondary"];
-  
-  const estadoMap = {
-    "Aprobada": 0,
-    "Pendiente": 1,
-    "Cancelada": 2
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
   };
+
+  const filteredOrdenes = ordenes.filter((orden) =>
+    orden.id.toString().includes(searchTerm)
+  );
 
   return (
     <div className="bg-secondary orderNum overflow-scroll">
       <h3>Por número de orden</h3>
+      <input
+        type="text"
+        placeholder="Buscar por número de orden"
+        value={searchTerm}
+        onChange={handleSearchChange}
+        className="search-input"
+      />
       <ul className="numOrden">
-        {ordenes.map((orden, index) => {
-          const { numero_orden, TiposEstado } = orden;
-          const estadoClase = resultadoOrden[estadoMap[TiposEstado.tipo_estado]];
+        {filteredOrdenes.map((orden, index) => {
+          const { id, Presupuesto, Entrega } = orden;
+          const estadoClase =
+            Entrega != null
+              ? "text-entregado"
+              : Presupuesto != null
+              ? "text-presupuestado"
+              : "text-aprobado";
 
           return (
-            <li key={index} className="d-flex justify-content-around">
-              <a href="#" onClick={(e) => onSelectOrden(e, orden.id)} className="text-orders">#{numero_orden}</a>
+            <li key={index}>
+              <a
+                href="#"
+                onClick={(e) => onSelectOrden(e, orden.id)}
+                className="text-orders"
+              >
+                #{id}
+              </a>
               <span className={estadoClase}>
-                {TiposEstado.tipo_estado}
+                {Entrega != null
+                  ? "Entregado"
+                  : Presupuesto != null
+                  ? "Presupuestado"
+                  : "Aprobado"}
               </span>
             </li>
           );
@@ -34,7 +59,7 @@ const NumOrden = ({ ordenes, onSelectOrden }) => {
 
 NumOrden.propTypes = {
   ordenes: PropTypes.array.isRequired,
-  onSelectOrden: PropTypes.func.isRequired
+  onSelectOrden: PropTypes.func.isRequired,
 };
 
 export default NumOrden;

@@ -8,15 +8,22 @@ import { listaCobros } from '../../../../services/CobrosService';
 import { useCustomContext } from '../../../../hooks/context';
 
 const Totalizador = () => {
-  const { listaFacturasCompra, listaFacturasVenta, getPresupuestos } = useCustomContext();
+  const { listaFacturasCompra, listaFacturasVenta, getPresupuestos, getSaldosPendientes } = useCustomContext();
   const [caja, setCaja] = useState([]);
   const [cobros, setCobros] = useState([]);
   const [selectedCajaId, setSelectedCajaId] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
   const [totalFacturas, setTotalFacturas] = useState();
   const [datosLiquidaciones, setDatosLiquidaciones] = useState();
+  const [saldosPendientes, setSaldosPendientes] = useState([]);
 
   useEffect(() => {
+    const saldoPendientesCobro = async () => {
+      const saldos = await getSaldosPendientes();
+      const monto = saldos.reduce((acumulador, saldo) => acumulador + saldo.monto, 0);
+      setSaldosPendientes(monto);
+      console.log(monto);
+    };
     const fetchCajasData = async () => {
       try {
         const data = await listaCajas();
@@ -52,6 +59,7 @@ const Totalizador = () => {
     fetchCobrosData();
     fetchFacturas();
     getCobrosOrdenes();
+    saldoPendientesCobro();
   }, []);
 
   // GASTOS OPERATIVOS (agregar desde factura compra, una columna mas, true o false)
@@ -124,7 +132,14 @@ const Totalizador = () => {
         <Cajas cajas={caja} onCajaSelect={handleCajaChange} selectedCajaId={selectedCajaId} />
         <div className='content'>
           <CajaSeleccionada onDateChange={handleDateChange} />
-          <DatosCaja cobros={filteredCobros} selectedDate={selectedDate} totalFacturado={totalFacturas} totalPagado={datosLiquidaciones} margenBruto={totalFacturas - datosLiquidaciones} />
+          <DatosCaja
+            cobros={filteredCobros}
+            selectedDate={selectedDate}
+            totalFacturado={totalFacturas}
+            totalPagado={datosLiquidaciones}
+            margenBruto={totalFacturas - datosLiquidaciones}
+            saldosPendientes={saldosPendientes}
+          />
         </div>
       </div>
     </div>
