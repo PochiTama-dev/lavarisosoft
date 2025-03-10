@@ -20,9 +20,11 @@ const Totalizador = () => {
   useEffect(() => {
     const saldoPendientesCobro = async () => {
       const saldos = await getSaldosPendientes();
-      const monto = saldos.reduce((acumulador, saldo) => acumulador + saldo.monto, 0);
+      const montoAdelanto = saldos.filter((saldo) => saldo.tipo === 'adelanto' || saldo.tipo === 'liquidacion');
+      const montoOrden = saldos.filter((saldo) => saldo.tipo === 'orden');
+      const monto = montoOrden.reduce((acumulador, saldo) => acumulador + saldo.monto, 0) - montoAdelanto.reduce((acumulador, saldo) => acumulador + saldo.monto, 0);
+      //console.log(saldos);
       setSaldosPendientes(monto);
-      console.log(monto);
     };
     const fetchCajasData = async () => {
       try {
