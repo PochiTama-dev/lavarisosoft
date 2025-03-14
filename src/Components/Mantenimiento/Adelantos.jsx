@@ -1,12 +1,14 @@
-import { useState, useEffect } from "react";
-import "./Adelantos.css";
-import { listaCajas, modificarCaja } from "../../services/cajasService";
-import { guardarSaldoPendiente } from "../../services/saldosPendientesService";
+import { useState, useEffect } from 'react';
+import './Adelantos.css';
+import { listaCajas, modificarCaja } from '../../services/cajasService';
+import { guardarSaldoPendiente } from '../../services/saldosPendientesService';
+import RemitoLiquidacion from './RemitoLiquidacion';
 
 const Adelantos = ({ tecnico, setModal, actualizarLiquidaciones }) => {
-  const [selectedCaja, setSelectedCaja] = useState("");
-  const [monto, setMonto] = useState("");
+  const [selectedCaja, setSelectedCaja] = useState('');
+  const [monto, setMonto] = useState('');
   const [cajas, setCajas] = useState([]);
+  const [newModal, setNewModal] = useState(false);
 
   useEffect(() => {
     const fetchCajas = async () => {
@@ -22,20 +24,13 @@ const Adelantos = ({ tecnico, setModal, actualizarLiquidaciones }) => {
 
   const handleCajaChange = (event) => {
     setSelectedCaja(event.target.value);
-    setMonto("");
+    setMonto('');
   };
 
   const handleMontoChange = (event) => {
-    const cajaSeleccionada = cajas.find(
-      (caja) => caja.id === parseInt(selectedCaja, 10)
-    );
-    if (
-      cajaSeleccionada &&
-      parseFloat(event.target.value) > cajaSeleccionada.monto
-    ) {
-      alert(
-        `El monto ingresado excede el monto disponible en la caja (${cajaSeleccionada.monto}).`
-      );
+    const cajaSeleccionada = cajas.find((caja) => caja.id === parseInt(selectedCaja, 10));
+    if (cajaSeleccionada && parseFloat(event.target.value) > cajaSeleccionada.monto) {
+      alert(`El monto ingresado excede el monto disponible en la caja (${cajaSeleccionada.monto}).`);
       setMonto(cajaSeleccionada.monto.toString());
     } else {
       setMonto(event.target.value);
@@ -43,18 +38,16 @@ const Adelantos = ({ tecnico, setModal, actualizarLiquidaciones }) => {
   };
 
   const handleConfirmarAdelanto = async () => {
-    const cajaSeleccionada = cajas.find(
-      (caja) => caja.id === parseInt(selectedCaja, 10)
-    );
+    setNewModal(!newModal);
+    console.log(newModal);
+    const cajaSeleccionada = cajas.find((caja) => caja.id === parseInt(selectedCaja, 10));
     if (!cajaSeleccionada) {
-      alert("Por favor, seleccione una caja válida.");
+      alert('Por favor, seleccione una caja válida.');
       return;
     }
 
     if (parseFloat(monto) > cajaSeleccionada.monto) {
-      alert(
-        `El monto ingresado excede el monto disponible en la caja (${cajaSeleccionada.monto}).`
-      );
+      alert(`El monto ingresado excede el monto disponible en la caja (${cajaSeleccionada.monto}).`);
       return;
     }
 
@@ -62,12 +55,12 @@ const Adelantos = ({ tecnico, setModal, actualizarLiquidaciones }) => {
       id_caja: parseInt(selectedCaja, 10),
       monto: parseFloat(monto),
       id_tecnico: tecnico.empleadoId,
-      tipo: "adelanto",
+      tipo: 'adelanto',
     };
 
-    console.log("Saldo Pendiente:", saldoPendiente);
+    console.log('Saldo Pendiente:', saldoPendiente);
 
-    const result = await guardarSaldoPendiente(saldoPendiente);
+    /* const result = await guardarSaldoPendiente(saldoPendiente);
     if (result) {
       alert("Adelanto registrado con éxito");
 
@@ -86,34 +79,30 @@ const Adelantos = ({ tecnico, setModal, actualizarLiquidaciones }) => {
       closeModal();
     } else {
       alert("Error al registrar el adelanto");
-    }
+    } */
   };
 
   return (
     <div>
-      <div className="modal-content">
+      <div className='modal-content'>
         <span
-          className="close"
+          className='close'
           onClick={closeModal}
           style={{
-            display: "flex",
-            justifyContent: "end",
-            marginRight: "40px",
-            fontWeight: "bold",
+            display: 'flex',
+            justifyContent: 'end',
+            marginRight: '40px',
+            fontWeight: 'bold',
           }}
         >
           X
         </span>
         <h2>Adelanto: {tecnico.nombre}</h2>
-        <div style={{ display: "flex", justifyContent: "start" }}>
+        <div style={{ display: 'flex', justifyContent: 'start' }}>
           <label>
             Caja:
-            <select
-              value={selectedCaja}
-              onChange={handleCajaChange}
-              style={{ marginLeft: "10px" }}
-            >
-              <option value="">Seleccione una caja</option>
+            <select value={selectedCaja} onChange={handleCajaChange} style={{ marginLeft: '10px' }}>
+              <option value=''>Seleccione una caja</option>
               {cajas.map((caja) => (
                 <option key={caja.id} value={caja.id}>
                   {caja.denominacion} (Disponible: {caja.monto})
@@ -124,31 +113,31 @@ const Adelantos = ({ tecnico, setModal, actualizarLiquidaciones }) => {
         </div>
         <div
           style={{
-            display: "flex",
-            justifyContent: "start",
-            marginTop: "10px",
+            display: 'flex',
+            justifyContent: 'start',
+            marginTop: '10px',
           }}
         >
           <label>
             Monto:
-            <input
-              type="number"
-              value={monto}
-              onChange={handleMontoChange}
-              style={{ marginLeft: "10px" }}
-            />
+            <input type='number' value={monto} onChange={handleMontoChange} style={{ marginLeft: '10px' }} />
           </label>
         </div>
         <div
           style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginTop: "20px",
+            display: 'flex',
+            justifyContent: 'space-between',
+            marginTop: '20px',
           }}
         >
           <button onClick={handleConfirmarAdelanto}>Confirmar</button>
         </div>
       </div>
+      {newModal && (
+        <div className='modal-content'>
+          <RemitoLiquidacion tecnico={tecnico} setModal={setNewModal} liqParcial={monto} />
+        </div>
+      )}
     </div>
   );
 };
