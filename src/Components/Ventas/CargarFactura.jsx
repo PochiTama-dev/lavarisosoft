@@ -1,24 +1,25 @@
 import { useEffect, useState } from 'react';
 import Header from '../Header/Header';
 import './CargarFactura.css';
-import { useNavigate } from 'react-router-dom';
-import { listadoEmpleados } from '../../services/empleadoService';
 import { listaCajas } from '../../services/cajasService';
-import { listaStockPrincipal } from '../../services/stockPrincipalService';
 import { listadoProveedores } from '../../services/proveedoresService';
 import { useCustomContext } from '../../hooks/context';
+/* import { useNavigate } from 'react-router-dom';
+import { listadoEmpleados } from '../../services/empleadoService';
+import { listaStockPrincipal } from '../../services/stockPrincipalService'; */
 
 const CargarFactura = () => {
   const { PostSaldosPendientes, listaFacturasCompra } = useCustomContext();
   const [factura, setFactura] = useState({
-    id_proveedor: 0,
-    id_caja: 0,
-    importe: 0,
-    monto_pagado: 0,
+    id_proveedor: null,
+    id_caja: null,
+    importe: null,
+    monto_pagado: null,
     tipo_comprobante: '',
     iva_alicuota: '',
     iva_cred_fiscal: '',
     gastos_operativos: false,
+    descripcion: '',
     //id_repuesto: 0,
     //id_responsable: 0,
     //cantidad: 0,
@@ -29,11 +30,10 @@ const CargarFactura = () => {
     //lote: '',
   });
   const [proveedores, setProveedores] = useState([]);
-  const [repuestos, setRepuestos] = useState([]);
+  /* const [repuestos, setRepuestos] = useState([]);
   const [empleados, setEmpleados] = useState([]);
+  const navigate = useNavigate(); */
   const [cajas, setCajas] = useState([]);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     const obtenerProveedores = async () => {
@@ -41,21 +41,21 @@ const CargarFactura = () => {
       setProveedores(data);
     };
 
-    const obtenerRepuestos = async () => {
+    /* const obtenerRepuestos = async () => {
       const data = await listaStockPrincipal();
       setRepuestos(data);
     };
     const obtenerEmpleados = async () => {
       const data = await listadoEmpleados();
       setEmpleados(data);
-    };
+    }; */
     const obtenerCajas = async () => {
       const data = await listaCajas();
       setCajas(data);
     };
+    /* obtenerRepuestos();
+    obtenerEmpleados(); */
     obtenerProveedores();
-    obtenerRepuestos();
-    obtenerEmpleados();
     obtenerCajas();
   }, []);
 
@@ -177,10 +177,10 @@ const CargarFactura = () => {
               ))}
             </select>
           </div> */}
-          {/* <div>
-            <h3>Cantidad:</h3>
-            <input type='number' placeholder='0' name='cantidad' value={factura.cantidad} onChange={handleChange} required />
-          </div> */}
+          <div>
+            <h3>Descripcion:</h3>
+            <input type='text' name='descripcion' value={factura.descripcion} onChange={handleChange} required />
+          </div>
           <div>
             <h3>Importe:</h3>
             <input type='text' placeholder='0' name='importe' value={factura.importe} onChange={handleChange} required />
@@ -201,13 +201,13 @@ const CargarFactura = () => {
             <h3>Imagen comprobante:</h3>
             <input type='file' name='imagen_comprobante' value={factura.imagen_comprobante} onChange={handleChange} required />
           </div> */}
-          <div>
+          {/* <div>
             <h3>Estado pago:</h3>
             <select name='estado_pago' value={factura.estado_pago} onChange={handleChange} required>
               <option value={0}>No pagado</option>
               <option value={1}>Pagado</option>
             </select>
-          </div>
+          </div> */}
 
           <div>
             <h3>Caja:</h3>
@@ -226,15 +226,32 @@ const CargarFactura = () => {
           </div> */}
           <div>
             <h3>Tipo de comprobante:</h3>
-            <input type='text' name='tipo_comprobante' value={factura.tipo_comprobante} onChange={handleChange} />
+            <select name='' id=''>
+              <option value='' disabled selected>
+                Seleccione comprobante
+              </option>
+              <option onClick={() => (factura.tipo_comprobante = 'Factura A')}>Factura A</option>
+              <option onClick={() => (factura.tipo_comprobante = 'Factura B')}>Factura B</option>
+              <option onClick={() => (factura.tipo_comprobante = 'Factura C')}>Factura C</option>
+            </select>
           </div>
           <div>
             <h3>IVA alicuota:</h3>
-            <input type='text' name='iva_alicuota' value={factura.iva_alicuota} onChange={handleChange} />
+            <input
+              type='text'
+              name='iva_alicuota'
+              value={factura.tipo_comprobante === 'Factura A' || factura.tipo_comprobante === 'Factura B' ? '21%' : factura.iva_alicuota}
+              onChange={handleChange}
+            />
           </div>
           <div>
             <h3>IVA credito fiscal:</h3>
-            <input type='text' name='iva_cred_fiscal' value={factura.iva_cred_fiscal} onChange={handleChange} />
+            <input
+              type='text'
+              name='iva_cred_fiscal'
+              value={factura.tipo_comprobante === 'Factura A' || factura.tipo_comprobante === 'Factura B' ? '21%' : factura.iva_cred_fiscal}
+              onChange={handleChange}
+            />
           </div>
           <div>
             <h3>Gastos operativos:</h3>
