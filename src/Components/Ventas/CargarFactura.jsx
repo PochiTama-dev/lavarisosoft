@@ -65,7 +65,10 @@ const CargarFactura = () => {
       ...prevFactura,
       [name]: name === 'estado_pago' ? Number(value) : value,
       [name]: name === 'gastos_operativos' ? checked : value,
+      iva_alicuota: (prevFactura.importe * 21) / 100,
+      iva_cred_fiscal: (prevFactura.importe * 21) / 100,
     }));
+    console.log(factura);
   };
 
   const handleSubmit = (e) => {
@@ -155,6 +158,17 @@ const CargarFactura = () => {
               ))}
             </select>
           </div>
+          <div>
+            <h3>Tipo de comprobante:</h3>
+            <select name='' id=''>
+              <option value='' disabled selected>
+                Seleccione comprobante
+              </option>
+              <option onClick={() => (factura.tipo_comprobante = 'Factura A')}>Factura A</option>
+              <option onClick={() => (factura.tipo_comprobante = 'Factura B')}>Factura B</option>
+              <option onClick={() => (factura.tipo_comprobante = 'Factura C')}>Factura C</option>
+            </select>
+          </div>
           {/* <div>
             <h3>Repuesto:</h3>
             <select name='id_repuesto' value={factura.id_repuesto} onChange={handleChange} required>
@@ -225,22 +239,11 @@ const CargarFactura = () => {
             <input type='text' name='lote' value={factura.lote} onChange={handleChange} />
           </div> */}
           <div>
-            <h3>Tipo de comprobante:</h3>
-            <select name='' id=''>
-              <option value='' disabled selected>
-                Seleccione comprobante
-              </option>
-              <option onClick={() => (factura.tipo_comprobante = 'Factura A')}>Factura A</option>
-              <option onClick={() => (factura.tipo_comprobante = 'Factura B')}>Factura B</option>
-              <option onClick={() => (factura.tipo_comprobante = 'Factura C')}>Factura C</option>
-            </select>
-          </div>
-          <div>
             <h3>IVA alicuota:</h3>
             <input
               type='text'
               name='iva_alicuota'
-              value={factura.tipo_comprobante === 'Factura A' || factura.tipo_comprobante === 'Factura B' ? '21%' : factura.iva_alicuota}
+              value={factura.tipo_comprobante === 'Factura A' || factura.tipo_comprobante === 'Factura B' ? (factura.importe * 21) / 100 : factura.iva_alicuota}
               onChange={handleChange}
             />
           </div>
@@ -249,7 +252,7 @@ const CargarFactura = () => {
             <input
               type='text'
               name='iva_cred_fiscal'
-              value={factura.tipo_comprobante === 'Factura A' || factura.tipo_comprobante === 'Factura B' ? '21%' : factura.iva_cred_fiscal}
+              value={factura.tipo_comprobante === 'Factura A' || factura.tipo_comprobante === 'Factura B' ? (factura.importe * 21) / 100 : factura.iva_cred_fiscal}
               onChange={handleChange}
             />
           </div>
