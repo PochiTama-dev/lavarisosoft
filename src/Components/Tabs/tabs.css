@@ -12,6 +12,7 @@
 /* /////////// */
 .tabs {
   display: flex;
+ 
   justify-content: space-around;
   align-items: flex-start;
 }
@@ -56,7 +57,8 @@ a.activeTab .line {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  width: 20vw !important;
+  justify-content: flex-start;
+  width: 400px !important;
   height: 80vh;
   margin-left: 2.5%;
   margin-top: 1%;
@@ -68,7 +70,7 @@ a.activeTab .line {
   text-decoration: none;
   margin: 10px;
   border-bottom: 6px solid #8ea3bf;
-  width: 80%;
+  width: 270px !important;
   margin-left: 10%;
   font-size: x-large;
   min-height: 10%;

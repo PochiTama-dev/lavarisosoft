@@ -14,9 +14,9 @@ const Mantenimiento = () => {
   return (
     <div className='ventas-container'>
       <Header text='Mantenimiento'></Header>
-      <div className='mantenimiento-ctn'>
-        <Tabs active={active} onChange={handleChange}>
-          <Tab title='Plan de Cuentas'>
+      <div className='mantenimiento-ctn' >
+        <Tabs active={active} onChange={handleChange}  >
+          <Tab title='Plan de Cuentas' >
             <PlanCuentas />
           </Tab>
           <Tab title='Proveedores'>
