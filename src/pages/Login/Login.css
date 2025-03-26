@@ -15,6 +15,7 @@ body{
 }
 .inputsLogin{
     width:400px;
+    height: 40px;
 }
 .loginContainer{
     height: 100vh;

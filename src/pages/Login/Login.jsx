@@ -61,7 +61,7 @@ const Login = () => {
         <span className="messageTitle">Credenciales requeridas</span>
         <form onSubmit={handleLogin} className="d-flex flex-column">
           <input
-            className="bg-white text-black rounded-pill my-2 inputsLogin"
+            className="bg-white text-black rounded-pill my-3 inputsLogin"
             type="email"
             placeholder="E-mail"
             value={email}

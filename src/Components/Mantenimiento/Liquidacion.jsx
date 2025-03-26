@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { func, object, any } from 'prop-types';
 import RemitoLiquidacion from './RemitoLiquidacion';
 import { listaCajas } from '../../services/cajasService';
-
+import { guardarLiquidacion } from '../../services/liquidacionesService';
 const Liquidacion = ({ tecnico, setModal }) => {
   const [newModal, setNewModal] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
@@ -19,8 +19,19 @@ const Liquidacion = ({ tecnico, setModal }) => {
     fetchCajas();
   }, []);
 
-  const handleLiquidate = () => {
-    setNewModal(!newModal);
+  const handleLiquidate = async () => {
+    try {
+      const fecha = new Date().toISOString();
+      const response = await guardarLiquidacion({
+        id_tecnico: tecnico.empleadoId,
+        monto: liqParcial,
+        fecha,
+      });
+      console.log('Liquidación guardada:', response);
+      setNewModal(!newModal);
+    } catch (error) {
+      console.error('Error al guardar la liquidación:', error);
+    }
   };
 
   const handleInputChange = (event) => {
@@ -45,7 +56,7 @@ const Liquidacion = ({ tecnico, setModal }) => {
   const handleCajaChange = (event) => {
     setSelectedCaja(event.target.value);
   };
-
+  console.log(tecnico);
   return (
     <div className='liquidacion rounded'>
       {!newModal && (
