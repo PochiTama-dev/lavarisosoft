@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
 
-const DatosCaja = ({ cobros, selectedDate, totalFacturado, totalPagado, margenBruto, saldosPendientes }) => {
+const DatosCaja = ({ cobros, selectedDate, totalFacturado, totalPagado, margenBruto, saldosPendientes, mesesFacturados }) => {
   const filteredCobros = selectedDate
     ? cobros.filter((cobro) => {
         const formattedDate = cobro.created_at.split('T')[0];
         return formattedDate === selectedDate;
       })
     : cobros;
-  //console.log(filteredCobros);
+
   return (
     <div>
       {filteredCobros.map((datos, index) => (
