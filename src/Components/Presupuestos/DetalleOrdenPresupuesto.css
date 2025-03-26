@@ -87,6 +87,10 @@
   background-color: #f7fafc;
 }
 
+.campo select {
+  background-color: #f7fafc;
+}
+
 .campo input:focus {
   outline: none;
   border-color: #4299e1;
@@ -133,7 +137,7 @@
   margin-top: 5%;
 }
 
-.modal-overlay {
+.modal-overlay-presupuesto {
   position: fixed;
   top: 0;
   left: 0;
@@ -146,7 +150,7 @@
   z-index: 9999;
 }
 
-.modal-content {
+.modal-content-presupuesto {
   background-color: white;
   padding: 20px;
   border-radius: 8px;
@@ -158,20 +162,21 @@
   height: 40vh;
 }
 
-.modal-content h3 {
+.modal-content-presupuesto h3 {
   margin-bottom: 15px;
   color: #283959;
 }
 
-.modal-content p {
+.modal-content-presupuesto p {
   color: #4a5568;
 }
 
 .modal-buttons {
   display: flex;
+  flex-direction: column;
   justify-content: flex-end;
   gap: 10px;
-  margin-top: 20px;
+  margin-top: 20%;
 }
 
 .modal-buttons button {
@@ -184,4 +189,9 @@
 
 .modal-buttons button:hover {
   opacity: 0.9;
+}
+
+button.disabled {
+  background-color: gray !important;
+  cursor: not-allowed;
 }
