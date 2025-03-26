@@ -260,6 +260,7 @@ const Presupuestos = () => {
           <div className="row">
             <DetalleOrdenPresupuesto
               orden={ordenSeleccionada}
+              setOrden={setOrdenSeleccionada}
               cajaSeleccionada={cajaSeleccionada}
               onCajaSelect={handleCajaSelect}
               comisiones={comisiones}
@@ -282,7 +283,7 @@ const Presupuestos = () => {
                 </div>
               ))}
             </div>
-            <div className="presupuestos-right-container-bottom">
+            {/* <div className="presupuestos-right-container-bottom">
               <h3 className="list-heading">Cajas</h3>
               {cajas?.map((caja) => (
                 <div
@@ -298,7 +299,7 @@ const Presupuestos = () => {
                   </button>
                 </div>
               ))}
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

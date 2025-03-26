@@ -1,14 +1,34 @@
 import "./DetalleOrdenPresupuesto.css";
 import { useNavigate } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { guardarFacturaVenta } from "../../services/facturaVentasService";
 import { modificarPresupuesto } from "../../services/presupuestosService";
+import { listaCajas } from "../../services/cajasService";
+import {
+  guardarLiquidacionPendiente,
+  liquidacionesPendientesPorTecnico,
+  actualizarLiquidacionPendiente,
+} from "../../services/liquidacionesPendientesService";
 
-const DetalleOrdenPresupuesto = ({ orden, cajaSeleccionada, comisiones }) => {
+const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [editingField, setEditingField] = useState(null);
   const [editValues, setEditValues] = useState({});
+  const [cajas, setCajas] = useState([]);
+  const [cajaSeleccionada, setCajaSeleccionada] = useState(null);
+
+  useEffect(() => {
+    const fetchCajas = async () => {
+      const data = await listaCajas();
+      setCajas(data);
+    };
+    fetchCajas();
+  }, []);
+
+  useEffect(() => {
+    setCajaSeleccionada(null);
+  }, [orden]);
 
   if (!orden) {
     return <div className="detalle-placeholder">Seleccione una orden</div>;
@@ -29,36 +49,69 @@ const DetalleOrdenPresupuesto = ({ orden, cajaSeleccionada, comisiones }) => {
     setShowModal(true);
   };
 
+  const guardarFactura = async () => {
+    const totalStr = orden.Presupuesto?.total || "0";
+    const totalNum = Math.round(parseFloat(totalStr) * 100) / 100;
+
+    const facturaData = {
+      tipo_comprobante: "FACTURA",
+      nro_comprobante: Number(orden.id),
+      id_cliente: Number(orden.id_cliente),
+      id_caja: Number(cajaSeleccionada?.id),
+      cuit_cliente: orden.Cliente?.cuil?.toString() || null,
+      descripcion: `Factura orden #${orden.id}`,
+      importe: totalNum,
+      iva_alicuota: 0.0,
+      iva_deb_fiscal: 0.0,
+      total: totalNum,
+      created_at: new Date().toISOString().split("T")[0],
+    };
+
+    return await guardarFacturaVenta(facturaData);
+  };
+
+  const guardarOActualizarLiquidacion = async () => {
+    const liquidacionData = {
+      id_tecnico: orden.id_empleado,
+      total: parseFloat(orden.Presupuesto?.comision_visita || 0),
+    };
+
+    const liquidaciones = await liquidacionesPendientesPorTecnico(
+      orden.id_empleado
+    );
+
+    if (liquidaciones && liquidaciones.length > 0) {
+      const liquidacionExistente = liquidaciones[0];
+      const nuevoTotal =
+        parseFloat(liquidacionExistente.total) + liquidacionData.total;
+      return await actualizarLiquidacionPendiente(liquidacionExistente.id, {
+        total: nuevoTotal,
+      });
+    } else {
+      return await guardarLiquidacionPendiente(liquidacionData);
+    }
+  };
+
   const handleConfirmConsolidar = async () => {
     try {
-      const totalStr = orden.Presupuesto?.total || "0";
-      const totalNum = Math.round(parseFloat(totalStr) * 100) / 100;
+      const facturaResult = await guardarFactura();
 
-      const facturaData = {
-        tipo_comprobante: "FACTURA",
-        nro_comprobante: Number(orden.id),
-        id_cliente: Number(orden.id_cliente),
-        id_caja: Number(cajaSeleccionada?.id),
-        cuit_cliente: orden.Cliente?.cuil?.toString() || null,
-        descripcion: `Factura orden #${orden.id}`,
-        importe: totalNum,
-        iva_alicuota: 0.0,
-        iva_deb_fiscal: 0.0,
-        total: totalNum,
-        created_at: new Date().toISOString().split("T")[0],
-      };
-
-      const result = await guardarFacturaVenta(facturaData);
-
-      if (result === true) {
-        alert("Factura creada con éxito");
-        setShowModal(false);
+      if (facturaResult === true) {
+        const liquidacionResult = await guardarOActualizarLiquidacion();
+        if (liquidacionResult) {
+          alert("Factura y liquidación creadas/actualizadas con éxito");
+          setOrden(null);
+        } else {
+          alert("Error al crear/actualizar la liquidación");
+        }
       } else {
         alert("Error al crear la factura");
       }
     } catch (error) {
-      console.error("Error al crear la factura:", error);
-      alert("Error al crear la factura");
+      console.error("Error al crear la factura o liquidación:", error);
+      alert("Error al crear la factura o liquidación");
+    } finally {
+      setShowModal(false);
     }
   };
 
@@ -263,12 +316,25 @@ const DetalleOrdenPresupuesto = ({ orden, cajaSeleccionada, comisiones }) => {
           <label>
             {cajaSeleccionada?.denominacion ? "Caja:" : "Seleccionar una caja"}
           </label>
-          <input
-            type="text"
-            value={cajaSeleccionada?.denominacion || ""}
-            readOnly
-            style={{ minWidth: "188px" }}
-          />
+          <select
+            value={cajaSeleccionada?.id || ""}
+            onChange={(e) => {
+              const selectedCaja = cajas.find(
+                (caja) => caja.id === parseInt(e.target.value)
+              );
+              setCajaSeleccionada(selectedCaja);
+            }}
+            required
+          >
+            <option value="" disabled>
+              Seleccione una caja
+            </option>
+            {cajas.map((caja) => (
+              <option key={caja.id} value={caja.id}>
+                {caja.denominacion}
+              </option>
+            ))}
+          </select>
         </div>
         {renderInput(
           "Técnico domicilio",
@@ -284,10 +350,13 @@ const DetalleOrdenPresupuesto = ({ orden, cajaSeleccionada, comisiones }) => {
 
       <div className="d-flex justify-content-around div-botones">
         <button
-          className="bg-info rounded-pill py-1 px-4 text-white"
+          className={`bg-info rounded-pill py-1 px-4 text-white ${
+            !cajaSeleccionada ? "disabled" : ""
+          }`}
           onClick={() => {
             handleConsolidar();
           }}
+          disabled={!cajaSeleccionada}
         >
           Consolidar
         </button>
@@ -300,8 +369,8 @@ const DetalleOrdenPresupuesto = ({ orden, cajaSeleccionada, comisiones }) => {
       </div>
 
       {showModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
+        <div className="modal-overlay-presupuesto">
+          <div className="modal-content-presupuesto">
             <h3>Confirmar Factura</h3>
             <p>¿Desea generar la factura para esta orden?</p>
             <div className="modal-buttons">
