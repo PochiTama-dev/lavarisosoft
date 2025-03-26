@@ -49,7 +49,7 @@ const Menu = () => {
           display: 'flex',
           justifyContent: 'center',
           paddingRight: '8%',
-          marginBottom: '2%',
+          marginBottom: '5%',
           marginTop: '6%',
           fontWeight: '500',
           color: 'black',
