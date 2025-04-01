@@ -56,7 +56,6 @@ const Liquidacion = ({ tecnico, setModal }) => {
   const handleCajaChange = (event) => {
     setSelectedCaja(event.target.value);
   };
-  console.log(tecnico);
   return (
     <div className='liquidacion rounded'>
       {!newModal && (

@@ -1,11 +1,11 @@
-const API_URL = "https://lv-back.online/";
+const API_URL = 'https://lv-back.online/';
 
 export const obtenerLiquidaciones = async () => {
   try {
     const response = await fetch(`${API_URL}liquidaciones/`);
     return await response.json();
   } catch (error) {
-    console.error("Error al obtener todas las liquidaciones.", error);
+    console.error('Error al obtener todas las liquidaciones.', error);
   }
 };
 
@@ -30,21 +30,21 @@ export const obtenerLiquidacionesPorTecnico = async (id_tecnico) => {
 export const guardarLiquidacion = async (data) => {
   try {
     const response = await fetch(`${API_URL}liquidaciones/guardar`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
     return await response.json();
   } catch (error) {
-    console.error("Error al guardar la liquidación.", error);
+    console.error('Error al guardar la liquidación.', error);
   }
 };
 
 export const modificarLiquidacion = async (id, data) => {
   try {
     const response = await fetch(`${API_URL}liquidaciones/modificar/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
     return await response.json();
@@ -56,7 +56,7 @@ export const modificarLiquidacion = async (id, data) => {
 export const eliminarLiquidacion = async (id) => {
   try {
     const response = await fetch(`${API_URL}liquidaciones/eliminar/${id}`, {
-      method: "DELETE",
+      method: 'DELETE',
     });
     return await response.json();
   } catch (error) {
