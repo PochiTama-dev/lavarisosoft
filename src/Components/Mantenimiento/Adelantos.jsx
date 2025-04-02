@@ -2,9 +2,8 @@ import { useState, useEffect } from 'react';
 import './Adelantos.css';
 import { listaCajas, modificarCaja } from '../../services/cajasService';
 import { guardarSaldoPendiente } from '../../services/saldosPendientesService';
-import RemitoLiquidacion from './RemitoLiquidacion';
 
-const Adelantos = ({ tecnico, setModal, actualizarLiquidaciones }) => {
+const Adelantos = ({ tecnico, setModal }) => {
   const [selectedCaja, setSelectedCaja] = useState('');
   const [monto, setMonto] = useState('');
   const [cajas, setCajas] = useState([]);
@@ -60,15 +59,11 @@ const Adelantos = ({ tecnico, setModal, actualizarLiquidaciones }) => {
 
     console.log('Saldo Pendiente:', saldoPendiente);
 
-    /* const result = await guardarSaldoPendiente(saldoPendiente);
+    const result = await guardarSaldoPendiente(saldoPendiente);
     if (result) {
-      alert("Adelanto registrado con éxito");
+      alert('Adelanto registrado con éxito');
 
-      const nuevasCajas = cajas.map((caja) =>
-        caja.id === cajaSeleccionada.id
-          ? { ...caja, monto: caja.monto - parseFloat(monto) }
-          : caja
-      );
+      const nuevasCajas = cajas.map((caja) => (caja.id === cajaSeleccionada.id ? { ...caja, monto: caja.monto - parseFloat(monto) } : caja));
       setCajas(nuevasCajas);
 
       await modificarCaja(cajaSeleccionada.id, {
@@ -78,8 +73,8 @@ const Adelantos = ({ tecnico, setModal, actualizarLiquidaciones }) => {
 
       closeModal();
     } else {
-      alert("Error al registrar el adelanto");
-    } */
+      alert('Error al registrar el adelanto');
+    }
   };
 
   return (
@@ -133,11 +128,6 @@ const Adelantos = ({ tecnico, setModal, actualizarLiquidaciones }) => {
           <button onClick={handleConfirmarAdelanto}>Confirmar</button>
         </div>
       </div>
-      {newModal && (
-        <div className='modal-content'>
-          <RemitoLiquidacion tecnico={tecnico} setModal={setNewModal} liqParcial={monto} />
-        </div>
-      )}
     </div>
   );
 };

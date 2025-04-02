@@ -1,14 +1,14 @@
-import "./mantenimiento.css";
-import   { useState, useEffect } from "react";
-import { func, object, any } from "prop-types";
-import RemitoLiquidacion from "./RemitoLiquidacion";
-import { listaCajas } from "../../services/cajasService";
-import {guardarLiquidacion} from "../../services/liquidacionesService";
+import './mantenimiento.css';
+import { useState, useEffect } from 'react';
+import { func, object, any } from 'prop-types';
+import RemitoLiquidacion from './RemitoLiquidacion';
+import { listaCajas } from '../../services/cajasService';
+import { guardarLiquidacion } from '../../services/liquidacionesService';
 const Liquidacion = ({ tecnico, setModal }) => {
   const [newModal, setNewModal] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-  const [liqParcial, setLiqParcial] = useState("");
-  const [selectedCaja, setSelectedCaja] = useState("");
+  const [liqParcial, setLiqParcial] = useState('');
+  const [selectedCaja, setSelectedCaja] = useState('');
   const [cajas, setCajas] = useState([]);
 
   useEffect(() => {
@@ -21,16 +21,16 @@ const Liquidacion = ({ tecnico, setModal }) => {
 
   const handleLiquidate = async () => {
     try {
-      const fecha = new Date().toISOString();  
+      const fecha = new Date().toISOString();
       const response = await guardarLiquidacion({
         id_tecnico: tecnico.empleadoId,
         monto: liqParcial,
         fecha,
       });
-      console.log("Liquidación guardada:", response);
+      console.log('Liquidación guardada:', response);
       setNewModal(!newModal);
     } catch (error) {
-      console.error("Error al guardar la liquidación:", error);
+      console.error('Error al guardar la liquidación:', error);
     }
   };
 
@@ -47,21 +47,7 @@ const Liquidacion = ({ tecnico, setModal }) => {
 
   const handleKeyPress = (event) => {
     const key = event.key;
-    const allowedKeys = [
-      "Backspace",
-      "Delete",
-      "ArrowLeft",
-      "ArrowRight",
-      "Tab",
-      ".",
-      "Shift",
-      "ArrowLeft",
-      "Home",
-      "Delete",
-      "ArrowRight",
-      "ArrowUp",
-      "ArrowDown",
-    ];
+    const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', '.', 'Shift', 'ArrowLeft', 'Home', 'Delete', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
     if (!/[0-9]/.test(key) && !allowedKeys.includes(key)) {
       event.preventDefault();
     }
@@ -70,55 +56,50 @@ const Liquidacion = ({ tecnico, setModal }) => {
   const handleCajaChange = (event) => {
     setSelectedCaja(event.target.value);
   };
-console.log(tecnico)
   return (
-    <div className="liquidacion rounded">
+    <div className='liquidacion rounded'>
       {!newModal && (
         <>
-          <div className="d-flex justify-content-around">
+          <div className='d-flex justify-content-around'>
             <h1>Liquidación {tecnico.nombre}</h1>
-            <h1 className="pointer" onClick={() => setModal(false)}>
+            <h1 className='pointer' onClick={() => setModal(false)}>
               x
             </h1>
           </div>
-          <div className="liq-table d-flex justify-content-evenly">
-            <div
-              style={{ display: "flex", flexDirection: "column", gap: "10px" }}
-            >
+          <div className='liq-table d-flex justify-content-evenly'>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <h2
                 style={{
-                  color: isDisabled ? "gray" : "initial",
-                  border: isDisabled ? "1px solid gray" : "initial",
-                  textDecoration: isDisabled ? "line-through" : "initial",
+                  color: isDisabled ? 'gray' : 'initial',
+                  border: isDisabled ? '1px solid gray' : 'initial',
+                  textDecoration: isDisabled ? 'line-through' : 'initial',
                 }}
               >
                 Total:
               </h2>
-              <label htmlFor="adelanto">
+              <label htmlFor='adelanto'>
                 <h2>Liquidacion parcial</h2>
               </label>
               <label>
                 <h2>Seleccionar Caja:</h2>
               </label>
             </div>
-            <div
-              style={{ display: "flex", flexDirection: "column", gap: "10px" }}
-            >
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <h3
                 style={{
-                  color: isDisabled ? "gray" : "initial",
-                  border: isDisabled ? "1px solid gray" : "initial",
-                  textDecoration: isDisabled ? "line-through" : "initial",
+                  color: isDisabled ? 'gray' : 'initial',
+                  border: isDisabled ? '1px solid gray' : 'initial',
+                  textDecoration: isDisabled ? 'line-through' : 'initial',
                 }}
               >
                 {tecnico.total - tecnico.adelanto}
               </h3>
               <input
-                className="m-auto "
-                style={{ height: "40px", fontSize: "30px" }}
-                type="number"
-                name=""
-                id="adelanto"
+                className='m-auto '
+                style={{ height: '40px', fontSize: '30px' }}
+                type='number'
+                name=''
+                id='adelanto'
                 max={tecnico.total - tecnico.adelanto}
                 onChange={handleInputChange}
                 onKeyDownCapture={handleKeyPress}
@@ -127,12 +108,12 @@ console.log(tecnico)
                 value={selectedCaja}
                 onChange={handleCajaChange}
                 style={{
-                  backgroundColor: "#e6e6e6",
-                  border: "1px solid black",
-                  width: "250px",
+                  backgroundColor: '#e6e6e6',
+                  border: '1px solid black',
+                  width: '250px',
                 }}
               >
-                <option value="">Seleccione una caja</option>
+                <option value=''>Seleccione una caja</option>
                 {cajas.map((caja) => (
                   <option key={caja.id} value={caja.id}>
                     {caja.denominacion} (Disponible: {caja.monto})
@@ -141,7 +122,7 @@ console.log(tecnico)
               </select>
             </div>
           </div>
-          <div className="d-flex  mt-3" style={{ flexDirection: "row" }}></div>
+          <div className='d-flex  mt-3' style={{ flexDirection: 'row' }}></div>
           <button onClick={handleLiquidate} disabled={!selectedCaja}>
             Liquidar
           </button>
@@ -149,13 +130,7 @@ console.log(tecnico)
       )}
       {newModal && (
         <div>
-          <RemitoLiquidacion
-            tecnico={tecnico}
-            setModal={setNewModal}
-            liqParcial={liqParcial}
-            selectedCaja={selectedCaja}
-            cajas={cajas}
-          />
+          <RemitoLiquidacion tecnico={tecnico} setModal={setNewModal} liqParcial={liqParcial} selectedCaja={selectedCaja} cajas={cajas} />
         </div>
       )}
     </div>
