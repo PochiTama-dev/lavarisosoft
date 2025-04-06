@@ -27,9 +27,9 @@ const Searchers = ({ activeTab, onFilterChange }) => {
   const [filterValues, setFilterValues] = useState({});
   const dateRef = useRef();
   useEffect(() => {
-    // Reinicia los valores de los filtros cuando cambia la tab
+ 
     const initialFilters = filterConfig[activeTab].reduce((acc, filter) => {
-      acc[filter.field] = ''; // Inicializa cada campo con un string vacío
+      acc[filter.field] = '';  
       return acc;
     }, {});
     setFilterValues(initialFilters);
@@ -60,7 +60,7 @@ const Searchers = ({ activeTab, onFilterChange }) => {
           {filter.field !== 'Presupuesto.id_medio_de_pago' ? (
             <>
               <input className='caja-input' type='text' placeholder={filter.placeholder} value={filterValues[filter.field] || ''} onChange={(e) => handleInputChange(filter.field, e.target.value)} />
-              <span className='caja-button-search'>🔍︎</span>
+              
             </>
           ) : (
             <select name='' id=''>

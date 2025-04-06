@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Saldos from './Saldos';
 import { useEffect } from 'react';
 import { useCustomContext } from '../../../../hooks/context';
-
+import Header from '../../../Header/Header';
 const SaldosPendiente = () => {
   const { getPresupuestos } = useCustomContext();
   const [saldos, setSaldos] = useState({ providers: [], costumers: [], employees: [] });
@@ -60,9 +60,10 @@ const SaldosPendiente = () => {
     }, []);
   };
   return (
-    <div className='bg-secondary-subtle saldosPendientes'>
+    <div className='bg-secondary-subtle saldosPendientes' style={{ padding: '20px' }}>
+         <Header text='Saldos pendientes' />
       <div>
-        <h1> Saldos Pendientes</h1>
+ 
         <div>
           <label htmlFor=''>Filtrar por fecha</label>
           <input type='date' name='' id='' />

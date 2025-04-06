@@ -24,8 +24,9 @@ const Ventas = () => {
   const handleChange2 = (newActive) => setActive2(newActive);
   return (
     <div className='ventas-container'>
-      <Header text='Ventas' />
+ 
       <div className='ventas-tabs'>
+      <Header text='Facturas' />
         <Tabs active={active} onChange={handleChange}>
           <Tab title='Facturas'>
             <div className='p-5 tabs-ctn'>
@@ -66,6 +67,7 @@ const Ventas = () => {
           </Tab>
           <Tab title='Cuentas Corrientes'>
             <div className='p-5 tabs-ctn'>
+                 <Header text='Cuentas Corrientes' />
               <CuentaCorriente />
               <Tabs2 active={active2} onChange={handleChange2} className='client-tabs'>
                 <Tab title='Empleados'>
