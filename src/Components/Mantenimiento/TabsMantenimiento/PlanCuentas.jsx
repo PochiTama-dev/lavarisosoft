@@ -197,7 +197,7 @@ const PlanCuentas = () => {
       >
         {nodes.map((node) => (
           <li key={node.id} style={{ paddingLeft: `${level * 20}px` }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}  >
               <span
                 onClick={() => toggleVisibility(node.id)}
                 style={{
@@ -282,7 +282,7 @@ const PlanCuentas = () => {
   };
 
   return (
-    <div>
+    <div className="plan-cuentas-ctn" >
       <h1 style={{ marginTop: "40px", marginBottom: "40px" }}>
         Plan de Cuentas
       </h1>

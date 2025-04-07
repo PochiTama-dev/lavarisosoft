@@ -1,7 +1,6 @@
 .facturas-ctn {
   width: 70vw;
-  margin-left: -50px;
-  margin-top: 10px;
+   margin-top: 10px;
 }
 
 .facturas-ctn th,
@@ -11,7 +10,7 @@
 }
 
 .row-white {
-  background-color: white !important;
+  background-color: transparent !important;
 }
 
 .row-even {
@@ -22,5 +21,21 @@
   font-weight: bold;
   font-size: x-large;
   color: #283959;
-  width: 50%;
+  
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pagination-container .page-item .page-link {
+  color: #283959;
+}
+
+.pagination-container .page-item.active .page-link {
+  background-color: #c8cfda;
+  border-color: #c8cfda;
+  color: #000;
 }

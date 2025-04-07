@@ -115,7 +115,7 @@ const Inventario = () => {
   const handleShow = () => setShow(!show);
 
   return (
-    <div className='bg-secondary inventario-container'>
+    <div className=' inventario-container'>
          <Header text='Inventario' />
   
       <ul className='d-flex justify-content-around'>
@@ -131,7 +131,7 @@ const Inventario = () => {
         <div>
           <h2 className='caja-input-text'>Buscar piezas</h2>
           <input className='caja-input' type='text' placeholder='Buscar' value={searchTerm} onChange={handleSearchChange} />
-          <button className='caja-button-search'>🔍︎</button>
+     {/*      <button className='caja-button-search'>🔍︎</button> */}
         </div>
       )}
       {pestaña === 'Stock' && (

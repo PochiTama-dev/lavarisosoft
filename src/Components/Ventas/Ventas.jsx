@@ -29,7 +29,7 @@ const Ventas = () => {
       <Header text='Facturas' />
         <Tabs active={active} onChange={handleChange}>
           <Tab title='Facturas'>
-            <div className='p-5 tabs-ctn'>
+            <div className='ps-5 tabs-ctn-facturas'>
               <Tabs2 active={active2} onChange={handleChange2} className='client-tabs'>
                 <Tab title='Facturas'>
                   <Facturas />
@@ -66,7 +66,7 @@ const Ventas = () => {
             <SaldosPendiente />
           </Tab>
           <Tab title='Cuentas Corrientes'>
-            <div className='p-5 tabs-ctn'>
+            <div className='ms-5 tabs-ctn-facturas'>
                  <Header text='Cuentas Corrientes' />
               <CuentaCorriente />
               <Tabs2 active={active2} onChange={handleChange2} className='client-tabs'>
