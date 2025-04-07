@@ -61,9 +61,8 @@ const SaldosPendiente = () => {
   };
   return (
     <div className='bg-secondary-subtle saldosPendientes' style={{ padding: '20px' }}>
-         <Header text='Saldos pendientes' />
+      <Header text='Saldos pendientes' />
       <div>
- 
         <div>
           <label htmlFor=''>Filtrar por fecha</label>
           <input type='date' name='' id='' />
@@ -75,7 +74,6 @@ const SaldosPendiente = () => {
             <li className='col saldosItems'>Descripción</li>
             <li className='col saldosItems'>Estado</li>
             <li className='col saldosItems'>Saldo</li>
-            <li className='col saldosItems'>Caja</li>
           </ul>
           <Saldos saldos={saldos} />
         </div>

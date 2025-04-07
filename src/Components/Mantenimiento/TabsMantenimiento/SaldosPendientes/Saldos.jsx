@@ -6,24 +6,20 @@ const Saldos = ({ saldos }) => {
     <>
       <h2>Proveedores</h2>
       <ul className='p-0'>
-        {saldos.providers.map((provider, index) => (
-          <div key={index} className={`d-flex align-items-center`}>
-            <li className='col saldoItem'>Proveedor</li>
-            <li className='col saldoItem'>{provider.descripcion}</li>
-            <li className={`col saldoItem`}> {(provider.monto_pagado === 0) | (provider.monto_pagado === null) ? 'DEBE' : ''}`</li>
-            <li
-              className={`col saldoItem ${
-                provider.monto_pagado === provider.total ? 'text-success' : (provider.monto_pagado === 0) | (provider.monto_pagado === null) ? 'text-danger' : 'text-warning'
-              }`}
-            >
-              ${provider.total - provider.monto_pagado}
-            </li>
-            <li className='col saldoItem'>C1</li>
-          </div>
-        ))}
+        {saldos.providers.map(
+          (provider, index) =>
+            provider.total - provider.monto_pagado !== 0 && (
+              <div key={index} className={`d-flex align-items-center`}>
+                <li className='col saldoItem'>Proveedor</li>
+                <li className='col saldoItem'>{provider.descripcion}</li>
+                <li className={`col saldoItem`}>DEBE</li>
+                <li className='col saldoItem text-danger'>${provider.total - provider.monto_pagado}</li>
+              </div>
+            )
+        )}
       </ul>
 
-      <h2>Clientes</h2>
+      {/* <h2>Clientes</h2>
       <ul className='p-0'>
         {saldos.costumers.map((costumer, index) => (
           <div key={index} className={`d-flex align-items-center`}>
@@ -31,22 +27,19 @@ const Saldos = ({ saldos }) => {
             <li className='col saldoItem'>{costumer.Ordene.equipo}</li>
             <li className={`col saldoItem`}>DEBE</li>
             <li className={`col saldoItem ${costumer.saldo > 0 ? 'text-success' : costumer.saldo === 0 ? 'text-warning' : 'text-danger'}`}>${costumer.total - costumer.monto_pagado}</li>
-            <li className='col saldoItem'>C2</li>
           </div>
         ))}
-      </ul>
+      </ul> */}
 
       <h2>Empleados</h2>
       <ul className='p-0'>
         {saldos.employees.map((employee, index) => (
           <div key={index} className={`d-flex align-items-center`}>
             <li className='col saldoItem'>{employee.nombre}</li>
-            <li className='col saldoItem'>Mes</li>
             <li className={`col saldoItem`}>LIQUIDAR</li>
             <li className={`col saldoItem ${employee.saldo > 0 ? 'text-success' : employee.saldo === 0 ? 'text-warning' : 'text-danger'}`}>
               ${employee.ordenes.reduce((acumulador, orden) => acumulador + parseFloat(orden.total - (orden.total - orden.dpg) * orden.Empleado.porcentaje_arreglo || 0), 0).toFixed(2)}
             </li>
-            <li className='col saldoItem'>C2</li>
           </div>
         ))}
       </ul>
