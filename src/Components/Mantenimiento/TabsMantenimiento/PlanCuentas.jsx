@@ -10,6 +10,7 @@ import "jspdf-autotable";
 import expandIcon from "../../../assets/expand_icon.png";
 import collapseIcon from "../../../assets/collapse_icon.png";
 import { useCustomContext } from "../../../hooks/context";
+import "./PlanCuentas.css";
 
 const PlanCuentas = () => {
   const { handleNavigate } = useCustomContext();
