@@ -8,7 +8,7 @@ import PorProducto from './Op-Ventas/PorProducto';
 import './Caja.css';
 import Searchers from './Op-Ventas/Searchers';
 import { useCustomContext } from '../../../hooks/context';
-
+import Header from '../../Header/Header';
 // Función auxiliar para obtener valores anidados
 const getNestedValue = (obj, path) => {
   return path.split('.').reduce((value, key) => (value ? value[key] : undefined), obj);
@@ -78,8 +78,9 @@ const OpVentas = () => {
   };
 
   return (
-    <div className='opventas-container'>
-      <h1 style={{ fontWeight: 'Bold', marginLeft: '20px', paddingTop: '2.5%' }}>Operaciones/Ventas</h1>
+    <div className='opventas-container' style={{ padding:'20px' }}>
+          <Header text='Operaciones/Ventas' />
+ 
       <Searchers activeTab={activeTab} onFilterChange={handleFilterChange} />
       <div style={{ textAlign: 'center', marginTop: '0px' }}>
         <Tab>

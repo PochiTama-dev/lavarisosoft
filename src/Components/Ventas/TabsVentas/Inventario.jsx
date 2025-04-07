@@ -6,7 +6,7 @@ import editar from '../../../images/editar.webp';
 import { useCustomContext } from '../../../hooks/context.jsx';
 import { Table } from 'react-bootstrap';
 import fetchDolarBlue from '../../../services/ApiDolarService.jsx';
-
+import Header from '../../Header/Header.jsx';
 const Inventario = () => {
   const { handleNavigate } = useCustomContext();
   const [pestaña, setPestaña] = useState('Stock');
@@ -20,6 +20,7 @@ const Inventario = () => {
 
   const handleSearchChange = (event) => setSearchTerm(event.target.value);
 
+  // eslint-disable-next-line no-unused-vars
   const filteredStockData = stockData.filter((item) => {
     try {
       if (item.Repuesto) {
@@ -115,7 +116,8 @@ const Inventario = () => {
 
   return (
     <div className='bg-secondary inventario-container'>
-      <h1 className='text-primary'>Inventario</h1>
+         <Header text='Inventario' />
+  
       <ul className='d-flex justify-content-around'>
         {['Stock', 'Stock Camionetas', 'Reserva', 'Reporte de ventas'].map((name) => (
           <li key={name} onClick={() => setPestaña(name)} className={`pestañasInventario ${pestaña === name ? 'pestañasInventarioActive' : ''}`}>

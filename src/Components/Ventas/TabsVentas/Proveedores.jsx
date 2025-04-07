@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Table } from "react-bootstrap";
 import { empleados } from "../../../services/empleadoService";
-
+import Header from "../../Header/Header";
 const Proveedores = () => {
   const [proveedoresData, setProveedoresData] = useState([]);
   const [empleadosData, setEmpleadosData] = useState([]);
@@ -78,11 +78,10 @@ const Proveedores = () => {
   }
 
   return (
-    <div className="proveedores-container">
+    <div className="proveedores-container" style={{ padding: "20px" }}>
       <div>
-        <div className="proveedores-heading mb-4">
-          <h1>Pagos a proveedores</h1>
-        </div>
+           <Header text='Pagos a proveedores' />
+      
         <div className="proveedores-top-box">
           <div>
             <select

@@ -1,9 +1,9 @@
-import React, { useContext, useState, useEffect } from "react";
+import   { useContext, useState, useEffect } from "react";
 import { DataContext } from "../../../hooks/DataContext";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import "./Caja.css";
-
+import Header from "../../Header/Header";
 const Caja = () => {
   const { cobros, cajas, listaCajas } = useContext(DataContext);
   const [orderBy, setOrderBy] = useState(null);
@@ -104,13 +104,12 @@ const Caja = () => {
 
   return (
     <div className="caja-container">
+         <Header text='Movimientos de caja' />
       <div>
-        <div className="caja-heading mb-4">
-          <h1>Movimientos de caja</h1>
-        </div>
-        <div className="caja-input-top">
-          <div>
-            <h4 className="caja-input-text">Buscar por número de orden</h4>
+   
+        <div className="caja-input-top "  >
+          <div style={{marginRight:'20px'}}>
+            <h4 className="caja-input-text">Número de orden</h4>
             <input
               className="caja-input"
               type="text"
@@ -118,16 +117,17 @@ const Caja = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <button className="caja-button-search">🔍︎</button>
+        
           </div>
 
           {/* Filtro por caja */}
-          <div>
+          <div        style={{marginRight:'20px'}}>
             <h4 className="caja-input-text">Filtrar por Caja</h4>
             <select
               className="caja-input"
               value={cajaFilter}
               onChange={(e) => setCajaFilter(e.target.value)}
+        
             >
               <option value="">Todas</option>
               {listaCajas.map((caja) => (
@@ -139,18 +139,20 @@ const Caja = () => {
           </div>
           <div>
             <h4 className="caja-input-text">Filtrar por rango de fechas</h4>
-            <input
-              className="caja-input"
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-            />
-            <input
-              className="caja-input"
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-            />
+            <div className="date-range-container">
+  <input
+    className="caja-input"
+    type="date"
+    value={startDate}
+    onChange={(e) => setStartDate(e.target.value)}
+  />
+  <input
+    className="caja-input"
+    type="date"
+    value={endDate}
+    onChange={(e) => setEndDate(e.target.value)}
+  />
+</div>
           </div>
         </div>
 
