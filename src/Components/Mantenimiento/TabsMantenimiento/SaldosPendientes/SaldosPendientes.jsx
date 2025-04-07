@@ -3,9 +3,13 @@ import Saldos from './Saldos';
 import { useEffect } from 'react';
 import { useCustomContext } from '../../../../hooks/context';
 import Header from '../../../Header/Header';
+import Tabs2 from '../../../Tabs/Tabs2';
+import Tab from '../../../Tabs/Tab';
+
 const SaldosPendiente = () => {
-  const { getPresupuestos } = useCustomContext();
+  const { getPresupuestos,getLiquidacionesPendientes  } = useCustomContext();
   const [saldos, setSaldos] = useState({ providers: [], costumers: [], employees: [] });
+  const [activeTab, setActiveTab] = useState(0); 
 
   useEffect(() => {
     const getProveedores = async () => {
@@ -20,27 +24,29 @@ const SaldosPendiente = () => {
     };
     const getTecnicos = async () => {
       const cobros = await getPresupuestos();
-      const empleadosOrdenes = transformarCobrosPorEmpleado(cobros);
+      const liquidaciones = await getLiquidacionesPendientes();
+      const empleadosOrdenes = transformarCobrosPorEmpleado(cobros, liquidaciones);
       setSaldos((prevSaldos) => ({ ...prevSaldos, employees: empleadosOrdenes }));
     };
     getProveedores();
     getClientes();
     getTecnicos();
   }, []);
-
-  const transformarCobrosPorEmpleado = (cobros) => {
+  const transformarCobrosPorEmpleado = (cobros, liquidaciones) => {
     return cobros.reduce((result, cobro) => {
-      const { Empleado } = cobro.Ordene; // Extrae el empleado de la orden
+      const { Empleado } = cobro.Ordene;
       const empleadoExistente = result.find((item) => item.empleadoId === Empleado.id);
+      const liquidacion = liquidaciones.find((liq) => liq.id_tecnico === Empleado.id) ;
+      console.log('Saldos:', liquidacion);
       const orden = {
         ...cobro.Ordene,
-        presupuestoId: cobro.id, // Puedes agregar el ID del presupuesto si es relevante
+        presupuestoId: cobro.id,
         PlazosReparacion: cobro.PlazosReparacion,
         MediosDePago: cobro.MediosDePago,
         EstadosPresupuesto: cobro.Estados_presupuesto,
         Diagnosticos: cobro.Diagnosticos,
         dpg: cobro.dpg,
-        total: cobro.total - (cobro.total - cobro.dpg) * cobro.Ordene.Empleado.porcentaje_arreglo,
+        total: liquidacion.total  
       };
 
       if (empleadoExistente) {
@@ -59,24 +65,30 @@ const SaldosPendiente = () => {
       return result;
     }, []);
   };
+
   return (
     <div className='bg-secondary-subtle saldosPendientes' style={{ padding: '20px' }}>
       <Header text='Saldos pendientes' />
       <div>
-        <div>
-          <label htmlFor=''>Filtrar por fecha</label>
+        <div style={{ marginBottom: '20px' }}>
+          <label htmlFor='' style={{ marginRight: '20px' }}>Filtrar por fecha </label>
           <input type='date' name='' id='' />
         </div>
 
-        <div>
-          <ul className='row'>
-            <li className='col saldosItems'>Motivo</li>
-            <li className='col saldosItems'>Descripción</li>
-            <li className='col saldosItems'>Estado</li>
-            <li className='col saldosItems'>Saldo</li>
-          </ul>
-          <Saldos saldos={saldos} />
-        </div>
+        <Tabs2 active={activeTab} onChange={setActiveTab} className='client-tabs'>
+          <Tab title='Proveedores'>
+            <Saldos 
+              saldos={{ providers: saldos.providers, employees: [] }} 
+              tableStyle={{ tableLayout: 'fixed', width: '100%' }} // Ensure consistent column width
+            />
+          </Tab>
+          <Tab title='Empleados'>
+            <Saldos 
+              saldos={{ providers: [], employees: saldos.employees }} 
+              tableStyle={{ tableLayout: 'fixed', width: '100%' }} // Ensure consistent column width
+            />
+          </Tab>
+        </Tabs2>
       </div>
     </div>
   );

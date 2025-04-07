@@ -168,11 +168,9 @@ const Liquidaciones = () => {
       <Table hover style={{ width: '100%' }}>
         <thead>
           <tr>
-            <th style={{ textAlign: 'center' }}>Nombre</th>
-            {/* <th style={{ textAlign: 'center' }}>Ultima Liquidacion</th> */}
-            <th style={{ textAlign: 'center' }}>Monto a Liquidar</th>
-            {/* <th style={{ textAlign: 'center' }}>Adelanto</th> */}
-            <th style={{ textAlign: 'center' }}>Seleccionar</th>
+            <th style={{ textAlign: 'center', width: '40%' }}>Nombre</th>
+            <th style={{ textAlign: 'center', width: '30%' }}>Monto a Liquidar</th>
+            <th style={{ textAlign: 'center', width: '30%' }}>Seleccionar</th>
           </tr>
         </thead>
         <tbody>
@@ -185,23 +183,26 @@ const Liquidaciones = () => {
                     if (e.target.type !== 'checkbox') handleExpandClick(index);
                   }}
                 >
-                  <td style={{ textAlign: 'center' }}>
+                  <td style={{ textAlign: 'center', width: '40%' }}>
                     {liquidacion.Empleado.nombre} {liquidacion.Empleado.apellido}
                   </td>
-                  {/* <td style={{ textAlign: 'center' }}></td> */}
-                  <td style={{ textAlign: 'center' }}>{liquidacion.total}</td>
-                  {/* <td style={{ textAlign: 'center' }}>{liquidacion.adelanto}</td> */}
-                  <td style={{ textAlign: 'center' }}>
-                    <input type='checkbox' style={{ cursor: 'pointer' }} checked={tecnicoSelected.nombre === liquidacion.Empleado.nombre} onChange={() => handleSelecTecnico(liquidacion.Empleado)} />
+                  <td style={{ textAlign: 'center', width: '30%' }}>{liquidacion.total}</td>
+                  <td style={{ textAlign: 'center', width: '30%' }}>
+                    <input
+                      type='checkbox'
+                      style={{ cursor: 'pointer' }}
+                      checked={tecnicoSelected.nombre === liquidacion.Empleado.nombre}
+                      onChange={() => handleSelecTecnico(liquidacion.Empleado)}
+                    />
                   </td>
                 </tr>
                 {expandedRow === index && (
                   <tr>
-                    <td colSpan='5'>
+                    <td colSpan='3'>
                       {
                         <Table striped bordered hover>
                           <thead>
-                            <h2 className='text-center'>Liquidaciones realizadas</h2>
+                            <h3 className='text-left'>Liquidaciones realizadas</h3>
                             <tr>
                               <th>Fecha</th>
                               <th>Monto</th>

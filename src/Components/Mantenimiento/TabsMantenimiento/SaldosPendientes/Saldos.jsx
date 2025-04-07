@@ -1,48 +1,85 @@
 import PropTypes from 'prop-types';
-
+import Table from 'react-bootstrap/Table';
+import './saldos.css'
 const Saldos = ({ saldos }) => {
-  console.log(saldos);
   return (
     <>
-      <h2>Proveedores</h2>
-      <ul className='p-0'>
-        {saldos.providers.map(
-          (provider, index) =>
-            provider.total - provider.monto_pagado !== 0 && (
-              <div key={index} className={`d-flex align-items-center`}>
-                <li className='col saldoItem'>Proveedor</li>
-                <li className='col saldoItem'>{provider.descripcion}</li>
-                <li className={`col saldoItem`}>DEBE</li>
-                <li className='col saldoItem text-danger'>${provider.total - provider.monto_pagado}</li>
-              </div>
-            )
-        )}
-      </ul>
-
-      {/* <h2>Clientes</h2>
-      <ul className='p-0'>
-        {saldos.costumers.map((costumer, index) => (
-          <div key={index} className={`d-flex align-items-center`}>
-            <li className='col saldoItem'>{costumer.Ordene.id_cliente}</li>
-            <li className='col saldoItem'>{costumer.Ordene.equipo}</li>
-            <li className={`col saldoItem`}>DEBE</li>
-            <li className={`col saldoItem ${costumer.saldo > 0 ? 'text-success' : costumer.saldo === 0 ? 'text-warning' : 'text-danger'}`}>${costumer.total - costumer.monto_pagado}</li>
+      {saldos.providers.length > 0 && (
+        <>
+           <div style={{marginTop:'30px'}} >
+           <Table className="table" striped hover>
+{/*            <Table className="table custom-striped" striped hover>
+ */}            <thead>
+              <tr>
+                <th className="text-start">Motivo</th>
+                <th className="text-start">Descripción</th>
+                <th className="text-start">Saldo</th>
+              </tr>
+            </thead>
+            <tbody>
+              {saldos.providers.map(
+                (provider, index) =>
+                  provider.total - provider.monto_pagado !== 0 && (
+                    <tr key={index}>
+                      <td className="text-start">Proveedor</td>
+                      <td className="text-start">{provider.descripcion}</td>
+                      <td className="text-start text-danger">${provider.total - provider.monto_pagado}</td>
+                    </tr>
+                  )
+              )}
+            </tbody>
+          </Table>
           </div>
-        ))}
-      </ul> */}
+        </>
+      )}
 
-      <h2>Empleados</h2>
-      <ul className='p-0'>
-        {saldos.employees.map((employee, index) => (
-          <div key={index} className={`d-flex align-items-center`}>
-            <li className='col saldoItem'>{employee.nombre}</li>
-            <li className={`col saldoItem`}>LIQUIDAR</li>
-            <li className={`col saldoItem ${employee.saldo > 0 ? 'text-success' : employee.saldo === 0 ? 'text-warning' : 'text-danger'}`}>
-              ${employee.ordenes.reduce((acumulador, orden) => acumulador + parseFloat(orden.total - (orden.total - orden.dpg) * orden.Empleado.porcentaje_arreglo || 0), 0).toFixed(2)}
-            </li>
-          </div>
-        ))}
-      </ul>
+      {saldos.employees.length > 0 && (
+        <>
+        <div style={{marginTop:'30px' }} >
+
+          <Table className="table" striped hover>
+            <thead>
+              <tr>
+                <th className="text-start">Nombre</th>
+                <th className="text-start">Estado</th>
+                <th className="text-start">Saldo</th>
+              </tr>
+            </thead>
+            <tbody>
+              {saldos.employees.map((employee, index) => {
+                const saldo = employee.ordenes.reduce(
+                  (acc, orden) =>
+                    acc +
+                    parseFloat(
+                      orden.total -
+                        (orden.total - orden.dpg) *
+                          orden.Empleado.porcentaje_arreglo || 0
+                    ),
+                  0
+                ).toFixed(2);
+                return (
+                  <tr key={index}>
+                    <td className="text-start">{employee.nombre}</td>
+                    <td className="text-start">LIQUIDAR</td>
+                    <td
+                      className={`text-start ${
+                        saldo > 0
+                          ? 'text-success'
+                          : saldo === 0
+                          ? 'text-warning'
+                          : 'text-danger'
+                      }`}
+                    >
+                      ${saldo}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </Table>
+        </div>
+        </>
+      )}
     </>
   );
 };
@@ -56,36 +93,3 @@ Saldos.propTypes = {
 };
 
 export default Saldos;
-
-/* 
- <ul className='p-0'>
-        {saldos.map((saldo, index) => (
-          <div
-            key={index}
-            className={`d-flex align-items-center ${index % 2 === 0 ? 'bg-light' : ''} ${
-              saldo.estado === 'PAGO' ? 'borde-verde' : saldo.estado === 'PENDIENTE' ? 'borde-amarillo' : 'borde-rojo'
-            }`}
-          >
-            <li className='col saldoItem'>{saldo.motivo}</li>
-            <li className='col saldoItem'>{saldo.descripcion}</li>
-            <li
-              className={`col saldoItem ${saldo.estado === 'PAGO' ? 'text-success' : saldo.estado === 'PENDIENTE' ? 'text-warning' : 'text-danger'}`}
-            >
-              {saldo.estado}
-            </li>
-
-            {saldo.estado === 'PAGO' ? (
-              <li className='text-success col saldoItem'>${saldo.saldo}</li>
-            ) : saldo.estado === 'PENDIENTE' ? (
-              <li className='text-warning col saldoItem'>+ ${saldo.saldo}</li>
-            ) : (
-              <li className='text-danger col saldoItem'>- ${saldo.saldo}</li>
-            )}
-            <li className='col saldoItem'>{saldo.caja}</li>
-          </div>
-        ))}
-      </ul>
-    </>
-  );
-};
- */
