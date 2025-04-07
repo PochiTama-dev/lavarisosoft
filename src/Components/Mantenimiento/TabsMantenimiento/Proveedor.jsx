@@ -32,7 +32,7 @@ const Proveedor = () => {
     editar: (
       <Link to={`/proveedorEdit/${proveedor.id}`}>
         <svg
-          width="33"
+          width="20"
           height="33"
           viewBox="0 0 33 33"
           fill="none"
@@ -47,7 +47,7 @@ const Proveedor = () => {
     ),
     ojo: (
       <svg
-        width="51"
+        width="30"
         height="51"
         viewBox="0 0 51 51"
         fill="none"

@@ -19,3 +19,13 @@
   justify-content: left;
   text-transform: uppercase;
 }
+
+.tabs-ctn-facturas{
+
+
+ 
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #eeeeee;
+    border-radius: 15px;
+}
