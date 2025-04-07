@@ -87,6 +87,7 @@ const Totalizador = () => {
 
   const handleCajaChange = (id) => setSelectedCajaId(id);
   const handleDateChange = (date) => setSelectedDate(date);
+
   return (
     <div className='totalizadorContainer'>
       <Header text='Totalizador' />

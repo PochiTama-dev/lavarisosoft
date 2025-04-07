@@ -103,7 +103,7 @@ const guardarEvento = async (evento) => {
 const NuevaOrden = ({ clienteData }) => {
   const [cliente, setCliente] = useState(clienteData || {});
   const [incidente, setIncidente] = useState({});
-  const [idEmpleado, setIdEmpleado] = useState(null); 
+  const [idEmpleado, setIdEmpleado] = useState(null);
   useEffect(() => {
     if (!clienteData) {
       const fetchMaxNumeroCliente = async () => {
@@ -119,7 +119,7 @@ const NuevaOrden = ({ clienteData }) => {
   }, [clienteData]);
 
   const handleSubmit = async () => {
-    if (!incidente.numero_orden || !incidente.id_tipo_estado ) {
+    if (!incidente.numero_orden || !incidente.id_tipo_estado) {
       alert('Por favor, complete todos los campos requeridos.');
       return;
     }
@@ -132,7 +132,7 @@ const NuevaOrden = ({ clienteData }) => {
         const orden = {
           numero_orden: incidente.numero_orden, // Use the numero_orden from incidente
           id_cliente: clienteId,
-          id_empleado: idEmpleado || null, 
+          id_empleado: idEmpleado || null,
           id_tipo_estado: incidente.id_tipo_estado, // Use the id_tipo_estado from incidente
           equipo: incidente.equipo,
           modelo: incidente.modelo,

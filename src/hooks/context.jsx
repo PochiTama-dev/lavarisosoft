@@ -336,6 +336,16 @@ export const Provider = ({ children }) => {
     }
   };
 
+  const getLiquidacionesPendientes = async () => {
+    try {
+      const response = await fetch('https://lv-back.online/liquidacionesPendientes');
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Problemas al obtener las liquidaciones pendientes: ', error);
+    }
+  };
+
   const listaFacturasCompra = async () => {
     try {
       const response = await fetch('https://lv-back.online/facturascompra/lista');
@@ -429,6 +439,7 @@ export const Provider = ({ children }) => {
         listaFacturasVenta,
         //Liquidaciones
         getPresupuestos,
+        getLiquidacionesPendientes,
         //Saldos Pendientes
         PostSaldosPendientes,
         getSaldosPendientes,

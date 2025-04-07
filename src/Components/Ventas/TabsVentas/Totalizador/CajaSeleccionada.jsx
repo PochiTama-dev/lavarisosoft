@@ -33,11 +33,11 @@ const CajaSeleccionada = ({ onDateChange }) => {
           </select>
         </div>
       </div>
-      <ul className='row'>
+      {/* <ul className='row'>
         <li className='pestañasFont pestañasInventario col text-center'>Efectivo</li>
         <li className='pestañasFont pestañasInventario col text-center'>Dólares</li>
         <li className='pestañasFont pestañasInventario col text-center'>Bancos</li>
-      </ul>
+      </ul> */}
       <ul className='row'>
         <li className='col text-center items'>Periodo del Mes</li>
         <li className='col text-center items'>Total Facturado</li>

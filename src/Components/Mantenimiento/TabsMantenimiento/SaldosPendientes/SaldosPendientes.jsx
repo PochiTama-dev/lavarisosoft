@@ -63,10 +63,10 @@ const SaldosPendiente = () => {
     <div className='bg-secondary-subtle saldosPendientes'>
       <div>
         <h1> Saldos Pendientes</h1>
-        <div>
+        {/* <div>
           <label htmlFor=''>Filtrar por fecha</label>
           <input type='date' name='' id='' />
-        </div>
+        </div> */}
 
         <div>
           <ul className='row'>
@@ -74,7 +74,6 @@ const SaldosPendiente = () => {
             <li className='col saldosItems'>Descripción</li>
             <li className='col saldosItems'>Estado</li>
             <li className='col saldosItems'>Saldo</li>
-            <li className='col saldosItems'>Caja</li>
           </ul>
           <Saldos saldos={saldos} />
         </div>
