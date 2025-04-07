@@ -11,23 +11,34 @@ export const liquidacionesPendientes = async () => {
 
 export const liquidacionesPendientesPorTecnico = async (id_tecnico) => {
   try {
-    const response = await fetch(`${API_URL}liquidacionesPendientes/tecnico/${id_tecnico}`);
+    const response = await fetch(
+      `${API_URL}liquidacionesPendientes/tecnico/${id_tecnico}`
+    );
     return await response.json();
   } catch (error) {
-    console.error(`Error al obtener liquidaciones pendientes para el técnico con id ${id_tecnico}.`, error);
+    console.error(
+      `Error al obtener liquidaciones pendientes para el técnico con id ${id_tecnico}.`,
+      error
+    );
   }
 };
 
 export const actualizarLiquidacionPendiente = async (id, data) => {
   try {
-    const response = await fetch(`${API_URL}liquidacionesPendientes/modificar/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
+    const response = await fetch(
+      `${API_URL}liquidacionesPendientes/modificar/${id}`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      }
+    );
     return await response.json();
   } catch (error) {
-    console.error(`Error al actualizar el estado de la liquidación pendiente con id ${id}.`, error);
+    console.error(
+      `Error al actualizar el estado de la liquidación pendiente con id ${id}.`,
+      error
+    );
   }
 };
 
@@ -41,7 +52,10 @@ export const obtenerLiquidacionPendientePorId = async (id) => {
       return null;
     }
   } catch (error) {
-    console.error(`Error al obtener la liquidación pendiente con id ${id}.`, error);
+    console.error(
+      `Error al obtener la liquidación pendiente con id ${id}.`,
+      error
+    );
   }
 };
 
@@ -60,11 +74,17 @@ export const guardarLiquidacionPendiente = async (data) => {
 
 export const eliminarLiquidacionPendiente = async (id) => {
   try {
-    const response = await fetch(`${API_URL}liquidacionesPendientes/eliminar/${id}`, {
-      method: "DELETE",
-    });
+    const response = await fetch(
+      `${API_URL}liquidacionesPendientes/eliminar/${id}`,
+      {
+        method: "DELETE",
+      }
+    );
     return await response.json();
   } catch (error) {
-    console.error(`Error al eliminar la liquidación pendiente con id ${id}.`, error);
+    console.error(
+      `Error al eliminar la liquidación pendiente con id ${id}.`,
+      error
+    );
   }
 };
