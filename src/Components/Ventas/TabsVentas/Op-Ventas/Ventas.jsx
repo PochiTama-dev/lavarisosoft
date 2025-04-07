@@ -38,14 +38,14 @@ const Ventas = ({ data }) => {
     <div className='opventas-tab-container'>
       <div>
         <div className='opventas-excel'>
-          <h2 className='opventas-excel-heading'>CONSULTAR TipoOperacion</h2>
+{/*           <h2 className='opventas-excel-heading'>CONSULTAR TipoOperacion</h2> */}
           <div className='opventas-excel-wrapper'>
             <table className='table'>
               <thead>
                 <tr>
                   <th onClick={() => handleSort('created_at')}>Fecha {orderBy === 'created_at' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
-                  <th onClick={() => handleSort('operacion')}>Tipo-Operación {orderBy === 'operacion' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
-                  <th onClick={() => handleSort('numero_orden')}>N° de orden {orderBy === 'numero_orden' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
+{/*                   <th onClick={() => handleSort('operacion')}>Tipo-Operación {orderBy === 'operacion' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
+ */}                  <th onClick={() => handleSort('numero_orden')}>N° de orden {orderBy === 'numero_orden' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
                   <th onClick={() => handleSort('Empleado.legajo')}>Legajo-Técnico {orderBy === 'Empleado.legajo' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
                   <th onClick={() => handleSort('Cliente.cuil')}>CUIL-Cliente {orderBy === 'Cliente.cuil' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
                   <th onClick={() => handleSort('Presupuesto.total')}>Monto {orderBy === 'Presupuesto.total' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
@@ -58,7 +58,7 @@ const Ventas = ({ data }) => {
                     sortedData.map((item, index) => (
                       <tr key={index} className={index % 2 === 0 ? '' : 'row-even'}>
                         <td>{new Date(item.created_at).toLocaleDateString()}</td>
-                        <td>{'Aca va algo'}</td>
+              {/*           <td>{'Aca va algo'}</td> */}
                         <td>{item.numero_orden}</td>
                         <td>{item.Empleado?.legajo}</td>
                         <td>{item.Cliente?.cuil}</td>

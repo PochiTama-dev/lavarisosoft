@@ -1,9 +1,12 @@
 .mantenimiento-ctn {
   display: flex;
   flex-direction: row;
-  gap: 5%;
+ 
   padding: 20px;
   margin-top: 5%;
+
+
+  
 }
 
 .facturas-ctn,
@@ -12,12 +15,16 @@
   margin-top: 50px;
 }
 .tabs-ctn {
-  width: 70vw;
+ 
   margin-top: 10px;
 }
 .liquidaciones-ctn {
   width: 65vw;
-  margin-top: 50px;
+  margin: 0 auto;
+ 
+  padding: 20px;
+  background-color: #eeeeee;
+  border-radius: 15px;
 }
 .liquidaciones-ctn h1 {
   margin-bottom: 50px;
@@ -71,7 +78,13 @@
 }
 
 .taller-ctn {
-  width: 100%;
+ 
+  width: 80vw;
+  color: #283959;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #eeeeee;
+  border-radius: 15px;
 }
 
 .taller-title-search {

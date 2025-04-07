@@ -1,11 +1,24 @@
 .proveedor-container {
-  margin-top: 5%;
-  width: 70vw;
+ 
+ 
   height: 75vh;
   overflow-x: hidden;
-  color: #283959;
+ 
   scrollbar-width: thin; /* Ancho del scrollbar */
   scrollbar-color: #69688c #c8cfda; /* Color de la barra de desplazamiento */
+
+
+
+
+
+
+
+  width: 70vw;
+  color: #283959;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #eeeeee;
+  border-radius: 15px;
 }
 
 .proveedor-heading {

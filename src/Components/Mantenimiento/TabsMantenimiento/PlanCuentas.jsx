@@ -10,6 +10,7 @@ import "jspdf-autotable";
 import expandIcon from "../../../assets/expand_icon.png";
 import collapseIcon from "../../../assets/collapse_icon.png";
 import { useCustomContext } from "../../../hooks/context";
+import "./PlanCuentas.css";
 
 const PlanCuentas = () => {
   const { handleNavigate } = useCustomContext();
@@ -197,7 +198,7 @@ const PlanCuentas = () => {
       >
         {nodes.map((node) => (
           <li key={node.id} style={{ paddingLeft: `${level * 20}px` }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}  >
               <span
                 onClick={() => toggleVisibility(node.id)}
                 style={{
@@ -282,7 +283,7 @@ const PlanCuentas = () => {
   };
 
   return (
-    <div>
+    <div className="plan-cuentas-ctn" >
       <h1 style={{ marginTop: "40px", marginBottom: "40px" }}>
         Plan de Cuentas
       </h1>

@@ -8,7 +8,14 @@
   color: white;
   display: block;
 }
-
+.plan-cuentas-ctn{
+  width: 70vw;
+  color: #283959;
+  margin: 0 auto; 
+  padding: 20px;
+  background-color: #eeeeee;
+  border-radius: 15px;
+}
 .boton3Puntos span {
   display: inline-block;
   width: 7px;
@@ -17,6 +24,7 @@
   border-radius: 50%;
   margin-right: 1px;
   margin-left: 1px;
+ 
 }
 
 .imagenes li img {

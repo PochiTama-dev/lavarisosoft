@@ -1,12 +1,15 @@
 .proveedores-container {
-  margin-top: 5%;
-  width: 70vw;
-  height: 75vh;
   overflow-x: hidden;
   color: #283959;
-  background-color: #f2f6fc;
-  scrollbar-width: thin; /* Ancho del scrollbar */
-  scrollbar-color: #69688c #c8cfda; /* Color de la barra de desplazamiento */
+  scrollbar-width: thin;  
+  scrollbar-color: #69688c #c8cfda; 
+
+ 
+  color: #283959;
+  margin: 0 40px;
+  padding: 20px;
+  background-color: #eeeeee;
+  border-radius: 15px;
 }
 .proveedores-heading {
   color: #283959;
@@ -59,25 +62,33 @@
   display: flex;
   flex-direction: row;
   margin-top: 2%;
-  margin-left: 5%;
-  gap: 2%;
+  margin-left: 2%;
+ 
 }
 
 .proveedores-button-box a {
   width: 18%;
   height: 5vh;
-  padding-left: 2.5%;
+ 
 }
 
 .proveedores-button-box button {
   background-color: #69688c;
   color: white;
   border: none;
-  width: 100%;
-  height: 100%;
-  font-weight: bold;
-  text-align: start;
-  padding-left: 10%;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+ 
+.proveedores-button-box button:hover {
+  background-color: #45a049;  
 }
 
 .proveedores-excel-wrapper {

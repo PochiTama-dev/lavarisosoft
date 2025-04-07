@@ -1,16 +1,28 @@
 .caja-container {
-  margin-top: 5%;
+   
   padding-left: 2.5%;
   width: 70vw;
   color: #283959;
+  
+ 
+  margin: 0 auto;
+ 
+  padding: 20px;
+  background-color: #eeeeee;
+  border-radius: 15px;
 }
 
 .opventas-container {
-  margin-top: 3%;
+ 
   width: 70vw;
   height: 80vh;
   color: #283959;
-  background-color: #f2f6fc;
+ 
+
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #eeeeee;
+  border-radius: 15px;
 }
 
 .opventas-tabs {

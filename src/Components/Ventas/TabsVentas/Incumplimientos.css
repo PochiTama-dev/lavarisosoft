@@ -1,6 +1,9 @@
 .incumplimientos-container {
-    width: 70vw;
     height: 75vh;
+    width: 70vw;
     color: #283959;
-    background-color: #E6E6E6;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #eeeeee;
+    border-radius: 15px;
 }
