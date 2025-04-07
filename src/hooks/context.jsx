@@ -400,6 +400,16 @@ export const Provider = ({ children }) => {
     }
   };
 
+  const getLiquidacionesHechas = async () => {
+    try {
+      const response = await fetch('https://lv-back.online/liquidaciones');
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Problemas al obtener las liquidaciones: ', error);
+    }
+  };
+
   return (
     <Context.Provider
       value={{
@@ -440,6 +450,7 @@ export const Provider = ({ children }) => {
         //Liquidaciones
         getPresupuestos,
         getLiquidacionesPendientes,
+        getLiquidacionesHechas,
         //Saldos Pendientes
         PostSaldosPendientes,
         getSaldosPendientes,

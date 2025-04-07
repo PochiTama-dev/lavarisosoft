@@ -1,6 +1,6 @@
 import Table from 'react-bootstrap/Table';
-import datosEmpleados from './DatosEmpleados'; 
- 
+import datosEmpleados from './DatosEmpleados';
+
 const Empleados = () => {
   return (
     <div className='empleados-ctn'>
@@ -9,10 +9,10 @@ const Empleados = () => {
           <tr>
             <th>Nombre</th>
             <th>Apellido</th>
-            <th>Cuenta virtual</th>
-            <th>Saldo (CV)</th>
-            <th>Cuenta efectivo</th>
-            <th>Saldo (CE)</th>
+            <th>Cuenta</th>
+            <th>Saldo</th>
+            {/* <th>Cuenta efectivo</th>
+            <th>Saldo (CE)</th> */}
           </tr>
         </thead>
         <tbody>
@@ -22,8 +22,8 @@ const Empleados = () => {
               <td>{empleado.apellido}</td>
               <td>{empleado.ctaVirtual}</td>
               <td>{empleado.saldoCV}</td>
-              <td>{empleado.ctaEfectivo}</td>
-              <td>{empleado.saldoCE}</td>
+              {/* <td>{empleado.ctaEfectivo}</td>
+              <td>{empleado.saldoCE}</td> */}
             </tr>
           ))}
         </tbody>

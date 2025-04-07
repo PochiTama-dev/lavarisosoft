@@ -19,7 +19,7 @@ const Saldos = ({ saldos }) => {
         )}
       </ul>
 
-      <h2>Clientes</h2>
+      {/* <h2>Clientes</h2>
       <ul className='p-0'>
         {saldos.costumers.map((costumer, index) => (
           <div key={index} className={`d-flex align-items-center`}>
@@ -29,7 +29,7 @@ const Saldos = ({ saldos }) => {
             <li className={`col saldoItem ${costumer.saldo > 0 ? 'text-success' : costumer.saldo === 0 ? 'text-warning' : 'text-danger'}`}>${costumer.total - costumer.monto_pagado}</li>
           </div>
         ))}
-      </ul>
+      </ul> */}
 
       <h2>Empleados</h2>
       <ul className='p-0'>

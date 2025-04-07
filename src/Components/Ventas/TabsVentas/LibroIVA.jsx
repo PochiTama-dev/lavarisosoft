@@ -5,6 +5,7 @@ import * as XLSX from "xlsx";
 import "./LibroIVA.css";
 import dayjs from 'dayjs';
 import { DataContext } from "../../../hooks/DataContext";
+import Header from "../../Header/Header";
 const LibroIVA = () => {
   const [orderBy, setOrderBy] = useState(null);
   const [orderAsc, setOrderAsc] = useState(true);
@@ -101,11 +102,10 @@ const LibroIVA = () => {
 
   return (
     <div className="libro-container">
+         <Header text='Libro IVA' />
       <div className="libro-header-container">
         <div className="libro-header-left">
-          <div className="libro-heading">
-            <h1>Libro IVA</h1>
-          </div>
+         
         </div>
         <div className="libro-header-right">
           <div className="libro-input-container">
