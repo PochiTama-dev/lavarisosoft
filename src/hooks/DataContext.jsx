@@ -1,17 +1,18 @@
 import  { createContext, useState, useEffect } from "react";
 import { ordenes } from "../services/ordenesService";
-import { listadoProveedores, listaFacturas } from "../services/proveedoresService";
+import { listadoProveedores, /* listaFacturas */ } from "../services/proveedoresService";
 import { listaStockCamioneta } from "../services/stockCamionetaService";
 import { listaCobros, listaCajas } from "../services/cajasService";
 
 export const DataContext = createContext();
 
+// eslint-disable-next-line react/prop-types
 export const DataProvider = ({ children }) => {
   const [orders, setOrders] = useState([]);
   const [proveedores, setProveedores] = useState([]);
   const [stockCamioneta, setStockCamioneta] = useState([]);
   const [cobros, setCobros] = useState([]);
-  const [listaCajasData, setListaCajasData] = useState([]);  // Estado para listaCajas
+  const [listaCajasData, setListaCajasData] = useState([]);   
 
   // Funciones para obtener los datos
   const fetchOrdenes = async () => {
@@ -36,7 +37,7 @@ export const DataProvider = ({ children }) => {
 
   const fetchListaCajas = async () => {
     const data = await listaCajas();
-    if (data) setListaCajasData(data);  // Aquí se carga listaCajas
+    if (data) setListaCajasData(data);   
   };
 
   useEffect(() => {
@@ -44,7 +45,7 @@ export const DataProvider = ({ children }) => {
     fetchProveedores();
     fetchListaStockCamioneta();
     fetchListaCobros();
-    fetchListaCajas();  // Llamamos a la función para obtener listaCajas
+    fetchListaCajas();   
   }, []);
 
   return (
@@ -54,7 +55,7 @@ export const DataProvider = ({ children }) => {
         proveedores, 
         stockCamioneta, 
         cobros, 
-        listaCajas: listaCajasData  // Proveemos listaCajas en el contexto
+        listaCajas: listaCajasData   
       }}
     >
       {children}
