@@ -9,7 +9,7 @@ const UploadEmpleado = () => {
     nombre: '',
     apellido: '',
     cuil: '',
-    cuenta: null,
+    cuenta: '',
     legajo: null,
     telefono: '',
     email: '',
@@ -25,7 +25,7 @@ const UploadEmpleado = () => {
   });
   const navigate = useNavigate();
   const [roles, setRoles] = useState([]);
-  const [camposVacios, setCamposVacios] = useState([]);
+  const [camposVacios, /* setCamposVacios */] = useState([]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -79,8 +79,8 @@ const UploadEmpleado = () => {
 
   const handleCreateEmpleado = async (empleado) => {
     try {
-      const { id_rol, nombre, apellido, cuil, legajo, telefono, email, direccion, ubicacion, longitud, latitud, estado, marca, modelo, color, patente } = await empleado;
-      await postEmpleado({ id_rol, nombre, apellido, cuil, legajo, telefono, email, direccion, ubicacion, longitud, latitud, estado });
+      const { id_rol, nombre, apellido, cuil, cuenta, legajo, telefono, email, direccion, ubicacion, longitud, latitud, estado, marca, modelo, color, patente } = await empleado;
+      await postEmpleado({ id_rol, nombre, apellido, cuil, cuenta, legajo, telefono, email, direccion, ubicacion, longitud, latitud, estado });
       if (marca && modelo && patente && color) {
         const idEmpleado = await getEmpleado(email);
         await postVehiculo({ id_empleado: idEmpleado, marca, modelo, patente, color });
@@ -103,7 +103,7 @@ const UploadEmpleado = () => {
   };
 
   const postEmpleado = async (empleadoForm) => {
-    let { id_rol, nombre, apellido, cuil, legajo, telefono, email, direccion, ubicacion, longitud, latitud } = await empleadoForm;
+    let { id_rol, nombre, apellido, cuil, cuenta, legajo, telefono, email, direccion, ubicacion, longitud, latitud } = await empleadoForm;
     switch (id_rol) {
       case '1':
         legajo = 'ATC-' + legajo;
@@ -130,7 +130,7 @@ const UploadEmpleado = () => {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ id_rol, nombre, apellido, cuil, legajo, telefono, email, direccion, ubicacion, longitud, latitud, estado: 0 }),
+      body: JSON.stringify({ id_rol, nombre, apellido, cuil, cuenta, legajo, telefono, email, direccion, ubicacion, longitud, latitud, estado: 0 }),
     });
     console.log('status empleado: ', fetchEmpleado.status);
   };
@@ -256,6 +256,19 @@ const UploadEmpleado = () => {
                 CUIL
               </Form.Label>
               <Form.Control type='text' name='cuil' value={empleado.cuil} onChange={handleChange} placeholder='Ingrese su CUIL' style={{ textAlign: 'left', borderRadius: '5px', width: '350px' }} />
+            </Form.Group>
+            <Form.Group controlId='formCuenta' className='label-input-margin'>
+              <Form.Label className={camposVacios.includes('cuenta') ? 'required-field' : ''} style={{ textAlign: 'left', display: 'block' }}>
+                Cuenta
+              </Form.Label>
+              <Form.Control
+                type='text'
+                name='cuenta'
+                value={empleado.cuenta}
+                onChange={handleChange}
+                placeholder='Ingrese su cuenta'
+                style={{ textAlign: 'left', borderRadius: '5px', width: '350px' }}
+              />
             </Form.Group>
             <Form.Group controlId='formDireccion' className='label-input-margin'>
               <Form.Label className={camposVacios.includes('direccion') ? 'required-field' : ''} style={{ textAlign: 'left', display: 'block' }}>
