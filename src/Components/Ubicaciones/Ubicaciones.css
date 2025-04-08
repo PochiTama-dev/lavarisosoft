@@ -65,8 +65,17 @@
 }
 
  
+.modal-dialog{
+  margin-top: 150px;
+}
+.modal-lg {
+  max-width: 80%;  
+}
 
- 
+.modal-body {
+  max-height: 400px; 
+  overflow-y: auto;  
+}
 .scrollable-container-topLocation {
   flex-grow: 1; 
   overflow-y: auto; 

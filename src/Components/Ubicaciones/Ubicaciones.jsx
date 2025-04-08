@@ -6,6 +6,8 @@ import { haversine } from "./calcularDistancia";
 import { listaClientes } from "../../services/clienteService";
 import { listadoEmpleados } from "../../services/empleadoService";
 import socket from "../services/socketService";
+import "bootstrap/dist/css/bootstrap.min.css"; // Asegúrate de importar Bootstrap
+
 const Ubicaciones = () => {
   const [showTareas, setShowTareas] = useState({});
   const [view, setView] = useState("clientesTecnicos"); // Estado para controlar la vista inicial
@@ -32,6 +34,11 @@ const Ubicaciones = () => {
 
   const suggestionsRef = useRef();
   const mapRef = useRef();
+
+  const [showModal, setShowModal] = useState(false);
+
+  const handleOpenModal = () => setShowModal(true);
+  const handleCloseModal = () => setShowModal(false);
 
   useEffect(() => {
     // Leer estado de conexión de los técnicos desde localStorage
@@ -574,13 +581,7 @@ const Ubicaciones = () => {
         >
           <button
             className="bg-info rounded-pill py-1 px-2 text-white"
-            onClick={() =>
-              setView(
-                view === "clientesTecnicos"
-                  ? "formClientes"
-                  : "clientesTecnicos"
-              )
-            }
+            onClick={handleOpenModal}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -945,6 +946,126 @@ const Ubicaciones = () => {
         </div>
    
       </div>
+      {/* Modal */}
+         {showModal && (
+        <div className="modal show d-block" tabIndex="-1" role="dialog">
+          <div className="modal-dialog modal-lg" role="document"> {/* Cambiado a modal-lg para hacerlo más grande */}
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Cargar cliente</h5>
+             
+              </div>
+              <div className="modal-body">
+                <div className="container">
+                  <div className="row">
+                    {/* Primera fila */}
+                    <div className="col-md-6 mb-3">
+                      <label>N° Cliente:</label>
+                      <input
+                        type="text"
+                        name="numero_cliente"
+                        className="form-control"
+                        value={newClient.numero_cliente}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                    <div className="col-md-6 mb-3">
+                      <label>Nombre:</label>
+                      <input
+                        type="text"
+                        name="nombre"
+                        className="form-control"
+                        value={newClient.nombre}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                    {/* Segunda fila */}
+                    <div className="col-md-6 mb-3">
+                      <label>Apellido:</label>
+                      <input
+                        type="text"
+                        name="apellido"
+                        className="form-control"
+                        value={newClient.apellido}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                    <div className="col-md-6 mb-3">
+                      <label>Dirección:</label>
+                      <input
+                        type="text"
+                        name="direccion"
+                        className="form-control"
+                        value={newClient.direccion}
+                        onChange={handleSuggestions}
+                      />
+                    </div>
+                    {/* Tercera fila */}
+                    <div className="col-md-6 mb-3">
+                      <label>Piso:</label>
+                      <input
+                        type="number"
+                        name="piso"
+                        className="form-control"
+                        value={newClient.piso || 0}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                    <div className="col-md-6 mb-3">
+                      <label>Departamento:</label>
+                      <input
+                        type="text"
+                        name="departamento"
+                        className="form-control"
+                        value={newClient.departamento || ""}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                    {/* Cuarta fila */}
+                    <div className="col-md-6 mb-3">
+                      <label>Teléfono:</label>
+                      <input
+                        type="text"
+                        name="telefono"
+                        className="form-control"
+                        value={newClient.telefono}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                    <div className="col-md-6 mb-3">
+                      <label>CUIL/CUIT:</label>
+                      <input
+                        type="text"
+                        name="cuil"
+                        className="form-control"
+                        value={newClient.cuil}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={handleCloseModal}
+                >
+                  Cerrar
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleAddClient}
+                >
+                  Guardar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+     
     </div>
   );
 };
