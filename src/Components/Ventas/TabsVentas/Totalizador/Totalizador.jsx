@@ -130,7 +130,7 @@ const Totalizador = () => {
           </div>
         </div>
       </div>
-      <button>Exportar a excel</button>
+      <button className='caja-export-button' style={{marginTop:'50px'}}>Exportar a excel</button>
     </div>
   );
 };

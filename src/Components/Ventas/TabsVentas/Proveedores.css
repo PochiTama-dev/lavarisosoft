@@ -63,7 +63,7 @@
   flex-direction: row;
   margin-top: 2%;
   margin-left: 2%;
- 
+  width: 1000px;
 }
 
 .proveedores-button-box a {

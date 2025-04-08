@@ -5,6 +5,15 @@ margin: 40px 0 30px 30px;
 .cajas ul {
     padding:0
 }
+.totalizadorContainer{
+    width: 70vw;
+  height: 80vh;
+  color: #283959;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #eeeeee;
+  border-radius: 15px;
+}
 .cajas .cajaItem{
     width: 200px;
     margin-top:5px;

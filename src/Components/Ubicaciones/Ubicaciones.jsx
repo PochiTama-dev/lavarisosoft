@@ -520,7 +520,10 @@ const Ubicaciones = () => {
               <div
                 id="clientes"
                 className="container-lists list-clientes-container"
+                style={{position:"relative"}}
               >
+                <div style={{ display: "flex", justifyContent: "space-between" }}> 
+
                 <h2 className="px-3 pb-2 feedback-containers-heading">
                   Clientes
                 </h2>
@@ -532,15 +535,14 @@ const Ubicaciones = () => {
                     value={searchTerm}
                     onChange={handleSearchChange}
                   />
-                  <button className="caja-button-search btn btn-primary">
-                    🔍︎
-                  </button>
+          
+                </div>
                 </div>
                 <div className="scrollable-container-top mt-3">
                   {filteredClientes.map((t, i) => (
                     <div
                       key={i}
-                      className="cliente-item my-2 p-3 d-flex justify-content-between align-items-center bg-light rounded shadow-sm"
+                      className="cliente-item my-2   d-flex justify-content-between align-items-center bg-light rounded shadow-sm"
                     >
                       <button
                         className="btn btn-link feedback-tecnicos-heading-button"
@@ -560,6 +562,38 @@ const Ubicaciones = () => {
                     </div>
                   ))}
                 </div>
+                      <div
+          className="d-flex justify-content-center"
+               style={{
+            position: "absolute",
+            bottom: "0",
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: "1",
+          }}
+        >
+          <button
+            className="bg-info rounded-pill py-1 px-2 text-white"
+            onClick={() =>
+              setView(
+                view === "clientesTecnicos"
+                  ? "formClientes"
+                  : "clientesTecnicos"
+              )
+            }
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="28"
+              height="28"
+              fill="currentColor"
+              className="bi bi-plus"
+              viewBox="0 0 16 16"
+            >
+              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+            </svg>
+          </button>
+        </div>
               </div>
               <hr />
             </>
@@ -570,6 +604,8 @@ const Ubicaciones = () => {
               id="tecnicos"
               className="container-lists list-tecnicos-container"
             >
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+
               <h2 className="px-3 feedback-containers-heading">Técnicos</h2>
               <div className="px-4 mx-3">
                 <input
@@ -579,7 +615,8 @@ const Ubicaciones = () => {
                   value={searchTec}
                   onChange={handleSearchTec}
                 />
-                <button className="caja-button-search">🔍︎</button>
+              </div>
+             
               </div>
               <div className="scrollable-container-top">
                 {filteredTecnicos.map((t) => {
@@ -595,20 +632,19 @@ const Ubicaciones = () => {
                   }`;
 
                   return (
-                    <div key={t.id}>
-                      <div className="feedback-tecnicos-container align-items-center">
+                    <div key={t.id}   >
+                                   <div key={t.id} className="tecnicos-container-badge position-relative">
                         <h3
                           className="feedback-tecnicos-heading mx-2 pointer"
                           onClick={() => handleSelectTecnico(t)}
                         >
                           {t.nombre} {t.apellido}
                         </h3>
-                        <div className={badgeClass}></div>
+                        <div className={`${badgeClass} badge-right`}></div>
                         <ul
                           onClick={() => handleShowTareas(t.id)}
                           className="feedback-tecnico"
                         >
-                          <li></li>
                         </ul>
                       </div>
                       {showTareas[t.id] && (
@@ -907,37 +943,7 @@ const Ubicaciones = () => {
             tecniCoordinates={tecCoordinates}
           />
         </div>
-        <div
-          className="d-flex justify-content-end"
-          style={{
-            top: "-120px",
-            right: "15px",
-            position: "relative",
-            zIndex: "1",
-          }}
-        >
-          <button
-            className="bg-info rounded-pill py-1 px-2 text-white"
-            onClick={() =>
-              setView(
-                view === "clientesTecnicos"
-                  ? "formClientes"
-                  : "clientesTecnicos"
-              )
-            }
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="28"
-              height="28"
-              fill="currentColor"
-              className="bi bi-plus"
-              viewBox="0 0 16 16"
-            >
-              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
-            </svg>
-          </button>
-        </div>
+   
       </div>
     </div>
   );

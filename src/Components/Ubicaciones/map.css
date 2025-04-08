@@ -1,0 +1,9 @@
+.selectFilterMapa{
+    position: absolute;
+    z-index: 9 ;
+    margin-top: 10px;
+    margin-left: 100px;
+    background-color: #69688c;
+    color: white;
+    
+}

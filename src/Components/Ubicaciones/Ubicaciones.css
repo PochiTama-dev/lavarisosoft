@@ -37,7 +37,21 @@
 .caja-button-search:hover {
   background-color: #0056b3;
 }
+.tecnicos-container-badge {
+  position: relative;
+ 
+  background-color: #c8cfda !important;
+  border-radius: 5px;
+  padding: 1px;
+  margin-bottom: 5px;
+}
 
+.badge-right {
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  transform: translateY(-50%);
+}
 /* Client item styling */
 .cliente-item {
   display: flex;
@@ -47,17 +61,15 @@
   border-radius: 8px;
   padding: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease-in-out;
+ cursor: pointer;
 }
 
-.cliente-item:hover {
-  transform: translateY(-5px);
-}
+ 
 
-/* Scrollable area for clients */
+ 
 .scrollable-container-topLocation {
-  flex-grow: 1; /* Hace que la lista crezca para llenar el espacio */
-  overflow-y: auto; /* Permite desplazarse si hay muchos elementos */
+  flex-grow: 1; 
+  overflow-y: auto; 
   margin-bottom: 10px;
   height: 90%;
 }
@@ -127,20 +139,7 @@
   height: 360px;
 }
 
-.feedback-tecnicos-heading-button {
-  color: #283959;
-  display: flex;
-  justify-content: left;
-  margin-left: 2.5%;
-  margin-top: 2.5%;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  font-size: 1.2rem;
-  font-weight: 500;
-  text-decoration: none;
-}
+ 
 
 /* Estilos popup */
 .leaflet-popup-content-wrapper {
@@ -300,8 +299,8 @@
   color: #283959;
   display: flex;
   justify-content: left;
-  margin-left: 2.5%;
-  margin-top: 2.5%;
+/*   margin-left: 2.5%;
+  margin-top: 2.5%; */
   background-color: transparent;
   border: none;
   cursor: pointer;
