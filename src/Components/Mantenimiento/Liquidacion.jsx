@@ -4,7 +4,7 @@ import { func, object, any } from 'prop-types';
 import RemitoLiquidacion from './RemitoLiquidacion';
 import { listaCajas } from '../../services/cajasService';
 import { guardarLiquidacion } from '../../services/liquidacionesService';
-const Liquidacion = ({ tecnico, setModal }) => {
+const Liquidacion = ({ tecnico, totalLiquidacion, setModal }) => {
   const [newModal, setNewModal] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const [liqParcial, setLiqParcial] = useState('');
@@ -20,10 +20,11 @@ const Liquidacion = ({ tecnico, setModal }) => {
   }, []);
 
   const handleLiquidate = async () => {
+    if (!window.confirm("Seguro que desea realizar esta liquidacion")) return;
     try {
       const fecha = new Date().toISOString();
       const response = await guardarLiquidacion({
-        id_tecnico: tecnico.empleadoId,
+        id_tecnico: tecnico.id, 
         monto: liqParcial,
         fecha,
       });
@@ -60,28 +61,34 @@ const Liquidacion = ({ tecnico, setModal }) => {
     <div className='liquidacion rounded'>
       {!newModal && (
         <>
-          <div className='d-flex justify-content-around'>
-            <h1>Liquidación {tecnico.nombre}</h1>
-            <h1 className='pointer' onClick={() => setModal(false)}>
+        
+          <div className='d-flex justify-content-around' style={{ position: 'relative' }}>
+          <h1 
+              className='pointer' 
+              onClick={() => setModal(false)}
+              style={{ position: 'absolute', top: '-40px', right: '-20px' }}
+            >
               x
             </h1>
+            <h3>Liquidación {tecnico.nombre} {tecnico.apellido}</h3>
+     
           </div>
           <div className='liq-table d-flex justify-content-evenly'>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <h2
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <h4
                 style={{
                   color: isDisabled ? 'gray' : 'initial',
                   border: isDisabled ? '1px solid gray' : 'initial',
                   textDecoration: isDisabled ? 'line-through' : 'initial',
                 }}
               >
-                Total:
-              </h2>
+                Total: 
+              </h4>
               <label htmlFor='adelanto'>
-                <h2>Liquidacion parcial</h2>
+                <h4>Liquidacion parcial</h4>
               </label>
               <label>
-                <h2>Seleccionar Caja:</h2>
+                <h4>Seleccionar Caja:</h4>
               </label>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -92,15 +99,14 @@ const Liquidacion = ({ tecnico, setModal }) => {
                   textDecoration: isDisabled ? 'line-through' : 'initial',
                 }}
               >
-                {tecnico.total - tecnico.adelanto}
+               $ {totalLiquidacion}
               </h3>
               <input
-                className='m-auto '
+                className='m-auto'
                 style={{ height: '40px', fontSize: '30px' }}
                 type='number'
-                name=''
                 id='adelanto'
-                max={tecnico.total - tecnico.adelanto}
+                max={totalLiquidacion} // se usa totalLiquidacion para el max
                 onChange={handleInputChange}
                 onKeyDownCapture={handleKeyPress}
               />
@@ -122,10 +128,13 @@ const Liquidacion = ({ tecnico, setModal }) => {
               </select>
             </div>
           </div>
-          <div className='d-flex  mt-3' style={{ flexDirection: 'row' }}></div>
+          <div className='d-flex  mt-3' style={{ flexDirection: 'row', justifyContent:'center' }}>
+
+
           <button onClick={handleLiquidate} disabled={!selectedCaja}>
             Liquidar
           </button>
+          </div>
         </>
       )}
       {newModal && (
@@ -139,6 +148,7 @@ const Liquidacion = ({ tecnico, setModal }) => {
 
 Liquidacion.propTypes = {
   tecnico: object,
+  totalLiquidacion: any,
   setModal: func,
   selectedCaja: any,
   cajas: any,
