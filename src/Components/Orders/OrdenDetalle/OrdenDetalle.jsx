@@ -128,9 +128,9 @@ const OrdenDetalle = ({ orden, onUpdateOrden }) => {
 
   return (
     <div className="contentDetail">
-      <div>
-        <h1>Orden #{id}</h1>
-        <span>Estado: {TiposEstado.tipo_estado}</span>
+      <div style={{display:'flex', justifyContent:'center' , margin:'40px auto'}}> 
+      <h3>Orden #{id}</h3>
+{/*         <span>Estado: {TiposEstado.tipo_estado}</span> */}
       </div>
       {orden.Empleado ? (
         <DatosTecnico
@@ -139,9 +139,9 @@ const OrdenDetalle = ({ orden, onUpdateOrden }) => {
           legajo={orden.Empleado.legajo}
         />
       ) : (
-        <div>
-          <h3>Seleccionar Técnico</h3>
-          <select
+        <div style={{margin:'-20px 0 40px 20px ', display:'flex', justifyContent:'center'}}>
+          <h4 style={{marginTop:'10px'}}>Asignar Técnico</h4>
+          <select style={{marginRight:'20px', marginLeft:'20px'}}
             onChange={(e) => setTecnicoSeleccionado(e.target.value)}
             value={tecnicoSeleccionado || ""}
           >
@@ -152,14 +152,17 @@ const OrdenDetalle = ({ orden, onUpdateOrden }) => {
               </option>
             ))}
           </select>
+          <div className="asignarTecnico-confirmar">
+
           <button
             onClick={handleAsignarTecnico}
             disabled={!tecnicoSeleccionado}
-            className="bg-primary rounded-pill text-white"
+ 
             style={{ marginLeft: "1%" }}
           >
-            Asignar Técnico
+           Confirmar
           </button>
+          </div>
         </div>
       )}
 
@@ -200,7 +203,7 @@ const OrdenDetalle = ({ orden, onUpdateOrden }) => {
         {TiposEstado.tipo_estado === "Cancelada" && (
           <div className="orders-btn">
             <button
-              className="bg-info rounded-pill text-white"
+              className="bg-info   text-white"
               onClick={handlePreliminar}
             >
               Preliminar
@@ -210,7 +213,7 @@ const OrdenDetalle = ({ orden, onUpdateOrden }) => {
         {TiposEstado.tipo_estado === "Aprobada" && (
           <div className="orders-btn">
             <button
-              className="bg-info rounded-pill text-white"
+   
               onClick={handleDeclinar}
             >
               Declinar
@@ -220,7 +223,7 @@ const OrdenDetalle = ({ orden, onUpdateOrden }) => {
         {TiposEstado.tipo_estado === "Aprobada" && (
           <div className="orders-btn">
             <button
-              className="bg-success rounded-pill text-white"
+       
               onClick={handleRedirect}
             >
               Remito

@@ -17,9 +17,9 @@ const OrdenesTecnico = ({ nombre, ordenes, onSelectOrden }) => {
 
   return (
     <div className="bg-secondary ordenes-tecnico">
-      <div className="d-flex">
-        <h3 className="subtitle">{nombre}</h3>
-        <ul onClick={handleShowOrder} className="ordenTecnico">
+      <div className="d-flex" onClick={handleShowOrder} style={{ cursor: "pointer" }}>
+        <h5 className="subtitle">{nombre}</h5>
+        <ul   className="ordenTecnico">
           <li></li>
         </ul>
       </div>
@@ -29,15 +29,19 @@ const OrdenesTecnico = ({ nombre, ordenes, onSelectOrden }) => {
             <div
               key={index}
               className="feedback-tecnicos-container align-items-center"
+              onClick={(e) => onSelectOrden(e, orden.id)}
+              style={{ cursor: "pointer" }}
             >
               <div
+
+      
                 className={`notification-badge-tarea ${
                   estadosClassname[orden.id_tipo_estado]
                 }`}
               ></div>
               <li className="li-tarea">
                 Orden #{orden.id}{" "}
-                <a href="#" onClick={(e) => onSelectOrden(e, orden.id)}>
+                <a href="#"  style={{marginLeft:'70px', color:'#69688c'}}>
                   ver detalles
                 </a>
               </li>

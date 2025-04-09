@@ -5,6 +5,7 @@
 
 .asideDetail {
   margin-left: 10px;
+  border-radius: 8px;
 }
 .nuevaOrder-ctn {
   margin-top: 50px;
@@ -13,4 +14,9 @@
 
 .text-orders {
   color: #283959;
+  display: flex;
+  flex-direction: row;
+}
+.boton-mas-orden{
+ 
 }
