@@ -1,136 +1,218 @@
-import { useEffect, useState } from 'react';
-import Header from '../../../Header/Header';
-import { listaCajas } from '../../../../services/cajasService';
-import Cajas from './Cajas';
-import CajaSeleccionada from './CajaSeleccionada';
-//import DatosCaja from './DatosCaja';
-import { listaCobros } from '../../../../services/CobrosService';
-import { useCustomContext } from '../../../../hooks/context';
+import { useEffect, useState } from "react";
+import * as XLSX from "xlsx";
+import Header from "../../../Header/Header";
+import { listaCajas } from "../../../../services/cajasService";
+import { obtenerLiquidaciones } from "../../../../services/liquidacionesService";
+import Cajas from "./Cajas";
+import CajaSeleccionada from "./CajaSeleccionada";
+import { useCustomContext } from "../../../../hooks/context";
+import "./Totalizador.css";
 
 const Totalizador = () => {
-  const { listaFacturasCompra, listaFacturasVenta, getPresupuestos, getSaldosPendientes } = useCustomContext();
+  const { listaFacturasCompra, listaFacturasVenta } = useCustomContext();
   const [caja, setCaja] = useState([]);
-  const [selectedCajaId, setSelectedCajaId] = useState('');
-  const [selectedDate, setSelectedDate] = useState('');
-  const [datosLiquidaciones, setDatosLiquidaciones] = useState(0);
-  const [saldosPendientes, setSaldosPendientes] = useState(0);
+  const [selectedCajaId, setSelectedCajaId] = useState("");
+  const [selectedDate, setSelectedDate] = useState({ year: "", month: "" });
+  const [datosFiltrados, setDatosFiltrados] = useState([]);
   const [mesFacturado, setMesFacturado] = useState({});
+  const [liquidaciones, setLiquidaciones] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [cajasData, cobrosData, facturasCompra, facturasVenta, saldos] = await Promise.all([listaCajas(), listaCobros(), listaFacturasCompra(), listaFacturasVenta(), getSaldosPendientes()]);
+        const [cajasData, facturasCompra, facturasVenta, liquidacionesData] =
+          await Promise.all([
+            listaCajas(),
+            listaFacturasCompra(),
+            listaFacturasVenta(),
+            obtenerLiquidaciones(),
+          ]);
 
         setCaja(cajasData || []);
-        console.log('COBROS DATA: ', cobrosData);
-        console.log('FACTURAS VENTA: ', facturasVenta);
-        setMesFacturado(organizarFacturasPorMes([...facturasCompra, ...facturasVenta]));
-        setSaldosPendientes(calcularSaldosPendientes(saldos));
-        obtenerDatosLiquidaciones();
+        setMesFacturado(
+          organizarFacturasPorMes([...facturasCompra, ...facturasVenta])
+        );
+        setLiquidaciones(liquidacionesData || []);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
       }
     };
     fetchData();
   }, []);
 
-  const calcularTotalFacturas = (facturasCompra, facturasVenta) => {
-    const totalCompra = facturasCompra.reduce((acc, factura) => acc + Number(factura.total), 0);
-    const totalVenta = facturasVenta.reduce((acc, factura) => acc + Number(factura.total), 0);
-    return totalVenta - totalCompra;
-  };
-
   const organizarFacturasPorMes = (facturas) => {
-    const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-
     return facturas.reduce((acc, factura) => {
-      const mesIndex = new Date(factura.created_at).getMonth();
-      const mesKey = meses[mesIndex];
-      acc[mesKey] = acc[mesKey] || [];
-      acc[mesKey].push(factura);
+      const fecha = new Date(factura.created_at);
+      const mes = fecha.getMonth() + 1;
+      const year = fecha.getFullYear();
+      const key = `${year}-${mes}`;
+      acc[key] = acc[key] || [];
+      acc[key].push(factura);
       return acc;
     }, {});
   };
 
-  const calcularSaldosPendientes = (saldos) => {
-    const montoAdelanto = saldos.filter(({ tipo }) => tipo === 'adelanto' || tipo === 'liquidacion').reduce((acc, saldo) => acc + saldo.monto, 0);
-    const montoOrden = saldos.filter(({ tipo }) => tipo === 'orden').reduce((acc, saldo) => acc + saldo.monto, 0);
-    return montoOrden - montoAdelanto;
+  const handleDateChange = ({ year, month }) => {
+    setSelectedDate({ year, month });
   };
 
-  const obtenerDatosLiquidaciones = async () => {
-    const cobros = await getPresupuestos();
-    const totalFacturado = transformarCobrosPorEmpleado(cobros).reduce((acc, empleado) => acc + empleado.ordenes.reduce((sum, orden) => sum + orden.total, 0), 0);
-    setDatosLiquidaciones(totalFacturado);
+  const handleCajaChange = (cajaId) => {
+    setSelectedCajaId(cajaId);
   };
 
-  const transformarCobrosPorEmpleado = (cobros) => {
-    return cobros.reduce((result, cobro) => {
-      const { Empleado } = cobro.Ordene;
-      const empleadoExistente = result.find((item) => item.empleadoId === Empleado.id);
-      const orden = {
-        ...cobro.Ordene,
-        total: cobro.total - (cobro.total - cobro.dpg) * cobro.Ordene.Empleado.porcentaje_arreglo,
-      };
-      if (empleadoExistente) {
-        empleadoExistente.ordenes.push(orden);
-      } else {
-        result.push({
-          empleadoId: Empleado.id,
-          nombre: `${Empleado.nombre} ${Empleado.apellido}`,
-          ordenes: [orden],
-        });
+  useEffect(() => {
+    const filteredData = Object.entries(mesFacturado).reduce(
+      (acc, [key, facturas]) => {
+        const [year, month] = key.split("-");
+        if (
+          (!selectedDate.year || selectedDate.year === year) &&
+          (!selectedDate.month || Number(selectedDate.month) === Number(month))
+        ) {
+          const facturasFiltradas = facturas.filter(
+            (factura) =>
+              !selectedCajaId ||
+              Number(factura.id_caja) === Number(selectedCajaId)
+          );
+          if (facturasFiltradas.length > 0) {
+            acc[key] = facturasFiltradas;
+          }
+        }
+        return acc;
+      },
+      {}
+    );
+    setDatosFiltrados(filteredData);
+  }, [mesFacturado, selectedDate, selectedCajaId]);
+
+  const calcularTotales = (facturas, year, month) => {
+    let totalFacturado = 0;
+    let totalPagado = 0;
+    let gastosOperativos = 0;
+    let facturasPendientes = 0;
+
+    const totalPagadoTecnicos = liquidaciones
+      .filter((liquidacion) => {
+        const fecha = new Date(liquidacion.created_at);
+        return (
+          fecha.getFullYear() === Number(year) &&
+          fecha.getMonth() + 1 === Number(month)
+        );
+      })
+      .reduce((acc, liquidacion) => acc + Number(liquidacion.monto), 0);
+
+    facturas.forEach((factura) => {
+      totalFacturado += Number(factura.total);
+      totalPagado += Number(factura.importe || 0);
+      gastosOperativos += Number(factura.gastos_operativos || 0);
+      if (factura.estado === "pendiente") {
+        facturasPendientes += 1;
       }
-      return result;
-    }, []);
+    });
+
+    const margenBruto = totalFacturado - totalPagadoTecnicos;
+    const gananciaNeta = margenBruto - gastosOperativos;
+
+    return {
+      totalFacturado,
+      totalPagado: totalPagadoTecnicos,
+      margenBruto,
+      gastosOperativos,
+      gananciaNeta,
+      facturasPendientes,
+    };
   };
 
-  const handleCajaChange = (id) => setSelectedCajaId(id);
-  const handleDateChange = (date) => setSelectedDate(date);
+  const exportarExcel = () => {
+    const datosExcel = Object.entries(datosFiltrados).map(([key, facturas]) => {
+      const [year, month] = key.split("-");
+      const nombreMes = new Date(year, month - 1).toLocaleString("es", {
+        month: "long",
+      });
+
+      const {
+        totalFacturado,
+        totalPagado,
+        margenBruto,
+        gastosOperativos,
+        gananciaNeta,
+        facturasPendientes,
+      } = calcularTotales(facturas, year, month);
+
+      return {
+        "Periodo del Mes": `${nombreMes} - ${year}`,
+        "Total Facturado": totalFacturado.toFixed(2),
+        "Total Pagado a Técnicos": totalPagado.toFixed(2),
+        "Margen Bruto": margenBruto.toFixed(2),
+        "Gastos Operativos": gastosOperativos.toFixed(2),
+        "Ganancia Neta": gananciaNeta.toFixed(2),
+        // "Facturas Pendientes de Cobro": facturasPendientes,
+      };
+    });
+
+    const hoja = XLSX.utils.json_to_sheet(datosExcel);
+
+    const libro = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(libro, hoja, "Totalizador");
+
+    XLSX.writeFile(libro, "Totalizador.xlsx");
+  };
 
   return (
-    <div className='totalizadorContainer'>
-      <Header text='Totalizador' />
-      <div className='totalizadorLayout'>
-        <Cajas cajas={caja} onCajaSelect={handleCajaChange} selectedCajaId={selectedCajaId} />
-        <div className='content'>
+    <div className="totalizadorContainer">
+      <Header text="Totalizador" />
+      <div className="totalizadorLayout">
+        {/* Selector de cajas */}
+        <Cajas
+          cajas={caja}
+          onCajaSelect={handleCajaChange}
+          selectedCajaId={selectedCajaId}
+        />
+        <div className="content">
+          {/* Selector de fecha */}
           <CajaSeleccionada onDateChange={handleDateChange} />
           <div>
-            {Object.entries(mesFacturado).map(([mes, datos], index) => {
-              // Reducimos datos en una sola iteración
-              const { compra, venta, totalFacturado } = datos.reduce(
-                (acc, dato) => {
-                  const total = Number(dato.total) || 0;
-                  const montoPagado = Number(dato.monto_pagado) || 0;
+            {Object.entries(datosFiltrados).map(([key, facturas], index) => {
+              const [year, month] = key.split("-");
+              const nombreMes = new Date(year, month - 1).toLocaleString("es", {
+                month: "long",
+              });
 
-                  if (dato.id_proveedor) {
-                    acc.compra += total - montoPagado; // Compra: total - pagado
-                  } else if (dato.id_cliente) {
-                    acc.venta += total; // Venta: total
-                  }
-
-                  acc.totalFacturado += total;
-                  return acc;
-                },
-                { compra: 0, venta: 0, totalFacturado: 0 }
-              );
+              const {
+                totalFacturado,
+                totalPagado,
+                margenBruto,
+                gastosOperativos,
+                gananciaNeta,
+                // facturasPendientes,
+              } = calcularTotales(facturas, year, month);
 
               return (
-                <div className={`d-flex datosCaja ${index % 2 === 0 ? 'bg-light' : ''}`} key={mes}>
-                  <li className='col text-center'>{mes}</li>
-                  <li className='col text-center'>{venta - compra}</li>
-                  <li className='col text-center'>{datosLiquidaciones.toFixed(2)}</li>
-                  <li className='col text-center'>{(0 - datosLiquidaciones).toFixed(2)}</li>
-                  <li className='col text-center'>{datos.length}</li>
-                  <li className='col text-center'>{totalFacturado.toFixed(2)}</li>
-                  <li className='col text-center'>{saldosPendientes}</li>
+                <div
+                  className={`d-flex datosCaja ${
+                    index % 2 === 0 ? "bg-light" : ""
+                  }`}
+                  key={key}
+                >
+                  <li className="col text-center">{`${nombreMes} - ${year}`}</li>
+                  <li className="col text-center">
+                    {totalFacturado.toFixed(2)}
+                  </li>
+                  <li className="col text-center">{totalPagado.toFixed(2)}</li>
+                  <li className="col text-center">{margenBruto.toFixed(2)}</li>
+                  <li className="col text-center">
+                    {gastosOperativos.toFixed(2)}
+                  </li>
+                  <li className="col text-center">{gananciaNeta.toFixed(2)}</li>
+                  {/* <li className="col text-center">{facturasPendientes}</li> */}
                 </div>
               );
             })}
           </div>
         </div>
       </div>
-      <button>Exportar a excel</button>
+      <button className="exportar-excel-totalizador" onClick={exportarExcel}>
+        Exportar a Excel
+      </button>
     </div>
   );
 };
