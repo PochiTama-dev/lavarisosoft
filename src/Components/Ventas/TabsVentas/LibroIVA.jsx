@@ -6,6 +6,8 @@ import "./LibroIVA.css";
 import dayjs from 'dayjs';
 import { DataContext } from "../../../hooks/DataContext";
 import Header from "../../Header/Header";
+import Tabs2 from "../../Tabs/Tabs2";
+
 const LibroIVA = () => {
   const [orderBy, setOrderBy] = useState(null);
   const [orderAsc, setOrderAsc] = useState(true);
@@ -16,7 +18,8 @@ const LibroIVA = () => {
   const [facturasCompra, setFacturasCompra] = useState([]);
   const [facturasVenta, setFacturasVenta] = useState([]);
   const [activeTab, setActiveTab] = useState("proveedores");
-
+console.log("FACTURAS", facturasVenta)
+  console.log("CAJAS", listaCajas)
   useEffect(() => {
     const fetchFacturasCompra = async () => {
       const response = await fetch("https://lv-back.online/facturasproveedores/lista");
@@ -45,13 +48,17 @@ const LibroIVA = () => {
     }
   };
 
-  const filteredData = (data) => data.filter((item) => {
-    const itemDate = new Date(item.fecha);
-    const start = startDate ? new Date(startDate) : null;
-    const end = endDate ? new Date(endDate) : null;
+  const filteredData = (data) => {
+    return data.filter((item) => {
+      const itemDate = new Date(item.created_at); 
+      const start = startDate ? new Date(startDate) : null;
+      const end = endDate ? new Date(endDate) : null;
 
-    return (!start || itemDate >= start) && (!end || itemDate <= end);
-  });
+      const matchesCaja = selectedCaja ? item.id_caja === parseInt(selectedCaja) : true;
+
+      return matchesCaja && (!start || itemDate >= start) && (!end || itemDate <= end);
+    });
+  };
 
   const sortedData = (data) => orderBy
     ? [...filteredData(data)].sort((a, b) => {
@@ -102,16 +109,24 @@ const LibroIVA = () => {
 
   return (
     <div className="libro-container">
-         <Header text='Libro IVA' />
+      <Header text="Libro IVA" />
       <div className="libro-header-container">
-        <div className="libro-header-left">
-         
-        </div>
-        <div className="libro-header-right">
+     
+        <div className="libro-header-center">
           <div className="libro-input-container">
-            <h3 className="libro-input-text">Filtrar por rango de fechas</h3>
-            <input className="libro-input" type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-            <input className="libro-input" type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+            <h3 className="libro-input-text">Filtrar por fechas</h3>
+            <input
+              className="libro-input"
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+            <input
+              className="libro-input"
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
             <button
               className="libro-button-clear"
               onClick={() => {
@@ -121,8 +136,12 @@ const LibroIVA = () => {
             >
               Limpiar
             </button>
-            <select className="libro-select" value={selectedCaja} onChange={(e) => setSelectedCaja(e.target.value)}>
-              <option value="">Seleccionar Caja</option>
+            <select
+              className="libro-select"
+              value={selectedCaja}
+              onChange={(e) => setSelectedCaja(e.target.value)}
+            >
+              <option value="">Todas las cajas</option>
               {listaCajas.map((caja) => (
                 <option key={caja.id} value={caja.id}>
                   {caja.denominacion}
@@ -132,51 +151,80 @@ const LibroIVA = () => {
           </div>
         </div>
       </div>
-      <div className="libro-tabs">
-        <button className={`libro-tab ${activeTab === "proveedores" ? "active" : ""}`} onClick={() => setActiveTab("proveedores")}>
-          Proveedores
-        </button>
-        <button className={`libro-tab ${activeTab === "ventas" ? "active" : ""}`} onClick={() => setActiveTab("ventas")}>
-          Ventas
-        </button>
-      </div>
-      <div className="libro-excel-wrapper">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Fecha</th>
-              <th>Tipo de Comprobante</th>
-              <th>Número de Comprobante</th>
-              {activeTab === "proveedores" ? <th>Proveedor</th> : <th>Cliente</th>}
-              {activeTab === "proveedores" ? <th>CUIT Proveedor</th> : <th>CUIT Cliente</th>}
-              <th>Descripción Bienes o Servicios</th>
-              <th>Importe neto gravado</th>
-              <th>Alicuota IVA</th>
-              <th>IVA crédito fiscal</th>
-              <th>Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sortedData(activeTab === "proveedores" ? facturasCompra : facturasVenta).map((item, index) => (
-          <tr key={index}>
-          <td>
-            {dayjs(item.created_at).format('DD/MM/YYYY')}
-          </td>       
-          <td>{activeTab === "proveedores" ? item.comprobante : item.tipo_comprobante} </td>
-                       <td>{activeTab === "proveedores" ? item.comprobante : item.nro_comprobante} </td>
-                          <td>{activeTab === "proveedores" ? item.Proveedore.nombre : `${item.Cliente?.nombre || ''} ${item.Cliente?.apellido || ''}`.trim()}</td>
-                          <td>{activeTab === "proveedores" ? item.Proveedore.cuit : item.cuit_cliente}</td>
-                          <td>{item.descripcion}</td>
-                          <td>{activeTab === "proveedores" ? item.importe : item.importe} </td>
-                          <td>{activeTab === "proveedores" ? item.iva_alicuota : item.iva_alicuota}% </td>
-          
-                          <td>${activeTab === "proveedores" ? item.iva_alicuota : (item.importe * (item.iva_alicuota /100))} </td>
-                          <td>${activeTab === "proveedores" ? item.importe : item.total} </td>
-                        </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <Tabs2 active={activeTab === "proveedores" ? 0 : 1} onChange={(index) => setActiveTab(index === 0 ? "proveedores" : "ventas")}>
+        <div title="Proveedores">
+          <div className="libro-excel-wrapper">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Tipo de Comprobante</th>
+                  <th>Número de Comprobante</th>
+                  <th>Proveedor</th>
+                  <th>CUIT Proveedor</th>
+                  <th>Descripción Bienes o Servicios</th>
+                  <th>Importe neto gravado</th>
+                  <th>Alicuota IVA</th>
+                  <th>IVA crédito fiscal</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sortedData(facturasCompra).map((item, index) => (
+                  <tr key={index}>
+                    <td>{dayjs(item.created_at).format("DD/MM/YYYY")}</td>
+                    <td>{item.comprobante}</td>
+                    <td>{item.comprobante}</td>
+                    <td>{item.Proveedore.nombre}</td>
+                    <td>{item.Proveedore.cuit}</td>
+                    <td>{item.descripcion}</td>
+                    <td>{item.importe}</td>
+                    <td>{item.iva_alicuota}%</td>
+                    <td>${item.iva_alicuota}</td>
+                    <td>${item.importe}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div title="Ventas">
+          <div className="libro-excel-wrapper">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Tipo de Comprobante</th>
+                  <th>Número de Comprobante</th>
+                  <th>Cliente</th>
+                  <th>CUIT Cliente</th>
+                  <th>Descripción Bienes o Servicios</th>
+                  <th>Importe neto gravado</th>
+                  <th>Alicuota IVA</th>
+                  <th>IVA crédito fiscal</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sortedData(facturasVenta).map((item, index) => (
+                  <tr key={index}>
+                    <td>{dayjs(item.created_at).format("DD/MM/YYYY")}</td>
+                    <td>{item.tipo_comprobante}</td>
+                    <td>{item.nro_comprobante}</td>
+                    <td>{`${item.Cliente?.nombre || ""} ${item.Cliente?.apellido || ""}`.trim()}</td>
+                    <td>{item.cuit_cliente}</td>
+                    <td>{item.descripcion}</td>
+                    <td>{item.importe}</td>
+                    <td>{item.iva_alicuota}%</td>
+                    <td>${item.importe * (item.iva_alicuota / 100)}</td>
+                    <td>${item.total}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </Tabs2>
       <div className="libro-export-button-container">
         <button onClick={() => exportToPDF(activeTab === "proveedores" ? facturasCompra : facturasVenta, activeTab === "proveedores" ? "Libro IVA Proveedores" : "Libro IVA Ventas")} className="libro-export-button">
           Exportar a PDF
