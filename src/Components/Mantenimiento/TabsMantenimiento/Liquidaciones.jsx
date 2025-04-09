@@ -92,18 +92,21 @@ const Liquidaciones = () => {
 
   const handleSelecTecnico = (tecnico) => {
     if (tecnicoSelected.nombre === tecnico.nombre) {
-      setTecnicoSelected({});
-    } else {
       setTecnicoSelected(tecnico);
+    } else {
+      setTecnicoSelected({});
     }
+    console.log(tecnicoSelected);
   };
 
   const handleLiquidarClick = () => {
+ 
     if (!tecnicoSelected.nombre) {
       alert("Por favor seleccione un tecnico");
     } else {
       setModal(!modal);
     }
+ 
   };
 
   // Calcular el monto a liquidar para el técnico seleccionado
@@ -166,14 +169,11 @@ const Liquidaciones = () => {
                   <td style={{ textAlign: 'center', width: '40%' }}>
                     {liquidacion.Empleado.nombre} {liquidacion.Empleado.apellido}
                   </td>
-                  <td style={{ textAlign: 'center', width: '30%' }}>{liquidacion.total}</td>
-                  <td style={{ textAlign: 'center', width: '30%' }}>
-                    <input
-                      type='checkbox'
-                      style={{ cursor: 'pointer' }}
-                      checked={tecnicoSelected.nombre === liquidacion.Empleado.nombre}
-                      onChange={() => handleSelecTecnico(liquidacion.Empleado)}
-                    />
+                  {/* <td style={{ textAlign: 'center' }}></td> */}
+                  <td style={{ textAlign: 'center' }}>{liquidacion.total}</td>
+                  {/* <td style={{ textAlign: 'center' }}>{liquidacion.adelanto}</td> */}
+                  <td style={{ textAlign: 'center' }}>
+                    <input type='checkbox' style={{ cursor: 'pointer' }} checked={tecnicoSelected.Empleado?.nombre === liquidacion.Empleado.nombre} onChange={() => handleSelecTecnico(liquidacion)} />
                   </td>
                 </tr>
                 {expandedRow === index && (
@@ -209,11 +209,13 @@ const Liquidaciones = () => {
             ))}
         </tbody>
       </Table>
+ 
       <div style={{ display: 'flex', justifyContent:'center' }}>
         <button onClick={handleLiquidarClick}>
           Liquidar
         </button>
     
+ 
       </div>
       {modal && (
         <div className='modal'>

@@ -1,10 +1,13 @@
 import './mantenimiento.css';
 import { useState, useEffect } from 'react';
 import { func, object, any } from 'prop-types';
-import RemitoLiquidacion from './RemitoLiquidacion';
 import { listaCajas } from '../../services/cajasService';
 import { guardarLiquidacion } from '../../services/liquidacionesService';
+ 
 const Liquidacion = ({ tecnico, totalLiquidacion, setModal }) => {
+ 
+//import RemitoLiquidacion from './RemitoLiquidacion';
+ 
   const [newModal, setNewModal] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const [liqParcial, setLiqParcial] = useState('');
@@ -24,12 +27,15 @@ const Liquidacion = ({ tecnico, totalLiquidacion, setModal }) => {
     try {
       const fecha = new Date().toISOString();
       const response = await guardarLiquidacion({
+ 
         id_tecnico: tecnico.id, 
+ 
         monto: liqParcial,
-        fecha,
+        created_at: fecha,
       });
       console.log('Liquidación guardada:', response);
       setNewModal(!newModal);
+      setModal(false);
     } catch (error) {
       console.error('Error al guardar la liquidación:', error);
     }
@@ -99,7 +105,9 @@ const Liquidacion = ({ tecnico, totalLiquidacion, setModal }) => {
                   textDecoration: isDisabled ? 'line-through' : 'initial',
                 }}
               >
+ 
                $ {totalLiquidacion}
+ 
               </h3>
               <input
                 className='m-auto'
@@ -128,6 +136,7 @@ const Liquidacion = ({ tecnico, totalLiquidacion, setModal }) => {
               </select>
             </div>
           </div>
+ 
           <div className='d-flex  mt-3' style={{ flexDirection: 'row', justifyContent:'center' }}>
 
 
@@ -135,13 +144,14 @@ const Liquidacion = ({ tecnico, totalLiquidacion, setModal }) => {
             Liquidar
           </button>
           </div>
+ 
         </>
       )}
-      {newModal && (
+      {/* {newModal && (
         <div>
           <RemitoLiquidacion tecnico={tecnico} setModal={setNewModal} liqParcial={liqParcial} selectedCaja={selectedCaja} cajas={cajas} />
         </div>
-      )}
+      )} */}
     </div>
   );
 };
