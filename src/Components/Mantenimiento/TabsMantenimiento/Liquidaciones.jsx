@@ -102,14 +102,15 @@ const Liquidaciones = () => {
  */
   const handleSelecTecnico = (tecnico) => {
     if (tecnicoSelected.nombre === tecnico.nombre) {
-      setTecnicoSelected({});
-    } else {
       setTecnicoSelected(tecnico);
+    } else {
+      setTecnicoSelected({});
     }
+    console.log(tecnicoSelected);
   };
 
   const handleLiquidarClick = () => {
-    tecnicoSelected.nombre && setModal(!modal);
+    tecnicoSelected && setModal(!modal);
   };
 
   /* const handleAdelantosClick = () => {
@@ -186,14 +187,11 @@ const Liquidaciones = () => {
                   <td style={{ textAlign: 'center', width: '40%' }}>
                     {liquidacion.Empleado.nombre} {liquidacion.Empleado.apellido}
                   </td>
-                  <td style={{ textAlign: 'center', width: '30%' }}>{liquidacion.total}</td>
-                  <td style={{ textAlign: 'center', width: '30%' }}>
-                    <input
-                      type='checkbox'
-                      style={{ cursor: 'pointer' }}
-                      checked={tecnicoSelected.nombre === liquidacion.Empleado.nombre}
-                      onChange={() => handleSelecTecnico(liquidacion.Empleado)}
-                    />
+                  {/* <td style={{ textAlign: 'center' }}></td> */}
+                  <td style={{ textAlign: 'center' }}>{liquidacion.total}</td>
+                  {/* <td style={{ textAlign: 'center' }}>{liquidacion.adelanto}</td> */}
+                  <td style={{ textAlign: 'center' }}>
+                    <input type='checkbox' style={{ cursor: 'pointer' }} checked={tecnicoSelected.Empleado?.nombre === liquidacion.Empleado.nombre} onChange={() => handleSelecTecnico(liquidacion)} />
                   </td>
                 </tr>
                 {expandedRow === index && (
@@ -230,9 +228,7 @@ const Liquidaciones = () => {
         </tbody>
       </Table>
       <div style={{ display: 'flex' }}>
-        <button onClick={handleLiquidarClick} disabled={!tecnicoSelected.nombre}>
-          Liquidar
-        </button>
+        <button onClick={handleLiquidarClick}>Liquidar</button>
         {/* <button onClick={handleAdelantosClick} disabled={!tecnicoSelected.nombre}>
           Adelantos
         </button> */}

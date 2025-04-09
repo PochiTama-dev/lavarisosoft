@@ -1,9 +1,9 @@
 import './mantenimiento.css';
 import { useState, useEffect } from 'react';
 import { func, object, any } from 'prop-types';
-import RemitoLiquidacion from './RemitoLiquidacion';
 import { listaCajas } from '../../services/cajasService';
 import { guardarLiquidacion } from '../../services/liquidacionesService';
+//import RemitoLiquidacion from './RemitoLiquidacion';
 const Liquidacion = ({ tecnico, setModal }) => {
   const [newModal, setNewModal] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
@@ -23,12 +23,13 @@ const Liquidacion = ({ tecnico, setModal }) => {
     try {
       const fecha = new Date().toISOString();
       const response = await guardarLiquidacion({
-        id_tecnico: tecnico.empleadoId,
+        id_tecnico: tecnico.id_tecnico,
         monto: liqParcial,
-        fecha,
+        created_at: fecha,
       });
       console.log('Liquidación guardada:', response);
       setNewModal(!newModal);
+      setModal(false);
     } catch (error) {
       console.error('Error al guardar la liquidación:', error);
     }
@@ -92,7 +93,7 @@ const Liquidacion = ({ tecnico, setModal }) => {
                   textDecoration: isDisabled ? 'line-through' : 'initial',
                 }}
               >
-                {tecnico.total - tecnico.adelanto}
+                {tecnico.total}
               </h3>
               <input
                 className='m-auto '
@@ -123,16 +124,14 @@ const Liquidacion = ({ tecnico, setModal }) => {
             </div>
           </div>
           <div className='d-flex  mt-3' style={{ flexDirection: 'row' }}></div>
-          <button onClick={handleLiquidate} disabled={!selectedCaja}>
-            Liquidar
-          </button>
+          <button onClick={handleLiquidate}>Liquidar</button>
         </>
       )}
-      {newModal && (
+      {/* {newModal && (
         <div>
           <RemitoLiquidacion tecnico={tecnico} setModal={setNewModal} liqParcial={liqParcial} selectedCaja={selectedCaja} cajas={cajas} />
         </div>
-      )}
+      )} */}
     </div>
   );
 };

@@ -5,7 +5,7 @@ import { modificarCaja } from '../../services/cajasService';
 
 const RemitoLiquidacion = ({ tecnico, setModal, liqParcial, selectedCaja, cajas }) => {
   const { PostSaldosPendientes } = useCustomContext();
-
+  console.log(tecnico);
   const handleModal = () => {
     setModal(false);
   };
@@ -38,16 +38,16 @@ const RemitoLiquidacion = ({ tecnico, setModal, liqParcial, selectedCaja, cajas 
     doc.text(`Remito ${tecnico.nombre}`, 10, 10);
     doc.setFontSize(12);
     doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 10, 30);
-    doc.text(`CUIT/CUIL: ${tecnico.ordenes[0]?.Empleado?.cuil || 'N/A'}`, 10, 40);
+    //doc.text(`CUIT/CUIL: ${tecnico.ordenes[0]?.Empleado?.cuil || 'N/A'}`, 10, 40);
     doc.setDrawColor(142, 163, 191);
     doc.setLineWidth(0.5);
     doc.line(10, 50, 200, 50);
     doc.setFontSize(14);
-    doc.text(`Porcentaje Técnico: ${tecnico.porcentaje_arreglo * 100}%`, 10, 60);
+    //doc.text(`Porcentaje Técnico: ${tecnico.porcentaje_arreglo * 100}%`, 10, 60);
     let startY = 70;
     doc.setFontSize(12);
-    doc.text('ORDENES:', 50, startY);
-    const tableHeaders = ['Nro', 'Fecha', 'Seguro', 'Precio total'];
+    //doc.text('ORDENES:', 50, startY);
+    //const tableHeaders = ['Nro', 'Fecha', 'Seguro', 'Precio total'];
     const columnWidths = [15, 45, 25, 30];
     const tableData = tecnico.ordenes.map((orden) => [orden.numero_orden, new Date(orden.created_at).toLocaleDateString(), `$${orden.dpg}`, `$${orden.total}`]);
     let colX = 10;
@@ -93,9 +93,6 @@ const RemitoLiquidacion = ({ tecnico, setModal, liqParcial, selectedCaja, cajas 
             <h4>
               Fecha <strong>{new Date().toLocaleDateString()}</strong>
             </h4>
-            <h4>
-              CUIT/CUIL <strong>{tecnico.ordenes[0].Empleado.cuil}</strong>
-            </h4>
           </div>
         </div>
         <svg height='5' viewBox='0 0 1829 5' fill='none' xmlns='http://www.w3.org/2000/svg'>
@@ -116,17 +113,7 @@ const RemitoLiquidacion = ({ tecnico, setModal, liqParcial, selectedCaja, cajas 
                 <th className='col'>Precio total</th>
               </tr>
             </thead>
-            <tbody>
-              {tecnico.ordenes.map((orden) => (
-                <tr className='row p-3' key={orden.id}>
-                  <td className='col'>{orden.numero_orden}</td>
-                  <td className='col'>{new Date(orden.created_at).toLocaleDateString()}</td>
-                  <td className='col w-auto'>{orden.diagnostico}</td>
-                  <td className='col'>${orden.dpg}</td>
-                  <td className='col'>${orden.total}</td>
-                </tr>
-              ))}
-            </tbody>
+            <tbody></tbody>
           </table>
           <div className='remito-container-total'>
             <h4 className='d-flex flex-column'>
