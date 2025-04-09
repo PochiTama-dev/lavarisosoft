@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import "./nuevaOrden.css";
 import dayjs, { Dayjs } from "dayjs";
@@ -108,15 +110,15 @@ const NuevosDatosIncidente = ({ setIncidente }) => {
       id_tipo_estado: selectedEstado,
     }));
   };
-
+/* 
   const handleEstadoChange = (e) => {
     setSelectedEstado(1);
     setIncidente((prevState) => ({
       ...prevState,
       id_tipo_estado: e.target.value,
     }));
-  };
-
+  }; */
+/* 
   const handleAdd = () => {
     if (nuevoRepuesto.trim() !== "") {
       const updatedRepuestos = [...repuestos, nuevoRepuesto];
@@ -129,10 +131,10 @@ const NuevosDatosIncidente = ({ setIncidente }) => {
       handleShow();
     }
   };
-
-  const handleShow = () => {
+ */
+/*   const handleShow = () => {
     setShowInput(!showInput);
-  };
+  }; */
 
   const handleFechaVisitaChange = (e) => {
     setFechaVisita(e.target.value);
@@ -197,7 +199,7 @@ const NuevosDatosIncidente = ({ setIncidente }) => {
                 id="equipo"
                 className="form-control input-small"
                 onChange={handleInputChange}
-                required
+        
               />
             </div>
           </div>
@@ -214,7 +216,7 @@ const NuevosDatosIncidente = ({ setIncidente }) => {
                     id="marca"
                     className="form-control input-small"
                     onChange={handleInputChange}
-                    required
+           
                   />
                 </div>
               </div>
@@ -228,7 +230,7 @@ const NuevosDatosIncidente = ({ setIncidente }) => {
                     id="modelo"
                     className="form-control input-small"
                     onChange={handleInputChange}
-                    required
+       
                   />
                 </div>
               </div>
@@ -241,7 +243,7 @@ const NuevosDatosIncidente = ({ setIncidente }) => {
                     id="diagnostico"
                     className="form-control input-small"
                     onChange={handleInputChange}
-                    required
+       
                   ></textarea>
                 </div>
               </div>

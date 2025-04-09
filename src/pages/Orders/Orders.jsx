@@ -93,7 +93,7 @@ const Orders = () => {
                 onUpdateOrden={handleUpdateOrden}
               />
             ) : (
-              <div>Selecciona una orden para ver los detalles</div>
+              <div style={{margin:'20px'}}> <h4>Selecciona una orden para ver los detalles</h4>  </div>
             )}
           </div>
         </aside>

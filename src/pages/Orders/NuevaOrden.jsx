@@ -119,10 +119,7 @@ const NuevaOrden = ({ clienteData }) => {
   }, [clienteData]);
 
   const handleSubmit = async () => {
-    if (!incidente.numero_orden || !incidente.id_tipo_estado) {
-      alert('Por favor, complete todos los campos requeridos.');
-      return;
-    }
+ 
     console.log(cliente);
     const verify = await verificarExistenciaCliente(cliente);
     console.log('INCIDENTE', incidente);
@@ -173,8 +170,8 @@ const NuevaOrden = ({ clienteData }) => {
         id_cliente: verify.id,
         id_empleado: idEmpleado || null,
         id_tipo_estado: incidente.id_tipo_estado, // Use the id_tipo_estado from incidente
-        equipo: incidente.equipo,
-        modelo: incidente.modelo,
+        equipo: incidente.equipo || "", 
+                modelo: incidente.modelo,
         marca: incidente.marca,
         antiguedad: incidente.antiguedad,
         motivo: incidente.diagnostico,
