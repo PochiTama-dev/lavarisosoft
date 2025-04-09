@@ -6,6 +6,8 @@ import { haversine } from "./calcularDistancia";
 import { listaClientes } from "../../services/clienteService";
 import { listadoEmpleados } from "../../services/empleadoService";
 import socket from "../services/socketService";
+import "bootstrap/dist/css/bootstrap.min.css"; // Asegúrate de importar Bootstrap
+
 const Ubicaciones = () => {
   const [showTareas, setShowTareas] = useState({});
   const [view, setView] = useState("clientesTecnicos"); // Estado para controlar la vista inicial
@@ -32,6 +34,11 @@ const Ubicaciones = () => {
 
   const suggestionsRef = useRef();
   const mapRef = useRef();
+
+  const [showModal, setShowModal] = useState(false);
+
+  const handleOpenModal = () => setShowModal(true);
+  const handleCloseModal = () => setShowModal(false);
 
   useEffect(() => {
     // Leer estado de conexión de los técnicos desde localStorage
@@ -520,7 +527,10 @@ const Ubicaciones = () => {
               <div
                 id="clientes"
                 className="container-lists list-clientes-container"
+                style={{position:"relative"}}
               >
+                <div style={{ display: "flex", justifyContent: "space-between" }}> 
+
                 <h2 className="px-3 pb-2 feedback-containers-heading">
                   Clientes
                 </h2>
@@ -532,15 +542,14 @@ const Ubicaciones = () => {
                     value={searchTerm}
                     onChange={handleSearchChange}
                   />
-                  <button className="caja-button-search btn btn-primary">
-                    🔍︎
-                  </button>
+          
+                </div>
                 </div>
                 <div className="scrollable-container-top mt-3">
                   {filteredClientes.map((t, i) => (
                     <div
                       key={i}
-                      className="cliente-item my-2 p-3 d-flex justify-content-between align-items-center bg-light rounded shadow-sm"
+                      className="cliente-item my-2   d-flex justify-content-between align-items-center bg-light rounded shadow-sm"
                     >
                       <button
                         className="btn btn-link feedback-tecnicos-heading-button"
@@ -560,6 +569,32 @@ const Ubicaciones = () => {
                     </div>
                   ))}
                 </div>
+                      <div
+          className="d-flex justify-content-center"
+               style={{
+            position: "absolute",
+            bottom: "0",
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: "1",
+          }}
+        >
+          <button
+            className="bg-info rounded-pill py-1 px-2 text-white"
+            onClick={handleOpenModal}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="28"
+              height="28"
+              fill="currentColor"
+              className="bi bi-plus"
+              viewBox="0 0 16 16"
+            >
+              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+            </svg>
+          </button>
+        </div>
               </div>
               <hr />
             </>
@@ -570,6 +605,8 @@ const Ubicaciones = () => {
               id="tecnicos"
               className="container-lists list-tecnicos-container"
             >
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+
               <h2 className="px-3 feedback-containers-heading">Técnicos</h2>
               <div className="px-4 mx-3">
                 <input
@@ -579,7 +616,8 @@ const Ubicaciones = () => {
                   value={searchTec}
                   onChange={handleSearchTec}
                 />
-                <button className="caja-button-search">🔍︎</button>
+              </div>
+             
               </div>
               <div className="scrollable-container-top">
                 {filteredTecnicos.map((t) => {
@@ -595,20 +633,19 @@ const Ubicaciones = () => {
                   }`;
 
                   return (
-                    <div key={t.id}>
-                      <div className="feedback-tecnicos-container align-items-center">
+                    <div key={t.id}   >
+                                   <div key={t.id} className="tecnicos-container-badge position-relative">
                         <h3
                           className="feedback-tecnicos-heading mx-2 pointer"
                           onClick={() => handleSelectTecnico(t)}
                         >
                           {t.nombre} {t.apellido}
                         </h3>
-                        <div className={badgeClass}></div>
+                        <div className={`${badgeClass} badge-right`}></div>
                         <ul
                           onClick={() => handleShowTareas(t.id)}
                           className="feedback-tecnico"
                         >
-                          <li></li>
                         </ul>
                       </div>
                       {showTareas[t.id] && (
@@ -907,38 +944,128 @@ const Ubicaciones = () => {
             tecniCoordinates={tecCoordinates}
           />
         </div>
-        <div
-          className="d-flex justify-content-end"
-          style={{
-            top: "-120px",
-            right: "15px",
-            position: "relative",
-            zIndex: "1",
-          }}
-        >
-          <button
-            className="bg-info rounded-pill py-1 px-2 text-white"
-            onClick={() =>
-              setView(
-                view === "clientesTecnicos"
-                  ? "formClientes"
-                  : "clientesTecnicos"
-              )
-            }
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="28"
-              height="28"
-              fill="currentColor"
-              className="bi bi-plus"
-              viewBox="0 0 16 16"
-            >
-              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
-            </svg>
-          </button>
-        </div>
+   
       </div>
+      {/* Modal */}
+         {showModal && (
+        <div className="modal show d-block" tabIndex="-1" role="dialog">
+          <div className="modal-dialog modal-lg" role="document"> {/* Cambiado a modal-lg para hacerlo más grande */}
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Cargar cliente</h5>
+             
+              </div>
+              <div className="modal-body">
+                <div className="container">
+                  <div className="row">
+                    {/* Primera fila */}
+                    <div className="col-md-6 mb-3">
+                      <label>N° Cliente:</label>
+                      <input
+                        type="text"
+                        name="numero_cliente"
+                        className="form-control"
+                        value={newClient.numero_cliente}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                    <div className="col-md-6 mb-3">
+                      <label>Nombre:</label>
+                      <input
+                        type="text"
+                        name="nombre"
+                        className="form-control"
+                        value={newClient.nombre}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                    {/* Segunda fila */}
+                    <div className="col-md-6 mb-3">
+                      <label>Apellido:</label>
+                      <input
+                        type="text"
+                        name="apellido"
+                        className="form-control"
+                        value={newClient.apellido}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                    <div className="col-md-6 mb-3">
+                      <label>Dirección:</label>
+                      <input
+                        type="text"
+                        name="direccion"
+                        className="form-control"
+                        value={newClient.direccion}
+                        onChange={handleSuggestions}
+                      />
+                    </div>
+                    {/* Tercera fila */}
+                    <div className="col-md-6 mb-3">
+                      <label>Piso:</label>
+                      <input
+                        type="number"
+                        name="piso"
+                        className="form-control"
+                        value={newClient.piso || 0}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                    <div className="col-md-6 mb-3">
+                      <label>Departamento:</label>
+                      <input
+                        type="text"
+                        name="departamento"
+                        className="form-control"
+                        value={newClient.departamento || ""}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                    {/* Cuarta fila */}
+                    <div className="col-md-6 mb-3">
+                      <label>Teléfono:</label>
+                      <input
+                        type="text"
+                        name="telefono"
+                        className="form-control"
+                        value={newClient.telefono}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                    <div className="col-md-6 mb-3">
+                      <label>CUIL/CUIT:</label>
+                      <input
+                        type="text"
+                        name="cuil"
+                        className="form-control"
+                        value={newClient.cuil}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={handleCloseModal}
+                >
+                  Cerrar
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleAddClient}
+                >
+                  Guardar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+     
     </div>
   );
 };

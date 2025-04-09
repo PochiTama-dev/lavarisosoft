@@ -148,45 +148,46 @@ export const uploadExcelStock = async (event) => {
   });
 };
 
-export const uploadExcelTotalizador = async (event) => {
-  return new Promise((resolve, reject) => {
-    const file = event.target.files[0];
-    if (file) {
-      console.log('Archivo seleccionado:', file);
+export const exportExcelTotalizador = async (data) => {
+  try {
+    // Crear un nuevo libro de Excel
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Totalizador');
 
-      const workbook = new ExcelJS.Workbook();
-      const reader = new FileReader();
+    // Agregar encabezados
+    worksheet.columns = [
+      { header: 'Periodo del Mes', key: 'periodo', width: 20 },
+      { header: 'Total Facturado', key: 'total_facturado', width: 20 },
+      { header: 'Total Pagado a Técnicos', key: 'total_pagado_tecnicos', width: 25 },
+      { header: 'Margen Bruto', key: 'margen_bruto', width: 20 },
+      { header: 'Gastos Operativos', key: 'gastos_operativos', width: 20 },
+      { header: 'Ganancia Neta', key: 'ganancia_neta', width: 20 },
+      { header: 'Facturas Pendientes de Cobro', key: 'facturas_pendientes', width: 30 },
+    ];
 
-      reader.onload = async (e) => {
-        try {
-          const buffer = e.target.result;
-          await workbook.xlsx.load(buffer);
-          const worksheet = workbook.getWorksheet(1);
-          const data = [];
+    // Agregar datos al archivo Excel
+    data.forEach((row) => {
+      worksheet.addRow({
+        periodo: row.periodo,
+        total_facturado: row.totalFacturado,
+        total_pagado_tecnicos: row.totalPagadoTecnicos,
+        margen_bruto: row.margenBruto,
+        gastos_operativos: row.gastosOperativos,
+        ganancia_neta: row.gananciaNeta,
+        facturas_pendientes: row.facturasPendientes,
+      });
+    });
 
-          worksheet.eachRow((row, rowNumber) => {
-            if (rowNumber > 1) {
-              const rowData = {
-                articulo: row.getCell(1).value,
-                descripcion: row.getCell(2).value,
-              };
-              data.push(rowData);
-            }
-          });
-          resolve(data);
-        } catch (error) {
-          reject(error);
-        }
-      };
+    // Generar el archivo Excel
+    const buffer = await workbook.xlsx.writeBuffer();
 
-      reader.onerror = (error) => {
-        console.error('Error al leer el archivo:', error);
-        reject(error);
-      };
-
-      reader.readAsArrayBuffer(file);
-    } else {
-      reject(new Error('No file selected'));
-    }
-  });
+    // Descargar el archivo
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'Totalizador.xlsx';
+    link.click();
+  } catch (error) {
+    console.error('Error al exportar el archivo Excel:', error);
+  }
 };

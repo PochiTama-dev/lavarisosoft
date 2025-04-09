@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import { useState, useEffect, useRef } from "react";
 import { MapContainer, TileLayer, Circle, useMap } from "react-leaflet";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +12,7 @@ import PropTypes from "prop-types";
 import { ClientMarker, TechnicianMarker } from "./Markers";
 import { haversine } from "./calcularDistancia";
 import { useCustomContext } from "../../hooks/context";
-
+import './map.css'
 const CORDOBA_BOUNDS = {
   north: -29.0,
   south: -34.0,
@@ -36,7 +38,7 @@ const Map = ({
   position,
   zoom,
   selectedClient,
-  selectedTechnician,
+ /*  selectedTechnician, */
   setSelectedTechnician,
   clientes,
   tecnicos,
@@ -241,6 +243,7 @@ const Map = ({
           id="filter"
           value={filter}
           onChange={handleFilterChange}
+          className="selectFilterMapa"
         >
           <option value="clients">Clientes</option>
           <option value="technicians">Técnicos</option>
