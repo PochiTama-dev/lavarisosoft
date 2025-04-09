@@ -1,13 +1,19 @@
 /* tabs2*/
 .tabs2 {
   display: flex;
-  justify-content: space-around;
-  align-items: flex-start;
+ justify-content: space-around;
+  align-items: center;
+  margin: 0 auto;
+   max-width: 800px;
+  
+ 
+  
 }
 
 .tabs2-vertical {
   flex-direction: column;
   border-bottom: none;
+  
 }
 /* /////////// */
 .tabs {
@@ -20,6 +26,7 @@
 .tabs-vertical {
   flex-direction: column;
   border-bottom: none;
+  
 }
 
 a {
@@ -62,6 +69,7 @@ a.activeTab .line {
   height: 600px;
  
  
+ 
 }
 
 .ventas-container .tabs a {
@@ -72,13 +80,14 @@ a.activeTab .line {
   border-bottom: 6px solid #8ea3bf;
   width: 250px !important;
   margin-left: 10%;
-  font-size: x-large;
+  font-size:  20px;
   min-height: 10%;
   font-weight: bold;
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 5px 0;
+  border-radius: 4px;
 }
 
 .ventas-container .tabs a.activeTab {

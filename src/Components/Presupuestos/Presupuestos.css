@@ -30,15 +30,16 @@
   padding: 15px;
   box-shadow: none;
   width: 100%;
+ 
 }
 
 .container-lists:first-child {
-  height: 40%;
+  height: 350px;
   margin: 0 0 20px 0;
 }
 
 .container-lists:last-child {
-  height: 57%;
+  height: 350px;
   margin: 0;
 }
 

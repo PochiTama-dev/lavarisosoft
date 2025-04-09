@@ -1,8 +1,12 @@
 .libro-container {
-  background-color: #f2f6fc;
+ 
   width: 70vw;
   height: 80vh;
-  margin-top: 2.5%;
+  color: #283959;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #eeeeee;
+  border-radius: 15px;
  
   
 }
@@ -12,6 +16,9 @@
   flex-direction: row;
   justify-content: space-between;
   flex-wrap: wrap;
+  margin: 0 auto;
+  justify-content: center;
+  align-items: center;
   
 }
 
@@ -46,21 +53,44 @@
 
 .libro-input-container {
   display: flex;
-  padding-top: 10%;
+  padding : 50px;
+  
 }
 .libro-input-container select, .libro-input-container button , .libro-input-container input{
  
   height: 50px;
+
+  
 }
 
+
+.libro-input-container select, .libro-input-container button   {
+    display: flex;
+    margin-top: 5%;
+    justify-content: center;
+    background-color: #69688c;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: auto 5px auto 5px;
+    cursor: pointer;
+    border-radius: 8px;
+ 
+}
+
+
 .libro-input-text {
-  max-width: 30vw;
+ 
   font-size: large;
   display: flex;
   justify-content: left;
   align-items: center;
   margin-bottom: 0;
-  margin-right: 2%;
+  margin-right: 10px;
   color: #283959;
 }
 
@@ -130,7 +160,24 @@ margin: 10px;
   margin-top: 5%;
   justify-content: center;
   margin-right: 2%;
+ 
 }
+.libro-export-button-container button{
+ 
+  background-color: #69688c;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+
 
 .libro-export-button {
   background-color: #69688c;
