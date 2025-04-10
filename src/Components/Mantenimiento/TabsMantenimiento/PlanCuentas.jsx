@@ -149,9 +149,10 @@ const PlanCuentas = () => {
         nombre: node.nombre,
         tipo: node.parent_id ? "Subnivel" : "Nivel Principal",
       });
-      const children = getChildrenNodes(node.id);
-      if (children.length > 0) {
-        orderedData = orderedData.concat(getOrderedData(children, level + 1));
+      if (node.children && node.children.length > 0) {
+        orderedData = orderedData.concat(
+          getOrderedData(node.children, level + 1)
+        );
       }
     });
     return orderedData;
@@ -159,7 +160,7 @@ const PlanCuentas = () => {
 
   const exportToPDF = () => {
     const doc = new jsPDF();
-    const orderedData = getOrderedData(getRootNodes());
+    const orderedData = getOrderedData(data);
     const tableData = orderedData.map((item) => [
       item.codigo,
       item.nombre,
@@ -184,6 +185,61 @@ const PlanCuentas = () => {
     doc.save("plan_de_cuentas.pdf");
   };
 
+  const ordenarPlanCuentas = async () => {
+    try {
+      const cuentas = await listaPlanCuentas();
+
+      const codigoToIdMap = {};
+      cuentas.forEach((cuenta) => {
+        codigoToIdMap[cuenta.codigo] = cuenta.id;
+      });
+
+      for (const cuenta of cuentas) {
+        if (cuenta.parent_id !== null) {
+          console.log(
+            `El nodo con código ${cuenta.codigo} ya tiene un parent_id (${cuenta.parent_id}), no se modifica.`
+          );
+          continue;
+        }
+
+        let parentCodigo = null;
+
+        if (cuenta.codigo.length === 5) {
+          parentCodigo = cuenta.codigo.slice(0, 1) + "0000";
+          if (!codigoToIdMap[parentCodigo]) {
+            parentCodigo = cuenta.codigo.slice(0, 2) + "000";
+          }
+        } else if (cuenta.codigo.length > 5) {
+          parentCodigo = cuenta.codigo.slice(0, 3) + "00";
+        }
+
+        const parent_id = parentCodigo
+          ? codigoToIdMap[parentCodigo] || null
+          : null;
+
+        if (parent_id === cuenta.id) {
+          console.error(
+            `Error: El parent_id calculado (${parent_id}) es igual al id de la cuenta (${cuenta.id}).`
+          );
+          continue;
+        }
+
+        if (parent_id !== cuenta.parent_id) {
+          console.log(
+            `Actualizando cuenta: ${cuenta.codigo} con ParentID: ${parent_id}`
+          );
+          await modificarPlanCuentas(cuenta.id, { parent_id });
+        }
+      }
+
+      alert("El plan de cuentas ha sido ordenado correctamente.");
+      await fetchData();
+    } catch (error) {
+      console.error("Error al ordenar el plan de cuentas:", error);
+      alert("Hubo un error al ordenar el plan de cuentas.");
+    }
+  };
+
   const renderTree = (nodes, level = 0) => {
     return (
       <ul
@@ -198,7 +254,7 @@ const PlanCuentas = () => {
       >
         {nodes.map((node) => (
           <li key={node.id} style={{ paddingLeft: `${level * 20}px` }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}  >
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <span
                 onClick={() => toggleVisibility(node.id)}
                 style={{
@@ -283,7 +339,7 @@ const PlanCuentas = () => {
   };
 
   return (
-    <div className="plan-cuentas-ctn" >
+    <div className="plan-cuentas-ctn">
       <h1 style={{ marginTop: "40px", marginBottom: "40px" }}>
         Plan de Cuentas
       </h1>
@@ -327,7 +383,20 @@ const PlanCuentas = () => {
             cursor: "pointer",
           }}
         >
-          Agregar datos mediante PDF
+          Agregar datos mediante Excel
+        </button>
+        <button
+          onClick={ordenarPlanCuentas}
+          style={{
+            backgroundColor: "#69688c",
+            color: "white",
+            padding: "10px 20px",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          Ordenar Plan de Cuentas
         </button>
       </div>
 
