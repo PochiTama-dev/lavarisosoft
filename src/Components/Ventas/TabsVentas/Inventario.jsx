@@ -99,19 +99,8 @@ const Inventario = () => {
   if (loading) {
     return <div>Loading...</div>;
   }
-
-  const totalVisitas = 31;
-  const visitasRealizadas = 25;
-  const porcentaje = (visitasRealizadas / totalVisitas) * 100;
-
-  const tecnicoss = [
-    { nombre: 'Alejandro Pilone', visitas: 0, total: 1 },
-    { nombre: 'Enzo Gastón Mondolo', visitas: 2, total: 4 },
-    { nombre: 'Roberto Barrionuevo', visitas: 5, total: 5 },
-    { nombre: 'Martín Perrone', visitas: 8, total: 10 },
-    { nombre: 'Sergio Narballo', visitas: 10, total: 11 },
-  ];
-
+ 
+ 
   const handleShow = () => setShow(!show);
 
   return (

@@ -1,7 +1,7 @@
 //import Adelantos from '../Adelantos';
 //import { listaCajas } from '../../../services/cajasService';
 //import { obtenerLiquidaciones } from '../../../services/liquidacionesService';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Table from 'react-bootstrap/Table';
 import '../mantenimiento.css';
 import { useCustomContext } from '../../../hooks/context';
@@ -47,8 +47,7 @@ const Liquidaciones = () => {
       acc[tecnicoId].liquidaciones.push(liq);
       return acc;
     }, {});
-    console.log('Liquidaciones Hechas por Tecnico: ', liquidacionesHechasPorTecnico);
-    setLiquidacionesHechas(liquidacionesHechasPorTecnico);
+     setLiquidacionesHechas(liquidacionesHechasPorTecnico);
     setDatosLiquidaciones(pendientes);
   };
 
@@ -159,7 +158,7 @@ const Liquidaciones = () => {
         <tbody>
           {datosLiquidaciones &&
             datosLiquidaciones.map((liquidacion, index) => (
-              <>
+              <React.Fragment key={index}>
                 <tr
                   className={expandedRow === index ? 'expanded-row' : ''}
                   onClick={(e) => {
@@ -205,7 +204,7 @@ const Liquidaciones = () => {
                     </td>
                   </tr>
                 )}
-              </>
+              </React.Fragment>
             ))}
         </tbody>
       </Table>

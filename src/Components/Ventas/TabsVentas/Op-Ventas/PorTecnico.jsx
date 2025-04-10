@@ -45,10 +45,10 @@ const PorTecnico = ({ data }) => {
                 <tr>
                   <th onClick={() => handleSort('fecha')}>Fecha {orderBy === 'fecha' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
                   <th onClick={() => handleSort('tecnico')}>Legajo-Técnico {orderBy === 'tecnico' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
-                  <th onClick={() => handleSort('ocupacion')}>Ocupación {orderBy === 'ocupacion' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
-                  <th onClick={() => handleSort('numeroOrden')}>N° de orden {orderBy === 'numeroOrden' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
-                  <th onClick={() => handleSort('operacion')}>Operación {orderBy === 'operacion' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
-                  <th onClick={() => handleSort('cliente')}>Numero-Cliente {orderBy === 'cliente' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
+{/*                   <th onClick={() => handleSort('ocupacion')}>Ocupación {orderBy === 'ocupacion' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
+ */}                  <th onClick={() => handleSort('numeroOrden')}>N° de orden {orderBy === 'numeroOrden' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
+{/*                   <th onClick={() => handleSort('operacion')}>Operación {orderBy === 'operacion' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
+ */}                  <th onClick={() => handleSort('cliente')}>Numero-Cliente {orderBy === 'cliente' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
                   <th onClick={() => handleSort('monto')}>Monto {orderBy === 'monto' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
                   <th onClick={() => handleSort('medioPago')}>Medio de pago {orderBy === 'medioPago' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
                 </tr>
@@ -59,11 +59,11 @@ const PorTecnico = ({ data }) => {
                     <tr key={index} className={index % 2 === 0 ? '' : 'row-even'}>
                       <td>{new Date(item.created_at).toLocaleDateString()}</td>
                       <td>{item.Empleado?.legajo}</td>
-                      <td>{'Domicilio/Taller'}</td>
-                      <td>{item.numero_orden}</td>
-                      <td>{item.motivo}</td>
-                      <td>{item.Cliente?.numero_cliente}</td>
-                      <td>{item.Presupuesto?.total}</td>
+{/*                       <td>{'Domicilio/Taller'}</td>
+ */}                      <td>{item.numero_orden}</td>
+{/*                       <td>{item.motivo}</td>
+ */}                      <td>{item.Cliente?.numero_cliente}</td>
+                      <td>$ {item.Presupuesto?.total}</td>
                       <td>{mediosPagos(item.Presupuesto?.id_medio_de_pago)}</td>
                     </tr>
                   ))}

@@ -12,8 +12,8 @@ const Tabs = ({ active, onChange, children, direction }) => {
         {children.map((c, index) => (
           <a
             key={index}
-            href={"javascript: void(0)"}
-            onClick={() => onChange(index)}
+            href="#"
+            onClick={e => { e.preventDefault(); onChange(index); }}
             className={active === index ? "activeTab" : ""}
           >
             {c.props.title}
@@ -32,4 +32,4 @@ Tabs.propTypes = {
 };
 
 export default Tabs;
- 
+

@@ -17,8 +17,7 @@ const Empleados = () => {
         const liquidacionesData = await getLiquidacionesHechas();
         setEmpleados(empleadosData || []);
         setLiquidaciones(liquidacionesData || []);
-        console.log('Empleados:', empleadosData);
-        console.log('Liquidaciones:', liquidacionesData);
+     
       } catch (error) {
         console.error('Error fetching data:', error);
       }
