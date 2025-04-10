@@ -67,6 +67,7 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
       iva_deb_fiscal: 0.0,
       total: totalNum,
       created_at: new Date().toISOString().split("T")[0],
+ 
     };
 
     return await guardarFacturaVenta(facturaData);

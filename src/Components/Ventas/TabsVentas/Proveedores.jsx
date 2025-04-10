@@ -118,9 +118,9 @@ const Proveedores = () => {
           <Link to="/ventas/cargarFactura">
             <button>Cargar factura</button>
           </Link>
-       {/*    <Link to="/gastos">
+           <Link to="/gastos">
             <button>Cargar gasto</button>
-          </Link> */}
+          </Link>  
        {/*    <Link to="/VentasRemito">
             <button>Recibir lote</button>
           </Link> */}
@@ -133,7 +133,7 @@ const Proveedores = () => {
             <thead>
               <tr>
                 <th>Nombre</th>
-        {/*         <th>Lote</th> */}
+               <th>Descripción</th>  
                 <th>Fecha</th>
                 <th>Estado de pago</th>
                 <th>Importe</th>
@@ -145,10 +145,10 @@ const Proveedores = () => {
               {filteredData.map((prov, index) => (
                 <tr key={index} className={index % 2 === 0 ? "" : "row-even"}>
                   <td>{prov.Proveedore.nombre}</td>
-              {/*     <td>{prov.lote}</td> */}
+                   <td>{prov.descripcion}</td>  
                   <td>{formatDate(prov.created_at)}</td>
                   <td>{prov.total !== prov.monto_pagado ? "Pago Parcial" : (prov.estado === 0 ? "No pagado" : "Pagado")}</td>
-                  <td>{prov.importe}</td>
+                  <td>{prov.total}</td>
                   <td>{prov.total !== prov.monto_pagado ? (prov.total - prov.monto_pagado) : "-"}</td>
                 {/*   <td>{getResponsable(prov.id_responsable)}</td> */}
                 </tr>

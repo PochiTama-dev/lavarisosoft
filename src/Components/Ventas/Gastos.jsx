@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "../Header/Header";
 import "./Gastos.css";
 import { useEffect, useState } from "react";
-
+import {listaCajas} from "../../services/cajasService";
 const Gastos = () => {
   const [factura, setFactura] = useState({
     id_proveedor: 0,
@@ -10,9 +10,11 @@ const Gastos = () => {
     motivo: "",
     codigo_imputacion: "",
     fecha_ingreso: "",
+    id_caja: "",
   });
   const [proveedores, setProveedores] = useState([]);
   const [gasto, setGasto] = useState([]);
+  const [cajas, setCajas] = useState([]);
 
   const navigate = useNavigate();
 
@@ -31,6 +33,19 @@ const Gastos = () => {
     };
 
     obtenerProveedores();
+  }, []);
+
+  useEffect(() => {
+    const obtenerCajas = async () => {
+      try {
+        const data = await listaCajas();
+        setCajas(data);
+      } catch (error) {
+        console.error("Error al obtener las cajas:", error.message);
+      }
+    };
+
+    obtenerCajas();
   }, []);
 
   const handleChange = (e) => {
@@ -54,6 +69,7 @@ const Gastos = () => {
         importe,
         codigo_imputacion,
         fecha_ingreso,
+        id_caja
       } = await gasto;
       await postGasto({
         id_proveedor,
@@ -61,6 +77,7 @@ const Gastos = () => {
         importe,
         codigo_imputacion,
         fecha_ingreso,
+        id_caja
       });
       alert("Gasto agregado con éxito");
       navigate(-1);
@@ -70,7 +87,7 @@ const Gastos = () => {
   };
 
   const postGasto = async (gasto) => {
-    const { id_proveedor, motivo, importe, codigo_imputacion, fecha_ingreso } =
+    const { id_proveedor, motivo, importe, codigo_imputacion, fecha_ingreso ,     id_caja} =
       await gasto;
     const fetchGasto = await fetch("https://lv-back.online/gastos/guardar", {
       method: "post",
@@ -84,6 +101,7 @@ const Gastos = () => {
         importe,
         codigo_imputacion,
         fecha_ingreso,
+        id_caja
       }),
     });
     console.log("Gasto cargada: ", fetchGasto.status);
@@ -152,6 +170,22 @@ const Gastos = () => {
               onChange={handleChange}
               required
             />
+          </div>
+          <div>
+            <h3>Caja:</h3>
+            <select
+              name="id_caja"
+              value={gasto.id_caja}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Seleccione una caja</option>
+              {cajas.map((caja) => (
+                <option key={caja.id} value={caja.id}>
+                  {caja.denominacion}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <button type="submit">Guardar</button>
