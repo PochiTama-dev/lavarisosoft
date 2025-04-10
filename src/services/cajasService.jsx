@@ -5,8 +5,7 @@ export const listaCajas = async () => {
     const response = await fetch(`${API_URL}cajas/lista`);
     const cajas = await response.json();
     if (cajas[0] !== undefined) {
-      console.log(`Se encontró un listado con ${cajas.length} cajas!!`);
-      console.log(cajas);
+ 
       return cajas;
     } else {
       console.log("Aún no hay registro de cajas...");
@@ -25,8 +24,7 @@ export const obtenerCaja = async (id) => {
     const response = await fetch(`${API_URL}cajas/${id}`);
     const caja = await response.json();
     if (caja) {
-      console.log(`Se encontró una caja asociada al id ${id}`);
-      console.log(caja);
+ 
       return caja;
     } else {
       console.log(`No se encontró ninguna caja con el id ${id}`);
@@ -128,8 +126,7 @@ export const listaCobros = async () => {
       console.log(cobros);
       return cobros;
     } else {
-      console.log("Aún no se registra ningún cobro...");
-      return false;
+       return false;
     }
   } catch (error) {
     console.error(

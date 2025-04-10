@@ -18,8 +18,7 @@ const LibroIVA = () => {
   const [facturasCompra, setFacturasCompra] = useState([]);
   const [facturasVenta, setFacturasVenta] = useState([]);
   const [activeTab, setActiveTab] = useState("proveedores");
-console.log("FACTURAS", facturasVenta)
-  console.log("CAJAS", listaCajas)
+ 
   useEffect(() => {
     const fetchFacturasCompra = async () => {
       const response = await fetch("https://lv-back.online/facturascompra/lista");
@@ -36,8 +35,8 @@ console.log("FACTURAS", facturasVenta)
     fetchFacturasCompra();
     fetchFacturasVenta();
   }, []);
- const combinedData = [...facturasCompra, ...facturasVenta];
- console.log(combinedData)
+/*  const combinedData = [...facturasCompra, ...facturasVenta];
+ console.log(combinedData) */
   // eslint-disable-next-line no-unused-vars
   const handleSort = (columnName) => {
     if (orderBy === columnName) {
@@ -214,8 +213,8 @@ console.log("FACTURAS", facturasVenta)
                     <td>{`${item.Cliente?.nombre || ""} ${item.Cliente?.apellido || ""}`.trim()}</td>
                     <td>{item.cuit_cliente}</td>
                     <td>{item.descripcion}</td>
-                    <td>{item.importe}</td>
-                    <td>{item.iva_alicuota}%</td>
+                    <td>${item.importe}</td>
+                    <td>${item.iva_alicuota}</td>
                     <td>${item.importe * (item.iva_alicuota / 100)}</td>
                     <td>${item.total}</td>
                   </tr>

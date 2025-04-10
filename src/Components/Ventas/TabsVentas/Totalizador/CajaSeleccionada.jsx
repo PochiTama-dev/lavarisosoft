@@ -33,7 +33,7 @@ const CajaSeleccionada = ({ onDateChange }) => {
         <li className="col text-center items">Total Facturado</li>
         <li className="col text-center items">Total Pagado a tecnicos</li>
         <li className="col text-center items">Margen Bruto</li>
-   {/*      <li className="col text-center items">Gastos Operativos</li> */}
+        <li className="col text-center items">Gastos Operativos</li>  
         <li className="col text-center items">Ganancia Neta</li>
         {/* <li className="col text-center items">Facturas pendientes de cobro</li> */}
       </ul>

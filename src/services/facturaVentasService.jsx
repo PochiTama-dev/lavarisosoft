@@ -5,8 +5,7 @@ export const listaFacturasVentas = async () => {
     const response = await fetch(`${API_URL}facturasventa/lista`);
     const data = await response.json();
     if (data[0] !== undefined) {
-      console.log(`Se encontró un listado con ${data.length} facturas!!`);
-      console.log(data);
+ 
       return data;
     } else {
       console.log("Aún no hay registro de facturas de ventas...");

@@ -4,13 +4,16 @@ import { useEffect, useState } from "react";
 import { Table } from "react-bootstrap";
 import { empleados } from "../../../services/empleadoService";
 import Header from "../../Header/Header";
+
 const Proveedores = () => {
   const [proveedoresData, setProveedoresData] = useState([]);
+  // eslint-disable-next-line no-unused-vars
   const [empleadosData, setEmpleadosData] = useState([]);
   const [searchDate, setSearchDate] = useState("");
   const [searchProveedor, setSearchProveedor] = useState("");
   const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const proveedoresDb = async () => {
     try {
       const response = await fetch("https://lv-back.online/facturascompra/lista");
@@ -21,14 +24,37 @@ const Proveedores = () => {
     }
   };
 
+  const gastosDb = async () => {
+    try {
+      const response = await fetch("https://lv-back.online/gastos/listado");
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  };
+
   useEffect(() => {
     const fetchProveedoresData = async () => {
       try {
-        const data = await proveedoresDb();
-        setProveedoresData(data);
-        setFilteredData(data);
+        const proveedoresData = await proveedoresDb();
+        const gastosData = await gastosDb();
+
+        // Normalize gastos data to match proveedores structure
+        const normalizedGastos = gastosData.map((gasto) => ({
+          Proveedore: { nombre: gasto.Proveedore.nombre },
+          descripcion: gasto.motivo,
+          created_at: gasto.fecha_ingreso,
+          total: gasto.importe,
+          monto_pagado: gasto.importe,
+          estado: gasto.estado_pago,
+        }));
+
+        const combinedData = [...proveedoresData, ...normalizedGastos];
+        setProveedoresData(combinedData);
+        setFilteredData(combinedData);
       } catch (error) {
-        console.error("Error fetching proveedores data:", error);
+        console.error("Error fetching data:", error);
         setProveedoresData([]);
       } finally {
         setLoading(false);
@@ -47,13 +73,7 @@ const Proveedores = () => {
     fetchEmpleadosData();
   }, []);
 
-  const getResponsable = (id) => {
-    const responsable = empleadosData.find((res) => res.id === id);
-    return responsable
-      ? responsable.nombre + " " + responsable.apellido
-      : "Desconocido";
-  };
-
+ 
   const uniqueProveedores = [
     ...new Set(proveedoresData.map((prov) => prov.Proveedore.nombre)),
   ];
@@ -73,9 +93,11 @@ const Proveedores = () => {
     });
     setFilteredData(filtered);
   }, [searchDate, searchProveedor, proveedoresData]);
+
   if (loading) {
     return <div>Loading...</div>;
   }
+
   const formatDate = (dateStr) => {
     const date = new Date(dateStr);
     const day = ("0" + date.getDate()).slice(-2);
@@ -87,8 +109,8 @@ const Proveedores = () => {
   return (
     <div className="proveedores-container" style={{ padding: "20px" }}>
       <div>
-           <Header text='Pagos a proveedores' />
-      
+        <Header text="Pagos a proveedores" />
+
         <div className="proveedores-top-box">
           <div>
             <select
@@ -118,10 +140,10 @@ const Proveedores = () => {
           <Link to="/ventas/cargarFactura">
             <button>Cargar factura</button>
           </Link>
-           <Link to="/gastos">
+          <Link to="/gastos">
             <button>Cargar gasto</button>
-          </Link>  
-       {/*    <Link to="/VentasRemito">
+          </Link>
+          {/*    <Link to="/VentasRemito">
             <button>Recibir lote</button>
           </Link> */}
         </div>
@@ -133,24 +155,32 @@ const Proveedores = () => {
             <thead>
               <tr>
                 <th>Nombre</th>
-               <th>Descripción</th>  
+                <th>Descripción</th>
                 <th>Fecha</th>
                 <th>Estado de pago</th>
                 <th>Importe</th>
                 <th>Debe</th>
-        {/*         <th>Responsable</th> */}
+                {/*         <th>Responsable</th> */}
               </tr>
             </thead>
             <tbody className="grilla-proveedores-body">
               {filteredData.map((prov, index) => (
                 <tr key={index} className={index % 2 === 0 ? "" : "row-even"}>
                   <td>{prov.Proveedore.nombre}</td>
-                   <td>{prov.descripcion}</td>  
+                  <td>{prov.descripcion}</td>
                   <td>{formatDate(prov.created_at)}</td>
-                  <td>{prov.total !== prov.monto_pagado ? "Pago Parcial" : (prov.estado === 0 ? "No pagado" : "Pagado")}</td>
-                  <td>{prov.total}</td>
-                  <td>{prov.total !== prov.monto_pagado ? (prov.total - prov.monto_pagado) : "-"}</td>
-                {/*   <td>{getResponsable(prov.id_responsable)}</td> */}
+                  <td>
+                    {prov.total !== prov.monto_pagado
+                      ? "Pago Parcial"
+                      : prov.estado === 0
+                      ? "No pagado"
+                      : "Pagado"}
+                  </td>
+                  <td>$ {prov.total}</td>
+                             <td style={{ color: "red" }}>
+                    {prov.total !== prov.monto_pagado ? `$${prov.total - prov.monto_pagado}` : <strong style={{color:'black'}}>-</strong>}
+                  </td>
+                  {/*   <td>{getResponsable(prov.id_responsable)}</td> */}
                 </tr>
               ))}
             </tbody>

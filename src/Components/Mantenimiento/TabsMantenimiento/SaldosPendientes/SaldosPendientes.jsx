@@ -37,7 +37,7 @@ const SaldosPendiente = () => {
       const { Empleado } = cobro.Ordene;
       const empleadoExistente = result.find((item) => item.empleadoId === Empleado.id);
       const liquidacion = liquidaciones.find((liq) => liq.id_tecnico === Empleado.id) ;
-      console.log('Saldos:', liquidacion);
+  
       const orden = {
         ...cobro.Ordene,
         presupuestoId: cobro.id,
@@ -78,13 +78,13 @@ const SaldosPendiente = () => {
         <Tabs2 active={activeTab} onChange={setActiveTab} className='client-tabs'>
           <Tab title='Proveedores'>
             <Saldos 
-              saldos={{ providers: saldos.providers, employees: [] }} 
+              saldos={{ providers: saldos.providers, costumers: saldos.costumers, employees: [] }} 
               tableStyle={{ tableLayout: 'fixed', width: '100%' }} 
             />
           </Tab>
           <Tab title='Empleados'>
             <Saldos 
-              saldos={{ providers: [], employees: saldos.employees }} 
+              saldos={{ providers: [], costumers: saldos.costumers, employees: saldos.employees }} 
               tableStyle={{ tableLayout: 'fixed', width: '100%' }}  
             />
           </Tab>

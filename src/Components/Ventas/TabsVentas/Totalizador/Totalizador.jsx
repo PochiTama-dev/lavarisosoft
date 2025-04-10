@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import Header from "../../../Header/Header";
 import { listaCajas } from "../../../../services/cajasService";
+ 
 import { obtenerLiquidaciones } from "../../../../services/liquidacionesService";
 import Cajas from "./Cajas";
 import CajaSeleccionada from "./CajaSeleccionada";
@@ -16,6 +17,17 @@ const Totalizador = () => {
   const [datosFiltrados, setDatosFiltrados] = useState([]);
   const [mesFacturado, setMesFacturado] = useState({});
   const [liquidaciones, setLiquidaciones] = useState([]);
+  const [totalesPorMes, setTotalesPorMes] = useState({});
+
+  const gastosDb = async () => {
+    try {
+      const response = await fetch("https://lv-back.online/gastos/listado");
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,7 +42,10 @@ const Totalizador = () => {
 
         setCaja(cajasData || []);
         setMesFacturado(
-          organizarFacturasPorMes([...facturasCompra, ...facturasVenta])
+          organizarFacturasPorMes([
+            ...facturasVenta.map((f) => ({ ...f, tipo: "venta" })),
+            ...facturasCompra.map((f) => ({ ...f, tipo: "compra" })),
+          ])
         );
         setLiquidaciones(liquidacionesData || []);
       } catch (error) {
@@ -61,33 +76,48 @@ const Totalizador = () => {
   };
 
   useEffect(() => {
-    const filteredData = Object.entries(mesFacturado).reduce(
-      (acc, [key, facturas]) => {
-        const [year, month] = key.split("-");
-        if (
-          (!selectedDate.year || selectedDate.year === year) &&
-          (!selectedDate.month || Number(selectedDate.month) === Number(month))
-        ) {
-          const facturasFiltradas = facturas.filter(
-            (factura) =>
-              !selectedCajaId ||
-              Number(factura.id_caja) === Number(selectedCajaId)
-          );
-          if (facturasFiltradas.length > 0) {
-            acc[key] = facturasFiltradas;
+    const updateDatosFiltrados = async () => {
+      const filteredData = await Object.entries(mesFacturado).reduce(
+        async (accPromise, [key, facturas]) => {
+          const acc = await accPromise;
+          const [year, month] = key.split("-");
+          if (
+            (!selectedDate.year || selectedDate.year === year) &&
+            (!selectedDate.month || Number(selectedDate.month) === Number(month))
+          ) {
+            const facturasFiltradas = facturas.filter(
+              (factura) =>
+                !selectedCajaId ||
+                Number(factura.id_caja) === Number(selectedCajaId)
+            );
+            if (facturasFiltradas.length > 0) {
+              acc[key] = facturasFiltradas;
+            }
           }
-        }
-        return acc;
-      },
-      {}
-    );
-    setDatosFiltrados(filteredData);
+          return acc;
+        },
+        Promise.resolve({})
+      );
+      setDatosFiltrados(filteredData);
+    };
+    updateDatosFiltrados();
   }, [mesFacturado, selectedDate, selectedCajaId]);
 
-  const calcularTotales = (facturas, year, month) => {
+  useEffect(() => {
+    const calcularTotalesPorMes = async () => {
+      const nuevosTotales = {};
+      for (const [key, facturas] of Object.entries(datosFiltrados)) {
+        const [year, month] = key.split("-");
+        nuevosTotales[key] = await calcularTotales(facturas, year, month);
+      }
+      setTotalesPorMes(nuevosTotales);
+    };
+    calcularTotalesPorMes();
+  }, [datosFiltrados]);
+
+  const calcularTotales = async (facturas, year, month) => {
     let totalFacturado = 0;
-    let totalPagado = 0;
-    let gastosOperativos = 0;
+    let compraGastos = 0;
     let facturasPendientes = 0;
 
     const totalPagadoTecnicos = liquidaciones
@@ -101,17 +131,39 @@ const Totalizador = () => {
       .reduce((acc, liquidacion) => acc + Number(liquidacion.monto), 0);
 
     facturas.forEach((factura) => {
-      totalFacturado += Number(factura.total);
-      totalPagado += Number(factura.importe || 0);
-      gastosOperativos += Number(factura.gastos_operativos || 0);
+      if (factura.tipo === "compra") {
+        compraGastos += Number(factura.monto_pagado);
+      } else {
+        totalFacturado += Number(factura.total);
+      }
       if (factura.estado === "pendiente") {
         facturasPendientes += 1;
       }
     });
 
+    const gastos = await gastosDb();
+    const gastosAPI = gastos
+      .filter((gasto) => {
+        const fecha = gasto.Proveedore?.fecha_ingreso || gasto.fecha_ingreso;
+        if (!fecha) return false;
+        let gastoYear, gastoMonth;
+        if (fecha.includes("-")) {
+          const d = new Date(fecha);
+          gastoYear = d.getFullYear();
+          gastoMonth = d.getMonth();
+        } else {
+          const [  monthGasto, yearGasto] = fecha.split("/");
+          gastoYear = Number(yearGasto);
+          gastoMonth = Number(monthGasto);
+        }
+        return Number(gastoYear) === Number(year) && Number(gastoMonth) === Number(month);
+      })
+      .reduce((acc, gasto) => acc + parseFloat(gasto.importe || 0), 0);
+
+    const gastosOperativos = compraGastos + gastosAPI;
     const margenBruto = totalFacturado - totalPagadoTecnicos;
     const gananciaNeta = margenBruto - gastosOperativos;
-
+     
     return {
       totalFacturado,
       totalPagado: totalPagadoTecnicos,
@@ -122,38 +174,25 @@ const Totalizador = () => {
     };
   };
 
-  const exportarExcel = () => {
-    const datosExcel = Object.entries(datosFiltrados).map(([key, facturas]) => {
-      const [year, month] = key.split("-");
-      const nombreMes = new Date(year, month - 1).toLocaleString("es", {
-        month: "long",
-      });
-
-      const {
-        totalFacturado,
-        totalPagado,
-        margenBruto,
-        gastosOperativos,
-        gananciaNeta,
-        facturasPendientes,
-      } = calcularTotales(facturas, year, month);
-
-      return {
-        "Periodo del Mes": `${nombreMes} - ${year}`,
-        "Total Facturado": totalFacturado.toFixed(2),
-        "Total Pagado a Técnicos": totalPagado.toFixed(2),
-        "Margen Bruto": margenBruto.toFixed(2),
-/*         "Gastos Operativos": gastosOperativos.toFixed(2), */
-        "Ganancia Neta": gananciaNeta.toFixed(2),
-        // "Facturas Pendientes de Cobro": facturasPendientes,
-      };
-    });
-
+  const exportarExcel = async () => {
+    const datosExcel = await Promise.all(
+      Object.entries(datosFiltrados).map(async ([key, facturas]) => {
+        const [year, month] = key.split("-");
+        const nombreMes = new Date(year, month - 1).toLocaleString("es", { month: "long" });
+        const totales = await calcularTotales(facturas, year, month);
+        return {
+          "Periodo del Mes": `${nombreMes} - ${year}`,
+          "Total Facturado": totales.totalFacturado?.toFixed(2) || "",
+          "Total Pagado a Técnicos": totales.totalPagado?.toFixed(2) || "",
+          "Margen Bruto": totales.margenBruto?.toFixed(2) || "",
+          "Gastos Operativos": totales.gastosOperativos?.toFixed(2) || "",
+          "Ganancia Neta": totales.gananciaNeta?.toFixed(2) || "",
+        };
+      })
+    );
     const hoja = XLSX.utils.json_to_sheet(datosExcel);
-
     const libro = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(libro, hoja, "Totalizador");
-
     XLSX.writeFile(libro, "Totalizador.xlsx");
   };
 
@@ -161,14 +200,12 @@ const Totalizador = () => {
     <div className="totalizadorContainer">
       <Header text="Totalizador" />
       <div className="totalizadorLayout">
-        {/* Selector de cajas */}
         <Cajas
           cajas={caja}
           onCajaSelect={handleCajaChange}
           selectedCajaId={selectedCajaId}
         />
         <div className="content">
-          {/* Selector de fecha */}
           <CajaSeleccionada onDateChange={handleDateChange} />
           <div>
             {Object.entries(datosFiltrados).map(([key, facturas], index) => {
@@ -177,14 +214,13 @@ const Totalizador = () => {
                 month: "long",
               });
 
-              const {
-                totalFacturado,
-                totalPagado,
-                margenBruto,
-                gastosOperativos,
-                gananciaNeta,
-                // facturasPendientes,
-              } = calcularTotales(facturas, year, month);
+              const totales = totalesPorMes[key] || {
+                totalFacturado: 0,
+                totalPagado: 0,
+                margenBruto: 0,
+                gastosOperativos: 0,
+                gananciaNeta: 0,
+              };
 
               return (
                 <div
@@ -195,15 +231,20 @@ const Totalizador = () => {
                 >
                   <li className="col text-center">{`${nombreMes} - ${year}`}</li>
                   <li className="col text-center">
-                    {totalFacturado.toFixed(2)}
+                   $ {totales.totalFacturado.toFixed(2)}
                   </li>
-                  <li className="col text-center">{totalPagado.toFixed(2)}</li>
-                  <li className="col text-center">{margenBruto.toFixed(2)}</li>
-            {/*       <li className="col text-center">
-                    {gastosOperativos.toFixed(2)}
-                  </li> */}
-                  <li className="col text-center">{gananciaNeta.toFixed(2)}</li>
-                  {/* <li className="col text-center">{facturasPendientes}</li> */}
+                  <li className="col text-center">
+                   $ {totales.totalPagado.toFixed(2)}
+                  </li>
+                  <li className="col text-center">
+                   $ {totales.margenBruto.toFixed(2)}
+                  </li>
+                  <li className="col text-center">
+                   $ {totales.gastosOperativos.toFixed(2)}
+                  </li>
+                  <li className="col text-center">
+                   $ {totales.gananciaNeta.toFixed(2)}
+                  </li>
                 </div>
               );
             })}
