@@ -70,22 +70,22 @@ const SaldosPendiente = () => {
     <div className='bg-secondary-subtle saldosPendientes' style={{ padding: '20px' }}>
       <Header text='Saldos pendientes' />
       <div>
-        <div style={{ marginBottom: '20px' }}>
+      {/*   <div style={{ marginBottom: '20px' }}>
           <label htmlFor='' style={{ marginRight: '20px' }}>Filtrar por fecha </label>
           <input type='date' name='' id='' />
-        </div>
+        </div> */}
 
         <Tabs2 active={activeTab} onChange={setActiveTab} className='client-tabs'>
           <Tab title='Proveedores'>
             <Saldos 
               saldos={{ providers: saldos.providers, employees: [] }} 
-              tableStyle={{ tableLayout: 'fixed', width: '100%' }} // Ensure consistent column width
+              tableStyle={{ tableLayout: 'fixed', width: '100%' }} 
             />
           </Tab>
           <Tab title='Empleados'>
             <Saldos 
               saldos={{ providers: [], employees: saldos.employees }} 
-              tableStyle={{ tableLayout: 'fixed', width: '100%' }} // Ensure consistent column width
+              tableStyle={{ tableLayout: 'fixed', width: '100%' }}  
             />
           </Tab>
         </Tabs2>

@@ -3,9 +3,9 @@ import { useState, useEffect } from 'react';
 import { func, object, any } from 'prop-types';
 import { listaCajas } from '../../services/cajasService';
 import { guardarLiquidacion } from '../../services/liquidacionesService';
- 
+ import RemitoLiquidacion from './RemitoLiquidacion';
+ import { modificarCaja } from '../../services/cajasService';
 const Liquidacion = ({ tecnico, totalLiquidacion, setModal }) => {
- 
 //import RemitoLiquidacion from './RemitoLiquidacion';
  
   const [newModal, setNewModal] = useState(false);
@@ -21,24 +21,34 @@ const Liquidacion = ({ tecnico, totalLiquidacion, setModal }) => {
     };
     fetchCajas();
   }, []);
-
+ 
   const handleLiquidate = async () => {
     if (!window.confirm("Seguro que desea realizar esta liquidacion")) return;
     try {
       const fecha = new Date().toISOString();
       const response = await guardarLiquidacion({
  
-        id_tecnico: tecnico.id, 
+        id_tecnico: tecnico.Empleado.id, 
  
         monto: liqParcial,
         created_at: fecha,
       });
       console.log('Liquidación guardada:', response);
-      setNewModal(!newModal);
-      setModal(false);
+      setNewModal(true);
+      // setModal(false); // Removed to keep Liquidacion open for modal display
+      const cajaSeleccionada = cajas.find((caja) => caja.id === parseInt(selectedCaja, 10));
+      if (cajaSeleccionada) {
+        const nuevoMonto = cajaSeleccionada.monto - (liqParcial ? liqParcial : tecnico.total);
+        await modificarCaja(cajaSeleccionada.id, {
+          ...cajaSeleccionada,
+          monto: nuevoMonto,
+        });
+      }
+    
     } catch (error) {
       console.error('Error al guardar la liquidación:', error);
     }
+   
   };
 
   const handleInputChange = (event) => {
@@ -63,6 +73,8 @@ const Liquidacion = ({ tecnico, totalLiquidacion, setModal }) => {
   const handleCajaChange = (event) => {
     setSelectedCaja(event.target.value);
   };
+
+   
   return (
     <div className='liquidacion rounded'>
       {!newModal && (
@@ -114,7 +126,7 @@ const Liquidacion = ({ tecnico, totalLiquidacion, setModal }) => {
                 style={{ height: '40px', fontSize: '30px' }}
                 type='number'
                 id='adelanto'
-                max={totalLiquidacion} // se usa totalLiquidacion para el max
+                max={totalLiquidacion} 
                 onChange={handleInputChange}
                 onKeyDownCapture={handleKeyPress}
               />
@@ -147,11 +159,11 @@ const Liquidacion = ({ tecnico, totalLiquidacion, setModal }) => {
  
         </>
       )}
-      {/* {newModal && (
+       {newModal && (
         <div>
           <RemitoLiquidacion tecnico={tecnico} setModal={setNewModal} liqParcial={liqParcial} selectedCaja={selectedCaja} cajas={cajas} />
         </div>
-      )} */}
+      )}  
     </div>
   );
 };

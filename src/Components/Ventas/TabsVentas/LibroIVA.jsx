@@ -22,7 +22,7 @@ console.log("FACTURAS", facturasVenta)
   console.log("CAJAS", listaCajas)
   useEffect(() => {
     const fetchFacturasCompra = async () => {
-      const response = await fetch("https://lv-back.online/facturasproveedores/lista");
+      const response = await fetch("https://lv-back.online/facturascompra/lista");
       const data = await response.json();
       setFacturasCompra(data);
     };
@@ -173,15 +173,15 @@ console.log("FACTURAS", facturasVenta)
                 {sortedData(facturasCompra).map((item, index) => (
                   <tr key={index}>
                     <td>{dayjs(item.created_at).format("DD/MM/YYYY")}</td>
-                    <td>{item.comprobante}</td>
-                    <td>{item.comprobante}</td>
+                    <td>{item.tipo_comprobante}</td>
+                    <td>{item.nro_comprobante}</td>
                     <td>{item.Proveedore.nombre}</td>
                     <td>{item.Proveedore.cuit}</td>
                     <td>{item.descripcion}</td>
-                    <td>{item.importe}</td>
-                    <td>{item.iva_alicuota}%</td>
-                    <td>${item.iva_alicuota}</td>
                     <td>${item.importe}</td>
+                    <td>${item.iva_alicuota}</td>
+                    <td>${item.iva_cred_fiscal}</td>
+                    <td>${item.total}</td>
                   </tr>
                 ))}
               </tbody>

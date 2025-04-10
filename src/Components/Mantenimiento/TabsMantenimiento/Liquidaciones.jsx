@@ -91,26 +91,26 @@ const Liquidaciones = () => {
   };
 
   const handleSelecTecnico = (tecnico) => {
-    if (tecnicoSelected.nombre === tecnico.nombre) {
-      setTecnicoSelected(tecnico);
-    } else {
+    // If the technician is already selected, deselect; otherwise, select.
+    if (tecnicoSelected.Empleado?.nombre === tecnico.Empleado.nombre) {
       setTecnicoSelected({});
+    } else {
+      setTecnicoSelected(tecnico);
     }
     console.log(tecnicoSelected);
   };
 
   const handleLiquidarClick = () => {
- 
-    if (!tecnicoSelected.nombre) {
+    // Check using the Empleado property
+    if (!tecnicoSelected.Empleado?.nombre) {
       alert("Por favor seleccione un tecnico");
     } else {
       setModal(!modal);
     }
- 
   };
 
-  // Calcular el monto a liquidar para el técnico seleccionado
-  const totalLiquidacion = datosLiquidaciones.find(liq => liq.Empleado.nombre === tecnicoSelected.nombre)?.total;
+  // Calcular el monto a liquidar para el técnico seleccionado usando la propiedad Empleado
+  const totalLiquidacion = datosLiquidaciones.find(liq => liq.Empleado.nombre === tecnicoSelected.Empleado?.nombre)?.total;
   
   const handleExpandClick = (index) => {
     setExpandedRow(expandedRow === index ? null : index);

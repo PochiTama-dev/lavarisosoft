@@ -68,22 +68,23 @@
 .add-container {
   background-color: #69688c;
   border-radius: 50%;
-  width: 64px;
-  height: 64px;
+  width: 35px;
+  height: 35px;
 }
 
 .proveedor-add-container button,
 .add-container button {
-  background-color: #69688c;
+  background-color: transparent;
   color: white;
-  border-radius: 50%;
-  width: 64px;
-  height: 64px;
+ 
+  width: 35px;
+  height: 35px;
   border: none;
   font-size: xxx-large;
   font-weight: bold;
   font-family: auto !important;
   line-height: normal;
+  margin-top: -20px;
 }
 
 .proveedor-export-button,

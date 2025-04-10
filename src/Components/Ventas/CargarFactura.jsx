@@ -17,7 +17,7 @@ const CargarFactura = () => {
     tipo_comprobante: '',
     iva_alicuota: '',
     iva_cred_fiscal: '',
-    gastos_operativos: false,
+ 
     descripcion: '',
   });
   const [proveedores, setProveedores] = useState([]);
@@ -65,10 +65,10 @@ const CargarFactura = () => {
 
   const postFactura = async (factura) => {
     const comprobantes = await listaFacturasCompra();
-    const { id_proveedor, importe, id_caja, tipo_comprobante, iva_alicuota, iva_cred_fiscal, monto_pagado, gastos_operativos } = await factura;
+    const { id_proveedor, importe, id_caja, tipo_comprobante, iva_alicuota, iva_cred_fiscal, monto_pagado } = await factura;
 
     const fetchFactura = await fetch('https://lv-back.online/facturascompra/guardar', {
-      method: 'post',
+      method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ const CargarFactura = () => {
         total: Number(importe) + Number(iva_alicuota),
         monto_pagado,
         descripcion: 'Factura proveedor',
-        gastos_operativos,
+  
         created_at: new Date(),
       }),
     });
@@ -93,7 +93,7 @@ const CargarFactura = () => {
 
   const handleCreateFactura = async (factura) => {
     try {
-      const { id_proveedor, id_caja, tipo_comprobante, iva_alicuota, importe, iva_cred_fiscal, monto_pagado, gastos_operativos } = await factura;
+      const { id_proveedor, id_caja, tipo_comprobante, iva_alicuota, importe, iva_cred_fiscal, monto_pagado  } = await factura;
 
       const facturaCompra = await postFactura({
         id_caja,
@@ -104,10 +104,10 @@ const CargarFactura = () => {
         importe,
         total: Number(importe) + Number(iva_alicuota),
         monto_pagado,
-        gastos_operativos,
+        
         created_at: new Date(),
       });
-
+console.log("datow factura",facturaCompra);
       if (Number(factura.monto_pagado) < Number(importe) + Number(iva_alicuota)) {
         const dataBody = {
           caja: id_caja,
@@ -200,14 +200,14 @@ const CargarFactura = () => {
               <option value='27.5'>27.5%</option>
             </select>
           </div>
-          <div>
+       <div>
             <h3>IVA alicuota:</h3>
             <input type='text' name='iva_alicuota' value={factura.iva_alicuota} readOnly />
           </div>
           <div>
             <h3>IVA credito fiscal:</h3>
             <input type='text' name='iva_cred_fiscal' value={factura.iva_cred_fiscal} readOnly />
-          </div>
+          </div> 
           <div>
             <h3>Importe pagado:</h3>
             <input type='text' placeholder='0' name='monto_pagado' value={factura.monto_pagado} onChange={handleChange} required />
@@ -223,7 +223,7 @@ const CargarFactura = () => {
               ))}
             </select>
           </div>
-          <div>
+     {/*       <div>
             <h3>IVA alicuota:</h3>
             <input
               type='text'
@@ -240,11 +240,11 @@ const CargarFactura = () => {
               value={factura.tipo_comprobante === 'Factura A' || factura.tipo_comprobante === 'Factura B' ? (factura.importe * 21) / 100 : factura.iva_cred_fiscal}
               onChange={handleChange}
             />
-          </div>
-          <div>
+          </div>   */}  
+    {/*       <div>
             <h3>Gastos operativos:</h3>
             <input type='checkbox' name='gastos_operativos' checked={factura.gastos_operativos} onChange={handleChange} />
-          </div>
+          </div> */}
           <div>
             <button type='submit'>Guardar</button>
           </div>

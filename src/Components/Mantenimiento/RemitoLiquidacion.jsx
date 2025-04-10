@@ -1,9 +1,8 @@
 import jsPDF from 'jspdf';
 import { any, func, object } from 'prop-types';
 import { useCustomContext } from '../../hooks/context';
-import { modificarCaja } from '../../services/cajasService';
-
-const RemitoLiquidacion = ({ tecnico, setModal, liqParcial, selectedCaja, cajas }) => {
+ 
+const RemitoLiquidacion = ({ tecnico, setModal, liqParcial, selectedCaja   }) => {
   const { PostSaldosPendientes } = useCustomContext();
   console.log(tecnico);
   const handleModal = () => {
@@ -21,15 +20,7 @@ const RemitoLiquidacion = ({ tecnico, setModal, liqParcial, selectedCaja, cajas 
       tipo: 'liquidacion',
     };
     await PostSaldosPendientes(dataBody);
-
-    const cajaSeleccionada = cajas.find((caja) => caja.id === parseInt(selectedCaja, 10));
-    if (cajaSeleccionada) {
-      const nuevoMonto = cajaSeleccionada.monto - (liqParcial ? liqParcial : tecnico.total);
-      await modificarCaja(cajaSeleccionada.id, {
-        ...cajaSeleccionada,
-        monto: nuevoMonto,
-      });
-    }
+ 
   };
 
   const exportToPDF = () => {

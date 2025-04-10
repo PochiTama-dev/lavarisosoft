@@ -253,19 +253,25 @@ const Ubicaciones = () => {
       setSuggestions([]);
     }
   };
+const handleSuggestionClick = (coordinates, formattedAddress) => {
+  setCoordinatesClient(coordinates);
+  const [lon, lat] = coordinates;
 
-  const handleSuggestionClick = (coordinates) => {
-    setCoordinatesClient(coordinates);
-    const [lon, lat] = coordinates;
-    newClient.latitud = lat;
-    newClient.longitud = lon;
-    setPosition([lat, lon]);
+  // Actualiza la dirección y las coordenadas en el estado del cliente
+  setNewClient((prevClient) => ({
+    ...prevClient,
+    direccion: formattedAddress,
+    latitud: lat,
+    longitud: lon,
+  }));
 
-    if (mapRef.current) {
-      mapRef.current.setView([lat, lon], 13);
-    }
-    setSuggestions([]);
-  };
+  setPosition({ latitude: lat, longitude: lon });
+
+  if (mapRef.current) {
+    mapRef.current.setView([lat, lon], 13);
+  }
+  setSuggestions([]); // Limpia las sugerencias después de seleccionar
+};
 
   const handleAddClient = async () => {
     if (validateForm()) {
@@ -737,29 +743,7 @@ const Ubicaciones = () => {
                       onChange={handleSuggestions}
                     />
                   </li>
-                  <div ref={suggestionsRef} className="suggestions-box">
-                    <Suspense fallback={<>Cargando...</>}>
-                      {suggestions.length > 0 && (
-                        <>
-                          {suggestions.map((suggestion, index) => {
-                            const coordinates = suggestion.geometry.coordinates;
-
-                            return (
-                              <div
-                                key={index}
-                                className="suggestion-item pointer"
-                                onClick={() =>
-                                  handleSuggestionClick(coordinates)
-                                }
-                              >
-                                {suggestion.properties.formatted}
-                              </div>
-                            );
-                          })}
-                        </>
-                      )}
-                    </Suspense>
-                  </div>
+        
                   <li className="pb-1">
                     {errors.direccion && (
                       <div className="text-danger">{errors.direccion}</div>
@@ -999,6 +983,29 @@ const Ubicaciones = () => {
                         value={newClient.direccion}
                         onChange={handleSuggestions}
                       />
+                                                               {/* Renderizado de las sugerencias */}
+                                <div ref={suggestionsRef} className="suggestions-box-modal">
+                                  <Suspense fallback={<>Cargando...</>}>
+                                    {suggestions.length > 0 && (
+                                      <div className="suggestions-list">
+                                        {suggestions.map((suggestion, index) => {
+                                          const coordinates = suggestion.geometry.coordinates;
+                                          const formattedAddress = suggestion.properties.formatted;
+                                
+                                          return (
+                                            <div
+                                              key={index}
+                                              className="suggestion-item pointer"
+                                              onClick={() => handleSuggestionClick(coordinates, formattedAddress)}
+                                            >
+                                              {formattedAddress}
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+                                    )}
+                                  </Suspense>
+                                </div>
                     </div>
                     {/* Tercera fila */}
                     <div className="col-md-6 mb-3">
@@ -1061,6 +1068,7 @@ const Ubicaciones = () => {
                   Guardar
                 </button>
               </div>
+              
             </div>
           </div>
         </div>

@@ -30,7 +30,7 @@ const Cajas = () => {
         <Link to="/caja" className="add-container">
           <button>+</button>
         </Link>
-        <button className="export-button">
+ {/*        <button className="export-button">
           <svg
             width="34"
             height="41"
@@ -48,7 +48,7 @@ const Cajas = () => {
               fill="white"
             />
           </svg>
-        </button>
+        </button> */}
       </div>
     </div>
   );

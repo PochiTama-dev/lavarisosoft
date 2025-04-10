@@ -75,7 +75,7 @@ const DatosIncidente = ({ equipo, modelo, antiguedad, diagnostico, idOrden }) =>
             </div>
           </div>
         </div>
-        <div className='col-md-6'>
+{/*         <div className='col-md-6'>
           <h3>Repuestos</h3>
           <ul className='ulRepuestos'>
             {repuestos &&
@@ -85,7 +85,7 @@ const DatosIncidente = ({ equipo, modelo, antiguedad, diagnostico, idOrden }) =>
                 </li>
               ))}
           </ul>
-        </div>
+        </div> */}
       </div>
     </div>
   );

@@ -8,6 +8,7 @@ const NuevoProveedor = () => {
   const [formData, setFormData] = useState({
     nombre: "",
     id_tipo_proveedor: "",
+    cuit: "",  
     fecha_ingreso: "",
   });
   const navigate = useNavigate();
@@ -39,12 +40,13 @@ const NuevoProveedor = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  console.log("FORMDATA", formData);
     try {
       const response = await fetch(
         "https://lv-back.online/proveedores/guardar",
         {
           method: "POST",
+      
           headers: {
             "Content-Type": "application/json",
           },
@@ -95,6 +97,17 @@ const NuevoProveedor = () => {
                 </option>
               ))}
             </select>
+          </div>
+          {/* Nuevo campo para CUIT */}
+          <div>
+            <h3>CUIT:</h3>
+            <input
+              type="text"
+              name="cuit"
+              value={formData.cuit}
+              onChange={handleChange}
+              required
+            />
           </div>
           <div>
             <h3>Fecha de ingreso:</h3>

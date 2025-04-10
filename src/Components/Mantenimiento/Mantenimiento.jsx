@@ -22,9 +22,9 @@ const Mantenimiento = () => {
           <Tab title='Proveedores'>
             <Proveedor />
           </Tab>
-          <Tab title='Taller'>
+{/*           <Tab title='Taller'>
             <Taller showHeader={false} />
-          </Tab>
+          </Tab> */}
           <Tab title='Incumplimientos'>
             <Incumplimientos />
           </Tab>

@@ -17,7 +17,7 @@ const Incumplimientos = () => {
   }, []);
   const getOrdenes = async () => {
     const ordenesDB = await ordenesGenerales();
-    const ordenesFilter = ordenesDB.filter((orden) => orden.id_tipo_estado === 2 || orden.id_tipo_estado === 3);
+    const ordenesFilter = ordenesDB.filter((orden) => orden.id_tipo_estado === 2 );
     setOrdenes(ordenesFilter);
     console.log(ordenesFilter);
   };
@@ -74,18 +74,18 @@ const Incumplimientos = () => {
                       <td>{new Date(item.created_at).toLocaleDateString()}</td>
                       <span>{'detalle'}</span>
                     </div>
-                    <td>{item.numero_orden}</td>
+                    <td>{item.id}</td>
                     <td className='fw-bold' style={{ color: color }}>
                       {item.TiposEstado.tipo_estado}
                     </td>
                     <td>{item.motivo}</td>
                     <td>{item.Presupuesto?.total}</td>
                     <td>
-                      {item.Cliente.nombre} {item.Cliente.apellido}
+                      {item.Cliente?.nombre} {item.Cliente?.apellido}
                     </td>
                     <td>{new Date(item.updated_at).toLocaleDateString()}</td>
                     <td>
-                      {item.Empleado.nombre} {item.Empleado.apellido}
+                      {item.Empleado?.nombre} {item.Empleado?.apellido}
                     </td>
                   </tr>
                 );

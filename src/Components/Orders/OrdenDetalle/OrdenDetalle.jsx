@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import DatosCliente from "./DatosCliente";
@@ -58,7 +59,7 @@ const OrdenDetalle = ({ orden, onUpdateOrden }) => {
     antiguedad,
     motivo,
     Cliente,
-    Empleado,
+ 
     TiposEstado,
   } = orden;
 

@@ -70,7 +70,7 @@ const PorTecnico = ({ data }) => {
               </tbody>
             </table>
           </div>
-          <div className='opventas-export-button-container'>
+   {/*        <div className='opventas-export-button-container'>
             <button className='opventas-export-button' type='submit'>
               <svg width='34' height='41' viewBox='0 0 34 41' fill='none' xmlns='http://www.w3.org/2000/svg'>
                 <path
@@ -84,7 +84,7 @@ const PorTecnico = ({ data }) => {
                 />
               </svg>
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
