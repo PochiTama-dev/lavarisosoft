@@ -244,7 +244,7 @@ const Taller = ({ showHeader }) => {
                     `${factura.Empleado.nombre} ${factura.Empleado.apellido}`
                   )}
                 </td>
-                <td>{factura.numero_orden}</td>
+                <td>{factura.id}</td>
                 <td>{factura.Cliente.numero_cliente}</td>
                 <td>
                   {editIndex === index ? (

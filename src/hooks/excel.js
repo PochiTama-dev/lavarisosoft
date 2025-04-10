@@ -160,7 +160,7 @@ export const exportExcelTotalizador = async (data) => {
       { header: 'Total Facturado', key: 'total_facturado', width: 20 },
       { header: 'Total Pagado a Técnicos', key: 'total_pagado_tecnicos', width: 25 },
       { header: 'Margen Bruto', key: 'margen_bruto', width: 20 },
-      { header: 'Gastos Operativos', key: 'gastos_operativos', width: 20 },
+/*       { header: 'Gastos Operativos', key: 'gastos_operativos', width: 20 }, */
       { header: 'Ganancia Neta', key: 'ganancia_neta', width: 20 },
       { header: 'Facturas Pendientes de Cobro', key: 'facturas_pendientes', width: 30 },
     ];

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../Header/Header";
@@ -52,7 +53,8 @@ const Presupuestos = () => {
     };
     const fetchOrdenes = async () => {
       const response = await listadoOrdenes();
-      const ordenesFiltradas = response.filter((orden) => orden.Entrega?.id);
+
+      const ordenesFiltradas = response.filter((orden) => orden.Entrega?.id && orden.TiposEstado?.tipo_estado !== "Cerrada");
       setOrdenes(ordenesFiltradas);
     };
     const fetchCajas = async () => {
@@ -71,12 +73,12 @@ const Presupuestos = () => {
     fetchRepuestos();
   }, []);
 
-  const handleShowOrder = (nombre) => {
+/*   const handleShowOrder = (nombre) => {
     setShowOrders({
       ...showOrders,
       [nombre]: !showOrders[nombre],
     });
-  };
+  }; */
 
   const toggleComision = (comision) => {
     setComisiones((prevComisiones) => ({
@@ -85,18 +87,18 @@ const Presupuestos = () => {
     }));
   };
 
-  const toggleCaja = (caja) => {
+/*   const toggleCaja = (caja) => {
     setCajas({
       ...cajas,
       [caja]: !cajas[caja],
     });
   };
-
-  const navigate = useNavigate();
-  const handleClickLiquidacion = () => {
+ */
+/*   const navigate = useNavigate(); */
+/*   const handleClickLiquidacion = () => {
     navigate("/liquidacionPresupuestos");
   };
-
+ */
   const handleTecnicoSelect = (tecnico) => {
     const tecnicoCompleto = tecnicos.find((t) => t.id === tecnico.id);
 

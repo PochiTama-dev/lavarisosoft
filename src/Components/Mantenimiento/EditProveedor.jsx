@@ -14,6 +14,7 @@ const EditProveedor = () => {
   );
   const [tiposDeProveedores, setTiposDeProveedores] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [cuit, setCuit] = useState(product?.cuit || "");
 
   useEffect(() => {
     const fetchProveedores = async () => {
@@ -25,6 +26,7 @@ const EditProveedor = () => {
         );
 
         if (proveedorEncontrado) {
+          setCuit((proveedorEncontrado.cuit || product?.cuit) || "");
           setNombre(proveedorEncontrado.nombre || product?.nombre || "");
           setTipo(
             proveedorEncontrado.TiposProveedore?.tipo_proveedor ||
@@ -68,6 +70,7 @@ const EditProveedor = () => {
       nombre,
       id_tipo_proveedor: tipoId,
       fecha_ingreso: fechaIngreso,
+      cuit: cuit,
     };
 
     try {
@@ -142,6 +145,17 @@ const EditProveedor = () => {
             />
           </div>
           <div>
+            <h3>CUIT:</h3>
+            <input
+              type="text"
+              name="cuit"
+              value={cuit}
+              onChange={(e) => setCuit(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+     
             <button type="submit">Guardar</button>
           </div>
         </form>

@@ -119,7 +119,7 @@ const Inventario = () => {
          <Header text='Inventario' />
   
       <ul className='d-flex justify-content-around'>
-        {['Stock', 'Stock Camionetas', 'Reserva', 'Reporte de ventas'].map((name) => (
+        {['Stock', 'Stock Camionetas', 'Reserva', /* 'Reporte de ventas' */].map((name) => (
           <li key={name} onClick={() => setPestaña(name)} className={`pestañasInventario ${pestaña === name ? 'pestañasInventarioActive' : ''}`}>
             {name}
           </li>
@@ -131,7 +131,7 @@ const Inventario = () => {
         <div>
           <h2 className='caja-input-text'>Buscar piezas</h2>
           <input className='caja-input' type='text' placeholder='Buscar' value={searchTerm} onChange={handleSearchChange} />
-     {/*      <button className='caja-button-search'>🔍︎</button> */}
+ 
         </div>
       )}
       {pestaña === 'Stock' && (
@@ -210,7 +210,7 @@ const Inventario = () => {
           </Table>
         </div>
       )}
-      {pestaña === 'Reporte de ventas' && (
+ {/*      {pestaña === 'Reporte de ventas' && (
         <div className='reporte-diario'>
           <div className='header'>
             <h2>Reporte de Actividad</h2>
@@ -289,7 +289,7 @@ const Inventario = () => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
       {pestaña === 'Reporte de ventas' ? (
         ''
       ) : (

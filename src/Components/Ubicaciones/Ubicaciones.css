@@ -76,6 +76,11 @@
   max-height: 400px; 
   overflow-y: auto;  
 }
+.suggestions-box-modal{
+  position: absolute;
+  z-index: 9999999;
+  background: white;
+}
 .scrollable-container-topLocation {
   flex-grow: 1; 
   overflow-y: auto; 

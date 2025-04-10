@@ -49,9 +49,9 @@ const Ventas = () => {
           <Tab title='OP/Ventas'>
             <OpVentas />
           </Tab>
-          <Tab title='Inventario'>
+   {/*        <Tab title='Inventario'>
             <Inventario />
-          </Tab>
+          </Tab> */}
           <Tab title='Totalizador'>
             <Totalizador />
           </Tab>

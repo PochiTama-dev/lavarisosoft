@@ -92,9 +92,9 @@ const OpVentas = () => {
               <Tab title='Por Técnico'>
                 <PorTecnico data={filteredData || ''} />
               </Tab>
-              <Tab title='Por Producto'>
+        {/*       <Tab title='Por Producto'>
                 <PorProducto data={filteredData} />
-              </Tab>
+              </Tab> */}
             </Tabs2>
           </div>
         </Tab>

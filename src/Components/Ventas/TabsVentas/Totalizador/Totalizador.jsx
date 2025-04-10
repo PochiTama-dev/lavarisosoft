@@ -143,7 +143,7 @@ const Totalizador = () => {
         "Total Facturado": totalFacturado.toFixed(2),
         "Total Pagado a Técnicos": totalPagado.toFixed(2),
         "Margen Bruto": margenBruto.toFixed(2),
-        "Gastos Operativos": gastosOperativos.toFixed(2),
+/*         "Gastos Operativos": gastosOperativos.toFixed(2), */
         "Ganancia Neta": gananciaNeta.toFixed(2),
         // "Facturas Pendientes de Cobro": facturasPendientes,
       };
@@ -199,9 +199,9 @@ const Totalizador = () => {
                   </li>
                   <li className="col text-center">{totalPagado.toFixed(2)}</li>
                   <li className="col text-center">{margenBruto.toFixed(2)}</li>
-                  <li className="col text-center">
+            {/*       <li className="col text-center">
                     {gastosOperativos.toFixed(2)}
-                  </li>
+                  </li> */}
                   <li className="col text-center">{gananciaNeta.toFixed(2)}</li>
                   {/* <li className="col text-center">{facturasPendientes}</li> */}
                 </div>

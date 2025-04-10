@@ -1,9 +1,11 @@
+/* eslint-disable react/prop-types */
 import "./DetalleOrdenPresupuesto.css";
 import { useNavigate } from "react-router-dom";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { guardarFacturaVenta } from "../../services/facturaVentasService";
 import { modificarPresupuesto } from "../../services/presupuestosService";
 import { listaCajas } from "../../services/cajasService";
+import { modificarOrden } from "../../services/ordenesService";
 import {
   guardarLiquidacionPendiente,
   liquidacionesPendientesPorTecnico,
@@ -95,8 +97,12 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
   const handleConfirmConsolidar = async () => {
     try {
       const facturaResult = await guardarFactura();
-
       if (facturaResult === true) {
+        const ordenActualizada = {
+          id_tipo_estado: 3,
+        };
+        await modificarOrden(orden.id, ordenActualizada);
+
         const liquidacionResult = await guardarOActualizarLiquidacion();
         if (liquidacionResult) {
           alert("Factura y liquidación creadas/actualizadas con éxito");
@@ -113,6 +119,7 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
     } finally {
       setShowModal(false);
     }
+    window.location.reload();
   };
 
   const handleEdit = (field, value) => {
@@ -170,7 +177,7 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
     }
   };
 
-  const handleCancelEdit = (field) => {
+  const handleCancelEdit = ( ) => {
     setEditingField(null);
     setEditValues({});
   };

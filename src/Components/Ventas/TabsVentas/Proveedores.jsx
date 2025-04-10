@@ -13,7 +13,7 @@ const Proveedores = () => {
   const [loading, setLoading] = useState(true);
   const proveedoresDb = async () => {
     try {
-      const response = await fetch("https://lv-back.online/facturas/lista");
+      const response = await fetch("https://lv-back.online/facturascompra/lista");
       return await response.json();
     } catch (error) {
       console.error(error);
@@ -76,6 +76,13 @@ const Proveedores = () => {
   if (loading) {
     return <div>Loading...</div>;
   }
+  const formatDate = (dateStr) => {
+    const date = new Date(dateStr);
+    const day = ("0" + date.getDate()).slice(-2);
+    const month = ("0" + (date.getMonth() + 1)).slice(-2);
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
 
   return (
     <div className="proveedores-container" style={{ padding: "20px" }}>
@@ -111,12 +118,12 @@ const Proveedores = () => {
           <Link to="/ventas/cargarFactura">
             <button>Cargar factura</button>
           </Link>
-          <Link to="/gastos">
+       {/*    <Link to="/gastos">
             <button>Cargar gasto</button>
-          </Link>
-          <Link to="/VentasRemito">
+          </Link> */}
+       {/*    <Link to="/VentasRemito">
             <button>Recibir lote</button>
-          </Link>
+          </Link> */}
         </div>
       </div>
       <div className="proveedores-excel-wrapper">
@@ -126,24 +133,24 @@ const Proveedores = () => {
             <thead>
               <tr>
                 <th>Nombre</th>
-                <th>Lote</th>
+        {/*         <th>Lote</th> */}
                 <th>Fecha</th>
                 <th>Estado de pago</th>
                 <th>Importe</th>
-                <th>Caja</th>
-                <th>Responsable</th>
+                <th>Debe</th>
+        {/*         <th>Responsable</th> */}
               </tr>
             </thead>
             <tbody className="grilla-proveedores-body">
               {filteredData.map((prov, index) => (
                 <tr key={index} className={index % 2 === 0 ? "" : "row-even"}>
                   <td>{prov.Proveedore.nombre}</td>
-                  <td>{prov.lote}</td>
-                  <td>{prov.fecha_ingreso}</td>
-                  <td>{prov.estado === 0 ? "No pagado" : "Pagado"}</td>
+              {/*     <td>{prov.lote}</td> */}
+                  <td>{formatDate(prov.created_at)}</td>
+                  <td>{prov.total !== prov.monto_pagado ? "Pago Parcial" : (prov.estado === 0 ? "No pagado" : "Pagado")}</td>
                   <td>{prov.importe}</td>
-                  <td>{prov.caja}</td>
-                  <td>{getResponsable(prov.id_responsable)}</td>
+                  <td>{prov.total !== prov.monto_pagado ? (prov.total - prov.monto_pagado) : "-"}</td>
+                {/*   <td>{getResponsable(prov.id_responsable)}</td> */}
                 </tr>
               ))}
             </tbody>
