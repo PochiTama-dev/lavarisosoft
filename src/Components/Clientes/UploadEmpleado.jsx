@@ -266,7 +266,7 @@ const UploadEmpleado = () => {
                 name='cuenta'
                 value={empleado.cuenta}
                 onChange={handleChange}
-                placeholder='Ingrese su cuenta'
+                placeholder='Ingrese CBU/Alias'
                 style={{ textAlign: 'left', borderRadius: '5px', width: '350px' }}
               />
             </Form.Group>
