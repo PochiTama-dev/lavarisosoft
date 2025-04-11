@@ -18,10 +18,13 @@ const PlanCuentas = () => {
   const [visibleNodes, setVisibleNodes] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
   const [newChildName, setNewChildName] = useState("");
+  const [newChildCode, setNewChildCode] = useState("");
   const [parentForNewChild, setParentForNewChild] = useState(null);
   const [editNode, setEditNode] = useState(null);
   const [editNodeName, setEditNodeName] = useState("");
   const [allExpanded, setAllExpanded] = useState(false);
+  const [isOrdering, setIsOrdering] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -58,57 +61,27 @@ const PlanCuentas = () => {
     data.filter((node) => node.parent_id === parentId);
 
   const addChildNode = async () => {
-    if (!newChildName.trim()) {
-      alert("El nombre del nuevo nodo no puede estar vacío.");
+    if (!newChildName.trim() || !newChildCode.trim()) {
+      alert("Por favor, completa todos los campos.");
       return;
     }
 
     try {
-      let newCode;
-      if (parentForNewChild === null) {
-        const rootNodes = getRootNodes();
-        if (rootNodes.length > 0) {
-          const lastRootCode = rootNodes
-            .map((node) => node.codigo)
-            .sort()
-            .pop();
-
-          newCode = (parseInt(lastRootCode, 10) + 1).toString();
-        } else {
-          newCode = "1";
-        }
-      } else {
-        const parentChildren = getChildrenNodes(parentForNewChild);
-        const parentNode = data.find((node) => node.id === parentForNewChild);
-        const parentCode = parentNode?.codigo || "";
-
-        if (parentChildren.length > 0) {
-          const lastChildCode = parentChildren
-            .map((child) => child.codigo)
-            .sort()
-            .pop();
-
-          const parts = lastChildCode.split(".");
-          parts[parts.length - 1] = parseInt(parts[parts.length - 1], 10) + 1;
-          newCode = parts.join(".");
-        } else {
-          newCode = `${parentCode}.1`;
-        }
-      }
-
-      await guardarPlanCuentas({
-        parent_id: parentForNewChild,
+      const newNode = {
         nombre: newChildName,
-        codigo: newCode,
-      });
+        codigo: newChildCode,
+        parent_id: parentForNewChild,
+      };
 
+      await guardarPlanCuentas(newNode);
+      alert("Nuevo plan de cuentas agregado con éxito.");
       setModalVisible(false);
       setNewChildName("");
-
+      setNewChildCode("");
       await fetchData();
     } catch (error) {
-      console.error("Error al guardar el nuevo nodo:", error);
-      alert("Hubo un error al guardar el nuevo nodo.");
+      console.error("Error al agregar el nuevo plan de cuentas:", error);
+      alert("Hubo un error al agregar el nuevo plan de cuentas.");
     }
   };
 
@@ -186,6 +159,7 @@ const PlanCuentas = () => {
   };
 
   const ordenarPlanCuentas = async () => {
+    setLoading(true);
     try {
       const cuentas = await listaPlanCuentas();
 
@@ -237,6 +211,8 @@ const PlanCuentas = () => {
     } catch (error) {
       console.error("Error al ordenar el plan de cuentas:", error);
       alert("Hubo un error al ordenar el plan de cuentas.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -249,7 +225,6 @@ const PlanCuentas = () => {
           padding: 0,
           display: "flex",
           flexDirection: "column",
-          gap: "15px",
         }}
       >
         {nodes.map((node) => (
@@ -261,6 +236,7 @@ const PlanCuentas = () => {
                   cursor: "pointer",
                   fontWeight: "500",
                   fontSize: "20px",
+                  marginTop: "10px",
                 }}
               >
                 {node.codigo} - {node.nombre}
@@ -387,20 +363,27 @@ const PlanCuentas = () => {
         </button>
         <button
           onClick={ordenarPlanCuentas}
+          disabled={isOrdering || loading}
           style={{
-            backgroundColor: "#69688c",
+            backgroundColor: isOrdering || loading ? "gray" : "#69688c",
             color: "white",
             padding: "10px 20px",
             border: "none",
             borderRadius: "5px",
-            cursor: "pointer",
+            cursor: isOrdering || loading ? "not-allowed" : "pointer",
           }}
         >
-          Ordenar Plan de Cuentas
+          {loading ? "Cargando..." : "Ordenar Plan de Cuentas"}
         </button>
       </div>
 
-      {data.length > 0 ? renderTree(getRootNodes()) : <p>Cargando datos...</p>}
+      {loading && <p>Cargando, por favor espere...</p>}
+
+      {data.length > 0 ? (
+        renderTree(getRootNodes())
+      ) : (
+        <p>No hay datos guardados.</p>
+      )}
 
       <button
         onClick={() => {
@@ -439,6 +422,19 @@ const PlanCuentas = () => {
               ? "Agregar Plan de Cuentas Principal"
               : "Agregar Nuevo Nivel"}
           </h3>
+          <input
+            type="text"
+            placeholder="Código del nuevo nivel"
+            value={newChildCode}
+            onChange={(e) => setNewChildCode(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "10px",
+              marginBottom: "10px",
+              borderRadius: "5px",
+              border: "1px solid #ccc",
+            }}
+          />
           <input
             type="text"
             placeholder="Nombre del nuevo nivel"
@@ -502,13 +498,14 @@ const PlanCuentas = () => {
             position: "fixed",
             top: "50%",
             left: "50%",
+            width: "30%",
             transform: "translate(-50%, -50%)",
             backgroundColor: "white",
             border: "1px solid #ccc",
             borderRadius: "5px",
             padding: "20px",
             zIndex: 1000,
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.3)",
           }}
         >
           <h3>Editar Nombre</h3>
