@@ -3,7 +3,7 @@ import { Suspense, useState } from 'react';
 import { useCustomContext } from '../../../hooks/context';
 
 const EditEmpleado = ({ empleado, setModal, setEmpleado }) => {
-  const { editPorcentajeEmpleado } = useCustomContext();
+  const { editEmpleado } = useCustomContext();
   const [suggestions, setSuggestions] = useState([]);
   const [porcentaje, setPorcentaje] = useState(empleado.porcentaje_arreglo);
 
@@ -11,7 +11,7 @@ const EditEmpleado = ({ empleado, setModal, setEmpleado }) => {
     setPorcentaje(event.target.value);
   };
 
-  const handlePut = async (empleado) => {
+  /* const handlePut = async (empleado) => {
     const parsedPorcentaje = parseFloat(porcentaje) / 100;
     if (isNaN(parsedPorcentaje)) {
       alert('Por favor, ingrese un número válido.');
@@ -20,7 +20,7 @@ const EditEmpleado = ({ empleado, setModal, setEmpleado }) => {
     empleado.porcentaje_arreglo = parsedPorcentaje;
     await editPorcentajeEmpleado(empleado.id, empleado);
     setModal(false);
-  };
+  }; */
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
@@ -64,6 +64,12 @@ const EditEmpleado = ({ empleado, setModal, setEmpleado }) => {
 
   const handleEdit = async (e) => {
     e.preventDefault();
+    const parsedPorcentaje = parseFloat(porcentaje) / 100;
+    if (isNaN(parsedPorcentaje)) {
+      alert('Por favor, ingrese un número válido.');
+      return;
+    }
+    empleado.porcentaje_arreglo = parsedPorcentaje;
     const empleadoData = {
       nombre: empleado.nombre,
       apellido: empleado.apellido,
@@ -71,8 +77,9 @@ const EditEmpleado = ({ empleado, setModal, setEmpleado }) => {
       telefono: empleado.telefono,
       email: empleado.email,
       direccion: empleado.direccion,
+      porcentaje_arreglo: empleado.porcentaje_arreglo,
     };
-    await editPorcentajeEmpleado(empleado.id, empleadoData);
+    await editEmpleado(empleado.id, empleadoData);
   };
 
   return (
@@ -126,7 +133,7 @@ const EditEmpleado = ({ empleado, setModal, setEmpleado }) => {
             <button type='button' className='btn btn-secondary' onClick={() => setModal(false)}>
               Cerrar
             </button>
-            <button type='button' className='btn btn-success' onClick={() => handlePut(empleado)}>
+            <button type='button' className='btn btn-success' onClick={handleEdit}>
               Guardar
             </button>
           </div>
