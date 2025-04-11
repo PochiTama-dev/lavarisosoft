@@ -21,7 +21,7 @@ const Cajas = () => {
             <tr key={index}>
               <td>{caja.denominacion}</td>
                   <td>{caja.cuenta ? caja.cuenta : "-"}</td>
-              <td>{caja.monto}</td>
+              <td>$ {caja.monto}</td>
             </tr>
           ))}
         </tbody>

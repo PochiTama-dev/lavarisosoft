@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Table from 'react-bootstrap/Table';
 import EditEmpleado from './EditEmpleado';
-
+import editar from '../../../images/editar.webp';
 const Empleados = () => {
   const [empleadosData, setEmpleadosData] = useState([]);
   const [modal, setModal] = useState(false);
@@ -50,16 +50,12 @@ const Empleados = () => {
               <td>{empleado.cuil}</td>
               <td>{empleado.automovil}</td>
               <td>{empleado.TiposRole.tipo_rol === 'Técnico' ? `${empleado.porcentaje_arreglo * 100}%` : ''}</td>
-              {empleado.TiposRole.tipo_rol === 'Técnico' && (
-                <button className='rounded' onClick={() => handleEditEmpleado(empleado)}>
-                  Agregar/Cambiar porcentaje arreglo
-                </button>
-              )}
+              {empleado.TiposRole.tipo_rol === 'Técnico' && <img className='rounded pointer editButton' onClick={() => handleEditEmpleado(empleado)} src={editar} />}
             </tr>
           ))}
           {modal && empleadoSelected && (
             <div className='modal'>
-              <EditEmpleado empleado={empleadoSelected} setModal={setModal} />
+              <EditEmpleado empleado={empleadoSelected} setModal={setModal} setEmpleado={setEmpleadoSelected} />
             </div>
           )}
         </tbody>

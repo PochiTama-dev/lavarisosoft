@@ -61,7 +61,7 @@ const Empleados = () => {
               <td>{empleado.nombre}</td>
               <td>{empleado.apellido}</td>
               <td>{empleado.cuenta}</td>
-              <td>{calculateSaldo(empleado.id)}</td>
+              <td>$ {calculateSaldo(empleado.id)}</td>
               {/* <td>{empleado.ctaEfectivo}</td>
               <td>{empleado.saldoCE}</td> */}
             </tr>
