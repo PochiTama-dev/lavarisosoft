@@ -64,3 +64,9 @@
   .flecha{
     cursor:pointer;
   }
+
+  .editButton{
+    padding: 5px 10px;
+    width: 40%;
+    cursor:pointer;    
+  }
