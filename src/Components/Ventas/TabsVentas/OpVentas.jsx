@@ -4,7 +4,7 @@ import Tab from '../../../Components/Tabs/Tab';
 import Tabs2 from '../../../Components/Tabs/Tabs2';
 import Ventas from './Op-Ventas/Ventas';
 import PorTecnico from './Op-Ventas/PorTecnico';
-import PorProducto from './Op-Ventas/PorProducto';
+ 
 import './Caja.css';
 import Searchers from './Op-Ventas/Searchers';
 import { useCustomContext } from '../../../hooks/context';
@@ -36,7 +36,7 @@ const OpVentas = () => {
   };
 
   const handleFilterChange = (field, value) => {
-    console.log(field);
+  
     if (field === 'created_at') {
       const targetDate = new Date(value);
       targetDate.setDate(targetDate.getDate() + 1);
@@ -73,7 +73,7 @@ const OpVentas = () => {
           return filterValue === '' || (itemValue && itemValue.toString().toLowerCase().includes(filterValue));
         });
       });
-    console.log(filtered);
+ 
     setFilteredData(filtered);
   };
 

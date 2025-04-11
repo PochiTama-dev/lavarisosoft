@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import ExcelJS from "exceljs";
@@ -7,12 +7,11 @@ import trash from "../../images/trash.webp";
 import { guardarPlanCuentas } from "../../services/planCuentasService";
 import "./AddPlanCuentasExcel.css";
 
-const AddPlanCuentasExcel = ({
-  columnas = ["Código", "Nombre", "Tipo", "Parent ID"],
-}) => {
+const AddPlanCuentasExcel = ({ columnas = ["Código", "Nombre"] }) => {
   const [items, setItems] = useState([]);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleDelete = (index) => {
@@ -22,26 +21,82 @@ const AddPlanCuentasExcel = ({
 
   const handleSave = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     try {
-      const savePromises = items.map((cuenta) => guardarPlanCuentas(cuenta));
-      await Promise.all(savePromises);
+      await guardarPlanCuentas(items);
+
       alert("Todas las cuentas se han agregado con éxito");
       navigate("/mantenimiento");
     } catch (error) {
       console.error("Error al agregar cuentas:", error);
       alert("Hubo un problema al agregar las cuentas");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleGuardar = () => {
-    if (!uploadedFile) {
-      console.log("No se ha subido ningún archivo.");
-    } else {
-      console.log("Guardando en la base de datos...");
-      console.log("Archivo a guardar:", uploadedFile);
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) {
+      alert("Por favor, selecciona un archivo.");
+      return;
     }
-    setIsModalOpen(false);
+
+    if (
+      file.type !==
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    ) {
+      alert("Por favor, selecciona un archivo Excel válido (.xlsx).");
+      return;
+    }
+
+    try {
+      setUploadedFile(file);
+      const reader = new FileReader();
+
+      reader.onload = async (e) => {
+        const buffer = e.target.result;
+
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.load(buffer);
+
+        const worksheet = workbook.getWorksheet(1);
+        const data = [];
+
+        worksheet.eachRow((row, rowNumber) => {
+          if (rowNumber > 1) {
+            const codigo = row.getCell(1).value?.toString().trim() || "";
+            const nombre = row.getCell(5).value?.toString().trim() || "";
+
+            if (!codigo || !nombre) {
+              console.warn(
+                `Fila ${rowNumber} tiene datos incompletos y será ignorada.`
+              );
+              return;
+            }
+
+            data.push({ codigo, nombre });
+          }
+        });
+
+        if (data.length === 0) {
+          alert(
+            "El archivo no contiene datos válidos o las columnas no coinciden con el formato esperado."
+          );
+          return;
+        }
+
+        setItems(data);
+      };
+
+      reader.readAsArrayBuffer(file);
+    } catch (error) {
+      console.error("Error al procesar el archivo:", error);
+      alert(
+        "Hubo un error al procesar el archivo. Asegúrate de que sea un archivo Excel válido."
+      );
+    }
   };
 
   const handleOpenModal = () => {
@@ -50,38 +105,6 @@ const AddPlanCuentasExcel = ({
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-  };
-
-  const handleFileUpload = async (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setUploadedFile(file);
-      const reader = new FileReader();
-
-      reader.onload = async (e) => {
-        const buffer = e.target.result;
-        const workbook = new ExcelJS.Workbook();
-        await workbook.xlsx.load(buffer);
-        const worksheet = workbook.getWorksheet(1);
-        const data = [];
-
-        worksheet.eachRow((row, rowNumber) => {
-          if (rowNumber > 1) {
-            const rowData = {
-              codigo: row.getCell(1).value,
-              nombre: row.getCell(2).value,
-              tipo: row.getCell(3).value,
-              parent_id: row.getCell(4).value || null,
-            };
-            data.push(rowData);
-          }
-        });
-
-        setItems(data);
-      };
-
-      reader.readAsArrayBuffer(file);
-    }
   };
 
   return (
@@ -106,28 +129,27 @@ const AddPlanCuentasExcel = ({
           <ul className="grilla">
             {items.map((item, index) => (
               <div key={index} className="itemContainer">
-                <ul
-                  className={`ulItem row mb-1 p-0 ${
-                    index % 2 === 0 ? "bg-light" : ""
-                  }`}
-                >
-                  <div className="d-flex itemsExcel">
+                <ul className={` row p-0 ${index % 2 === 0 ? "bg-light" : ""}`}>
+                  <div
+                    className="d-flex "
+                    style={{ height: "36px", alignItems: "center" }}
+                  >
                     {Object.entries(item).map(([key, valor], i) => (
                       <li key={i} className="col text-center">
                         {valor}
                       </li>
                     ))}
+                    <li className="d-flex justify-content-end position-relative ">
+                      <div className="d-flex">
+                        <img
+                          src={trash}
+                          onClick={() => handleDelete(index)}
+                          alt="Eliminar"
+                          className="imgEditar"
+                        />
+                      </div>
+                    </li>
                   </div>
-                  <li className="d-flex justify-content-end position-relative ">
-                    <div className="d-flex">
-                      <img
-                        src={trash}
-                        onClick={() => handleDelete(index)}
-                        alt="Eliminar"
-                        className="imgEditar"
-                      />
-                    </div>
-                  </li>
                 </ul>
               </div>
             ))}
@@ -147,13 +169,21 @@ const AddPlanCuentasExcel = ({
               <div className="modal-content">
                 <h2>¿Qué deseas hacer?</h2>
                 <div className="modal-buttons">
-                  <button className="modal-btn" onClick={handleSave}>
-                    Guardar sin factura
+                  <button
+                    className="modal-btn"
+                    onClick={handleSave}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "Guardando..." : "Guardar"}
+                  </button>
+                  <button
+                    className="modal-btn"
+                    onClick={handleCloseModal}
+                    disabled={isLoading}
+                  >
+                    Cerrar
                   </button>
                 </div>
-                <button className="modal-close" onClick={handleCloseModal}>
-                  Cerrar
-                </button>
               </div>
             </div>
           )}

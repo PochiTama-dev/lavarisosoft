@@ -5,9 +5,7 @@ export const listadoProveedores = async () => {
     const response = await fetch(`${API_URL}/proveedores`);
     const proveedores = await response.json();
     if (proveedores[0] !== undefined) {
-      console.log(
-        `Se encontró un listado completo con ${proveedores.length} proveedores!!`
-      );
+    
       return proveedores;
     } else {
       console.log("Aún no se registra ningún proveedor...");

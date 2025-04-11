@@ -4,14 +4,7 @@ import "./Gastos.css";
 import { useEffect, useState } from "react";
 import {listaCajas} from "../../services/cajasService";
 const Gastos = () => {
-  const [factura, setFactura] = useState({
-    id_proveedor: 0,
-    importe: 0,
-    motivo: "",
-    codigo_imputacion: "",
-    fecha_ingreso: "",
-    id_caja: "",
-  });
+ 
   const [proveedores, setProveedores] = useState([]);
   const [gasto, setGasto] = useState([]);
   const [cajas, setCajas] = useState([]);
@@ -161,9 +154,9 @@ const Gastos = () => {
             />
           </div>
           <div>
-            <h3>Fecha de ingreso:</h3>
+            <h3>Fecha:</h3>
             <input
-              type="text"
+              type="date"
               placeholder="dd/mm/aaaa"
               name="fecha_ingreso"
               value={gasto.fecha_ingreso}

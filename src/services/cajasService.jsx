@@ -1,12 +1,8 @@
-const API_URL = "https://lv-back.online/";
-
 export const listaCajas = async () => {
   try {
-    const response = await fetch(`${API_URL}cajas/lista`);
+    const response = await fetch("https://lv-back.online/cajas/lista");
     const cajas = await response.json();
     if (cajas[0] !== undefined) {
-      console.log(`Se encontró un listado con ${cajas.length} cajas!!`);
-      console.log(cajas);
       return cajas;
     } else {
       console.log("Aún no hay registro de cajas...");
@@ -22,11 +18,9 @@ export const listaCajas = async () => {
 
 export const obtenerCaja = async (id) => {
   try {
-    const response = await fetch(`${API_URL}cajas/${id}`);
+    const response = await fetch(`https://lv-back.online/cajas/${id}`);
     const caja = await response.json();
     if (caja) {
-      console.log(`Se encontró una caja asociada al id ${id}`);
-      console.log(caja);
       return caja;
     } else {
       console.log(`No se encontró ninguna caja con el id ${id}`);
@@ -40,14 +34,11 @@ export const obtenerCaja = async (id) => {
 export const denominacionCaja = async (denominacion) => {
   try {
     const response = await fetch(
-      `${API_URL}cajas/denominacion/${denominacion}`
+      `https://lv-back.online/cajas/denominacion/${denominacion}`
     );
     const cajas = await response.json();
+    console.log(cajas);
     if (cajas[0] !== undefined) {
-      console.log(
-        `Se encontró ${cajas.length} caja(s) asociada a la denominación "${denominacion}"`
-      );
-      console.log(cajas);
       return cajas;
     } else {
       console.log(
@@ -62,14 +53,14 @@ export const denominacionCaja = async (denominacion) => {
 
 export const guardarCaja = async (caja) => {
   try {
-    const response = await fetch(`${API_URL}cajas/guardar`, {
+    const response = await fetch("https://lv-back.online/cajas/guardar", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(caja),
     });
     const result = await response.json();
     if (result) {
-      console.log("Caja registrada con éxito!!!");
+      console.log("Caja registrada con exito!!!");
       return true;
     } else {
       console.log("Se produjo un error, la caja no pudo ser registrada...");
@@ -82,14 +73,17 @@ export const guardarCaja = async (caja) => {
 
 export const modificarCaja = async (id, caja) => {
   try {
-    const response = await fetch(`${API_URL}cajas/modificar/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(caja),
-    });
+    const response = await fetch(
+      `https://lv-back.online/cajas/modificar/${id}`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(caja),
+      }
+    );
     const result = await response.json();
     if (result[0] === 1) {
-      console.log("Caja modificada con éxito!!!");
+      console.log("Caja modificada con exito!!!");
       return true;
     } else {
       console.log("Se produjo un error, la caja no pudo ser modificada...");
@@ -102,10 +96,13 @@ export const modificarCaja = async (id, caja) => {
 
 export const eliminarCaja = async (id) => {
   try {
-    const response = await fetch(`${API_URL}cajas/eliminar/${id}`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-    });
+    const response = await fetch(
+      `https://lv-back.online/cajas/eliminar/${id}`,
+      {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      }
+    );
     const result = await response.json();
     if (result === 1) {
       console.log("La caja se eliminó correctamente de la base de datos!!");
@@ -118,7 +115,6 @@ export const eliminarCaja = async (id) => {
     console.error("Error al tratar de eliminar la caja.", error);
   }
 };
-
 export const listaCobros = async () => {
   try {
     const response = await fetch(`${API_URL}/cobros/lista`);

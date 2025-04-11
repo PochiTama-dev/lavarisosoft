@@ -46,9 +46,11 @@
   background-color: white;
   padding: 30px;
   border-radius: 12px;
-  max-width: 80%;
+  max-width: 40%;
+  height: 50vh;
   text-align: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  overflow-y: hidden;
 }
 
 .modal-content h2 {

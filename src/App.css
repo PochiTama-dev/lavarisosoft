@@ -3,7 +3,9 @@
 body {
   font-family: 'Raleway', sans-serif;
 }
-
+td, li{
+  font-weight: 500;
+}
 .bg-primary{
     background-color: #8EA3BF !important;
 }
