@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "../Header/Header";
 import "./Gastos.css";
 import { useEffect, useState } from "react";
-import {listaCajas} from "../../services/cajasService";
+import { listaCajas, modificarCaja } from "../../services/cajasService";
 const Gastos = () => {
  
   const [proveedores, setProveedores] = useState([]);
@@ -56,14 +56,7 @@ const Gastos = () => {
 
   const handleCreateGasto = async (gasto) => {
     try {
-      const {
-        id_proveedor,
-        motivo,
-        importe,
-        codigo_imputacion,
-        fecha_ingreso,
-        id_caja
-      } = await gasto;
+      const { id_proveedor, motivo, importe, codigo_imputacion, fecha_ingreso, id_caja } = await gasto;
       await postGasto({
         id_proveedor,
         motivo,
@@ -72,6 +65,12 @@ const Gastos = () => {
         fecha_ingreso,
         id_caja
       });
+      // Actualizar caja: restar el importe del gasto al monto de la caja seleccionada
+      const cajaSeleccionada = cajas.find(c => Number(c.id) === Number(id_caja));
+      if (cajaSeleccionada) {
+        const nuevoMonto = Number(cajaSeleccionada.monto) - Number(importe);
+        await modificarCaja(id_caja, { monto: nuevoMonto });
+      }
       alert("Gasto agregado con éxito");
       navigate(-1);
     } catch (error) {
@@ -80,7 +79,7 @@ const Gastos = () => {
   };
 
   const postGasto = async (gasto) => {
-    const { id_proveedor, motivo, importe, codigo_imputacion, fecha_ingreso ,     id_caja} =
+    const { id_proveedor, motivo, importe, codigo_imputacion, fecha_ingreso , id_caja } =
       await gasto;
     const fetchGasto = await fetch("https://lv-back.online/gastos/guardar", {
       method: "post",

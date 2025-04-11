@@ -5,7 +5,7 @@ import Tabs from '../../Components/Tabs/Tabs';
 import Tabs2 from '../../Components/Tabs/Tabs2';
 import Caja from './TabsVentas/Caja';
 import OpVentas from './TabsVentas/OpVentas';
- import Totalizador from './TabsVentas/Totalizador/Totalizador';
+import Totalizador from './TabsVentas/Totalizador/Totalizador';
 import LibroIVA from './TabsVentas/LibroIVA';
 import Proveedores from './TabsVentas/Proveedores';
 import Header from '../Header/Header';
@@ -16,16 +16,26 @@ import SaldosPendiente from '../Mantenimiento/TabsMantenimiento/SaldosPendientes
 import CuentaCorriente from '../Mantenimiento/TabsMantenimiento/CuentaCorriente';
 import Empleados from '../Mantenimiento/TabsMantenimiento/Empleados';
 import Cajas from '../Mantenimiento/TabsMantenimiento/Cajas';
+
 const Ventas = () => {
-  const [active, setActive] = useState(0);
-  const [active2, setActive2] = useState(0);
-  const handleChange = (newActive) => setActive(newActive);
-  const handleChange2 = (newActive) => setActive2(newActive);
+  // Inicializamos con el valor guardado en localStorage, o 0 por defecto.
+  const [active, setActive] = useState(localStorage.getItem('activeTab') ? parseInt(localStorage.getItem('activeTab')) : 0);
+  const [active2, setActive2] = useState(localStorage.getItem('activeTab2') ? parseInt(localStorage.getItem('activeTab2')) : 0);
+
+  const handleChange = (newActive) => {
+    setActive(newActive);
+    localStorage.setItem('activeTab', newActive);
+  };
+
+  const handleChange2 = (newActive) => {
+    setActive2(newActive);
+    localStorage.setItem('activeTab2', newActive);
+  };
+
   return (
     <div className='ventas-container'>
- 
       <div className='ventas-tabs'>
-      <Header text='Facturas' />
+        <Header text='Facturas' />
         <Tabs active={active} onChange={handleChange}>
           <Tab title='Facturas'>
             <div className='ps-5 tabs-ctn-facturas'>
@@ -48,9 +58,6 @@ const Ventas = () => {
           <Tab title='OP/Ventas'>
             <OpVentas />
           </Tab>
-   {/*        <Tab title='Inventario'>
-            <Inventario />
-          </Tab> */}
           <Tab title='Totalizador'>
             <Totalizador />
           </Tab>
@@ -60,13 +67,12 @@ const Ventas = () => {
           <Tab title='Proveedores'>
             <Proveedores />
           </Tab>
-
           <Tab title='Saldos Pendientes'>
             <SaldosPendiente />
           </Tab>
           <Tab title='Cuentas Corrientes'>
             <div className='ms-5 tabs-ctn-facturas'>
-                 <Header text='Cuentas Corrientes' />
+              <Header text='Cuentas Corrientes' />
               <CuentaCorriente />
               <Tabs2 active={active2} onChange={handleChange2} className='client-tabs'>
                 <Tab title='Empleados'>

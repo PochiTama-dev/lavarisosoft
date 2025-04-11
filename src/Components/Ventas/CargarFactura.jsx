@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Header from '../Header/Header';
 import './CargarFactura.css';
-import { listaCajas } from '../../services/cajasService';
+import { listaCajas, modificarCaja } from '../../services/cajasService';
 import { listadoProveedores } from '../../services/proveedoresService';
 import { useCustomContext } from '../../hooks/context';
 import { useNavigate } from 'react-router-dom';
@@ -17,7 +17,6 @@ const CargarFactura = () => {
     tipo_comprobante: '',
     iva_alicuota: '',
     iva_cred_fiscal: '',
- 
     descripcion: '',
   });
   const [proveedores, setProveedores] = useState([]);
@@ -83,8 +82,7 @@ const CargarFactura = () => {
         importe,
         total: Number(importe) + Number(iva_alicuota),
         monto_pagado,
-        descripcion: 'Factura proveedor',
-  
+        descripcion: factura.descripcion,
         created_at: new Date(),
       }),
     });
@@ -93,7 +91,7 @@ const CargarFactura = () => {
 
   const handleCreateFactura = async (factura) => {
     try {
-      const { id_proveedor, id_caja, tipo_comprobante, iva_alicuota, importe, iva_cred_fiscal, monto_pagado  } = await factura;
+      const { id_proveedor, id_caja, tipo_comprobante, iva_alicuota, importe, iva_cred_fiscal, monto_pagado } = await factura;
 
       const facturaCompra = await postFactura({
         id_caja,
@@ -104,10 +102,10 @@ const CargarFactura = () => {
         importe,
         total: Number(importe) + Number(iva_alicuota),
         monto_pagado,
-        
+        descripcion: factura.descripcion,
         created_at: new Date(),
       });
-console.log("datow factura",facturaCompra);
+      console.log("datow factura", facturaCompra);
       if (Number(factura.monto_pagado) < Number(importe) + Number(iva_alicuota)) {
         const dataBody = {
           caja: id_caja,
@@ -119,6 +117,13 @@ console.log("datow factura",facturaCompra);
         };
         await PostSaldosPendientes(dataBody);
       }
+      // Actualizar caja: restar el "monto_pagado" al monto de la caja seleccionada
+      const cajaSeleccionada = cajas.find(c => Number(c.id) === Number(factura.id_caja));
+      if (cajaSeleccionada) {
+        const nuevoMonto = Number(cajaSeleccionada.monto) - Number(factura.monto_pagado);
+        await modificarCaja(factura.id_caja, { monto: nuevoMonto });
+        console.log(nuevoMonto)
+      }
       alert('Factura agregada con éxito');
       navigate(-1);
     } catch (error) {
@@ -129,6 +134,7 @@ console.log("datow factura",facturaCompra);
   const handleSubmit = (e) => {
     e.preventDefault();
     handleCreateFactura(factura);
+ 
   };
 
   return (
@@ -159,28 +165,6 @@ console.log("datow factura",facturaCompra);
               <option onClick={() => (factura.tipo_comprobante = 'Factura C')}>Factura C</option>
             </select>
           </div>
-          {/* <div>
-            <h3>Repuesto:</h3>
-            <select name='id_repuesto' value={factura.id_repuesto} onChange={handleChange} required>
-              <option value=''>Seleccione un repuesto</option>
-              {repuestos.map((rep) => (
-                <option key={rep.id} value={rep.id}>
-                  {rep.nombre}
-                </option>
-              ))}
-            </select>
-          </div> */}
-          {/* <div>
-            <h3>Responsable:</h3>
-            <select name='id_responsable' value={factura.id_responsable} onChange={handleChange} required>
-              <option value=''>Seleccione un responsable</option>
-              {empleados.map((emp) => (
-                <option key={emp.id} value={emp.id}>
-                  {emp.nombre} {emp.apellido}
-                </option>
-              ))}
-            </select>
-          </div> */}
           <div>
             <h3>Descripcion:</h3>
             <input type='text' name='descripcion' value={factura.descripcion} onChange={handleChange} required />
@@ -200,14 +184,14 @@ console.log("datow factura",facturaCompra);
               <option value='27.5'>27.5%</option>
             </select>
           </div>
-       <div>
+          <div>
             <h3>IVA alicuota:</h3>
             <input type='text' name='iva_alicuota' value={factura.iva_alicuota} readOnly />
           </div>
           <div>
             <h3>IVA credito fiscal:</h3>
             <input type='text' name='iva_cred_fiscal' value={factura.iva_cred_fiscal} readOnly />
-          </div> 
+          </div>
           <div>
             <h3>Importe pagado:</h3>
             <input type='text' placeholder='0' name='monto_pagado' value={factura.monto_pagado} onChange={handleChange} required />
@@ -223,28 +207,6 @@ console.log("datow factura",facturaCompra);
               ))}
             </select>
           </div>
-     {/*       <div>
-            <h3>IVA alicuota:</h3>
-            <input
-              type='text'
-              name='iva_alicuota'
-              value={factura.tipo_comprobante === 'Factura A' || factura.tipo_comprobante === 'Factura B' ? (factura.importe * 21) / 100 : factura.iva_alicuota}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <h3>IVA credito fiscal:</h3>
-            <input
-              type='text'
-              name='iva_cred_fiscal'
-              value={factura.tipo_comprobante === 'Factura A' || factura.tipo_comprobante === 'Factura B' ? (factura.importe * 21) / 100 : factura.iva_cred_fiscal}
-              onChange={handleChange}
-            />
-          </div>   */}  
-    {/*       <div>
-            <h3>Gastos operativos:</h3>
-            <input type='checkbox' name='gastos_operativos' checked={factura.gastos_operativos} onChange={handleChange} />
-          </div> */}
           <div>
             <button type='submit'>Guardar</button>
           </div>

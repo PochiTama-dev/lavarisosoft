@@ -1,12 +1,13 @@
 import jsPDF from 'jspdf';
 import { any, func, object } from 'prop-types';
 import { useCustomContext } from '../../hooks/context';
- 
+ import logo from '../../assets/logo-service.png';
 const RemitoLiquidacion = ({ tecnico, setModal, liqParcial, selectedCaja   }) => {
   const { PostSaldosPendientes } = useCustomContext();
   console.log(tecnico);
   const handleModal = () => {
     setModal(false);
+    window.location.reload();
   };
 
   const sendToPrinter = async () => {
@@ -22,33 +23,54 @@ const RemitoLiquidacion = ({ tecnico, setModal, liqParcial, selectedCaja   }) =>
     await PostSaldosPendientes(dataBody);
  
   };
-
-  const exportToPDF = () => {
+const exportToPDF = () => {
     const doc = new jsPDF();
-    doc.setFontSize(18);
-    doc.text(`Remito ${tecnico.nombre}`, 10, 10);
-    doc.setFontSize(12);
-    doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 10, 30);
- 
+    let posY = 10;
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    if (logo) {
+        doc.addImage(logo, 'PNG', 40, posY, 40, 40);
+    }
+    // Información de la empresa a la derecha de la imagen, en un bloque de ancho 80%
+    const companyBlockWidth = pageWidth * 0.8;
+    const companyX = pageWidth - companyBlockWidth; // posición X del bloque
+
+    doc.setFontSize(14);
+    doc.text("Juan Garcia Martinez 65 local 3", companyX + companyBlockWidth/2, posY + 10, { align: "center" });
+    doc.text("CUIL/CUIT: 30-71794576-6", companyX + companyBlockWidth/2, posY + 20, { align: "center" });
+    doc.text("www.gruposervice.ar", companyX + companyBlockWidth/2, posY + 30, { align: "center" });
+    doc.text("TEL: 351-7061881", companyX + companyBlockWidth/2, posY + 40, { align: "center" });
+
+    // Actualizamos posY para el siguiente contenido
+    posY += 50;
+
+    // Línea separadora (se ajusta para usar márgenes)
     doc.setDrawColor(142, 163, 191);
     doc.setLineWidth(0.5);
-    doc.line(10, 50, 200, 50);
+    doc.line(10, posY, pageWidth - 10, posY);
+    posY += 10;
+
+    // Título y fecha en la misma línea con menos espacio inferior
+    doc.setFontSize(18);
+    doc.text(`Remito liquidación ${tecnico.Empleado.nombre} ${tecnico.Empleado.apellido}`, 10, posY);
+    doc.text(`${new Date().toLocaleDateString()}`, pageWidth - 10, posY, { align: 'right' });
+    posY += 10;
+    
     doc.setFontSize(14);
-    //doc.text(`Porcentaje Técnico: ${tecnico.porcentaje_arreglo * 100}%`, 10, 60);
-    let startY = 70;
- 
+    let startY = posY + 10;
     if (liqParcial) {
-      doc.text(`Liquidacion Parcial: ${liqParcial}`, 10, startY + 10);
-      doc.text(`Debe: ${parseFloat(tecnico.total - liqParcial).toFixed(2)}`, 10, startY + 20);
+        doc.text(`Liquidacion Parcial: $${liqParcial}`, 10, startY);
+        doc.text(`Debe: $${parseFloat(tecnico.total - liqParcial).toFixed(2)}`, 10, startY + 10);
     } else {
-      doc.text(`Total: $${tecnico.total}`, 10, startY + 10);
+        doc.text(`Total: $${tecnico.total}`, 10, startY);
     }
- 
+
     const pdfBlob = doc.output('blob');
     const pdfURL = URL.createObjectURL(pdfBlob);
     setModal(false);
     window.open(pdfURL, '_blank');
-  };
+    window.location.reload();
+};
 
   return (
     <div className='container'>
