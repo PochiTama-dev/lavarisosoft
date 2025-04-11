@@ -11,6 +11,7 @@ const AddPlanCuentasExcel = ({ columnas = ["Código", "Nombre"] }) => {
   const [items, setItems] = useState([]);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleDelete = (index) => {
@@ -20,6 +21,7 @@ const AddPlanCuentasExcel = ({ columnas = ["Código", "Nombre"] }) => {
 
   const handleSave = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     try {
       await guardarPlanCuentas(items);
@@ -29,6 +31,8 @@ const AddPlanCuentasExcel = ({ columnas = ["Código", "Nombre"] }) => {
     } catch (error) {
       console.error("Error al agregar cuentas:", error);
       alert("Hubo un problema al agregar las cuentas");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -165,13 +169,21 @@ const AddPlanCuentasExcel = ({ columnas = ["Código", "Nombre"] }) => {
               <div className="modal-content">
                 <h2>¿Qué deseas hacer?</h2>
                 <div className="modal-buttons">
-                  <button className="modal-btn" onClick={handleSave}>
-                    Guardar sin factura
+                  <button
+                    className="modal-btn"
+                    onClick={handleSave}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "Guardando..." : "Guardar"}
+                  </button>
+                  <button
+                    className="modal-btn"
+                    onClick={handleCloseModal}
+                    disabled={isLoading}
+                  >
+                    Cerrar
                   </button>
                 </div>
-                <button className="modal-close" onClick={handleCloseModal}>
-                  Cerrar
-                </button>
               </div>
             </div>
           )}
