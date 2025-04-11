@@ -117,7 +117,7 @@ export const eliminarCaja = async (id) => {
 };
 export const listaCobros = async () => {
   try {
-    const response = await fetch(`${API_URL}/cobros/lista`);
+    const response = await fetch(`https://lv-back.online/cobros/lista`);
     const cobros = await response.json();
     if (cobros[0] !== undefined) {
       console.log(`Se encontró una lista con ${cobros.length} cobros!!`);
