@@ -132,6 +132,25 @@ export const Provider = ({ children }) => {
       console.error(error);
     }
   };
+  const postCliente = async (cliente) => {
+    try {
+      const data = await fetch('https://lv-back.online/clientes/guardar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(cliente),
+      });
+      const result = await data.json();
+      if (result) {
+        console.log('Cliente agregado con exito!!!');
+        return true;
+      } else {
+        console.log('Se produjo un error, el cliente no pudo ser agregado...');
+        return false;
+      }
+    } catch (error) {
+      console.error('Error al guardar el cliente.', error);
+    }
+  };
   //ORDENES!!
   const ordenesGenerales = async () => {
     try {
@@ -426,6 +445,7 @@ export const Provider = ({ children }) => {
         //clientes
         getClienteById,
         listaClientes,
+        postCliente,
         //Ordenes
         ordenes,
         ordenesGenerales,

@@ -61,7 +61,7 @@ const ClientesEmpleados = () => {
         </Dropdown.Toggle>
         <Dropdown.Menu className='dropdown-menu-up'>
           <Dropdown.Item>Descargar Excel</Dropdown.Item>
-          <Dropdown.Item>Editar</Dropdown.Item>
+          <Dropdown.Item onClick={() => navigate('/uploadCliente')}>Agregar Cliente</Dropdown.Item>
           {getUploadButtonText() === 'Cargar Excel Empleados' && (
             <div onClick={handleUpload}>
               <Dropdown.Item>{getUploadButtonText()}</Dropdown.Item>
