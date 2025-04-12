@@ -29,7 +29,7 @@ const Liquidacion = ({ tecnico, totalLiquidacion, setModal }) => {
       const response = await guardarLiquidacion({
  
         id_tecnico: tecnico.Empleado.id, 
- 
+         id_caja: selectedCaja,
         monto: liqParcial,
         created_at: fecha,
       });

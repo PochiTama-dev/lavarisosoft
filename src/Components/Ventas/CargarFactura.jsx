@@ -18,6 +18,9 @@ const CargarFactura = () => {
     iva_alicuota: '',
     iva_cred_fiscal: '',
     descripcion: '',
+    monto_efectivo: '',
+    monto_dolares: '',
+    monto_transferencia: '',
   });
   const [proveedores, setProveedores] = useState([]);
   const [cajas, setCajas] = useState([]);
@@ -117,12 +120,21 @@ const CargarFactura = () => {
         };
         await PostSaldosPendientes(dataBody);
       }
-      // Actualizar caja: restar el "monto_pagado" al monto de la caja seleccionada
+      // Actualizar caja: actualizar segun los montos ingresados en efectivo, dolares y transferencia
       const cajaSeleccionada = cajas.find(c => Number(c.id) === Number(factura.id_caja));
       if (cajaSeleccionada) {
-        const nuevoMonto = Number(cajaSeleccionada.monto) - Number(factura.monto_pagado);
-        await modificarCaja(factura.id_caja, { monto: nuevoMonto });
-        console.log(nuevoMonto)
+        let updatedFields = {};
+        if (factura.monto_efectivo) {
+          updatedFields.efectivo = Number(cajaSeleccionada.efectivo || 0) - Number(factura.monto_efectivo);
+        }
+        if (factura.monto_dolares) {
+          updatedFields.dolares = Number(cajaSeleccionada.dolares || 0) - Number(factura.monto_dolares);
+        }
+        if (factura.monto_transferencia) {
+          updatedFields.banco = Number(cajaSeleccionada.banco || 0) - Number(factura.monto_transferencia);
+        }
+        await modificarCaja(factura.id_caja, updatedFields);
+        console.log(updatedFields);
       }
       alert('Factura agregada con éxito');
       navigate(-1);
@@ -195,6 +207,18 @@ const CargarFactura = () => {
           <div>
             <h3>Importe pagado:</h3>
             <input type='text' placeholder='0' name='monto_pagado' value={factura.monto_pagado} onChange={handleChange} required />
+          </div>
+          <div>
+            <h3>Monto Efectivo:</h3>
+            <input type='text' placeholder='0' name='monto_efectivo' value={factura.monto_efectivo} onChange={handleChange} />
+          </div>
+          <div>
+            <h3>Monto Dolares:</h3>
+            <input type='text' placeholder='0' name='monto_dolares' value={factura.monto_dolares} onChange={handleChange} />
+          </div>
+          <div>
+            <h3>Monto Transferencia:</h3>
+            <input type='text' placeholder='0' name='monto_transferencia' value={factura.monto_transferencia} onChange={handleChange} />
           </div>
           <div>
             <h3>Caja:</h3>

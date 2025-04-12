@@ -208,7 +208,7 @@ const Totalizador = () => {
         <div className="content">
           <CajaSeleccionada onDateChange={handleDateChange} />
           <div>
-            {Object.entries(datosFiltrados).map(([key, facturas], index) => {
+            {Object.entries(datosFiltrados).map(([key], index) => {
               const [year, month] = key.split("-");
               const nombreMes = new Date(year, month - 1).toLocaleString("es", {
                 month: "long",

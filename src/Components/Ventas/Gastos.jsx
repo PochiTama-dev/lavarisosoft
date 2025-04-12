@@ -6,7 +6,17 @@ import { listaCajas, modificarCaja } from "../../services/cajasService";
 const Gastos = () => {
  
   const [proveedores, setProveedores] = useState([]);
-  const [gasto, setGasto] = useState([]);
+  const [gasto, setGasto] = useState({
+    id_proveedor: null,
+    motivo: "",
+    importe: "",
+    codigo_imputacion: "",
+    fecha_ingreso: "",
+    id_caja: "",
+    monto_efectivo: "",
+    monto_dolares: "",
+    monto_transferencia: "",
+  });
   const [cajas, setCajas] = useState([]);
 
   const navigate = useNavigate();
@@ -56,7 +66,7 @@ const Gastos = () => {
 
   const handleCreateGasto = async (gasto) => {
     try {
-      const { id_proveedor, motivo, importe, codigo_imputacion, fecha_ingreso, id_caja } = await gasto;
+      const { id_proveedor, motivo, importe, codigo_imputacion, fecha_ingreso, id_caja, monto_efectivo, monto_dolares, monto_transferencia } = await gasto;
       await postGasto({
         id_proveedor,
         motivo,
@@ -65,11 +75,25 @@ const Gastos = () => {
         fecha_ingreso,
         id_caja
       });
-      // Actualizar caja: restar el importe del gasto al monto de la caja seleccionada
+      // Actualizar caja: restar, según se hayan ingresado montos específicos o el importe total
       const cajaSeleccionada = cajas.find(c => Number(c.id) === Number(id_caja));
       if (cajaSeleccionada) {
-        const nuevoMonto = Number(cajaSeleccionada.monto) - Number(importe);
-        await modificarCaja(id_caja, { monto: nuevoMonto });
+        if (monto_efectivo || monto_dolares || monto_transferencia) {
+          let updatedFields = {};
+          if (monto_efectivo) {
+            updatedFields.efectivo = Number(cajaSeleccionada.efectivo || 0) - Number(monto_efectivo);
+          }
+          if (monto_dolares) {
+            updatedFields.dolares = Number(cajaSeleccionada.dolares || 0) - Number(monto_dolares);
+          }
+          if (monto_transferencia) {
+            updatedFields.banco = Number(cajaSeleccionada.banco || 0) - Number(monto_transferencia);
+          }
+          await modificarCaja(id_caja, updatedFields);
+        } else {
+          const nuevoMonto = Number(cajaSeleccionada.monto) - Number(importe);
+          await modificarCaja(id_caja, { monto: nuevoMonto });
+        }
       }
       alert("Gasto agregado con éxito");
       navigate(-1);
@@ -130,6 +154,36 @@ const Gastos = () => {
               value={gasto.importe}
               onChange={handleChange}
               required
+            />
+          </div>
+          <div>
+            <h3>Monto Efectivo:</h3>
+            <input
+              type="text"
+              placeholder="0"
+              name="monto_efectivo"
+              value={gasto.monto_efectivo}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <h3>Monto Dolares:</h3>
+            <input
+              type="text"
+              placeholder="0"
+              name="monto_dolares"
+              value={gasto.monto_dolares}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <h3>Monto Transferencia:</h3>
+            <input
+              type="text"
+              placeholder="0"
+              name="monto_transferencia"
+              value={gasto.monto_transferencia}
+              onChange={handleChange}
             />
           </div>
           <div>

@@ -3,6 +3,7 @@ import { DataContext } from "../../../hooks/DataContext";
 import { listaFacturasVentas } from "../../../services/facturaVentasService";
 import { listaFacturasCompras } from "../../../services/facturaComprasService";
 import { obtenerGastos } from "../../../services/gastoDeclaradoService";
+import { obtenerLiquidaciones } from "../../../services/liquidacionesService";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import "./Caja.css";
@@ -16,24 +17,26 @@ const convertirFecha = (fecha) => {
 
 const Caja = () => {
   const { listaCajas } = useContext(DataContext);
-  const [orderBy, setOrderBy] = useState(null);
-  const [orderAsc, setOrderAsc] = useState(true);
+  const [orderBy, setOrderBy] = useState("created_at");
+  const [orderAsc, setOrderAsc] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [cajaFilter, setCajaFilter] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  // eslint-disable-next-line no-unused-vars
   const [filterName, setFilterName] = useState("");
   const [movimientos, setMovimientos] = useState([]);
-
+ 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [facturasVentas, facturasCompras, gastos] = await Promise.all([
+        const [facturasVentas, facturasCompras, gastos, liquidaciones] = await Promise.all([
           listaFacturasVentas(),
           listaFacturasCompras(),
           obtenerGastos(),
+          obtenerLiquidaciones(),
         ]);
-
+        console.log(liquidaciones)
         const combinedData = [
           ...facturasVentas.map((item) => ({
             ...item,
@@ -52,6 +55,13 @@ const Caja = () => {
             tipoMovimiento: "Egreso",
             motivo: item.motivo || "-",
             fecha: convertirFecha(item.fecha_ingreso),
+          })),
+          ...liquidaciones.map((item) => ({
+            ...item,
+            tipoMovimiento: "Liquidación",
+            total: item.monto,
+            motivo: `Liq: ${item.Empleado?.nombre}`,
+            fecha: item.created_at,
           })),
         ];
 

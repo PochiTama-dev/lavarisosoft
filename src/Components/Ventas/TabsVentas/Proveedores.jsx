@@ -159,6 +159,7 @@ const Proveedores = () => {
                 <th>Fecha</th>
                 <th>Estado de pago</th>
                 <th>Importe</th>
+                <th>Pagado</th>
                 <th>Debe</th>
                 {/*         <th>Responsable</th> */}
               </tr>
@@ -177,6 +178,7 @@ const Proveedores = () => {
                       : "Pagado"}
                   </td>
                   <td>$ {prov.total}</td>
+                  <td>$ {prov.monto_pagado}</td>
                              <td style={{ color: "red" }}>
                     {prov.total !== prov.monto_pagado ? `$${prov.total - prov.monto_pagado}` : <strong style={{color:'black'}}>-</strong>}
                   </td>
