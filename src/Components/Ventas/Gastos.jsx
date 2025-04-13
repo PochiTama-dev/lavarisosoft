@@ -3,6 +3,8 @@ import Header from "../Header/Header";
 import "./Gastos.css";
 import { useEffect, useState } from "react";
 import { listaCajas, modificarCaja } from "../../services/cajasService";
+import fetchDolarBlue from "../../services/ApiDolarService";
+
 const Gastos = () => {
  
   const [proveedores, setProveedores] = useState([]);
@@ -11,13 +13,15 @@ const Gastos = () => {
     motivo: "",
     importe: "",
     codigo_imputacion: "",
-    fecha_ingreso: "",
+    fecha_ingreso: new Date().toISOString().split('T')[0],  
     id_caja: "",
-    monto_efectivo: "",
-    monto_dolares: "",
-    monto_transferencia: "",
+    efectivo: "",
+    dolares: "",
+    transferencia: "",
   });
   const [cajas, setCajas] = useState([]);
+  const [error, setError] = useState("");  
+  const [total, setTotal] = useState(0);  
 
   const navigate = useNavigate();
 
@@ -51,43 +55,69 @@ const Gastos = () => {
     obtenerCajas();
   }, []);
 
-  const handleChange = (e) => {
+  const handleChange = async (e) => {
     const { name, value } = e.target;
     setGasto((prevGasto) => ({
       ...prevGasto,
       [name]: value,
     }));
+
+    // Update total and validate against importe
+    if (['efectivo', 'transferencia', 'dolares'].includes(name)) {
+      const dolarBlueRate = await fetchDolarBlue();
+      setGasto((prevGasto) => {
+        const efectivo = parseFloat(prevGasto.efectivo || 0);
+        const transferencia = parseFloat(prevGasto.transferencia || 0);
+        const dolares = parseFloat(prevGasto.dolares || 0) * dolarBlueRate;
+        const importe = parseFloat(prevGasto.importe || 0);
+
+        const newTotal = efectivo + transferencia + dolares;
+        setTotal(newTotal);
+
+        if (newTotal > importe) {
+          setError("La suma de efectivo, dólares (convertidos a pesos) y transferencia no puede superar el importe.");
+        } else {
+          setError(""); // Clear error if valid
+        }
+        return prevGasto;
+      });
+    }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    handleCreateGasto(gasto);
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // prevent page reload
+    await handleCreateGasto(gasto);  
   };
 
   const handleCreateGasto = async (gasto) => {
     try {
-      const { id_proveedor, motivo, importe, codigo_imputacion, fecha_ingreso, id_caja, monto_efectivo, monto_dolares, monto_transferencia } = await gasto;
+      const { id_proveedor, motivo, importe, codigo_imputacion, fecha_ingreso, id_caja, efectivo, dolares, transferencia } = gasto;
+      if (total !== parseFloat(importe)) {
+        alert("El monto no puede ser menor al importe a pagar");
+        return;
+      }
       await postGasto({
         id_proveedor,
         motivo,
         importe,
         codigo_imputacion,
         fecha_ingreso,
-        id_caja
+        id_caja,
+        efectivo, dolares, transferencia,
       });
       // Actualizar caja: restar, según se hayan ingresado montos específicos o el importe total
       const cajaSeleccionada = cajas.find(c => Number(c.id) === Number(id_caja));
       if (cajaSeleccionada) {
-        if (monto_efectivo || monto_dolares || monto_transferencia) {
+        if (efectivo || dolares || transferencia) {
           let updatedFields = {};
-          if (monto_efectivo) {
-            updatedFields.efectivo = Number(cajaSeleccionada.efectivo || 0) - Number(monto_efectivo);
+          if (efectivo) {
+            updatedFields.efectivo = Number(cajaSeleccionada.efectivo || 0) - Number(efectivo);
           }
-          if (monto_dolares) {
-            updatedFields.dolares = Number(cajaSeleccionada.dolares || 0) - Number(monto_dolares);
+          if (dolares) {
+            updatedFields.dolares = Number(cajaSeleccionada.dolares || 0) - Number(dolares);
           }
-          if (monto_transferencia) {
-            updatedFields.banco = Number(cajaSeleccionada.banco || 0) - Number(monto_transferencia);
+          if (transferencia) {
+            updatedFields.banco = Number(cajaSeleccionada.banco || 0) - Number(transferencia);
           }
           await modificarCaja(id_caja, updatedFields);
         } else {
@@ -98,13 +128,13 @@ const Gastos = () => {
       alert("Gasto agregado con éxito");
       navigate(-1);
     } catch (error) {
-      console.error(error);
+      console.error("Error al crear el gasto:", error.message); // Improve error logging
     }
   };
 
   const postGasto = async (gasto) => {
-    const { id_proveedor, motivo, importe, codigo_imputacion, fecha_ingreso , id_caja } =
-      await gasto;
+    const { id_proveedor, motivo, importe, codigo_imputacion, fecha_ingreso, id_caja, efectivo, dolares, transferencia } = gasto;
+    console.log("Datos a enviar a gastos:", { id_proveedor, motivo, importe, codigo_imputacion, fecha_ingreso, id_caja });
     const fetchGasto = await fetch("https://lv-back.online/gastos/guardar", {
       method: "post",
       headers: {
@@ -117,7 +147,10 @@ const Gastos = () => {
         importe,
         codigo_imputacion,
         fecha_ingreso,
-        id_caja
+        id_caja, 
+        efectivo,   
+        dolares,
+        transferencia
       }),
     });
     console.log("Gasto cargada: ", fetchGasto.status);
@@ -157,35 +190,103 @@ const Gastos = () => {
             />
           </div>
           <div>
+            <h3>Caja:</h3>
+            <select
+              name="id_caja"
+              value={gasto.id_caja}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Seleccione una caja</option>
+              {cajas.map((caja) => (
+                <option key={caja.id} value={caja.id}>
+                  {caja.denominacion}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
             <h3>Monto Efectivo:</h3>
             <input
               type="text"
               placeholder="0"
-              name="monto_efectivo"
-              value={gasto.monto_efectivo}
-              onChange={handleChange}
+              name="efectivo"
+              value={gasto.efectivo}
+              onChange={(e) => {
+                const value = parseFloat(e.target.value) || 0;
+                const disponible = parseFloat(cajas.find((c) => c.id === Number(gasto.id_caja))?.efectivo || 0);
+                if (value > disponible) {
+                  setGasto((prevGasto) => ({ ...prevGasto, efectivo: disponible }));
+                } else {
+                  handleChange(e);
+                }
+              }}
             />
-          </div>
-          <div>
-            <h3>Monto Dolares:</h3>
-            <input
-              type="text"
-              placeholder="0"
-              name="monto_dolares"
-              value={gasto.monto_dolares}
-              onChange={handleChange}
-            />
+            {gasto.id_caja && (
+              <span style={{ fontSize: "14px", color: "gray" }}>
+                Disponible: ${cajas.find((c) => c.id === Number(gasto.id_caja))?.efectivo || 0}
+              </span>
+            )}
           </div>
           <div>
             <h3>Monto Transferencia:</h3>
             <input
               type="text"
               placeholder="0"
-              name="monto_transferencia"
-              value={gasto.monto_transferencia}
-              onChange={handleChange}
+              name="transferencia"
+              value={gasto.transferencia}
+              onChange={(e) => {
+                const value = parseFloat(e.target.value) || 0;
+                const disponible = parseFloat(cajas.find((c) => c.id === Number(gasto.id_caja))?.banco || 0);
+                if (value > disponible) {
+                  setGasto((prevGasto) => ({ ...prevGasto, transferencia: disponible }));
+                } else {
+                  handleChange(e);
+                }
+              }}
+            />
+            {gasto.id_caja && (
+              <span style={{ fontSize: "14px", color: "gray" }}>
+                Disponible: ${cajas.find((c) => c.id === Number(gasto.id_caja))?.banco || 0}
+              </span>
+            )}
+          </div>
+          <div>
+            <h3>Monto Dolares:</h3>
+            <input
+              type="text"
+              placeholder="0"
+              name="dolares"
+              value={gasto.dolares}
+              onChange={(e) => {
+                const value = parseFloat(e.target.value) || 0;
+                const disponible = parseFloat(cajas.find((c) => c.id === Number(gasto.id_caja))?.dolares || 0);
+                if (value > disponible) {
+                  setGasto((prevGasto) => ({ ...prevGasto, dolares: disponible }));
+                } else {
+                  handleChange(e);
+                }
+              }}
+            />
+            {gasto.id_caja && (
+              <span style={{ fontSize: "14px", color: "gray" }}>
+                Disponible: ${cajas.find((c) => c.id === Number(gasto.id_caja))?.dolares || 0}
+              </span>
+            )}
+          </div>
+      
+          <div>
+            <h3>Total:</h3>
+            <input
+              type="text"
+              value={total.toFixed(2)}
+              readOnly
+              style={{ backgroundColor: "#f0f0f0", border: "none" }}
             />
           </div>
+          {error && (
+            <span style={{ fontSize: "14px", color: "red" }}>{error}</span>
+          )}
           <div>
             <h3>Motivo:</h3>
             <input
@@ -217,22 +318,7 @@ const Gastos = () => {
               required
             />
           </div>
-          <div>
-            <h3>Caja:</h3>
-            <select
-              name="id_caja"
-              value={gasto.id_caja}
-              onChange={handleChange}
-              required
-            >
-              <option value="">Seleccione una caja</option>
-              {cajas.map((caja) => (
-                <option key={caja.id} value={caja.id}>
-                  {caja.denominacion}
-                </option>
-              ))}
-            </select>
-          </div>
+     
           <div>
             <button type="submit">Guardar</button>
           </div>

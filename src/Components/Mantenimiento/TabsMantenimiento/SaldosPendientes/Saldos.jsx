@@ -56,23 +56,27 @@ const Saldos = ({ saldos }) => {
               </tr>
             </thead>
             <tbody>
-              {saldos.employees.map((employee, index) => {
-                const liquidacionesArray = Array.isArray(liquidaciones)
-                  ? liquidaciones
-                  : Object.values(liquidaciones);
-                const liquidacion = liquidacionesArray.find(item => item.id_tecnico === employee.empleadoId);
-      
-                const saldo = liquidacion ? liquidacion.total : 0;
-                return (
-                             <tr key={index}>
-                    <td className="text-start">{employee.nombre}</td>
-                    <td className="text-start">LIQUIDAR</td>
-                    <td className={`text-start ${saldo > 0 ? 'text-success' : saldo === 0 ? 'text-warning' : 'text-danger'}`}>
-                      ${parseFloat(saldo).toFixed(2).replace(/\.00$/, '')}
-                    </td>
-                  </tr>
-                );
-              })}
+              {saldos.employees
+                .map((employee, index) => {
+                  const liquidacionesArray = Array.isArray(liquidaciones)
+                    ? liquidaciones
+                    : Object.values(liquidaciones);
+                  const liquidacion = liquidacionesArray.find(item => item.id_tecnico === employee.empleadoId);
+        
+                  const saldo = liquidacion ? liquidacion.total : 0;
+                  if (saldo == 0) return null; // Exclude employees with saldo of zero
+                  return (
+                    <tr key={index}>
+                      <td className="text-start">{employee.nombre}</td>
+                      <td className="text-start">LIQUIDAR</td>
+                      <td className={`text-start ${saldo > 0 ? 'text-success' : 'text-danger'}`}>
+                        ${parseFloat(saldo).toFixed(2).replace(/\.00$/, '')}
+                      </td>
+                    </tr>
+                  );
+                })
+                .filter(Boolean) 
+              }
             </tbody>
           </Table>
         </div>

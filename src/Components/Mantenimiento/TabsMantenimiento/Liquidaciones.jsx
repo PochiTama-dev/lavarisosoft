@@ -166,13 +166,17 @@ const Liquidaciones = () => {
                 </tr>
                 {expandedRow === index && (
                   <tr>
-                    <td colSpan='3'>
+                                        <td colSpan='3'>
                       <Table striped bordered hover>
                         <thead>
-                          <h3 className='text-left'>Liquidaciones realizadas</h3>
+                  {/*         <h4 className='text-left'>Liquidaciones realizadas</h4> */}
                           <tr>
                             <th>Fecha</th>
-                            <th>Monto</th>
+                            <th>Efectivo</th>
+                            <th>Transferencia</th>
+                            <th>Dólares</th>
+                            <th>Total</th>
+                      
                           </tr>
                         </thead>
                         <tbody>
@@ -185,18 +189,22 @@ const Liquidaciones = () => {
                             
                             const startIndex = (currentPage - 1) * 10;
                             const currentData = allLiquidaciones.slice(startIndex, startIndex + 10);
-
+                    
                             return (
                               <>
                                 {currentData.map((liq, indx) => (
                                   <tr key={indx}>
                                     <td>{new Date(liq.created_at).toLocaleDateString()}</td>
-                                    <td>{liq.monto}</td>
+                                    <td>$ {liq.efectivo > 0 ? liq.efectivo : '-'}</td>
+                                    <td>$ {liq.transferencia > 0 ? liq.transferencia : '-'}</td>
+                                    <td>$ {liq.dolares > 0 ? liq.dolares : '-'}</td>
+                                    <td>$ {(liq.monto)}</td>
+                               
                                   </tr>
                                 ))}
                                 {currentData.length === 0 && (
                                   <tr>
-                                    <td colSpan="2" className="text-center">No hay liquidaciones</td>
+                                    <td colSpan="6" className="text-center">No hay liquidaciones</td>
                                   </tr>
                                 )}
                               </>
