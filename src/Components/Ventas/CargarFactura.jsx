@@ -5,6 +5,7 @@ import { listaCajas, modificarCaja } from '../../services/cajasService';
 import { listadoProveedores } from '../../services/proveedoresService';
 import { useCustomContext } from '../../hooks/context';
 import { useNavigate } from 'react-router-dom';
+import fetchDolarBlue from '../../services/ApiDolarService';
 
 const CargarFactura = () => {
   const navigate = useNavigate();
@@ -18,6 +19,10 @@ const CargarFactura = () => {
     iva_alicuota: '',
     iva_cred_fiscal: '',
     descripcion: '',
+    efectivo: '',
+    dolares: '',
+    transferencia: '',
+    codigo_imputacion: '',  
   });
   const [proveedores, setProveedores] = useState([]);
   const [cajas, setCajas] = useState([]);
@@ -37,16 +42,39 @@ const CargarFactura = () => {
     obtenerCajas();
   }, []);
 
-  const handleChange = (e) => {
+  const handleChange = async (e) => {
     const { name, value, checked } = e.target;
-    setFactura((prevFactura) => ({
-      ...prevFactura,
-      [name]: name === 'estado_pago' ? Number(value) : value,
-      [name]: name === 'gastos_operativos' ? checked : value,
-      iva_alicuota: (prevFactura.importe * 21) / 100,
-      iva_cred_fiscal: (prevFactura.importe * 21) / 100,
-    }));
-    console.log(factura);
+    setFactura((prevFactura) => {
+      const updatedFactura = {
+        ...prevFactura,
+        [name]: name === 'estado_pago' ? Number(value) : name === 'gastos_operativos' ? checked : value,
+      };
+
+      // Recalculate IVA fields only if 'importe' changes
+      if (name === 'importe') {
+        const importe = Number(value); // Ensure value is treated as a number
+        updatedFactura.iva_alicuota = (importe * 21) / 100;
+        updatedFactura.iva_cred_fiscal = (importe * 21) / 100;
+      }
+
+      return updatedFactura;
+    });
+
+    // Update monto_pagado as the sum of efectivo, transferencia, and dolares (converted to pesos)
+    if (['efectivo', 'transferencia', 'dolares'].includes(name)) {
+      const dolarBlueRate = await fetchDolarBlue();
+      setFactura((prevFactura) => {
+        const efectivo = parseFloat(prevFactura.efectivo || 0);
+        const transferencia = parseFloat(prevFactura.transferencia || 0);
+        const dolares = parseFloat(prevFactura.dolares || 0) * dolarBlueRate;
+        return {
+          ...prevFactura,
+          monto_pagado: (efectivo + transferencia + dolares).toFixed(2),
+        };
+      });
+    }
+
+    console.log(factura); // Debugging: Log the updated factura state
   };
 
   const handleIvaChange = (e) => {
@@ -64,7 +92,7 @@ const CargarFactura = () => {
 
   const postFactura = async (factura) => {
     const comprobantes = await listaFacturasCompra();
-    const { id_proveedor, importe, id_caja, tipo_comprobante, iva_alicuota, iva_cred_fiscal, monto_pagado } = await factura;
+    const { id_proveedor, importe, id_caja, tipo_comprobante, iva_alicuota, iva_cred_fiscal, monto_pagado, efectivo, dolares, transferencia, codigo_imputacion } = factura;
 
     const fetchFactura = await fetch('https://lv-back.online/facturascompra/guardar', {
       method: 'POST',
@@ -80,10 +108,14 @@ const CargarFactura = () => {
         iva_alicuota,
         iva_cred_fiscal,
         importe,
-        total: Number(importe) + Number(iva_alicuota),
+        total: Number(importe),
         monto_pagado,
         descripcion: factura.descripcion,
         created_at: new Date(),
+        efectivo,  
+        dolares,   
+        transferencia, 
+        codigo_imputacion,
       }),
     });
     return fetchFactura.json();
@@ -91,7 +123,7 @@ const CargarFactura = () => {
 
   const handleCreateFactura = async (factura) => {
     try {
-      const { id_proveedor, id_caja, tipo_comprobante, iva_alicuota, importe, iva_cred_fiscal, monto_pagado } = await factura;
+      const { id_proveedor, id_caja, tipo_comprobante, iva_alicuota, importe, iva_cred_fiscal, monto_pagado, efectivo, dolares, transferencia, codigo_imputacion } = factura;
 
       const facturaCompra = await postFactura({
         id_caja,
@@ -104,26 +136,43 @@ const CargarFactura = () => {
         monto_pagado,
         descripcion: factura.descripcion,
         created_at: new Date(),
+        efectivo,  
+        dolares,   
+        transferencia,
+        codigo_imputacion,
       });
+
       console.log("datow factura", facturaCompra);
-      if (Number(factura.monto_pagado) < Number(importe) + Number(iva_alicuota)) {
+
+      if (Number(monto_pagado) < Number(importe) + Number(iva_alicuota)) {
         const dataBody = {
           caja: id_caja,
           presupuesto: null,
-          facturaCompra: await facturaCompra.id,
+          facturaCompra: facturaCompra.id,
           tecnico: null,
-          monto: Number(factura.monto_pagado),
+          monto: Number(monto_pagado),
           tipo: 'proveedor',
         };
         await PostSaldosPendientes(dataBody);
       }
-      // Actualizar caja: restar el "monto_pagado" al monto de la caja seleccionada
-      const cajaSeleccionada = cajas.find(c => Number(c.id) === Number(factura.id_caja));
+
+      // Actualizar caja: actualizar según los montos ingresados en efectivo, dólares y transferencia
+      const cajaSeleccionada = cajas.find(c => Number(c.id) === Number(id_caja));
       if (cajaSeleccionada) {
-        const nuevoMonto = Number(cajaSeleccionada.monto) - Number(factura.monto_pagado);
-        await modificarCaja(factura.id_caja, { monto: nuevoMonto });
-        console.log(nuevoMonto)
+        let updatedFields = {};
+        if (efectivo) {
+          updatedFields.efectivo = Number(cajaSeleccionada.efectivo || 0) - Number(efectivo);
+        }
+        if (dolares) {
+          updatedFields.dolares = Number(cajaSeleccionada.dolares || 0) - Number(dolares);
+        }
+        if (transferencia) {
+          updatedFields.banco = Number(cajaSeleccionada.banco || 0) - Number(transferencia);
+        }
+        await modificarCaja(id_caja, updatedFields);
+        console.log(updatedFields);
       }
+
       alert('Factura agregada con éxito');
       navigate(-1);
     } catch (error) {
@@ -134,7 +183,6 @@ const CargarFactura = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     handleCreateFactura(factura);
- 
   };
 
   return (
@@ -193,10 +241,6 @@ const CargarFactura = () => {
             <input type='text' name='iva_cred_fiscal' value={factura.iva_cred_fiscal} readOnly />
           </div>
           <div>
-            <h3>Importe pagado:</h3>
-            <input type='text' placeholder='0' name='monto_pagado' value={factura.monto_pagado} onChange={handleChange} required />
-          </div>
-          <div>
             <h3>Caja:</h3>
             <select name='id_caja' value={factura.id_caja} onChange={handleChange} required>
               <option value=''>Seleccione una caja</option>
@@ -206,6 +250,95 @@ const CargarFactura = () => {
                 </option>
               ))}
             </select>
+          </div>
+          <div>
+            <h3>Importe pagado:</h3>
+            <input
+              type='text'
+              placeholder='0'
+              name='monto_pagado'
+              value={factura.monto_pagado}
+              onChange={handleChange}
+              required
+            />
+            {parseFloat(factura.efectivo || 0) + parseFloat(factura.dolares || 0) + parseFloat(factura.transferencia || 0) > parseFloat(factura.monto_pagado || 0) && (
+              <span style={{ fontSize: '14px', color: 'red' }}>
+                La suma de los montos no puede ser mayor que el importe pagado.
+              </span>
+            )}
+          </div>
+          <div>
+            <h3>Monto Efectivo:</h3>
+            <input
+              type='text'
+              placeholder='0'
+              name='efectivo'
+              value={factura.efectivo}
+              onChange={(e) => {
+                const value = parseFloat(e.target.value) || 0;
+                const disponible = parseFloat(cajas.find((c) => c.id === Number(factura.id_caja))?.efectivo || 0);
+                if (value > disponible) {
+                  setFactura((prevFactura) => ({ ...prevFactura, efectivo: disponible }));
+                } else {
+                  handleChange(e);
+                }
+              }}
+            />
+            <span style={{ fontSize: '14px', color: 'gray' }}>
+              Disponible: ${cajas.find((c) => c.id === Number(factura.id_caja))?.efectivo || 0}
+            </span>
+          </div>
+          <div>
+            <h3>Monto Dolares:</h3>
+            <input
+              type='text'
+              placeholder='0'
+              name='dolares'
+              value={factura.dolares}
+              onChange={(e) => {
+                const value = parseFloat(e.target.value) || 0;
+                const disponible = parseFloat(cajas.find((c) => c.id === Number(factura.id_caja))?.dolares || 0);
+                if (value > disponible) {
+                  setFactura((prevFactura) => ({ ...prevFactura, dolares: disponible }));
+                } else {
+                  handleChange(e);
+                }
+              }}
+            />
+            <span style={{ fontSize: '14px', color: 'gray' }}>
+              Disponible: ${cajas.find((c) => c.id === Number(factura.id_caja))?.dolares || 0}
+            </span>
+          </div>
+          <div>
+            <h3>Monto Transferencia:</h3>
+            <input
+              type='text'
+              placeholder='0'
+              name='transferencia'
+              value={factura.transferencia}
+              onChange={(e) => {
+                const value = parseFloat(e.target.value) || 0;
+                const disponible = parseFloat(cajas.find((c) => c.id === Number(factura.id_caja))?.banco || 0);
+                if (value > disponible) {
+                  setFactura((prevFactura) => ({ ...prevFactura, transferencia: disponible }));
+                } else {
+                  handleChange(e);
+                }
+              }}
+            />
+            <span style={{ fontSize: '14px', color: 'gray' }}>
+              Disponible: ${cajas.find((c) => c.id === Number(factura.id_caja))?.banco || 0}
+            </span>
+          </div>
+          <div>
+            <h3>Código Imputación:</h3>
+            <input 
+              type='text' 
+              name='codigo_imputacion' 
+              value={factura.codigo_imputacion} 
+              onChange={handleChange} 
+              required 
+            />
           </div>
           <div>
             <button type='submit'>Guardar</button>

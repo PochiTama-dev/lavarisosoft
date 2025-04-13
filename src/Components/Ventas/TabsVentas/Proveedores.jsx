@@ -40,7 +40,7 @@ const Proveedores = () => {
         const proveedoresData = await proveedoresDb();
         const gastosData = await gastosDb();
 
-        // Normalize gastos data to match proveedores structure
+        // Normalize gastos data to match proveedores structure, adding missing fields
         const normalizedGastos = gastosData.map((gasto) => ({
           Proveedore: { nombre: gasto.Proveedore.nombre },
           descripcion: gasto.motivo,
@@ -48,6 +48,9 @@ const Proveedores = () => {
           total: gasto.importe,
           monto_pagado: gasto.importe,
           estado: gasto.estado_pago,
+          efectivo: gasto.efectivo || 0,         // default value for efectivo 
+          dolares: gasto.dolares || 0,            // default value for dolares
+          transferencia: gasto.transferencia || 0,// default value for transferencia
         }));
 
         const combinedData = [...proveedoresData, ...normalizedGastos];
@@ -153,32 +156,45 @@ const Proveedores = () => {
         <div className="grilla-inventario">
           <Table hover className="grilla-proveedores">
             <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Descripción</th>
-                <th>Fecha</th>
-                <th>Estado de pago</th>
-                <th>Importe</th>
-                <th>Debe</th>
+              <tr >
+                <th  style={{textAlign:'left'}}>Nombre</th>
+                <th  style={{textAlign:'left'}}>Descripción</th>
+                <th  style={{textAlign:'left'}}>Fecha</th>
+                <th  style={{textAlign:'left'}}>Estado de pago</th>
+                <th  style={{textAlign:'left'}}>Importe</th>
+             
+
+                <th  style={{textAlign:'left'}}>Efectivo</th>
+                <th  style={{textAlign:'left'}}>Dolares</th>
+                <th  style={{textAlign:'left'}}>Transferencia</th>
+                <th  style={{textAlign:'left'}}>Pagado</th>
+                <th  style={{textAlign:'left'}}>Debe</th>
                 {/*         <th>Responsable</th> */}
               </tr>
             </thead>
             <tbody className="grilla-proveedores-body">
               {filteredData.map((prov, index) => (
                 <tr key={index} className={index % 2 === 0 ? "" : "row-even"}>
-                  <td>{prov.Proveedore.nombre}</td>
-                  <td>{prov.descripcion}</td>
-                  <td>{formatDate(prov.created_at)}</td>
-                  <td>
+                                  <td style={{textAlign:'left'}}>{prov.Proveedore.nombre}</td>
+                  <td style={{textAlign:'left'}}>{prov.descripcion}</td>
+                  <td style={{textAlign:'left'}}>{formatDate(prov.created_at)}</td>
+                  <td style={{textAlign:'left'}}>
                     {prov.total !== prov.monto_pagado
                       ? "Pago Parcial"
                       : prov.estado === 0
                       ? "No pagado"
                       : "Pagado"}
                   </td>
-                  <td>$ {prov.total}</td>
-                             <td style={{ color: "red" }}>
-                    {prov.total !== prov.monto_pagado ? `$${prov.total - prov.monto_pagado}` : <strong style={{color:'black'}}>-</strong>}
+                  <td style={{color:'green', textAlign:'left'}}>$ {prov.total}</td>
+                  
+                  <td style={{textAlign:'left'}}>{prov.efectivo == 0 ? '-' : `$ ${prov.efectivo}`}</td>
+                  <td style={{textAlign:'left'}}>{prov.dolares == 0 ? '-' : `$ ${prov.dolares}`}</td>
+                  <td style={{textAlign:'left'}}>{prov.transferencia == 0 ? '-' : `$ ${prov.transferencia}`}</td>
+                  <td style={{textAlign:'left'}}>$ {prov.monto_pagado}</td>
+                  <td style={{color:"red", textAlign:'left'}}>
+                    {prov.total !== prov.monto_pagado
+                      ? `$${(Number(prov.total) - Number(prov.monto_pagado)).toFixed(2)}`
+                      : <strong style={{ color: 'black' }}>-</strong>}
                   </td>
                   {/*   <td>{getResponsable(prov.id_responsable)}</td> */}
                 </tr>

@@ -7,7 +7,10 @@ const NuevaCaja = () => {
     denominacion: '',
     monto: '',
     cuenta: '',
-    codigo_imputacion: ''
+    codigo_imputacion: '',
+    efectivo: '',
+    dolares: '',
+    banco: ''
   });
 
   const handleChange = (e) => {
@@ -19,8 +22,11 @@ const NuevaCaja = () => {
     e.preventDefault();
     const success = await guardarCaja(formData);
     if (success) {
+      await guardarEfectivo({ efectivo: formData.efectivo });
+      await guardarDolares({ dolares: formData.dolares });
+      await guardarBanco({ banco: formData.banco });
       alert("Caja registrada con éxito!");
-      setFormData({ denominacion: '', monto: '', cuenta: '', codigo_imputacion: '' });
+      setFormData({ denominacion: '', monto: '', cuenta: '', codigo_imputacion: '', efectivo: '', dolares: '', banco: '' });
     } else {
       alert("Error al registrar la caja.");
     }
@@ -43,6 +49,45 @@ const NuevaCaja = () => {
       }
     } catch (error) {
       console.error("Error al registrar la caja.", error);
+    }
+  };
+
+  const guardarEfectivo = async (data) => {
+    try {
+      const response = await fetch("https://lv-back.online/efectivo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      return await response.json();
+    } catch (error) {
+      console.error("Error al registrar efectivo.", error);
+    }
+  };
+
+  const guardarDolares = async (data) => {
+    try {
+      const response = await fetch("https://lv-back.online/dolares", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      return await response.json();
+    } catch (error) {
+      console.error("Error al registrar dolares.", error);
+    }
+  };
+
+  const guardarBanco = async (data) => {
+    try {
+      const response = await fetch("https://lv-back.online/banco", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      return await response.json();
+    } catch (error) {
+      console.error("Error al registrar banco.", error);
     }
   };
 
@@ -92,6 +137,33 @@ const NuevaCaja = () => {
               onChange={handleChange}
             />
             <span className='required'>*</span>
+          </div>
+          <div>
+            <h3>Efectivo:</h3>
+            <input
+              type='text'
+              name='efectivo'
+              value={formData.efectivo}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <h3>Dolares:</h3>
+            <input
+              type='text'
+              name='dolares'
+              value={formData.dolares}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <h3>Banco:</h3>
+            <input
+              type='text'
+              name='banco'
+              value={formData.banco}
+              onChange={handleChange}
+            />
           </div>
           <div>
             <button type='submit'>Guardar</button>
