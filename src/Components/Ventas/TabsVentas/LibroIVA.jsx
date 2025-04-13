@@ -162,6 +162,12 @@ const LibroIVA = () => {
                   <th>Proveedor</th>
                   <th>CUIT Proveedor</th>
                   <th>Descripción Bienes o Servicios</th>
+
+                  <th>Efectivo</th> 
+                  <th>Transferencia</th>
+                  <th>Dolares</th>
+
+
                   <th>Importe neto gravado</th>
                   <th>Alicuota IVA</th>
                   <th>IVA crédito fiscal</th>
@@ -177,6 +183,12 @@ const LibroIVA = () => {
                     <td>{item.Proveedore.nombre}</td>
                     <td>{item.Proveedore.cuit}</td>
                     <td>{item.descripcion}</td>
+
+                    <td>{item.efectivo == 0 ? "-" : `$${item.efectivo}`}</td>
+                    <td>{item.transferencia == 0 ? "-" : `$${item.transferencia}`}</td>
+                    <td>{item.dolares == 0 ? "-" : `$${item.dolares}`}</td>
+
+
                     <td>${item.importe}</td>
                     <td>${item.iva_alicuota}</td>
                     <td>${item.iva_cred_fiscal}</td>
@@ -198,6 +210,11 @@ const LibroIVA = () => {
                   <th>Cliente</th>
                   <th>CUIT Cliente</th>
                   <th>Descripción Bienes o Servicios</th>
+
+                  <th>Efectivo</th> 
+                  <th>Transferencia</th>
+                  <th>Dolares</th>
+
                   <th>Importe neto gravado</th>
                   <th>Alicuota IVA</th>
                   <th>IVA crédito fiscal</th>
@@ -213,6 +230,11 @@ const LibroIVA = () => {
                     <td>{`${item.Cliente?.nombre || ""} ${item.Cliente?.apellido || ""}`.trim()}</td>
                     <td>{item.cuit_cliente}</td>
                     <td>{item.descripcion}</td>
+                    
+                    <td>{item.efectivo == 0 ? "-" : `$${item.efectivo}`}</td>
+                    <td>{item.transferencia == 0 ? "-" : `$${item.transferencia}`}</td>
+                    <td>{item.dolares == 0 ? "-" : `$${item.dolares}`}</td>
+
                     <td>${item.importe}</td>
                     <td>${item.iva_alicuota}</td>
                     <td>${item.importe * (item.iva_alicuota / 100)}</td>

@@ -1,36 +1,41 @@
 import { useEffect, useState } from 'react';
-import Header from '../Header/Header';
-import './CargarFactura.css';
-import { listaCajas, modificarCaja } from '../../services/cajasService';
-import { listadoProveedores } from '../../services/proveedoresService';
-import { useCustomContext } from '../../hooks/context';
+import Header from '../../Header/Header';
+/* import './CargarFactura.css'; */
+import { listaCajas, modificarCaja } from '../../../services/cajasService';
+import { listadoEmpleados } from '../../../services/empleadoService';
+import { useCustomContext } from '../../../hooks/context';
 import { useNavigate } from 'react-router-dom';
-import fetchDolarBlue from '../../services/ApiDolarService';
+import fetchDolarBlue from '../../../services/ApiDolarService';
 
-const CargarFactura = () => {
+const CargarFacturaVenta = () => {
   const navigate = useNavigate();
-  const { PostSaldosPendientes, listaFacturasCompra } = useCustomContext();
+  const {/*  PostSaldosPendientes, */ listaFacturasCompra, listaClientes } = useCustomContext();
   const [factura, setFactura] = useState({
-    id_proveedor: null,
     id_caja: null,
     importe: null,
     monto_pagado: null,
     tipo_comprobante: '',
+    nro_comprobante: '',
+    id_cliente: null,
     iva_alicuota: '',
-    iva_cred_fiscal: '',
+    iva_deb_fiscal: '',
+    id_tecnico : null,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
     descripcion: '',
-    efectivo: '',
-    dolares: '',
-    transferencia: '',
-    codigo_imputacion: '',  
+    efectivo: 0,
+    dolares: 0,
+    transferencia: 0,
+    codigo_imputacion: '',
   });
   const [proveedores, setProveedores] = useState([]);
   const [cajas, setCajas] = useState([]);
+  const [clientes, setClientes] = useState([]);
+  const [isCliente, setIsCliente] = useState(false);
 
   useEffect(() => {
-    const obtenerProveedores = async () => {
-      const data = await listadoProveedores();
-      setProveedores(data);
+    const obtenerTecnicos = async () => {
+      const data = await listadoEmpleados();
+      const filteredData = data.filter((emp) => emp.id_rol !== 4);
+      setProveedores(filteredData);
     };
 
     const obtenerCajas = async () => {
@@ -38,9 +43,25 @@ const CargarFactura = () => {
       setCajas(data);
     };
 
-    obtenerProveedores();
+    const obtenerClientes = async () => {
+      const data = await listaClientes();
+      setClientes(data);
+    };
+
+    obtenerTecnicos();
     obtenerCajas();
+    obtenerClientes();
   }, []);
+
+  const handleToggle = (e) => {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+    const { checked } = e.target;
+    setIsCliente(checked);
+    setFactura((prevFactura) => ({
+      ...prevFactura,
+      id_cliente: checked ? null : prevFactura.id_cliente,
+      id_tecnico: checked ? null : prevFactura.id_tecnico,
+    }));
+  };
 
   const handleChange = async (e) => {
     const { name, value, checked } = e.target;
@@ -50,17 +71,19 @@ const CargarFactura = () => {
         [name]: name === 'estado_pago' ? Number(value) : name === 'gastos_operativos' ? checked : value,
       };
 
-      // Recalculate IVA fields only if 'importe' changes
+      if (name === 'codigo_imputacion') {
+        updatedFactura.nro_comprobante = value; // Set nro_comprobante to codigo_imputacion
+      }
+
       if (name === 'importe') {
-        const importe = Number(value); // Ensure value is treated as a number
+        const importe = Number(value);
         updatedFactura.iva_alicuota = (importe * 21) / 100;
-        updatedFactura.iva_cred_fiscal = (importe * 21) / 100;
+        updatedFactura.iva_deb_fiscal = (importe * 21) / 100;
       }
 
       return updatedFactura;
     });
 
-    // Update monto_pagado as the sum of efectivo, transferencia, and dolares (converted to pesos)
     if (['efectivo', 'transferencia', 'dolares'].includes(name)) {
       const dolarBlueRate = await fetchDolarBlue();
       setFactura((prevFactura) => {
@@ -74,7 +97,7 @@ const CargarFactura = () => {
       });
     }
 
-    console.log(factura); // Debugging: Log the updated factura state
+    console.log(factura);
   };
 
   const handleIvaChange = (e) => {
@@ -92,30 +115,43 @@ const CargarFactura = () => {
 
   const postFactura = async (factura) => {
     const comprobantes = await listaFacturasCompra();
-    const { id_proveedor, importe, id_caja, tipo_comprobante, iva_alicuota, iva_cred_fiscal, monto_pagado, efectivo, dolares, transferencia, codigo_imputacion } = factura;
-
-    const fetchFactura = await fetch('https://lv-back.online/facturascompra/guardar', {
+    const {
+      tipo_comprobante,
+      nro_comprobante,
+      id_cliente,
+      importe,
+      iva_alicuota,
+      iva_deb_fiscal,
+      id_caja,
+      descripcion,
+      codigo_imputacion,
+      efectivo,
+      dolares,
+      transferencia,
+      id_tecnico,
+    } = factura;
+    const fetchFactura = await fetch('https://lv-back.online/facturasventa/guardar', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        id_caja,
         tipo_comprobante,
-        nro_comprobante: comprobantes.length + 1,
-        id_proveedor,
-        iva_alicuota,
-        iva_cred_fiscal,
+        nro_comprobante: nro_comprobante || comprobantes.length + 1,
+        id_cliente,
         importe,
-        total: Number(importe),
-        monto_pagado,
-        descripcion: factura.descripcion,
+        iva_alicuota,
+        iva_deb_fiscal,
+        total: Number(importe) + Number(iva_alicuota),
+        id_caja,
+        descripcion,
         created_at: new Date(),
-        efectivo,  
-        dolares,   
-        transferencia, 
         codigo_imputacion,
+        efectivo,
+        dolares,
+        transferencia,
+        id_tecnico,
       }),
     });
     return fetchFactura.json();
@@ -123,41 +159,55 @@ const CargarFactura = () => {
 
   const handleCreateFactura = async (factura) => {
     try {
-      const { id_proveedor, id_caja, tipo_comprobante, iva_alicuota, importe, iva_cred_fiscal, monto_pagado, efectivo, dolares, transferencia, codigo_imputacion } = factura;
+      const {
+        id_caja,
+        tipo_comprobante,
+        nro_comprobante,
+        id_cliente,
+        iva_alicuota,
+        id_tecnico,
+        iva_deb_fiscal,
+        importe,
+       /*  monto_pagado, */
+        efectivo,
+        dolares,
+        transferencia,
+        descripcion,
+        codigo_imputacion,
+      } = factura;
 
       const facturaCompra = await postFactura({
         id_caja,
         tipo_comprobante,
-        id_proveedor,
-        iva_alicuota,
-        iva_cred_fiscal,
+        nro_comprobante,
+        id_cliente,
         importe,
-        total: Number(importe) + Number(iva_alicuota),
-        monto_pagado,
-        descripcion: factura.descripcion,
-        created_at: new Date(),
-        efectivo,  
-        dolares,   
-        transferencia,
+        iva_alicuota,
+        iva_deb_fiscal,
+        descripcion,
         codigo_imputacion,
+        efectivo,
+        dolares,
+        transferencia,
+        id_tecnico,
       });
 
-      console.log("datow factura", facturaCompra);
-
+      console.log('datow factura', facturaCompra);
+/* 
       if (Number(monto_pagado) < Number(importe) + Number(iva_alicuota)) {
         const dataBody = {
           caja: id_caja,
           presupuesto: null,
           facturaCompra: facturaCompra.id,
-          tecnico: null,
+          tecnico: null,                                                                                             
           monto: Number(monto_pagado),
-          tipo: 'proveedor',
+          tipo: 'proveedor',                                                                                                        
         };
         await PostSaldosPendientes(dataBody);
-      }
+      } */
 
       // Actualizar caja: actualizar según los montos ingresados en efectivo, dólares y transferencia
-      const cajaSeleccionada = cajas.find(c => Number(c.id) === Number(id_caja));
+      const cajaSeleccionada = cajas.find((c) => Number(c.id) === Number(id_caja));
       if (cajaSeleccionada) {
         let updatedFields = {};
         if (efectivo) {
@@ -189,19 +239,54 @@ const CargarFactura = () => {
     <div>
       <Header text='Cargar factura' />
       <div className='factura-formulario'>
-        <h2>Cargar factura</h2>
+        {/*     <h2>Cargar factura</h2> */}
         <form onSubmit={handleSubmit}>
           <div>
-            <h3>Proveedor:</h3>
-            <select name='id_proveedor' value={factura.id_proveedor} onChange={handleChange} required>
-              <option value=''>Seleccione un proveedor</option>
-              {proveedores.map((prov) => (
-                <option key={prov.id} value={prov.id}>
-                  {prov.nombre}
-                </option>
-              ))}
-            </select>
+            <label style={{ fontSize: '20px', margin: '10px' }}>
+              <input
+                style={{ fontSize: '20px', marginRight: '10px' }}
+                type='checkbox'
+                checked={isCliente}
+                onChange={handleToggle}
+              />
+              Cliente ( seleccionar si es para un cliente)
+            </label>
           </div>
+          {isCliente ? (
+            <div>
+              <h3>Cliente:</h3>
+              <select
+                name='id_cliente'
+                value={factura.id_cliente}
+                onChange={handleChange}
+                required
+              >
+                <option value=''>Seleccione un cliente</option>
+                {clientes.map((cliente) => (
+                  <option key={cliente.id} value={cliente.id}>
+                    {cliente.nombre} {cliente.apellido}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : (
+            <div>
+              <h3>Tecnico:</h3>
+              <select
+                name='id_tecnico'
+                value={factura.id_tecnico}
+                onChange={handleChange}
+                required
+              >
+                <option value=''>Seleccione un tecnico</option>
+                {proveedores.map((prov) => (
+                  <option key={prov.id} value={prov.id}>
+                    {prov.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
           <div>
             <h3>Tipo de comprobante:</h3>
             <select name='' id=''>
@@ -238,7 +323,7 @@ const CargarFactura = () => {
           </div>
           <div>
             <h3>IVA credito fiscal:</h3>
-            <input type='text' name='iva_cred_fiscal' value={factura.iva_cred_fiscal} readOnly />
+            <input type='text' name='iva_deb_fiscal' value={factura.iva_deb_fiscal} readOnly />
           </div>
           <div>
             <h3>Caja:</h3>
@@ -251,22 +336,7 @@ const CargarFactura = () => {
               ))}
             </select>
           </div>
-          <div>
-            <h3>Importe pagado:</h3>
-            <input
-              type='text'
-              placeholder='0'
-              name='monto_pagado'
-              value={factura.monto_pagado}
-              onChange={handleChange}
-              required
-            />
-            {parseFloat(factura.efectivo || 0) + parseFloat(factura.dolares || 0) + parseFloat(factura.transferencia || 0) > parseFloat(factura.monto_pagado || 0) && (
-              <span style={{ fontSize: '14px', color: 'red' }}>
-                La suma de los montos no puede ser mayor que el importe pagado.
-              </span>
-            )}
-          </div>
+  
           <div>
             <h3>Monto Efectivo:</h3>
             <input
@@ -331,13 +401,31 @@ const CargarFactura = () => {
             </span>
           </div>
           <div>
+            <h3>Importe</h3>
+            <input
+              type='text'
+              placeholder='0'
+              name='monto_pagado'
+              value={factura.monto_pagado}
+              onChange={handleChange}
+              required
+              disabled
+            />
+            {parseFloat(factura.efectivo || 0) + parseFloat(factura.dolares || 0) + parseFloat(factura.transferencia || 0) >
+              parseFloat(factura.monto_pagado || 0) && (
+              <span style={{ fontSize: '14px', color: 'red' }}>
+                La suma de los montos no puede ser mayor que el importe pagado.
+              </span>
+            )}
+          </div>
+          <div>
             <h3>Código Imputación:</h3>
-            <input 
-              type='text' 
-              name='codigo_imputacion' 
-              value={factura.codigo_imputacion} 
-              onChange={handleChange} 
-              required 
+            <input
+              type='text'
+              name='codigo_imputacion'
+              value={factura.codigo_imputacion}
+              onChange={handleChange}
+              required
             />
           </div>
           <div>
@@ -349,4 +437,4 @@ const CargarFactura = () => {
   );
 };
 
-export default CargarFactura;
+export default CargarFacturaVenta;

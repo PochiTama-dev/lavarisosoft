@@ -4,13 +4,15 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { guardarFacturaVenta } from "../../services/facturaVentasService";
 import { modificarPresupuesto } from "../../services/presupuestosService";
-import { listaCajas } from "../../services/cajasService";
+import { listaCajas, modificarCaja } from "../../services/cajasService";
 import { modificarOrden } from "../../services/ordenesService";
 import {
   guardarLiquidacionPendiente,
   liquidacionesPendientesPorTecnico,
   actualizarLiquidacionPendiente,
 } from "../../services/liquidacionesPendientesService";
+import { guardarLiquidacion } from "../../services/liquidacionesService";
+import fetchDolarBlue from "../../services/ApiDolarService";
 
 const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
   const navigate = useNavigate();
@@ -19,6 +21,19 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
   const [editValues, setEditValues] = useState({});
   const [cajas, setCajas] = useState([]);
   const [cajaSeleccionada, setCajaSeleccionada] = useState(null);
+  const [codigoImputacion, setCodigoImputacion] = useState("");
+  const [metodoPago, setMetodoPago] = useState({
+    efectivo: false,
+    banco: false,
+    dolares: false,
+  });
+  const [valoresPago, setValoresPago] = useState({
+    efectivo: 0,
+    banco: 0,
+    dolares: 0,
+  });
+  const [porcentajePago, setPorcentajePago] = useState(50);
+  const [valorDolar, setValorDolar] = useState(0);
 
   useEffect(() => {
     const fetchCajas = async () => {
@@ -31,6 +46,14 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
   useEffect(() => {
     setCajaSeleccionada(null);
   }, [orden]);
+
+  useEffect(() => {
+    const obtenerValorDolar = async () => {
+      const dolar = await fetchDolarBlue();
+      setValorDolar(dolar || 0);
+    };
+    obtenerValorDolar();
+  }, []);
 
   if (!orden) {
     return <div className="detalle-placeholder">Seleccione una orden</div>;
@@ -67,16 +90,23 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
       iva_deb_fiscal: 0.0,
       total: totalNum,
       created_at: new Date().toISOString().split("T")[0],
- 
+      codigo_imputacion: codigoImputacion,
+      efectivo: valoresPago.efectivo || 0,
+      dolares: valoresPago.dolares || 0,
+      transferencia: valoresPago.banco || 0,
     };
 
     return await guardarFacturaVenta(facturaData);
   };
 
   const guardarOActualizarLiquidacion = async () => {
+    const totalEnPesos = parseFloat(orden.Presupuesto?.total || 0);
+
+    const montoLiquidacion = (totalEnPesos * porcentajePago) / 100;
+
     const liquidacionData = {
       id_tecnico: orden.id_empleado,
-      total: parseFloat(orden.Presupuesto?.comision_visita || 0),
+      total: montoLiquidacion,
     };
 
     const liquidaciones = await liquidacionesPendientesPorTecnico(
@@ -87,6 +117,7 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
       const liquidacionExistente = liquidaciones[0];
       const nuevoTotal =
         parseFloat(liquidacionExistente.total) + liquidacionData.total;
+
       return await actualizarLiquidacionPendiente(liquidacionExistente.id, {
         total: nuevoTotal,
       });
@@ -95,32 +126,173 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
     }
   };
 
-  const handleConfirmConsolidar = async () => {
+  const handleConfirmConsolidarConPago = async () => {
     try {
-      const facturaResult = await guardarFactura();
-      if (facturaResult === true) {
-        const ordenActualizada = {
-          id_tipo_estado: 3,
-        };
-        await modificarOrden(orden.id, ordenActualizada);
+      await handleConfirmConsolidarBase(true);
+    } catch (error) {
+      console.error("Error al consolidar con pago:", error);
+    }
+  };
 
-        const liquidacionResult = await guardarOActualizarLiquidacion();
-        if (liquidacionResult) {
-          alert("Factura y liquidación creadas/actualizadas con éxito");
-          setOrden(null);
-        } else {
-          alert("Error al crear/actualizar la liquidación");
+  const handleConfirmConsolidarSinPago = async () => {
+    try {
+      if (!cajaSeleccionada) {
+        alert("Debe seleccionar una caja antes de consolidar.");
+        return;
+      }
+
+      const totalFactura = parseFloat(orden.Presupuesto?.total || 0);
+
+      const porcentajeTecnico = parseFloat(
+        orden.Empleado?.porcentaje_arreglo || 0
+      );
+      const montoCalculado = (totalFactura * porcentajeTecnico) / 100;
+
+      const liquidaciones = await liquidacionesPendientesPorTecnico(
+        orden.id_empleado
+      );
+
+      if (liquidaciones && liquidaciones.length > 0) {
+        const liquidacionExistente = liquidaciones[0];
+        const nuevoTotal =
+          parseFloat(liquidacionExistente.total) + montoCalculado;
+
+        const response = await actualizarLiquidacionPendiente(
+          liquidacionExistente.id,
+          {
+            total: nuevoTotal,
+          }
+        );
+
+        if (!response) {
+          alert("Error al actualizar la liquidación pendiente.");
+          return;
         }
       } else {
-        alert("Error al crear la factura");
+        const response = await guardarLiquidacionPendiente({
+          id_tecnico: orden.id_empleado,
+          total: montoCalculado,
+        });
+
+        if (!response) {
+          alert("Error al crear la liquidación pendiente.");
+          return;
+        }
       }
+
+      await handleConfirmConsolidarBase(false);
+
+      alert("Liquidación pendiente actualizada con éxito.");
     } catch (error) {
-      console.error("Error al crear la factura o liquidación:", error);
-      alert("Error al crear la factura o liquidación");
+      console.error("Error al consolidar sin pago al técnico:", error);
+      alert("Error al consolidar sin pago al técnico.");
+    }
+  };
+
+  const handleConfirmConsolidarBase = async (conPago) => {
+    try {
+      if (!cajaSeleccionada) {
+        alert("Debe seleccionar una caja antes de consolidar.");
+        return;
+      }
+
+      const totalFactura = parseFloat(orden.Presupuesto?.total || 0);
+
+      const sumaMetodosPago =
+        valoresPago.efectivo +
+        valoresPago.banco +
+        valoresPago.dolares * valorDolar;
+
+      if (sumaMetodosPago < totalFactura) {
+        alert(
+          `La suma de los montos de los métodos de pago (${sumaMetodosPago.toFixed(
+            2
+          )} ARS) es menor al total (${totalFactura.toFixed(
+            2
+          )} ARS). Por favor, ajuste los valores.`
+        );
+        return;
+      }
+
+      const facturaResult = await guardarFactura();
+      if (!facturaResult) {
+        alert("Error al crear la factura.");
+        return;
+      }
+
+      const ordenActualizada = {
+        id_tipo_estado: 3,
+      };
+      await modificarOrden(orden.id, ordenActualizada);
+
+      const liquidacionResult = await guardarOActualizarLiquidacion();
+      if (!liquidacionResult) {
+        alert("Error al crear/actualizar la liquidación.");
+        return;
+      }
+
+      const montoActual = parseFloat(
+        cajaSeleccionada.monto.replace(",", ".") || 0
+      );
+      const nuevoMonto = montoActual + totalFactura;
+
+      const efectivoActual = parseFloat(cajaSeleccionada.efectivo || 0);
+      const dolaresActual = parseFloat(cajaSeleccionada.dolares || 0);
+      const bancoActual = parseFloat(cajaSeleccionada.banco || 0);
+
+      const cajaActualizada = {
+        monto: nuevoMonto.toFixed(2),
+        efectivo: (efectivoActual + valoresPago.efectivo).toFixed(2),
+        dolares: (dolaresActual + parseFloat(valoresPago.dolares || 0)).toFixed(
+          2
+        ),
+        banco: (bancoActual + valoresPago.banco).toFixed(2),
+      };
+
+      const cajaResult = await modificarCaja(
+        cajaSeleccionada.id,
+        cajaActualizada
+      );
+      if (!cajaResult) {
+        alert("Error al actualizar el monto de la caja.");
+        return;
+      }
+
+      if (conPago) {
+        const montoCalculado =
+          (parseFloat(orden.Presupuesto?.total || 0) * porcentajePago) / 100;
+
+        const response = await guardarLiquidacion({
+          id_tecnico: orden.id_empleado,
+          monto: montoCalculado,
+          id_caja: cajaSeleccionada.id,
+          codigo_imputacion: codigoImputacion,
+          efectivo: valoresPago.efectivo || 0,
+          dolares: valoresPago.dolares || 0,
+          transferencia: valoresPago.banco || 0,
+          created_at: new Date().toISOString(),
+        });
+
+        if (!response) {
+          alert("Error al realizar el pago al técnico.");
+          return;
+        }
+
+        alert(
+          `Pago al técnico realizado con éxito. Monto: $${montoCalculado.toFixed(
+            2
+          )}`
+        );
+      }
+
+      alert("Factura, liquidación y caja actualizadas con éxito.");
+      setOrden(null);
+    } catch (error) {
+      console.error("Error al consolidar la orden:", error);
+      alert("Error al consolidar la orden.");
     } finally {
       setShowModal(false);
     }
-    window.location.reload();
   };
 
   const handleEdit = (field, value) => {
@@ -178,7 +350,7 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
     }
   };
 
-  const handleCancelEdit = ( ) => {
+  const handleCancelEdit = () => {
     setEditingField(null);
     setEditValues({});
   };
@@ -279,6 +451,66 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
     );
   };
 
+  const handleMetodoPagoChange = (metodo) => {
+    const totalFactura = parseFloat(orden.Presupuesto?.total || 0);
+    const nuevosMetodos = {
+      ...metodoPago,
+      [metodo]: !metodoPago[metodo],
+    };
+
+    setMetodoPago(nuevosMetodos);
+
+    const metodosSeleccionados = Object.keys(nuevosMetodos).filter(
+      (key) => nuevosMetodos[key]
+    );
+
+    if (metodosSeleccionados.length === 1) {
+      const nuevoValoresPago = {
+        efectivo: 0,
+        banco: 0,
+        dolares: 0,
+      };
+
+      if (metodo === "dolares" && valorDolar > 0) {
+        // Convertir el total de pesos a dólares
+        nuevoValoresPago.dolares = (totalFactura / valorDolar).toFixed(2);
+      } else {
+        nuevoValoresPago[metodosSeleccionados[0]] = totalFactura;
+      }
+
+      setValoresPago(nuevoValoresPago);
+    } else {
+      setValoresPago({
+        efectivo: 0,
+        banco: 0,
+        dolares: 0,
+      });
+    }
+  };
+
+  const handleValorPagoChange = (metodo, valor) => {
+    const totalFactura = parseFloat(orden.Presupuesto?.total || 0);
+    const nuevoValor = parseFloat(valor) || 0;
+
+    const sumaOtros = Object.keys(valoresPago)
+      .filter((key) => key !== metodo)
+      .reduce((acc, key) => acc + valoresPago[key], 0);
+
+    if (nuevoValor + sumaOtros > totalFactura) {
+      alert("La suma de Efectivo, Banco y Dólares no puede exceder el total.");
+      return;
+    }
+
+    setValoresPago((prev) => ({
+      ...prev,
+      [metodo]: nuevoValor,
+    }));
+  };
+
+  const convertirAPesos = (valorEnDolares) => {
+    return (valorEnDolares * valorDolar).toFixed(2);
+  };
+
   return (
     <div className="detalle-orden-container">
       <div className="detalle-header">
@@ -287,7 +519,7 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
       </div>
 
       <div className="campos-container">
-        {renderInput("Seguro", orden.Presupuesto?.dpg || "$85790", "dpg")}
+        {renderInput("Seguro", orden.Presupuesto?.dpg || 0, "dpg")}
         {renderInput("Repuestos", calcularTotalRepuestos(), "repuestos")}
         {renderInput(
           "Viáticos",
@@ -318,7 +550,113 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
 
         <div className="separador"></div>
 
-        {renderInput("Total", orden.Presupuesto?.total || "$105790", "total")}
+        {renderInput("Total", orden.Presupuesto?.total || 0, "total")}
+
+        <div className="campo">
+          <label>Porcentaje de Pago al Técnico:</label>
+          <div className="input-container">
+            <input
+              type="number"
+              value={porcentajePago}
+              min="0"
+              max="100"
+              onChange={(e) => setPorcentajePago(e.target.value)}
+            />
+            <span>%</span>
+          </div>
+        </div>
+        <div className="campo">
+          <label>Código de Imputación:</label>
+          <input
+            type="text"
+            value={codigoImputacion}
+            onChange={(e) => setCodigoImputacion(e.target.value)}
+          />
+        </div>
+
+        <div className="campo">
+          <label>Método de Pago:</label>
+          <div className="metodo-pago-container">
+            <label>
+              <input
+                type="checkbox"
+                checked={metodoPago.efectivo}
+                onChange={() => handleMetodoPagoChange("efectivo")}
+              />
+              Efectivo
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={metodoPago.banco}
+                onChange={() => handleMetodoPagoChange("banco")}
+              />
+              Banco
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={metodoPago.dolares}
+                onChange={() => handleMetodoPagoChange("dolares")}
+              />
+              Dólares
+            </label>
+          </div>
+        </div>
+
+        {metodoPago.efectivo && (
+          <div className="campo">
+            <label>Efectivo:</label>
+            <input
+              type="number"
+              value={valoresPago.efectivo}
+              onFocus={(e) => {
+                if (e.target.value === "0") e.target.value = "";
+              }}
+              onBlur={(e) => {
+                if (e.target.value === "") e.target.value = "0";
+              }}
+              onChange={(e) =>
+                handleValorPagoChange("efectivo", e.target.value)
+              }
+            />
+          </div>
+        )}
+
+        {metodoPago.banco && (
+          <div className="campo">
+            <label>Banco:</label>
+            <input
+              type="number"
+              value={valoresPago.banco}
+              onFocus={(e) => {
+                if (e.target.value === "0") e.target.value = "";
+              }}
+              onBlur={(e) => {
+                if (e.target.value === "") e.target.value = "0";
+              }}
+              onChange={(e) => handleValorPagoChange("banco", e.target.value)}
+            />
+          </div>
+        )}
+
+        {metodoPago.dolares && (
+          <div className="campo">
+            <label>Dólares:</label>
+            <input
+              type="number"
+              value={valoresPago.dolares}
+              onFocus={(e) => {
+                if (e.target.value === "0") e.target.value = "";
+              }}
+              onBlur={(e) => {
+                if (e.target.value === "") e.target.value = "0";
+              }}
+              onChange={(e) => handleValorPagoChange("dolares", e.target.value)}
+            />
+            <span>(≈ ${convertirAPesos(valoresPago.dolares)} ARS)</span>
+          </div>
+        )}
 
         <div className="campo">
           <label>
@@ -344,16 +682,12 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
             ))}
           </select>
         </div>
+        {/* 
         {renderInput(
           "Técnico domicilio",
-          orden.Presupuesto?.comision_visita || "$105790",
+          orden.Presupuesto?.comision_visita || 0,
           "comision_visita"
-        )}
-        {renderInput(
-          "Monto pagado",
-          orden.Presupuesto?.monto_pagado || "0",
-          "monto_pagado"
-        )}
+        )} */}
       </div>
 
       <div className="d-flex justify-content-around div-botones">
@@ -384,9 +718,15 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
             <div className="modal-buttons">
               <button
                 className="bg-info text-white"
-                onClick={handleConfirmConsolidar}
+                onClick={handleConfirmConsolidarConPago}
               >
-                Confirmar
+                Confirmar CON Pago al Técnico
+              </button>
+              <button
+                className="bg-info text-white"
+                onClick={handleConfirmConsolidarSinPago}
+              >
+                Confirmar SIN Pago al Técnico
               </button>
               <button
                 className="bg-secondary text-black"

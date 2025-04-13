@@ -78,12 +78,7 @@ const FacturaOrden = () => {
   };
 
   const calcularTotal = () => {
-    const total =
-      parseFloat(editableValues.dpg) +
-      parseFloat(editableValues.viaticos) +
-      parseFloat(editableValues.comision_visita) +
-      calcularTotalRepuestos();
-    return total.toFixed(2);
+    return parseFloat(orden.Presupuesto?.total || 0).toFixed(2);
   };
 
   return (

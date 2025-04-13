@@ -42,6 +42,26 @@
   min-width: 150px;
 }
 
+.campo .metodo-pago-container {
+  display: flex;
+  gap: 20px; /* Espacio entre los checkboxes */
+  align-items: center;
+}
+
+.campo .metodo-pago-container label {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Espacio entre el checkbox y la etiqueta */
+  font-size: 14px;
+  color: #283959;
+}
+
+.campo .metodo-pago-container input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
 .input-container {
   display: flex;
   align-items: center;
