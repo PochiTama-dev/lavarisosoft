@@ -46,7 +46,7 @@ import Taller from './Components/Mantenimiento/TabsMantenimiento/Taller.jsx';
 import AddPlanCuentasExcel from './Components/Mantenimiento/AddPlanCuentasExcel.jsx';
 import FacturaOrden from './Components/Presupuestos/FacturaOrden.jsx';
 import UploadCliente from './Components/Clientes/UploadCliente.jsx';
-
+import CargarFacturaVenta from './Components/Ventas/TabsVentas/CargarFacturaVenta.jsx';
 function App() {
   return (
     <Routes>
@@ -92,6 +92,7 @@ function App() {
         <Route path='/presupuestos' element={<Presupuestos />} />
         <Route path='/addFactura' element={<AddFactura />} />
         <Route path='/facturaOrden' element={<FacturaOrden />} />
+        <Route path='/cargarFacturaVenta' element={<CargarFacturaVenta />} />
       </Route>
       <Route element={<PrivateRoute roles={['Jefe de taller', 'Super administrador']} />}>
         <Route path='/taller' element={<Taller showHeader={true} />} />

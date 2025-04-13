@@ -1,5 +1,6 @@
 // OpVentas.jsx
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import Tab from '../../../Components/Tabs/Tab';
 import Tabs2 from '../../../Components/Tabs/Tabs2';
 import Ventas from './Op-Ventas/Ventas';
@@ -79,9 +80,14 @@ const OpVentas = () => {
 
   return (
     <div className='opventas-container' style={{ padding:'20px' }}>
-          <Header text='Operaciones/Ventas' />
+      <Header text='Operaciones/Ventas' />
  
       <Searchers activeTab={activeTab} onFilterChange={handleFilterChange} />
+      <div className='cargarButton' style={{ textAlign: 'right', marginBottom: '10px' }}>
+      <Link to="/cargarFacturaVenta">
+            <button>Cargar factura</button>
+          </Link>
+      </div>
       <div style={{ textAlign: 'center', marginTop: '0px' }}>
         <Tab>
           <div className='opventas-tabs tabs-ctn'>
