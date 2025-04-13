@@ -228,7 +228,7 @@ const Caja = () => {
               <thead>
                 <tr>
                   <th onClick={() => handleSort("tipoMovimiento")}>
-                    Movimiento{" "}
+                    Tipo
                     {orderBy === "tipoMovimiento" ? (
                       orderAsc ? (
                         "▲"
@@ -239,27 +239,7 @@ const Caja = () => {
                       <span>▼</span>
                     )}
                   </th>
-                  <th onClick={() => handleSort("total")}>
-                    Precio{" "}
-                    {orderBy === "total" ? (
-                      orderAsc ? (
-                        "▲"
-                      ) : (
-                        "▼"
-                      )
-                    ) : (
-                      <span>▼</span>
-                    )}
-                  </th>
-                  <th>
-                    Efectivo
-                  </th>
-                  <th>
-                    Transferencia
-                  </th>
-                  <th>
-                    Dolares
-                  </th>
+
                   <th onClick={() => handleSort("created_at")}>
                     Fecha{" "}
                     {orderBy === "created_at" ? (
@@ -273,7 +253,7 @@ const Caja = () => {
                     )}
                   </th>
                   <th onClick={() => handleSort("motivo")}>
-                    Comentarios{" "}
+                    Descripción
                     {orderBy === "motivo" ? (
                       orderAsc ? (
                         "▲"
@@ -284,6 +264,41 @@ const Caja = () => {
                       <span>▼</span>
                     )}
                   </th>
+            
+                  <th>
+                    Efectivo
+                  </th>
+                  <th>
+                    Transferencia
+                  </th>
+                  <th>
+                    Dólares
+                  </th>
+                  <th onClick={() => handleSort("total")}>
+                    Pagado
+                    {orderBy === "total" ? (
+                      orderAsc ? (
+                        "▲"
+                      ) : (
+                        "▼"
+                      )
+                    ) : (
+                      <span>▼</span>
+                    )}
+                  </th>
+                         <th onClick={() => handleSort("total")}>
+                    Total
+                    {orderBy === "total" ? (
+                      orderAsc ? (
+                        "▲"
+                      ) : (
+                        "▼"
+                      )
+                    ) : (
+                      <span>▼</span>
+                    )}
+                  </th>
+            
                   <th onClick={() => handleSort("id_caja")}>
                     Caja{" "}
                     {orderBy === "id_caja" ? (
@@ -302,14 +317,17 @@ const Caja = () => {
                 {sortedData.map((item, index) => (
                   <tr key={index} className={index % 2 === 0 ? "" : "row-even"}>
                     <td>{item.tipoMovimiento}</td>
-                    <td>{item.total || item.importe}</td>
-                    <td>${item.efectivo } </td>
-                    <td>${item.transferencia } </td>
-                    <td>US${item.dolares } </td>
                     <td>{formatDate(item.fecha)}</td>
                     <td className="comentarios-columna">
                       {item.motivo || "-"}
                     </td>
+                    <td>{item.efectivo == 0 ? "-" : `$${item.efectivo}`}</td>
+                    <td>{item.transferencia == 0 ? "-" : `$${item.transferencia}`}</td>
+                    <td>{item.dolares == 0 ? "-" : `US$${item.dolares}`}</td>
+                    <td style={{ color: item.monto_pagado ? "red" : "black" }}>
+                      {item.monto_pagado ? `$${item.monto_pagado}` : "-"}
+                    </td>                   
+                    <td style={{color:'green'}}> ${item.total}</td>
                     <td>{getCajaName(item.id_caja)}</td>
                   </tr>
                 ))}

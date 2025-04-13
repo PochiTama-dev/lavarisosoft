@@ -304,7 +304,7 @@ const Totalizador = () => {
               <option value="">Todos</option>
               <option value="efectivo">Efectivo</option>
               <option value="dolares">Dólares</option>
-              <option value="transferencia">Banco</option>
+              <option value="transferencia">Transferencia</option>
             </select>
           </div>
         </div>
