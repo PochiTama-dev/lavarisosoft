@@ -12,6 +12,7 @@ import {
   actualizarLiquidacionPendiente,
 } from "../../services/liquidacionesPendientesService";
 import { guardarLiquidacion } from "../../services/liquidacionesService";
+import fetchDolarBlue from "../../services/ApiDolarService";
 
 const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
   const navigate = useNavigate();
@@ -32,6 +33,7 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
     dolares: 0,
   });
   const [porcentajePago, setPorcentajePago] = useState(50);
+  const [valorDolar, setValorDolar] = useState(0);
 
   useEffect(() => {
     const fetchCajas = async () => {
@@ -44,6 +46,14 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
   useEffect(() => {
     setCajaSeleccionada(null);
   }, [orden]);
+
+  useEffect(() => {
+    const obtenerValorDolar = async () => {
+      const dolar = await fetchDolarBlue();
+      setValorDolar(dolar || 0);
+    };
+    obtenerValorDolar();
+  }, []);
 
   if (!orden) {
     return <div className="detalle-placeholder">Seleccione una orden</div>;
@@ -90,9 +100,13 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
   };
 
   const guardarOActualizarLiquidacion = async () => {
+    const totalEnPesos = parseFloat(orden.Presupuesto?.total || 0);
+
+    const montoLiquidacion = (totalEnPesos * porcentajePago) / 100;
+
     const liquidacionData = {
       id_tecnico: orden.id_empleado,
-      total: parseFloat(orden.Presupuesto?.comision_visita || 0),
+      total: montoLiquidacion,
     };
 
     const liquidaciones = await liquidacionesPendientesPorTecnico(
@@ -103,6 +117,7 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
       const liquidacionExistente = liquidaciones[0];
       const nuevoTotal =
         parseFloat(liquidacionExistente.total) + liquidacionData.total;
+
       return await actualizarLiquidacionPendiente(liquidacionExistente.id, {
         total: nuevoTotal,
       });
@@ -128,19 +143,16 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
 
       const totalFactura = parseFloat(orden.Presupuesto?.total || 0);
 
-      // Calcular el monto basado en el porcentaje del técnico
       const porcentajeTecnico = parseFloat(
         orden.Empleado?.porcentaje_arreglo || 0
       );
       const montoCalculado = (totalFactura * porcentajeTecnico) / 100;
 
-      // Verificar si ya existe una liquidación pendiente para el técnico
       const liquidaciones = await liquidacionesPendientesPorTecnico(
         orden.id_empleado
       );
 
       if (liquidaciones && liquidaciones.length > 0) {
-        // Si existe, actualizar el total sumando el monto calculado
         const liquidacionExistente = liquidaciones[0];
         const nuevoTotal =
           parseFloat(liquidacionExistente.total) + montoCalculado;
@@ -157,7 +169,6 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
           return;
         }
       } else {
-        // Si no existe, crear una nueva liquidación pendiente
         const response = await guardarLiquidacionPendiente({
           id_tecnico: orden.id_empleado,
           total: montoCalculado,
@@ -169,7 +180,6 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
         }
       }
 
-      // Consolidar la orden sin pago al técnico
       await handleConfirmConsolidarBase(false);
 
       alert("Liquidación pendiente actualizada con éxito.");
@@ -189,11 +199,17 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
       const totalFactura = parseFloat(orden.Presupuesto?.total || 0);
 
       const sumaMetodosPago =
-        valoresPago.efectivo + valoresPago.banco + valoresPago.dolares;
+        valoresPago.efectivo +
+        valoresPago.banco +
+        valoresPago.dolares * valorDolar;
 
       if (sumaMetodosPago < totalFactura) {
         alert(
-          `La suma de los montos de los métodos de pago (${sumaMetodosPago}) es menor al total (${totalFactura}). Por favor, ajuste los valores.`
+          `La suma de los montos de los métodos de pago (${sumaMetodosPago.toFixed(
+            2
+          )} ARS) es menor al total (${totalFactura.toFixed(
+            2
+          )} ARS). Por favor, ajuste los valores.`
         );
         return;
       }
@@ -215,7 +231,6 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
         return;
       }
 
-      // Actualizar el monto de la caja y los valores de efectivo, dólares y banco
       const montoActual = parseFloat(
         cajaSeleccionada.monto.replace(",", ".") || 0
       );
@@ -228,7 +243,9 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
       const cajaActualizada = {
         monto: nuevoMonto.toFixed(2),
         efectivo: (efectivoActual + valoresPago.efectivo).toFixed(2),
-        dolares: (dolaresActual + valoresPago.dolares).toFixed(2),
+        dolares: (dolaresActual + parseFloat(valoresPago.dolares || 0)).toFixed(
+          2
+        ),
         banco: (bancoActual + valoresPago.banco).toFixed(2),
       };
 
@@ -448,12 +465,20 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
     );
 
     if (metodosSeleccionados.length === 1) {
-      setValoresPago({
+      const nuevoValoresPago = {
         efectivo: 0,
         banco: 0,
         dolares: 0,
-        [metodosSeleccionados[0]]: totalFactura,
-      });
+      };
+
+      if (metodo === "dolares" && valorDolar > 0) {
+        // Convertir el total de pesos a dólares
+        nuevoValoresPago.dolares = (totalFactura / valorDolar).toFixed(2);
+      } else {
+        nuevoValoresPago[metodosSeleccionados[0]] = totalFactura;
+      }
+
+      setValoresPago(nuevoValoresPago);
     } else {
       setValoresPago({
         efectivo: 0,
@@ -480,6 +505,10 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
       ...prev,
       [metodo]: nuevoValor,
     }));
+  };
+
+  const convertirAPesos = (valorEnDolares) => {
+    return (valorEnDolares * valorDolar).toFixed(2);
   };
 
   return (
@@ -625,6 +654,7 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
               }}
               onChange={(e) => handleValorPagoChange("dolares", e.target.value)}
             />
+            <span>(≈ ${convertirAPesos(valoresPago.dolares)} ARS)</span>
           </div>
         )}
 

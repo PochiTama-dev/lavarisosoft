@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 import Header from "../../../Header/Header";
 import { listaCajas } from "../../../../services/cajasService";
- 
+
 import { obtenerLiquidaciones } from "../../../../services/liquidacionesService";
 import Cajas from "./Cajas";
 import CajaSeleccionada from "./CajaSeleccionada";
@@ -14,6 +16,7 @@ const Totalizador = () => {
   const [caja, setCaja] = useState([]);
   const [selectedCajaId, setSelectedCajaId] = useState("");
   const [selectedDate, setSelectedDate] = useState({ year: "", month: "" });
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
   const [datosFiltrados, setDatosFiltrados] = useState([]);
   const [mesFacturado, setMesFacturado] = useState({});
   const [liquidaciones, setLiquidaciones] = useState([]);
@@ -75,6 +78,10 @@ const Totalizador = () => {
     setSelectedCajaId(cajaId);
   };
 
+  const handlePaymentMethodChange = (method) => {
+    setSelectedPaymentMethod(method);
+  };
+
   useEffect(() => {
     const updateDatosFiltrados = async () => {
       const filteredData = await Object.entries(mesFacturado).reduce(
@@ -83,13 +90,24 @@ const Totalizador = () => {
           const [year, month] = key.split("-");
           if (
             (!selectedDate.year || selectedDate.year === year) &&
-            (!selectedDate.month || Number(selectedDate.month) === Number(month))
+            (!selectedDate.month ||
+              Number(selectedDate.month) === Number(month))
           ) {
-            const facturasFiltradas = facturas.filter(
-              (factura) =>
-                !selectedCajaId ||
-                Number(factura.id_caja) === Number(selectedCajaId)
-            );
+            const facturasFiltradas = facturas.filter((factura) => {
+              const metodoPagoValido =
+                selectedPaymentMethod === "transferencia"
+                  ? Number(factura.transferencia) > 0 ||
+                    Number(factura.banco) > 0
+                  : selectedPaymentMethod
+                  ? Number(factura[selectedPaymentMethod]) > 0
+                  : true;
+
+              return (
+                (!selectedCajaId ||
+                  Number(factura.id_caja) === Number(selectedCajaId)) &&
+                metodoPagoValido
+              );
+            });
             if (facturasFiltradas.length > 0) {
               acc[key] = facturasFiltradas;
             }
@@ -101,7 +119,7 @@ const Totalizador = () => {
       setDatosFiltrados(filteredData);
     };
     updateDatosFiltrados();
-  }, [mesFacturado, selectedDate, selectedCajaId]);
+  }, [mesFacturado, selectedDate, selectedCajaId, selectedPaymentMethod]);
 
   useEffect(() => {
     const calcularTotalesPorMes = async () => {
@@ -131,10 +149,14 @@ const Totalizador = () => {
       .reduce((acc, liquidacion) => acc + Number(liquidacion.monto), 0);
 
     facturas.forEach((factura) => {
+      const metodoPagoTotal = selectedPaymentMethod
+        ? Number(factura[selectedPaymentMethod])
+        : Number(factura.total);
+
       if (factura.tipo === "compra") {
-        compraGastos += Number(factura.monto_pagado);
+        compraGastos += metodoPagoTotal;
       } else {
-        totalFacturado += Number(factura.total);
+        totalFacturado += metodoPagoTotal;
       }
       if (factura.estado === "pendiente") {
         facturasPendientes += 1;
@@ -152,18 +174,21 @@ const Totalizador = () => {
           gastoYear = d.getFullYear();
           gastoMonth = d.getMonth();
         } else {
-          const [  monthGasto, yearGasto] = fecha.split("/");
+          const [monthGasto, yearGasto] = fecha.split("/");
           gastoYear = Number(yearGasto);
           gastoMonth = Number(monthGasto);
         }
-        return Number(gastoYear) === Number(year) && Number(gastoMonth) === Number(month);
+        return (
+          Number(gastoYear) === Number(year) &&
+          Number(gastoMonth) === Number(month)
+        );
       })
       .reduce((acc, gasto) => acc + parseFloat(gasto.importe || 0), 0);
 
     const gastosOperativos = compraGastos + gastosAPI;
     const margenBruto = totalFacturado - totalPagadoTecnicos;
     const gananciaNeta = margenBruto - gastosOperativos;
-     
+
     return {
       totalFacturado,
       totalPagado: totalPagadoTecnicos,
@@ -178,7 +203,9 @@ const Totalizador = () => {
     const datosExcel = await Promise.all(
       Object.entries(datosFiltrados).map(async ([key, facturas]) => {
         const [year, month] = key.split("-");
-        const nombreMes = new Date(year, month - 1).toLocaleString("es", { month: "long" });
+        const nombreMes = new Date(year, month - 1).toLocaleString("es", {
+          month: "long",
+        });
         const totales = await calcularTotales(facturas, year, month);
         return {
           "Periodo del Mes": `${nombreMes} - ${year}`,
@@ -196,15 +223,91 @@ const Totalizador = () => {
     XLSX.writeFile(libro, "Totalizador.xlsx");
   };
 
+  const exportarPDF = async () => {
+    const doc = new jsPDF();
+    doc.text("Totalizador", 14, 20);
+
+    const datosPDF = await Promise.all(
+      Object.entries(datosFiltrados).map(async ([key, facturas]) => {
+        const [year, month] = key.split("-");
+        const nombreMes = new Date(year, month - 1).toLocaleString("es", {
+          month: "long",
+        });
+        const totales = await calcularTotales(facturas, year, month);
+        return {
+          periodo: `${nombreMes} - ${year}`,
+          totalFacturado: totales.totalFacturado?.toFixed(2) || "",
+          totalPagado: totales.totalPagado?.toFixed(2) || "",
+          margenBruto: totales.margenBruto?.toFixed(2) || "",
+          gastosOperativos: totales.gastosOperativos?.toFixed(2) || "",
+          gananciaNeta: totales.gananciaNeta?.toFixed(2) || "",
+        };
+      })
+    );
+
+    doc.autoTable({
+      startY: 30,
+      head: [
+        [
+          "Periodo del Mes",
+          "Total Facturado",
+          "Total Pagado a Técnicos",
+          "Margen Bruto",
+          "Gastos Operativos",
+          "Ganancia Neta",
+        ],
+      ],
+      body: datosPDF.map((dato) => [
+        dato.periodo,
+        `$ ${dato.totalFacturado}`,
+        `$ ${dato.totalPagado}`,
+        `$ ${dato.margenBruto}`,
+        `$ ${dato.gastosOperativos}`,
+        `$ ${dato.gananciaNeta}`,
+      ]),
+    });
+
+    doc.save("Totalizador.pdf");
+  };
+
   return (
     <div className="totalizadorContainer">
       <Header text="Totalizador" />
       <div className="totalizadorLayout">
-        <Cajas
-          cajas={caja}
-          onCajaSelect={handleCajaChange}
-          selectedCajaId={selectedCajaId}
-        />
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-around",
+          }}
+        >
+          <Cajas
+            cajas={caja}
+            onCajaSelect={handleCajaChange}
+            selectedCajaId={selectedCajaId}
+          />
+          <div className="d-flex justify-content-center align-items-center">
+            <select
+              id="paymentMethod"
+              className="form-select"
+              style={{
+                height: "38px",
+                width: "300px",
+                margin: "40px 0 30px 30px",
+              }}
+              value={selectedPaymentMethod}
+              onChange={(e) => handlePaymentMethodChange(e.target.value)}
+            >
+              <option value="" disabled>
+                Seleccione un método de pago
+              </option>
+              <option value="">Todos</option>
+              <option value="efectivo">Efectivo</option>
+              <option value="dolares">Dólares</option>
+              <option value="transferencia">Banco</option>
+            </select>
+          </div>
+        </div>
         <div className="content">
           <CajaSeleccionada onDateChange={handleDateChange} />
           <div>
@@ -231,19 +334,19 @@ const Totalizador = () => {
                 >
                   <li className="col text-center">{`${nombreMes} - ${year}`}</li>
                   <li className="col text-center">
-                   $ {totales.totalFacturado.toFixed(2)}
+                    $ {totales.totalFacturado.toFixed(2)}
                   </li>
                   <li className="col text-center">
-                   $ {totales.totalPagado.toFixed(2)}
+                    $ {totales.totalPagado.toFixed(2)}
                   </li>
                   <li className="col text-center">
-                   $ {totales.margenBruto.toFixed(2)}
+                    $ {totales.margenBruto.toFixed(2)}
                   </li>
                   <li className="col text-center">
-                   $ {totales.gastosOperativos.toFixed(2)}
+                    $ {totales.gastosOperativos.toFixed(2)}
                   </li>
                   <li className="col text-center">
-                   $ {totales.gananciaNeta.toFixed(2)}
+                    $ {totales.gananciaNeta.toFixed(2)}
                   </li>
                 </div>
               );
@@ -251,9 +354,14 @@ const Totalizador = () => {
           </div>
         </div>
       </div>
-      <button className="exportar-excel-totalizador" onClick={exportarExcel}>
-        Exportar a Excel
-      </button>
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <button className="exportar-excel-totalizador" onClick={exportarExcel}>
+          Exportar a Excel
+        </button>
+        <button className="exportar-excel-totalizador" onClick={exportarPDF}>
+          Exportar a PDF
+        </button>
+      </div>
     </div>
   );
 };
