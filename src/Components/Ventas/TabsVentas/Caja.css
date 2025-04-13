@@ -217,6 +217,28 @@ border-radius: 8px;
   background-color: #3e8e41;  
 }
 
+
+
+.cargarButton button{
+  background-color: #69688c;
+  color: white;
+  border:
+none;
+  padding:
+10px 20px;
+  text-align: center;
+  text-decoration:
+none;
+  display: inline-block;
+  font-size: 16px;
+  margin:
+4px 2px;
+  cursor: pointer;
+  border-radius:
+8px;
+ 
+}
+
 .opventas-container ::-webkit-scrollbar-track {
   background: #c8cfda;  
   border-radius: 10px;  

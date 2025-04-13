@@ -150,9 +150,11 @@ const Caja = () => {
       head: [
         [
           "Movimiento",
-          "Precio",
-          // "No. de orden",
           "Fecha",
+          "Efectivo",
+          "Transferencia",
+          "Dolares",
+          // "No. de orden",
           "Comentarios",
           "Caja",
         ],
@@ -249,18 +251,15 @@ const Caja = () => {
                       <span>▼</span>
                     )}
                   </th>
-                  {/* <th onClick={() => handleSort("id_orden")}>
-                    No. de orden{" "}
-                    {orderBy === "id_orden" ? (
-                      orderAsc ? (
-                        "▲"
-                      ) : (
-                        "▼"
-                      )
-                    ) : (
-                      <span>▼</span>
-                    )}
-                  </th> */}
+                  <th>
+                    Efectivo
+                  </th>
+                  <th>
+                    Transferencia
+                  </th>
+                  <th>
+                    Dolares
+                  </th>
                   <th onClick={() => handleSort("created_at")}>
                     Fecha{" "}
                     {orderBy === "created_at" ? (
@@ -304,7 +303,9 @@ const Caja = () => {
                   <tr key={index} className={index % 2 === 0 ? "" : "row-even"}>
                     <td>{item.tipoMovimiento}</td>
                     <td>{item.total || item.importe}</td>
-                    {/* <td>{item.nro_comprobante || "-"}</td> */}
+                    <td>${item.efectivo } </td>
+                    <td>${item.transferencia } </td>
+                    <td>US${item.dolares } </td>
                     <td>{formatDate(item.fecha)}</td>
                     <td className="comentarios-columna">
                       {item.motivo || "-"}
