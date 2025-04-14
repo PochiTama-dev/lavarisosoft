@@ -21,7 +21,7 @@ const OpVentas = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [filters, setFilters] = useState({});
 
-  const { ordenesGenerales, stockCamioneta } = useCustomContext();
+  const { listaFacturasVenta } = useCustomContext();
 
   useEffect(() => {
     itemsData();
@@ -54,13 +54,8 @@ const OpVentas = () => {
   };
 
   const itemsData = async () => {
-    if (activeTab === 0 || activeTab === 1) {
-      const orders = await ordenesGenerales();
-      setDataTab(orders);
-    } else if (activeTab === 2) {
-      const listaStockCamioneta = await stockCamioneta();
-      setDataTab(listaStockCamioneta);
-    }
+    const facturasVenta = await listaFacturasVenta();
+    setDataTab(facturasVenta);
   };
 
   const applyFilters = () => {
