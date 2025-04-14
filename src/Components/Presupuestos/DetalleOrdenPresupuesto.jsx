@@ -83,7 +83,7 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
       nro_comprobante: Number(orden.id),
       id_cliente: Number(orden.id_cliente),
       id_caja: Number(cajaSeleccionada?.id),
-      cuit_cliente: orden.Cliente?.cuil?.toString() || null,
+      cuit_cliente: orden.Cliente?.cuil?.toString(),
       descripcion: `Factura orden #${orden.id}`,
       importe: totalNum,
       iva_alicuota: 0.0,
