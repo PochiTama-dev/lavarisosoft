@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { array } from 'prop-types';
 import eye from '../../../../assets/eye.svg';
 import jsPDF from 'jspdf';
+import logo from '../../../../assets/logo-service.png';
 const PorTecnico = ({ data }) => {
   const [orderBy, setOrderBy] = useState(null);
   const [orderAsc, setOrderAsc] = useState(true);
@@ -56,19 +57,42 @@ const PorTecnico = ({ data }) => {
   const handleExportToPDF = () => {
     const doc = new jsPDF();
 
-    // Título del remito
-    doc.setFontSize(18);
-    doc.text(`Remito Ventas y Servicios No.#${remito.numero_orden}`, 10, 20);
+    let posY = 10;
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    if (logo) {
+      doc.addImage(logo, 'PNG', 40, posY, 40, 40);
+    }
+    // Información de la empresa a la derecha de la imagen, en un bloque de ancho 80%
+    const companyBlockWidth = pageWidth * 0.8;
+    const companyX = pageWidth - companyBlockWidth; // posición X del bloque
+
+    doc.setFontSize(14);
+    doc.text("Juan Garcia Martinez 65 local 3", companyX + companyBlockWidth / 2, posY + 10, { align: "center" });
+    doc.text("CUIL/CUIT: 30-71794576-6", companyX + companyBlockWidth / 2, posY + 20, { align: "center" });
+    doc.text("www.gruposervice.ar", companyX + companyBlockWidth / 2, posY + 30, { align: "center" });
+    doc.text("TEL: 351-7061881", companyX + companyBlockWidth / 2, posY + 40, { align: "center" });
+
+    posY += 50;
+    doc.setDrawColor(142, 163, 191);
+    doc.setLineWidth(0.5);
+    doc.line(10, posY, pageWidth - 10, posY);
+    posY += 10;
+
+// Título del remito
+    doc.setFontSize(16);
+    doc.text(`Remito Ventas y Servicios No.#${remito.numero_orden}`, 10, 80); // Y + 60
 
     // Detalles del remito
+    doc.setFontSize(14);
+    doc.text(`Fecha: ${remito.fecha}`, 150, 80); // Y + 60
     doc.setFontSize(12);
-    doc.text(`Fecha: ${remito.fecha}`, 90, 40);
-    doc.text(`Técnico: ${remito.nombreEmpleado}`, 10, 50);
-    doc.text(`Legajo: ${remito.legajo}`, 60, 50);
-    doc.text(`Cliente: ${remito.nombreCliente}`, 10, 60);
-    doc.text(`CUIL: ${remito.cuil}`, 60, 60);
-    doc.text(`Monto: $${remito.monto}`, 10, 70);
-    doc.text(`Medio de pago: ${remito.medio_pago}`, 60, 70);
+    doc.text(`Técnico: ${remito.nombreEmpleado}`, 10, 110); // Y + 60
+    doc.text(`Legajo: ${remito.legajo}`, 60, 110); // Y + 60
+    doc.text(`Cliente: ${remito.nombreCliente}`, 10, 120); // Y + 60
+    doc.text(`CUIL: ${remito.cuil}`, 60, 120); // Y + 60
+    doc.text(`Monto: $${remito.monto}`, 10, 130); // Y + 60
+    doc.text(`Medio de pago: ${remito.medio_pago}`, 60, 130); // Y + 60
     // Generar el PDF como un blob
     const pdfBlob = doc.output('blob');
 
