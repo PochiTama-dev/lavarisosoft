@@ -36,10 +36,10 @@ const Liquidacion = ({ tecnico, totalLiquidacion, setModal }) => {
   const handleLiquidate = async () => {
     const total = (parseFloat(efectivo) || 0) + (parseFloat(banco) || 0) + (parseFloat(dolares) || 0) * dolarBlueRate;
     if (total > totalLiquidacion) {
-      alert("El monto total no puede ser mayor al monto a liquidar.");
+      alert('El monto total no puede ser mayor al monto a liquidar.');
       return;
     }
-    if (!window.confirm("Seguro que desea realizar esta liquidacion")) return;
+    if (!window.confirm('Seguro que desea realizar esta liquidacion')) return;
     try {
       const fecha = new Date().toISOString();
       const response = await guardarLiquidacion({
@@ -87,14 +87,12 @@ const Liquidacion = ({ tecnico, totalLiquidacion, setModal }) => {
       {!newModal && (
         <>
           <div className='d-flex justify-content-around' style={{ position: 'relative' }}>
-            <h1 
-              className='pointer' 
-              onClick={() => setModal(false)}
-              style={{ position: 'absolute', top: '-40px', right: '-20px' }}
-            >
+            <h1 className='pointer' onClick={() => setModal(false)} style={{ position: 'absolute', top: '-40px', right: '-20px' }}>
               x
             </h1>
-            <h3>Liquidación {tecnico.nombre} {tecnico.apellido}</h3>
+            <h3>
+              Liquidación {tecnico.nombre} {tecnico.apellido}
+            </h3>
           </div>
           <div className='liq-table d-flex justify-content-evenly'>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -133,8 +131,8 @@ const Liquidacion = ({ tecnico, totalLiquidacion, setModal }) => {
                 >
                   <option value=''>Seleccione una caja</option>
                   {cajas.map((caja) => {
-/*                     const disponible = (parseFloat(caja.efectivo || 0) + parseFloat(caja.banco || 0)) || 0;
- */                    return (
+                    /*                     const disponible = (parseFloat(caja.efectivo || 0) + parseFloat(caja.banco || 0)) || 0;
+                     */ return (
                       <option key={caja.id} value={caja.id}>
                         {caja.denominacion} {/* (Disponible: {disponible}) */}
                       </option>
@@ -145,45 +143,30 @@ const Liquidacion = ({ tecnico, totalLiquidacion, setModal }) => {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <label>
                   <h4>Efectivo:</h4>
-                    Disponible: ${parseFloat(cajas.find((caja) => caja.id === parseInt(selectedCaja, 10))?.efectivo || 0)}
+                  Disponible: ${parseFloat(cajas.find((caja) => caja.id === parseInt(selectedCaja, 10))?.efectivo || 0)}
                 </label>
-            
+
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                  <input
-                    type='number' 
-                    value={efectivo}
-                    onChange={(e) => setEfectivo(parseFloat(e.target.value) || 0)}
-                    style={{ height: '40px', fontSize: '20px' }}
-                  />
+                  <input type='number' value={efectivo} onChange={(e) => setEfectivo(parseFloat(e.target.value) || 0)} style={{ height: '40px', fontSize: '20px' }} />
                 </div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <label>
                   <h4>Transferencia:</h4>
-                    Disponible: ${parseFloat(cajas.find((caja) => caja.id === parseInt(selectedCaja, 10))?.banco || 0)}
+                  Disponible: ${parseFloat(cajas.find((caja) => caja.id === parseInt(selectedCaja, 10))?.banco || 0)}
                 </label>
-                 
+
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                  <input
-                    type='number'
-                    value={banco}
-                    onChange={(e) => setBanco(parseFloat(e.target.value) || 0)}
-                    style={{ height: '40px', fontSize: '20px' }}
-                  />
+                  <input type='number' value={banco} onChange={(e) => setBanco(parseFloat(e.target.value) || 0)} style={{ height: '40px', fontSize: '20px' }} />
                 </div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <label>
                   <h4>Dólares:</h4>
-                    Disponible: ${parseFloat(cajas.find((caja) => caja.id === parseInt(selectedCaja, 10))?.dolares || 0)}
+                  Disponible: ${parseFloat(cajas.find((caja) => caja.id === parseInt(selectedCaja, 10))?.dolares || 0)}
                 </label>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                  <input
-                    type='number'
-                    value={dolares}
-                    onChange={(e) => setDolares(parseFloat(e.target.value) || 0)}
-                    style={{ height: '40px', fontSize: '20px' }}
-                  />
+                  <input type='number' value={dolares} onChange={(e) => setDolares(parseFloat(e.target.value) || 0)} style={{ height: '40px', fontSize: '20px' }} />
                 </div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -201,12 +184,10 @@ const Liquidacion = ({ tecnico, totalLiquidacion, setModal }) => {
                       padding: '0 10px',
                     }}
                   >
-                    $ {(parseFloat(efectivo || 0) + parseFloat(banco || 0) + (parseFloat(dolares || 0) * dolarBlueRate)).toFixed(2)}
+                    $ {(parseFloat(efectivo || 0) + parseFloat(banco || 0) + parseFloat(dolares || 0) * dolarBlueRate).toFixed(2)}
                   </span>
-                  {parseFloat(efectivo || 0) + parseFloat(banco || 0) + (parseFloat(dolares || 0) * dolarBlueRate) > totalLiquidacion && (
-                    <span style={{ color: 'red', fontSize: '14px', marginTop: '5px' }}>
-                      El monto seleccionado es mayor al monto a liquidar.
-                    </span>
+                  {parseFloat(efectivo || 0) + parseFloat(banco || 0) + parseFloat(dolares || 0) * dolarBlueRate > totalLiquidacion && (
+                    <span style={{ color: 'red', fontSize: '14px', marginTop: '5px' }}>El monto seleccionado es mayor al monto a liquidar.</span>
                   )}
                 </div>
               </div>
@@ -214,16 +195,11 @@ const Liquidacion = ({ tecnico, totalLiquidacion, setModal }) => {
                 <label>
                   <h4>Código de Imputación:</h4>
                 </label>
-                <input
-                  type='text'
-                  value={codigoImputacion}
-                  onChange={(e) => setCodigoImputacion(e.target.value)}
-                  style={{ height: '40px', fontSize: '20px' }}
-                />
+                <input type='text' value={codigoImputacion} onChange={(e) => setCodigoImputacion(e.target.value)} style={{ height: '40px', fontSize: '20px' }} />
               </div>
             </div>
           </div>
-          <div className='d-flex  mt-3' style={{ flexDirection: 'row', justifyContent:'center' }}>
+          <div className='d-flex  mt-3' style={{ flexDirection: 'row', justifyContent: 'center' }}>
             <button onClick={handleLiquidate} disabled={!selectedCaja}>
               Liquidar
             </button>
@@ -234,7 +210,7 @@ const Liquidacion = ({ tecnico, totalLiquidacion, setModal }) => {
         <div>
           <RemitoLiquidacion tecnico={tecnico} setModal={setNewModal} liqParcial={''} selectedCaja={selectedCaja} cajas={cajas} />
         </div>
-      )}  
+      )}
     </div>
   );
 };

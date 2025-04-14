@@ -106,6 +106,26 @@ export const Provider = ({ children }) => {
     }
   };
 
+  const editEmpleado = async (id, empleado) => {
+    try {
+      const data = await fetch(`https://lv-back.online/empleados/modificar/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(empleado),
+      });
+      const result = await data.json();
+      if (result) {
+        console.log('Empleado editado con exito!!!');
+        return true;
+      } else {
+        console.log('Se produjo un error, el empleado no pudo ser editado...');
+        return false;
+      }
+    } catch (error) {
+      console.error('Error al editar el empleado.', error);
+    }
+  };
+
   //CLIENTES
   const listaClientes = async () => {
     try {
@@ -442,6 +462,7 @@ export const Provider = ({ children }) => {
         getEmpleadosLista,
         getEmpleadosListaCompleta,
         editPorcentajeEmpleado,
+        editEmpleado,
         //clientes
         getClienteById,
         listaClientes,

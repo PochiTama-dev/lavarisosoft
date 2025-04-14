@@ -125,7 +125,7 @@ const Clientes = () => {
                 {/* Primera fila */}
                 <div className='col-md-6 mb-3'>
                   <label>N° Cliente:</label>
-                  <input type='text' name='numero_cliente' className='form-control' value={editClient?.numero_cliente} onChange={handleInputChange} />
+                  <input type='text' name='numero_cliente' className='form-control' value={editClient?.numero_cliente} onChange={handleInputChange} disabled />
                 </div>
                 <div className='col-md-6 mb-3'>
                   <label>Nombre:</label>

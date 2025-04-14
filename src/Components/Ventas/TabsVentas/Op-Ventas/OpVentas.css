@@ -61,3 +61,44 @@
   width: 50%; 
   margin: 0; 
 }
+
+.remito-modal{
+  position:absolute;
+  top:20%;
+  left:30%;
+  background-color: white;
+  padding: 30px;
+  border-radius: 12px;
+  width:50%;  
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  overflow-y: hidden;
+}
+.remito-content{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.remito-content h2{
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+}
+.remito-content h3{
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+}
+.remito-content button{
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  background-color: #69688c;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
