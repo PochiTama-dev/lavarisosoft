@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { array } from 'prop-types';
+import { useState } from "react";
+import { array } from "prop-types";
 const PorTecnico = ({ data }) => {
   const [orderBy, setOrderBy] = useState(null);
   const [orderAsc, setOrderAsc] = useState(true);
@@ -16,53 +16,136 @@ const PorTecnico = ({ data }) => {
   const sortedData =
     data &&
     [...data].sort((a, b) => {
-      if (orderBy === 'fecha') {
+      if (orderBy === "fecha") {
         const dateA = new Date(a.fecha);
         const dateB = new Date(b.fecha);
         return orderAsc ? dateA - dateB : dateB - dateA;
       } else {
         const valA = a[orderBy];
         const valB = b[orderBy];
-        return orderAsc ? (valA < valB ? -1 : valA > valB ? 1 : 0) : valA > valB ? -1 : valA < valB ? 1 : 0;
+        return orderAsc
+          ? valA < valB
+            ? -1
+            : valA > valB
+            ? 1
+            : 0
+          : valA > valB
+          ? -1
+          : valA < valB
+          ? 1
+          : 0;
       }
     });
 
   const mediosPagos = (num) => {
-    if (num === 1) return 'Echeq';
-    else if (num === 2) return 'Efectivo en dólares';
-    else if (num === 3) return 'Efectivo en pesos';
-    else if (num === 4) return 'Transferencia en dólares';
-    else if (num === 5) return 'Transferencia en pesos';
+    if (num === 1) return "Echeq";
+    else if (num === 2) return "Efectivo en dólares";
+    else if (num === 3) return "Efectivo en pesos";
+    else if (num === 4) return "Transferencia en dólares";
+    else if (num === 5) return "Transferencia en pesos";
   };
 
   return (
-    <div className='opventas-tab-container'>
+    <div className="opventas-tab-container">
       <div>
-        <div className='opventas-excel'>
-          <div className='opventas-excel-wrapper'>
-            <table className='table'>
+        <div className="opventas-excel">
+          <div className="opventas-excel-wrapper">
+            <table className="table">
               <thead>
                 <tr>
-                  <th onClick={() => handleSort('fecha')}>Fecha {orderBy === 'fecha' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
-                  <th onClick={() => handleSort('tecnico')}>Legajo-Técnico {orderBy === 'tecnico' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
-{/*                   <th onClick={() => handleSort('ocupacion')}>Ocupación {orderBy === 'ocupacion' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
- */}                  <th onClick={() => handleSort('numeroOrden')}>N° de orden {orderBy === 'numeroOrden' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
-{/*                   <th onClick={() => handleSort('operacion')}>Operación {orderBy === 'operacion' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
- */}                  <th onClick={() => handleSort('cliente')}>Numero-Cliente {orderBy === 'cliente' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
-                  <th onClick={() => handleSort('monto')}>Monto {orderBy === 'monto' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
-                  <th onClick={() => handleSort('medioPago')}>Medio de pago {orderBy === 'medioPago' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
+                  <th onClick={() => handleSort("fecha")}>
+                    Fecha{" "}
+                    {orderBy === "fecha" ? (
+                      orderAsc ? (
+                        "▲"
+                      ) : (
+                        "▼"
+                      )
+                    ) : (
+                      <span>▼</span>
+                    )}
+                  </th>
+                  <th onClick={() => handleSort("tecnico")}>
+                    Legajo-Técnico{" "}
+                    {orderBy === "tecnico" ? (
+                      orderAsc ? (
+                        "▲"
+                      ) : (
+                        "▼"
+                      )
+                    ) : (
+                      <span>▼</span>
+                    )}
+                  </th>
+                  {/*                   <th onClick={() => handleSort('ocupacion')}>Ocupación {orderBy === 'ocupacion' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
+                   */}{" "}
+                  <th onClick={() => handleSort("numeroOrden")}>
+                    N° de orden{" "}
+                    {orderBy === "numeroOrden" ? (
+                      orderAsc ? (
+                        "▲"
+                      ) : (
+                        "▼"
+                      )
+                    ) : (
+                      <span>▼</span>
+                    )}
+                  </th>
+                  {/*                   <th onClick={() => handleSort('operacion')}>Operación {orderBy === 'operacion' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
+                   */}{" "}
+                  <th onClick={() => handleSort("cliente")}>
+                    Numero-Cliente{" "}
+                    {orderBy === "cliente" ? (
+                      orderAsc ? (
+                        "▲"
+                      ) : (
+                        "▼"
+                      )
+                    ) : (
+                      <span>▼</span>
+                    )}
+                  </th>
+                  <th onClick={() => handleSort("monto")}>
+                    Monto{" "}
+                    {orderBy === "monto" ? (
+                      orderAsc ? (
+                        "▲"
+                      ) : (
+                        "▼"
+                      )
+                    ) : (
+                      <span>▼</span>
+                    )}
+                  </th>
+                  <th onClick={() => handleSort("medioPago")}>
+                    Medio de pago{" "}
+                    {orderBy === "medioPago" ? (
+                      orderAsc ? (
+                        "▲"
+                      ) : (
+                        "▼"
+                      )
+                    ) : (
+                      <span>▼</span>
+                    )}
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {sortedData &&
                   sortedData.map((item, index) => (
-                    <tr key={index} className={index % 2 === 0 ? '' : 'row-even'}>
+                    <tr
+                      key={index}
+                      className={index % 2 === 0 ? "" : "row-even"}
+                    >
                       <td>{new Date(item.created_at).toLocaleDateString()}</td>
                       <td>{item.Empleado?.legajo}</td>
-{/*                       <td>{'Domicilio/Taller'}</td>
- */}                      <td>{item.numero_orden}</td>
-{/*                       <td>{item.motivo}</td>
- */}                      <td>{item.Cliente?.numero_cliente}</td>
+                      {/*                       <td>{'Domicilio/Taller'}</td>
+                       */}{" "}
+                      <td>{item.numero_orden}</td>
+                      {/*                       <td>{item.motivo}</td>
+                       */}{" "}
+                      <td>{item.Cliente?.numero_cliente}</td>
                       <td>$ {item.Presupuesto?.total}</td>
                       <td>{mediosPagos(item.Presupuesto?.id_medio_de_pago)}</td>
                     </tr>
@@ -70,7 +153,7 @@ const PorTecnico = ({ data }) => {
               </tbody>
             </table>
           </div>
-   {/*        <div className='opventas-export-button-container'>
+          {/*        <div className='opventas-export-button-container'>
             <button className='opventas-export-button' type='submit'>
               <svg width='34' height='41' viewBox='0 0 34 41' fill='none' xmlns='http://www.w3.org/2000/svg'>
                 <path
