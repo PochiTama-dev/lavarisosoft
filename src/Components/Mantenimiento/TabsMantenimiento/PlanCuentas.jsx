@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import {
   listaPlanCuentas,
   guardarPlanCuentas,
@@ -10,13 +10,20 @@ import "jspdf-autotable";
 import expandIcon from "../../../assets/expand_icon.png";
 import collapseIcon from "../../../assets/collapse_icon.png";
 import { useCustomContext } from "../../../hooks/context";
+import Table from "react-bootstrap/Table";
 import "./PlanCuentas.css";
+import { listaFacturasVentas } from "../../../services/facturaVentasService";
+import { listaFacturasCompras } from "../../../services/facturaComprasService";
+import { obtenerLiquidaciones } from "../../../services/liquidacionesService";
+import { listaCajas } from "../../../services/cajasService";
 
 const PlanCuentas = () => {
   const { handleNavigate } = useCustomContext();
   const [data, setData] = useState([]);
   const [visibleNodes, setVisibleNodes] = useState({});
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalAgregarVisible, setModalAgregarVisible] = useState(false);
+  const [modalOperacionesVisible, setModalOperacionesVisible] = useState(false);
+  const [modalEditarVisible, setModalEditarVisible] = useState(false);
   const [newChildName, setNewChildName] = useState("");
   const [newChildCode, setNewChildCode] = useState("");
   const [parentForNewChild, setParentForNewChild] = useState(null);
@@ -25,6 +32,12 @@ const PlanCuentas = () => {
   const [allExpanded, setAllExpanded] = useState(false);
   const [isOrdering, setIsOrdering] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [facturasVenta, setFacturasVenta] = useState([]);
+  const [facturasCompra, setFacturasCompra] = useState([]);
+  const [liquidaciones, setLiquidaciones] = useState([]);
+  const [cajas, setCajas] = useState([]);
+  const [codigoImputacion, setCodigoImputacion] = useState("");
+  const [operacionesFiltradas, setOperacionesFiltradas] = useState([]);
 
   const fetchData = async () => {
     try {
@@ -36,6 +49,26 @@ const PlanCuentas = () => {
   };
 
   useEffect(() => {
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const ventas = await listaFacturasVentas();
+        const compras = await listaFacturasCompras();
+        const liquidacionesData = await obtenerLiquidaciones();
+        const cajasData = await listaCajas();
+
+        setFacturasVenta(ventas || []);
+        setFacturasCompra(compras || []);
+        setLiquidaciones(liquidacionesData || []);
+        setCajas(cajasData || []);
+      } catch (error) {
+        console.error("Error al cargar los datos:", error);
+      }
+    };
+
     fetchData();
   }, []);
 
@@ -75,7 +108,7 @@ const PlanCuentas = () => {
 
       await guardarPlanCuentas(newNode);
       alert("Nuevo plan de cuentas agregado con éxito.");
-      setModalVisible(false);
+      setModalAgregarVisible(false);
       setNewChildName("");
       setNewChildCode("");
       await fetchData();
@@ -95,6 +128,7 @@ const PlanCuentas = () => {
       await modificarPlanCuentas(editNode.id, { nombre: editNodeName });
       setEditNode(null);
       setEditNodeName("");
+      setModalEditarVisible(false);
       await fetchData();
     } catch (error) {
       console.error("Error al modificar el nodo:", error);
@@ -216,6 +250,43 @@ const PlanCuentas = () => {
     }
   };
 
+  const buscarOperaciones = () => {
+    console.log("Función buscarOperaciones llamada");
+    if (!codigoImputacion.trim()) {
+      alert("Por favor, ingrese un código de imputación válido.");
+      return;
+    }
+
+    const facturasVentaFiltradas = facturasVenta.filter(
+      (factura) => factura.codigo_imputacion === codigoImputacion
+    );
+    const facturasCompraFiltradas = facturasCompra.filter(
+      (factura) => factura.codigo_imputacion === codigoImputacion
+    );
+    const cajasFiltradas = cajas.filter(
+      (caja) => caja.codigo_imputacion === codigoImputacion
+    );
+    const liquidacionesFiltradas = liquidaciones.filter(
+      (liquidacion) => liquidacion.codigo_imputacion === codigoImputacion
+    );
+
+    const filtradas = [
+      ...facturasVentaFiltradas,
+      ...facturasCompraFiltradas,
+      ...cajasFiltradas,
+      ...liquidacionesFiltradas,
+    ];
+
+    console.log("Operaciones filtradas:", filtradas);
+
+    setOperacionesFiltradas(filtradas);
+    setModalOperacionesVisible(true);
+  };
+
+  const cerrarModal = () => {
+    setModalOperacionesVisible(false);
+  };
+
   const renderTree = (nodes, level = 0) => {
     return (
       <ul
@@ -245,7 +316,7 @@ const PlanCuentas = () => {
               <button
                 onClick={() => {
                   setParentForNewChild(node.id);
-                  setModalVisible(true);
+                  setModalAgregarVisible(true);
                 }}
                 style={{
                   backgroundColor: "transparent",
@@ -268,6 +339,7 @@ const PlanCuentas = () => {
                 onClick={() => {
                   setEditNode(node);
                   setEditNodeName(node.nombre);
+                  setModalEditarVisible(true);
                 }}
                 style={{
                   backgroundColor: "transparent",
@@ -377,6 +449,34 @@ const PlanCuentas = () => {
         </button>
       </div>
 
+      <div style={{ marginTop: "20px" }}>
+        <input
+          type="text"
+          placeholder="Ingrese código de imputación"
+          value={codigoImputacion}
+          onChange={(e) => setCodigoImputacion(e.target.value)}
+          style={{
+            padding: "10px",
+            marginRight: "10px",
+            borderRadius: "5px",
+            border: "1px solid #ccc",
+          }}
+        />
+        <button
+          onClick={buscarOperaciones}
+          style={{
+            backgroundColor: "#69688c",
+            color: "white",
+            padding: "10px 20px",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          Ver Operaciones por Código
+        </button>
+      </div>
+
       {loading && <p>Cargando, por favor espere...</p>}
 
       {data.length > 0 ? (
@@ -388,7 +488,7 @@ const PlanCuentas = () => {
       <button
         onClick={() => {
           setParentForNewChild(null);
-          setModalVisible(true);
+          setModalAgregarVisible(true);
         }}
         style={{
           backgroundColor: "#69688c",
@@ -402,7 +502,7 @@ const PlanCuentas = () => {
       >
         Agregar Plan de Cuentas Principal
       </button>
-      {modalVisible && (
+      {modalAgregarVisible && (
         <div
           style={{
             position: "fixed",
@@ -463,7 +563,7 @@ const PlanCuentas = () => {
               Guardar
             </button>
             <button
-              onClick={() => setModalVisible(false)}
+              onClick={() => setModalAgregarVisible(false)}
               style={{
                 backgroundColor: "gray",
                 color: "white",
@@ -478,21 +578,82 @@ const PlanCuentas = () => {
           </div>
         </div>
       )}
-      {modalVisible && (
+      {modalOperacionesVisible && (
         <div
           style={{
             position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(0, 0, 0, 0.3)",
-            zIndex: 999,
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            backgroundColor: "white",
+            border: "1px solid #ccc",
+            borderRadius: "5px",
+            padding: "20px",
+            zIndex: 1000,
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+            width: "80%",
           }}
-          onClick={() => setModalVisible(false)}
-        ></div>
+        >
+          <h3>Operaciones para el Código: {codigoImputacion}</h3>
+          {operacionesFiltradas.length > 0 ? (
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <thead>
+                <tr>
+                  <th style={{ border: "1px solid #ddd", padding: "8px" }}>
+                    ID
+                  </th>
+                  <th style={{ border: "1px solid #ddd", padding: "8px" }}>
+                    Descripción
+                  </th>
+                  <th style={{ border: "1px solid #ddd", padding: "8px" }}>
+                    Monto
+                  </th>
+                  <th style={{ border: "1px solid #ddd", padding: "8px" }}>
+                    Fecha
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {operacionesFiltradas.map((operacion, index) => (
+                  <tr key={index}>
+                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                      {operacion.id || "N/A"}
+                    </td>
+                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                      {operacion.descripcion || "Sin descripción"}
+                    </td>
+                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                      {operacion.monto || operacion.total || "N/A"}
+                    </td>
+                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                      {operacion.created_at
+                        ? new Date(operacion.created_at).toLocaleDateString()
+                        : "N/A"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>No se encontraron operaciones para el código ingresado.</p>
+          )}
+          <button
+            onClick={() => setModalOperacionesVisible(false)}
+            style={{
+              backgroundColor: "gray",
+              color: "white",
+              padding: "10px 20px",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer",
+              marginTop: "20px",
+            }}
+          >
+            Cerrar
+          </button>
+        </div>
       )}
-      {editNode && (
+      {modalEditarVisible && (
         <div
           style={{
             position: "fixed",
@@ -537,7 +698,7 @@ const PlanCuentas = () => {
               Guardar
             </button>
             <button
-              onClick={() => setEditNode(null)}
+              onClick={() => setModalEditarVisible(false)}
               style={{
                 backgroundColor: "gray",
                 color: "white",
