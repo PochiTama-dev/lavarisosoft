@@ -170,7 +170,7 @@ const LibroIVA = () => {
 
                   <th>Importe neto gravado</th>
                   <th>Alicuota IVA</th>
-                  <th>IVA crédito fiscal</th>
+         {/*          <th>IVA crédito fiscal</th> */}
                   <th>Total</th>
                 </tr>
               </thead>
@@ -193,7 +193,7 @@ const LibroIVA = () => {
 
                     <td>${item.importe}</td>
                     <td>${item.iva_alicuota}</td>
-                    <td>${item.iva_cred_fiscal}</td>
+         {/*            <td>${item.iva_cred_fiscal}</td> */}
                     <td style={{color:'green'}} >${item.total}</td>
                   </tr>
                 ))}
@@ -219,7 +219,7 @@ const LibroIVA = () => {
 
                   <th>Importe neto gravado</th>
                   <th>Alicuota IVA</th>
-                  <th>IVA crédito fiscal</th>
+       {/*            <th>IVA crédito fiscal</th> */}
                   <th>Total</th>
                 </tr>
               </thead>
@@ -241,8 +241,8 @@ const LibroIVA = () => {
 
                     <td>${item.importe}</td>
                     <td>${item.iva_alicuota}</td>
-                    <td>${(item.importe * (item.iva_alicuota / 100) ).toFixed(2)}</td>
-                    <td style={{color:'green'}}>${item.total}</td>
+                {/*     <td>${(item.importe * (item.iva_alicuota / 100) ).toFixed(2)}</td> */}
+                    <td style={{color:'green'}}>${item.importe}</td>
                   </tr>
                 ))}
               </tbody>

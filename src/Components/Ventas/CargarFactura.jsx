@@ -236,10 +236,10 @@ const CargarFactura = () => {
             <h3>IVA alicuota:</h3>
             <input type='text' name='iva_alicuota' value={factura.iva_alicuota} readOnly />
           </div>
-          <div>
+    {/*       <div>
             <h3>IVA credito fiscal:</h3>
             <input type='text' name='iva_cred_fiscal' value={factura.iva_cred_fiscal} readOnly />
-          </div>
+          </div> */}
           <div>
             <h3>Caja:</h3>
             <select name='id_caja' value={factura.id_caja} onChange={handleChange} required>

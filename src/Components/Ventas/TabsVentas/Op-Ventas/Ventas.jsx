@@ -51,7 +51,7 @@ const Ventas = () => {
         }
       })
     : data;
-
+console.log(sortedData);
   const handleRemito = (item) => {
     console.log(item);
     const remito = {
@@ -151,8 +151,8 @@ const Ventas = () => {
       doc.setFontSize(14);
       doc.text(`Total: $${remito.total || '0.00'}`, 10, posY);
       doc.setFontSize(12);
-      doc.text(`IVA alícuota: ${remito.iva_alicuota || '0.00'}`, pageWidth / 3, posY);
-      doc.text(`IVA débito fiscal: ${remito.iva_deb_fiscal || '0.00'}`, (2 * pageWidth) / 3, posY);
+/*       doc.text(`IVA alícuota: ${remito.iva_alicuota || '0.00'}`, pageWidth / 3, posY);
+      doc.text(`IVA débito fiscal: ${remito.iva_deb_fiscal || '0.00'}`, (2 * pageWidth) / 3, posY); */
       posY += 20;
   
       // Generar el PDF como un blob
@@ -173,8 +173,12 @@ const Ventas = () => {
               <thead>
                 <tr>
                   <th onClick={() => handleSort('created_at')}>Fecha {orderBy === 'created_at' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
-                  <th onClick={() => handleSort('nro_comprobante')}>N° de orden {orderBy === 'nro_comprobante' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
+                  <th onClick={() => handleSort('codigo_imputacion')}>Cod.Imp. {orderBy === 'codigo_imputacion' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
+                  <th onClick={() => handleSort('descripcion')}>Descripcion {orderBy === 'descripcion' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
+
                   <th onClick={() => handleSort('Cliente.cuil')}>CUIL-Cliente {orderBy === 'Cliente.cuil' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
+                  <th onClick={() => handleSort('id_tecnico')}>Técnico {orderBy === 'Cliente.cuil' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
+
                   <th onClick={() => handleSort('efectivo')}>Efectivo {orderBy === 'efectivo' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>{' '}
                   <th onClick={() => handleSort('dolares')}>Dólares {orderBy === 'dolares' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
                   <th onClick={() => handleSort('transferencia')}>Transferencia {orderBy === 'transferencia' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
@@ -187,11 +191,13 @@ const Ventas = () => {
                     sortedData.map((item, index) => (
                       <tr key={index} className={index % 2 === 0 ? '' : 'row-even'}>
                         <td>{new Date(item.created_at).toLocaleDateString()}</td>
-                        <td>{item.nro_comprobante}</td>
-                        <td>{item.cuit_cliente}</td>
-                        <td>{item.efectivo}</td>
-                        <td>{item.dolares}</td>
-                        <td>{item.transferencia}</td>
+                        <td>{item.codigo_imputacion}</td>
+                        <td>{item.descripcion}</td>
+                        <td>{item.cuit_cliente || '-'}</td>
+                                       <td>{item.id_tecnico || '-'}</td>
+                        <td>{item.efectivo > 0 ? `$ ${item.efectivo}` : '-'}</td>
+                        <td>{item.dolares > 0 ? `US$ ${item.dolares}` : '-'}</td>
+                        <td>$ {item.transferencia || '-'}</td>
                         <td>$ {item.total}</td>
                         <img className='pointer' style={{ width: '46px' }} src={eye} alt='Ver remito' onClick={() => handleRemito(item)} />
                       </tr>

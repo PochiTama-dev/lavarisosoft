@@ -71,9 +71,7 @@ const CargarFacturaVenta = () => {
         [name]: name === 'estado_pago' ? Number(value) : name === 'gastos_operativos' ? checked : value,
       };
 
-      if (name === 'codigo_imputacion') {
-        updatedFactura.nro_comprobante = value; // Set nro_comprobante to codigo_imputacion
-      }
+ 
 
       if (name === 'importe') {
         const importe = Number(value);
@@ -339,18 +337,32 @@ const CargarFacturaVenta = () => {
   
           <div>
             <h3>Monto Efectivo:</h3>
+  {/*           <label>
+              <input
+                type='checkbox'
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setFactura((prevFactura) => ({
+                      ...prevFactura,
+                      efectivo: parseFloat(factura.importe || 0),
+                    }));
+                  }
+                }}
+              />
+              Pago total
+            </label> */}
             <input
               type='text'
               placeholder='0'
               name='efectivo'
               value={factura.efectivo}
               onChange={(e) => {
-                const value = parseFloat(e.target.value) || 0;
+                const value = e.target.value === '' ? 0 : parseFloat(e.target.value);
                 const disponible = parseFloat(cajas.find((c) => c.id === Number(factura.id_caja))?.efectivo || 0);
                 if (value > disponible) {
                   setFactura((prevFactura) => ({ ...prevFactura, efectivo: disponible }));
                 } else {
-                  handleChange(e);
+                  handleChange({ target: { name: 'efectivo', value } });
                 }
               }}
             />
@@ -359,19 +371,33 @@ const CargarFacturaVenta = () => {
             </span>
           </div>
           <div>
-            <h3>Monto Dolares:</h3>
+            <h3>Monto Dólares:</h3>
+    {/*         <label>
+              <input
+                type='checkbox'
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setFactura((prevFactura) => ({
+                      ...prevFactura,
+                      dolares: parseFloat(factura.importe || 0),
+                    }));
+                  }
+                }}
+              />
+              Pago total
+            </label> */}
             <input
               type='text'
               placeholder='0'
               name='dolares'
               value={factura.dolares}
               onChange={(e) => {
-                const value = parseFloat(e.target.value) || 0;
+                const value = e.target.value === '' ? 0 : parseFloat(e.target.value);
                 const disponible = parseFloat(cajas.find((c) => c.id === Number(factura.id_caja))?.dolares || 0);
                 if (value > disponible) {
                   setFactura((prevFactura) => ({ ...prevFactura, dolares: disponible }));
                 } else {
-                  handleChange(e);
+                  handleChange({ target: { name: 'dolares', value } });
                 }
               }}
             />
@@ -381,18 +407,32 @@ const CargarFacturaVenta = () => {
           </div>
           <div>
             <h3>Monto Transferencia:</h3>
+   {/*          <label>
+              <input
+                type='checkbox'
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setFactura((prevFactura) => ({
+                      ...prevFactura,
+                      transferencia: parseFloat(factura.importe || 0),
+                    }));
+                  }
+                }}
+              />
+              Pago total
+            </label> */}
             <input
               type='text'
               placeholder='0'
               name='transferencia'
               value={factura.transferencia}
               onChange={(e) => {
-                const value = parseFloat(e.target.value) || 0;
+                const value = e.target.value === '' ? 0 : parseFloat(e.target.value);
                 const disponible = parseFloat(cajas.find((c) => c.id === Number(factura.id_caja))?.banco || 0);
                 if (value > disponible) {
                   setFactura((prevFactura) => ({ ...prevFactura, transferencia: disponible }));
                 } else {
-                  handleChange(e);
+                  handleChange({ target: { name: 'transferencia', value } });
                 }
               }}
             />
@@ -412,9 +452,9 @@ const CargarFacturaVenta = () => {
               disabled
             />
             {parseFloat(factura.efectivo || 0) + parseFloat(factura.dolares || 0) + parseFloat(factura.transferencia || 0) >
-              parseFloat(factura.monto_pagado || 0) && (
+              parseFloat(factura.importe || 0) && (
               <span style={{ fontSize: '14px', color: 'red' }}>
-                La suma de los montos no puede ser mayor que el importe pagado.
+                La suma de los montos no puede ser mayor que el importe.
               </span>
             )}
           </div>
