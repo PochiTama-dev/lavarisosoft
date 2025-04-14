@@ -176,7 +176,9 @@ const LibroIVA = () => {
               </thead>
               <tbody>
                 {sortedData(facturasCompra).map((item, index) => (
-                  <tr key={index}>
+                  <tr key={index}    className={`    ${
+                    index % 2 === 0 ? "bg-light" : ""
+                  }`}>
                     <td>{dayjs(item.created_at).format("DD/MM/YYYY")}</td>
                     <td>{item.tipo_comprobante}</td>
                     <td>{item.nro_comprobante}</td>
@@ -192,7 +194,7 @@ const LibroIVA = () => {
                     <td>${item.importe}</td>
                     <td>${item.iva_alicuota}</td>
                     <td>${item.iva_cred_fiscal}</td>
-                    <td>${item.total}</td>
+                    <td style={{color:'green'}} >${item.total}</td>
                   </tr>
                 ))}
               </tbody>
@@ -203,7 +205,7 @@ const LibroIVA = () => {
           <div className="libro-excel-wrapper">
             <table className="table">
               <thead>
-                <tr>
+                <tr >
                   <th>Fecha</th>
                   <th>Tipo de Comprobante</th>
                   <th>Número de Comprobante</th>
@@ -223,7 +225,9 @@ const LibroIVA = () => {
               </thead>
               <tbody>
                 {sortedData(facturasVenta).map((item, index) => (
-                  <tr key={index}>
+                  <tr key={index}  className={`    ${
+                    index % 2 === 0 ? "bg-light" : ""
+                  }`}>
                     <td>{dayjs(item.created_at).format("DD/MM/YYYY")}</td>
                     <td>{item.tipo_comprobante}</td>
                     <td>{item.nro_comprobante}</td>
@@ -237,8 +241,8 @@ const LibroIVA = () => {
 
                     <td>${item.importe}</td>
                     <td>${item.iva_alicuota}</td>
-                    <td>${item.importe * (item.iva_alicuota / 100)}</td>
-                    <td>${item.total}</td>
+                    <td>${(item.importe * (item.iva_alicuota / 100) ).toFixed(2)}</td>
+                    <td style={{color:'green'}}>${item.total}</td>
                   </tr>
                 ))}
               </tbody>

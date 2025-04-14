@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import { listaFacturasVentas } from '../../../../services/facturaVentasService';
 import eye from '../../../../assets/eye.svg';
 import jsPDF from 'jspdf';
+import logo from '../../../../assets/logo-service.png';
+
 const Ventas = () => {
   const [data, setData] = useState([]);
   const [orderBy, setOrderBy] = useState(null);
@@ -78,50 +80,89 @@ const Ventas = () => {
     setRemito(remito);
     setModal(!modal);
   };
-  const handleExportToPDF = () => {
-    const doc = new jsPDF();
+   const handleExportToPDF = () => {
+      const doc = new jsPDF();
+  
+      let posY = 10; // Posición inicial en Y
+      const pageWidth = doc.internal.pageSize.getWidth();
+  
+      // Agregar logo si está disponible
+    // Agregar logo si está disponible
+    if (logo) {
+      doc.addImage(logo, 'PNG',40, posY, 40, 40); // Logo en la esquina superior izquierda
+  }
 
-    // Título del remito
-    doc.setFontSize(18);
-    doc.text(`Remito Ventas y Servicios No.#${remito.nro_comprobante}`, 10, 20);
+  // Información de la empresa al lado del logo
+  doc.setFontSize(14);
+  const infoPosX = 85; // Posición X para la información de la empresa
+  doc.text("Juan Garcia Martinez 65 local 3", infoPosX, posY + 10);
+  doc.text("CUIL/CUIT: 30-71794576-6", infoPosX, posY + 20);
+  doc.text("www.gruposervice.ar", infoPosX, posY + 30);
+  doc.text("TEL: 351-7061881", infoPosX, posY + 40);
 
-    // Detalles del remito
-    doc.setFontSize(12);
-    doc.text(`Fecha: ${remito.fecha}`, 10, 40);
-    doc.text(`Técnico: ${remito.nombreEmpleado || '-'}`, 10, 50);
-    doc.text(`Legajo: ${remito.legajo || '-'}`, 120, 50);
-    doc.text(`Cliente: ${remito.nombreCliente || '-'}`, 10, 60);
-    doc.text(`CUIT/CUIL: ${remito.cuil || '-'}`, 120, 60);
-    doc.text(`Tipo de comprobante: ${remito.tipo_comprobante || '-'}`, 10, 70);
-    doc.text(`Tipo de factura: ${remito.tipo_factura || '-'}`, 120, 70);
-    doc.text(`Código de imputación: ${remito.codigo_imputacion || '-'}`, 10, 80);
-    doc.text(`Descripción: ${remito.descripcion || '-'}`, 120, 80);
+  posY += 50; // Incrementar posY después del bloque del logo y la información
+  doc.setDrawColor(142, 163, 191);
+  doc.setLineWidth(0.5);
+  doc.line(10, posY, pageWidth - 10, posY);
+  posY += 10;
 
-    // Medios de pago
-    doc.setFontSize(14);
-    doc.text('Medios de Pago:', 10, 100);
-    doc.setFontSize(12);
-    doc.text(`Efectivo: $${remito.efectivo || '0.00'}`, 10, 110);
-    doc.text(`Dólares: $${remito.dolares || '0.00'}`, 70, 110);
-    doc.text(`Transferencia: $${remito.transferencia || '0.00'}`, 130, 110);
-
-    // Totales
-    doc.setFontSize(14);
-    doc.text(`Total: $${remito.total || '0.00'}`, 10, 130);
-
-    // IVA
-    doc.setFontSize(12);
-    doc.text(`IVA alícuota: ${remito.iva_alicuota || '0.00'}`, 70, 130);
-    doc.text(`IVA débito fiscal: ${remito.iva_deb_fiscal || '0.00'}`, 130, 130);
-
-    // Generar el PDF como un blob
-    const pdfBlob = doc.output('blob');
-
-    // Crear una URL para el blob
-    const pdfUrl = URL.createObjectURL(pdfBlob);
-
-    // Abrir el PDF en una nueva pestaña
-    window.open(pdfUrl, '_blank');
+      // Título del remito
+      doc.setFontSize(18);
+      doc.text(`Remito Ventas y Servicios No.#${remito.nro_comprobante}`, 10, posY);
+      posY += 10;
+  
+      // Detalles del remito
+      doc.setFontSize(12);
+      doc.text(`Fecha: ${remito.fecha}`, 10, posY);
+      doc.text(`Técnico: ${remito.nombreEmpleado || '-'}`, 10, posY + 10);
+      doc.text(`Legajo: ${remito.legajo || '-'}`, pageWidth / 2, posY + 10);
+      posY += 20;
+      doc.text(`Cliente: ${remito.nombreCliente || '-'}`, 10, posY);
+      doc.text(`CUIT/CUIL: ${remito.cuil || '-'}`, pageWidth / 2, posY);
+      posY += 10;
+      doc.text(`Tipo de comprobante: ${remito.tipo_comprobante || '-'}`, 10, posY);
+      doc.text(`Tipo de factura: ${remito.tipo_factura || '-'}`, pageWidth / 2, posY);
+      posY += 10;
+      doc.text(`Código de imputación: ${remito.codigo_imputacion || '-'}`, 10, posY);
+      doc.text(`Descripción: ${remito.descripcion || '-'}`, pageWidth / 2, posY);
+      posY += 20;
+  
+      // Medios de pago
+      doc.setFontSize(14);
+      doc.text('Medios de Pago:', 10, posY);
+      posY += 10;
+      doc.setFontSize(12);
+      
+      if (remito.efectivo > 0) {
+          doc.text(`Efectivo: $${remito.efectivo}`, 10, posY);
+          posY += 10;
+      }
+      if (remito.dolares > 0) {
+          doc.text(`Dólares: $${remito.dolares}`, 10, posY);
+          posY += 10;
+      }
+      if (remito.transferencia > 0) {
+          doc.text(`Transferencia: $${remito.transferencia}`, 10, posY);
+          posY += 10;
+      }
+      posY += 10;
+  
+      // Totales
+      doc.setFontSize(14);
+      doc.text(`Total: $${remito.total || '0.00'}`, 10, posY);
+      doc.setFontSize(12);
+      doc.text(`IVA alícuota: ${remito.iva_alicuota || '0.00'}`, pageWidth / 3, posY);
+      doc.text(`IVA débito fiscal: ${remito.iva_deb_fiscal || '0.00'}`, (2 * pageWidth) / 3, posY);
+      posY += 20;
+  
+      // Generar el PDF como un blob
+      const pdfBlob = doc.output('blob');
+  
+      // Crear una URL para el blob
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+  
+      // Abrir el PDF en una nueva pestaña
+      window.open(pdfUrl, '_blank');
   };
   return (
     <div className='opventas-tab-container'>
@@ -196,10 +237,10 @@ const Ventas = () => {
                 <p>IVA debito fiscal: {remito?.iva_deb_fiscal || '0.00'}</p>
               </div>
               <h4>Medios de pago</h4>
-              <div style={{ width: '100%' }} className='d-flex justify-content-between'>
-                <p>Efectivo: $ {remito.efectivo}</p>
-                <p>Dolares: $ {remito.dolares}</p>
-                <p>Transferencia: $ {remito?.trasferencia || '0.00'}</p>
+                       <div style={{ width: '100%' }} className='d-flex justify-content-between'>
+                {remito.efectivo > 0 && <p>Efectivo: $ {remito.efectivo}</p>}
+                {remito.dolares > 0 && <p>Dólares: $ {remito.dolares}</p>}
+                {remito?.transferencia > 0 && <p>Transferencia: $ {remito.transferencia}</p>}
               </div>
               <div style={{ width: '100%' }} className='d-flex justify-content-between'>
                 <h3>Total: $ {remito.total}</h3>

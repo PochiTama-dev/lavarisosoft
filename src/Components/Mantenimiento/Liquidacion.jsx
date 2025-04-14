@@ -208,8 +208,21 @@ const Liquidacion = ({ tecnico, totalLiquidacion, setModal }) => {
       )}
       {newModal && (
         <div>
-          <RemitoLiquidacion tecnico={tecnico} setModal={setNewModal} liqParcial={''} selectedCaja={selectedCaja} cajas={cajas} />
-        </div>
+          {newModal && (
+            <div>
+              <RemitoLiquidacion
+                tecnico={tecnico}
+                setModal={setNewModal}
+                liqParcial={''}
+                selectedCaja={selectedCaja}
+                cajas={cajas}
+                efectivo={efectivo}
+                dolares={dolares}
+                transferencia={banco}
+                monto={parseFloat(efectivo || 0) + parseFloat(banco || 0) + parseFloat(dolares || 0) * dolarBlueRate}
+              />
+            </div>
+          )}        </div>
       )}
     </div>
   );

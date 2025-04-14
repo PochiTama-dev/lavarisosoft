@@ -162,6 +162,11 @@ margin: 10px;
   margin-right: 2%;
  
 }
+
+.libro-container td, .libro-container th {
+  text-align: left  !important;
+ 
+}
 .libro-export-button-container button{
  
   background-color: #69688c;
