@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
+import { NotificationProvider } from './hooks/NotificationContext';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
@@ -47,70 +48,73 @@ import AddPlanCuentasExcel from './Components/Mantenimiento/AddPlanCuentasExcel.
 import FacturaOrden from './Components/Presupuestos/FacturaOrden.jsx';
 import UploadCliente from './Components/Clientes/UploadCliente.jsx';
 import CargarFacturaVenta from './Components/Ventas/TabsVentas/CargarFacturaVenta.jsx';
+
 function App() {
   return (
-    <Routes>
-      <Route path='/' element={<Login />} />
-      <Route path='/login' element={<Login />} />
-      <Route path='/menu' element={<Menu />} />
-      <Route element={<PrivateRoute roles={['Atención al cliente', 'Super administrador']} />}>
-        {/* Rutas Chat Redes Sociales */}
-        <Route path='/chat' element={<Chat />} />
-        {/* Rutas Clientes y Empleados */}
-        <Route path='/clientes' element={<Clientes />} />
-        <Route path='/uploadCliente' element={<UploadCliente />} />
-        <Route path='/uploadEmpleado' element={<UploadEmpleado />} />
-        <Route path='/uploadEmpleadoExcel' element={<UploadEmpleadoExcel />} />
-        {/* Ruta Feedback */}
-        <Route path='/feedback' element={<Feedback />} />
-        <Route path='/feedback/empleado' element={<FeedbackEmpleado />} />
-      </Route>
+    <NotificationProvider>
+      <Routes>
+        <Route path='/' element={<Login />} />
+        <Route path='/login' element={<Login />} />
+        <Route path='/menu' element={<Menu />} />
+        <Route element={<PrivateRoute roles={['Atención al cliente', 'Super administrador']} />}>
+          {/* Rutas Chat Redes Sociales */}
+          <Route path='/chat' element={<Chat />} />
+          {/* Rutas Clientes y Empleados */}
+          <Route path='/clientes' element={<Clientes />} />
+          <Route path='/uploadCliente' element={<UploadCliente />} />
+          <Route path='/uploadEmpleado' element={<UploadEmpleado />} />
+          <Route path='/uploadEmpleadoExcel' element={<UploadEmpleadoExcel />} />
+          {/* Ruta Feedback */}
+          <Route path='/feedback' element={<Feedback />} />
+          <Route path='/feedback/empleado' element={<FeedbackEmpleado />} />
+        </Route>
 
-      <Route element={<PrivateRoute roles={['Contable administrativo', 'Super administrador']} />}>
-        {/* Rutas Ordenes */}
-        <Route path='/ordenes' element={<Orders />} />
-        <Route path='/mantenimiento' element={<Mantenimiento />} />
-        <Route path='/agregarPlanCuentasExcel' element={<AddPlanCuentasExcel />} />
-        <Route path='/ordenes/nuevaOrden' element={<NuevaOrden />} />
-        <Route path='/ordenes/cobrarCaja' element={<Cobrar />} />
-        <Route path='/ordenes/ordenGlobal' element={<AumentosGlobal />} />
-        <Route path='/ventas' element={<Ventas />} />
-        <Route path='/ventas/cargarFactura' element={<CargarFactura />} />
-        <Route path='/gastos' element={<Gastos />} />
-        <Route path='/VentasRemito' element={<RemitoVentas />} />
-        <Route path='/facturasremito' element={<FacturasRemito />} />
-        <Route path='/mantEditRemito' element={<MantEditRemito />} />
-        <Route path='/remitoOrden' element={<RemitoOrden />} />
-        <Route path='/mantFactura' element={<MantFacturas />} />
-        <Route path='/liquidacion' element={<Liquidacion />} />
-        <Route path='/cargarCuenta' element={<CargarCuenta />} />
-        <Route path='/editarCuenta' element={<EditCuenta />} />
-        <Route path='/caja' element={<NuevaCaja />} />
-        <Route path='/cajasBancos' element={<CajasBancos />} />
-        <Route path='/proveedor' element={<NuevoProveedor />} />
-        <Route path='/proveedorEdit/:id' element={<EditProveedor />} />
-        <Route path='/presupuestos' element={<Presupuestos />} />
-        <Route path='/addFactura' element={<AddFactura />} />
-        <Route path='/facturaOrden' element={<FacturaOrden />} />
-        <Route path='/cargarFacturaVenta' element={<CargarFacturaVenta />} />
-      </Route>
-      <Route element={<PrivateRoute roles={['Jefe de taller', 'Super administrador']} />}>
-        <Route path='/taller' element={<Taller showHeader={true} />} />
-        <Route path='/liquidacionPresupuestos' element={<LiquidacionPresupuestos />} />
-        <Route path='/editarStockRepuestos' element={<EditarStockRespuestos />} />
-        <Route path='/editarStockRepuestos/editarProducto/:id' element={<EditarProducto />} />
-        <Route path='/addRespuestos' element={<AddRespuestos />} />
-        <Route path='/addLoteExcel' element={<AddLoteExcel />} />
-        {/* Rutas Agenda */}
-        <Route path='/agenda' element={<Agenda />} />
-        {/* Rutas Ubicaciones */}
-        <Route path='/location' element={<Ubicaciones />} />
-        <Route path='/locationOrder' element={<UbicacionesOrden />} />
-      </Route>
+        <Route element={<PrivateRoute roles={['Contable administrativo', 'Super administrador']} />}>
+          {/* Rutas Ordenes */}
+          <Route path='/ordenes' element={<Orders />} />
+          <Route path='/mantenimiento' element={<Mantenimiento />} />
+          <Route path='/agregarPlanCuentasExcel' element={<AddPlanCuentasExcel />} />
+          <Route path='/ordenes/nuevaOrden' element={<NuevaOrden />} />
+          <Route path='/ordenes/cobrarCaja' element={<Cobrar />} />
+          <Route path='/ordenes/ordenGlobal' element={<AumentosGlobal />} />
+          <Route path='/ventas' element={<Ventas />} />
+          <Route path='/ventas/cargarFactura' element={<CargarFactura />} />
+          <Route path='/gastos' element={<Gastos />} />
+          <Route path='/VentasRemito' element={<RemitoVentas />} />
+          <Route path='/facturasremito' element={<FacturasRemito />} />
+          <Route path='/mantEditRemito' element={<MantEditRemito />} />
+          <Route path='/remitoOrden' element={<RemitoOrden />} />
+          <Route path='/mantFactura' element={<MantFacturas />} />
+          <Route path='/liquidacion' element={<Liquidacion />} />
+          <Route path='/cargarCuenta' element={<CargarCuenta />} />
+          <Route path='/editarCuenta' element={<EditCuenta />} />
+          <Route path='/caja' element={<NuevaCaja />} />
+          <Route path='/cajasBancos' element={<CajasBancos />} />
+          <Route path='/proveedor' element={<NuevoProveedor />} />
+          <Route path='/proveedorEdit/:id' element={<EditProveedor />} />
+          <Route path='/presupuestos' element={<Presupuestos />} />
+          <Route path='/addFactura' element={<AddFactura />} />
+          <Route path='/facturaOrden' element={<FacturaOrden />} />
+          <Route path='/cargarFacturaVenta' element={<CargarFacturaVenta />} />
+        </Route>
+        <Route element={<PrivateRoute roles={['Jefe de taller', 'Super administrador']} />}>
+          <Route path='/taller' element={<Taller showHeader={true} />} />
+          <Route path='/liquidacionPresupuestos' element={<LiquidacionPresupuestos />} />
+          <Route path='/editarStockRepuestos' element={<EditarStockRespuestos />} />
+          <Route path='/editarStockRepuestos/editarProducto/:id' element={<EditarProducto />} />
+          <Route path='/addRespuestos' element={<AddRespuestos />} />
+          <Route path='/addLoteExcel' element={<AddLoteExcel />} />
+          {/* Rutas Agenda */}
+          <Route path='/agenda' element={<Agenda />} />
+          {/* Rutas Ubicaciones */}
+          <Route path='/location' element={<Ubicaciones />} />
+          <Route path='/locationOrder' element={<UbicacionesOrden />} />
+        </Route>
 
-      {/* Rutas Notificaciones */}
-      <Route path='/notificaciones' element={<Notificaciones />} />
-    </Routes>
+        {/* Rutas Notificaciones */}
+        <Route path='/notificaciones' element={<Notificaciones />} />
+      </Routes>
+    </NotificationProvider>
   );
 }
 
