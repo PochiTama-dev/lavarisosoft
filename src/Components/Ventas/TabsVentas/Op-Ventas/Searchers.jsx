@@ -3,15 +3,15 @@ import { useEffect, useRef, useState } from 'react';
 import { func, number } from 'prop-types';
 const filterConfig = {
   0: [
-    { label: 'Cliente', field: 'Cliente.cuil', placeholder: 'Buscar Cliente' },
-    { label: 'Técnico', field: 'Empleado.legajo', placeholder: 'Buscar Técnico' },
-    { label: 'Medio de pago', field: 'Presupuesto.id_medio_de_pago', placeholder: 'Buscar Medio de Pago' },
-    { label: 'Operación', field: 'operacion', placeholder: 'Buscar Operación' },
+/*       { label: 'Cliente', field: 'Cliente.cuil', placeholder: 'Buscar Cliente' },
+ */     { label: 'Técnico', field: 'Empleado.legajo', placeholder: 'Buscar Técnico' },
+/*     { label: 'Medio de pago', field: 'Presupuesto.id_medio_de_pago', placeholder: 'Buscar Medio de Pago' },
+ */    { label: 'Descripción', field: 'descripcion', placeholder: 'Buscar Descripción' },
   ],
   1: [
     { label: 'Técnico', field: 'tecnico', placeholder: 'Buscar Técnico' },
-    { label: 'Ocupación', field: 'ocupacion', placeholder: 'Domicilio/Taller' },
-    { label: 'Operación', field: 'operacion', placeholder: 'Buscar Operación' },
+/*     { label: 'Ocupación', field: 'ocupacion', placeholder: 'Domicilio/Taller' }, */
+    { label: 'Descripción', field: 'descripcion', placeholder: 'Buscar Descripción' },
   ],
   2: [
     { label: 'Técnico', field: 'tecnico', placeholder: 'Buscar Técnico' },
@@ -44,14 +44,24 @@ const Searchers = ({ activeTab, onFilterChange }) => {
   };
 
   const handleDate = (date) => {
-    onFilterChange('created_at', new Date(date.current.value));
+    const dateValue = date.current.value;
+    if (dateValue) {
+      onFilterChange('created_at', new Date(dateValue));
+    } else {
+      onFilterChange('created_at', null); // Clear the filter when the date is removed
+    }
   };
+
   return (
     <div className='caja-input-bottom' style={{ marginLeft: '20px' }}>
       {activeTab !== 2 && (
         <div>
           <h4 className='caja-input-text'>Fecha</h4>
-          <input type='date' onChange={() => handleDate(dateRef)} ref={dateRef} />
+          <input
+            type='date'
+            onChange={() => handleDate(dateRef)}
+            ref={dateRef}
+          />
         </div>
       )}
       {filterConfig[activeTab].map((filter) => (

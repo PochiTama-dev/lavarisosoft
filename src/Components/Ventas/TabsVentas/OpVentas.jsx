@@ -10,6 +10,7 @@ import './Caja.css';
 import Searchers from './Op-Ventas/Searchers';
 import { useCustomContext } from '../../../hooks/context';
 import Header from '../../Header/Header';
+
 // Función auxiliar para obtener valores anidados
 const getNestedValue = (obj, path) => {
   return path.split('.').reduce((value, key) => (value ? value[key] : undefined), obj);
@@ -37,20 +38,23 @@ const OpVentas = () => {
   };
 
   const handleFilterChange = (field, value) => {
-  
-    if (field === 'created_at') {
-      const targetDate = new Date(value);
-      targetDate.setDate(targetDate.getDate() + 1);
-      console.log(targetDate.toLocaleDateString());
-      setFilteredData(
-        dataTab.filter((item) => {
-          const itemDate = new Date(item.created_at).toLocaleDateString();
-          return itemDate === targetDate.toLocaleDateString();
-        })
-      );
-    } else {
-      setFilters((prev) => ({ ...prev, [field]: value }));
-    }
+      if (field === 'created_at') {
+          if (!value) {
+              // Si el valor de la fecha está vacío, mostrar todos los datos
+              setFilteredData(dataTab);
+          } else {
+              const targetDate = new Date(value);
+              targetDate.setDate(targetDate.getDate() + 1);
+              setFilteredData(
+                  dataTab.filter((item) => {
+                      const itemDate = new Date(item.created_at).toLocaleDateString();
+                      return itemDate === targetDate.toLocaleDateString();
+                  })
+              );
+          }
+      } else {
+          setFilters((prev) => ({ ...prev, [field]: value }));
+      }
   };
 
   const itemsData = async () => {
@@ -63,25 +67,34 @@ const OpVentas = () => {
       dataTab &&
       dataTab.filter((item) => {
         return Object.keys(filters).every((key) => {
-          //console.log(key);
-          const filterValue = key !== 'created_at' && filters[key].toLowerCase();
-          const itemValue = getNestedValue(item, key);
-          return filterValue === '' || (itemValue && itemValue.toString().toLowerCase().includes(filterValue));
+          const filterValue = filters[key]?.toLowerCase();
+          let itemValue;
+
+          if (key === 'operacion') {
+            itemValue = item.descripcion?.toLowerCase();  
+          } else if (key === 'Empleado.legajo' || key === 'tecnico') {
+            itemValue = `${item.Empleado?.nombre || ''} ${item.Empleado?.apellido || ''}`.toLowerCase(); // Filter by full name for "Técnico"
+          } else {
+            itemValue = getNestedValue(item, key)?.toString().toLowerCase();
+          }
+
+          return filterValue === '' || (itemValue && itemValue.includes(filterValue));
         });
       });
- 
-    setFilteredData(filtered);
+
+    setFilteredData(filtered || []);
   };
 
+  console.log('filteredData', filteredData);
   return (
     <div className='opventas-container' style={{ padding:'20px' }}>
       <Header text='Operaciones/Ventas' />
  
       <Searchers activeTab={activeTab} onFilterChange={handleFilterChange} />
       <div className='cargarButton' style={{ textAlign: 'right', marginBottom: '10px' }}>
-      <Link to="/cargarFacturaVenta">
-            <button>Cargar factura</button>
-          </Link>
+        <Link to="/cargarFacturaVenta">
+          <button>Cargar factura</button>
+        </Link>
       </div>
       <div style={{ textAlign: 'center', marginTop: '0px' }}>
         <Tab>
@@ -91,11 +104,8 @@ const OpVentas = () => {
                 <Ventas data={filteredData} />
               </Tab>
               <Tab title='Por Técnico'>
-                <PorTecnico data={filteredData || ''} />
+                <PorTecnico data={filteredData} />
               </Tab>
-        {/*       <Tab title='Por Producto'>
-                <PorProducto data={filteredData} />
-              </Tab> */}
             </Tabs2>
           </div>
         </Tab>

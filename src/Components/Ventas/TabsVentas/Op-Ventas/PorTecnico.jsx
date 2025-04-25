@@ -1,30 +1,16 @@
-import { Suspense, useState, useEffect } from 'react';
+import { Suspense, useState } from 'react';
 import './OpVentas.css';
 import PropTypes from 'prop-types';
-import { listaFacturasVentas } from '../../../../services/facturaVentasService';
 import eye from '../../../../assets/eye.svg';
 import jsPDF from 'jspdf';
 import logo from '../../../../assets/logo-service.png';
 
-const PorTecnico = () => {
-  const [data, setData] = useState([]);
+const PorTecnico = ({ data }) => {
   const [orderBy, setOrderBy] = useState(null);
   const [orderAsc, setOrderAsc] = useState(true);
   const [remito, setRemito] = useState({});
   const [modal, setModal] = useState(false);
 
-  useEffect(() => {
-    const fetchFacturas = async () => {
-      const facturas = await listaFacturasVentas();
-      if (facturas) {
-        // Filter to include only sales with id_tecnico
-        const filteredFacturas = facturas.filter((item) => item.id_tecnico);
-        setData(filteredFacturas);
-      }
-    };
-    fetchFacturas();
-  }, []);
-console.log("data",data);
   const handleSort = (columnName) => {
     if (orderBy === columnName) {
       setOrderAsc((prevOrderAsc) => !prevOrderAsc);
@@ -100,20 +86,19 @@ console.log("data",data);
     doc.text(`Tipo de factura: ${remito.tipo_factura || '-'}`, pageWidth / 2, posY);
     posY += 20;
 
-    
     if (remito.efectivo > 0) {
       doc.text(`Efectivo: $${remito.efectivo}`, 10, posY);
       posY += 10;
-  }
-  if (remito.dolares > 0) {
+    }
+    if (remito.dolares > 0) {
       doc.text(`Dólares: $${remito.dolares}`, 10, posY);
       posY += 10;
-  }
-  if (remito.transferencia > 0) {
+    }
+    if (remito.transferencia > 0) {
       doc.text(`Transferencia: $${remito.transferencia}`, 10, posY);
       posY += 10;
-  }
-  posY += 10;
+    }
+    posY += 10;
 
     doc.setFontSize(14);
     doc.text(`Total: $${remito.total || '0.00'}`, 10, posY);
@@ -122,7 +107,6 @@ console.log("data",data);
     const pdfUrl = URL.createObjectURL(pdfBlob);
     window.open(pdfUrl, '_blank');
   };
-
  
   return (
     <div className='opventas-tab-container'>
@@ -135,13 +119,13 @@ console.log("data",data);
                   <th onClick={() => handleSort('created_at')}>Fecha {orderBy === 'created_at' ? (orderAsc ? '▲' : '▼') : <span>▼</span>}</th>
                   <th onClick={() => handleSort('id_tecnico')}>Técnico {orderBy === 'id_tecnico' ? (orderAsc ? '▲' : '▼') : <span>▼</span>}</th>
                   <th onClick={() => handleSort('codigo_imputacion')}>Cod. Imp. {orderBy === 'codigo_imputacion' ? (orderAsc ? '▲' : '▼') : <span>▼</span>}</th>
-                  <th onClick={() => handleSort('descripcion')}>Descripcion {orderBy === 'descripcion' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
+                  <th onClick={() => handleSort('descripcion')}>Descripción {orderBy === 'descripcion' ? orderAsc ? '▲' : '▼' : <span>▼</span>}</th>
 
-                  <th onClick={() => handleSort('tipo_comprobante')}>Tipo Comprobante {orderBy === 'tipo_comprobante' ? (orderAsc ? '▲' : '▼') : <span>▼</span>}</th>
-                   <th onClick={() => handleSort('efectivo')}>Efectivo {orderBy === 'efectivo' ? (orderAsc ? '▲' : '▼') : <span>▼</span>}</th>
+                  <th onClick={() => handleSort('tipo_comprobante')}>Tipo{orderBy === 'tipo_comprobante' ? (orderAsc ? '▲' : '▼') : <span>▼</span>}</th>
+                  <th onClick={() => handleSort('efectivo')}>Efectivo {orderBy === 'efectivo' ? (orderAsc ? '▲' : '▼') : <span>▼</span>}</th>
                   <th onClick={() => handleSort('dolares')}>Dólares {orderBy === 'dolares' ? (orderAsc ? '▲' : '▼') : <span>▼</span>}</th>
                   <th onClick={() => handleSort('transferencia')}>Transferencia {orderBy === 'transferencia' ? (orderAsc ? '▲' : '▼') : <span>▼</span>}</th>
-                  <th onClick={() => handleSort('total')}>Monto {orderBy === 'total' ? (orderAsc ? '▲' : '▼') : <span>▼</span>}</th>
+                  <th onClick={() => handleSort('total')}>Total {orderBy === 'total' ? (orderAsc ? '▲' : '▼') : <span>▼</span>}</th>
                 </tr>
               </thead>
               <tbody>
@@ -150,11 +134,11 @@ console.log("data",data);
                     sortedData.map((item, index) => (
                       <tr key={index} className={index % 2 === 0 ? '' : 'row-even'}>
                         <td>{new Date(item.created_at).toLocaleDateString()}</td>
-                        <td>{item.id_tecnico || '-'}</td>
+                        <td  >{`${item.Empleado?.nombre || '-'} ${item.Empleado?.apellido || ''}`.trim()}</td>
                         <td>{item.codigo_imputacion}</td>
-                        <td>{item.descripcion}</td>
+                        <td style={{ textAlign: 'left' }} >{item.descripcion}</td>
                         <td>{item.tipo_comprobante}</td>
-                         <td>$ {item.efectivo || '-'}</td>
+                        <td>$ {item.efectivo || '-'}</td>
                         <td>US$ {item.dolares || '-'}</td>
                         <td>$ {item.transferencia || '-'}</td>
                         <td>$ {item.total}</td>
@@ -199,7 +183,7 @@ console.log("data",data);
 };
 
 PorTecnico.propTypes = {
-  data: PropTypes.array,
+  data: PropTypes.array.isRequired,
 };
 
 export default PorTecnico;
