@@ -118,19 +118,21 @@ const Proveedores = () => {
     ...new Set(proveedoresData.map((prov) => prov.Proveedore.nombre)),
   ];
 
-  const formatSearchDate = (date) => {
-    const [year, month, day] = date.split("-");
-    return `${day}/${month}/${year}`;
-  };
-
   useEffect(() => {
-    const formattedDate = searchDate ? formatSearchDate(searchDate) : "";
     const filtered = proveedoresData.filter((prov) => {
-      const dateMatch = !searchDate || prov.fecha_ingreso === formattedDate;
+      // Formatear la fecha de creación de la factura o gasto
+      const provDate = new Date(prov.created_at).toISOString().split("T")[0];
+
+      // Comparar la fecha formateada con la fecha ingresada por el usuario
+      const dateMatch = !searchDate || provDate === searchDate;
+
+      // Comparar el nombre del proveedor
       const proveedorMatch =
         !searchProveedor || prov.Proveedore.nombre === searchProveedor;
+
       return dateMatch && proveedorMatch;
     });
+
     setFilteredData(filtered);
   }, [searchDate, searchProveedor, proveedoresData]);
 
