@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom"; // Add useLocation
 import Header from "../Header/Header";
 import "./Presupuestos.css";
 import { empleados } from "../../services/empleadoService";
@@ -10,6 +10,7 @@ import { ordenesRepuestos } from "../../services/ordenRepuestosService";
 import DetalleOrdenPresupuesto from "./DetalleOrdenPresupuesto";
 
 const Presupuestos = () => {
+  const location = useLocation(); // Get navigation state
   const [showOrders, setShowOrders] = useState({});
   const [tecnicos, setTecnicos] = useState([]);
   const [tecnicoSeleccionado, setTecnicoSeleccionado] = useState(null);
@@ -73,12 +74,20 @@ const Presupuestos = () => {
     fetchRepuestos();
   }, []);
 
-/*   const handleShowOrder = (nombre) => {
-    setShowOrders({
-      ...showOrders,
-      [nombre]: !showOrders[nombre],
-    });
-  }; */
+  useEffect(() => {
+    if (location.state?.ordenId && ordenes.length > 0 && repuestosOrdenes.length > 0) {
+      console.log("Orden ID received from navigation state:", location.state.ordenId);
+      const ordenCompleta = ordenes.find((o) => o.id === location.state.ordenId);
+      if (ordenCompleta) {
+        const repuestosOrden = repuestosOrdenes.filter(
+          (r) => r.id_orden === location.state.ordenId
+        );
+        setOrdenSeleccionada({ ...ordenCompleta, repuestos: repuestosOrden });
+      } else {
+        console.log("Orden not found in ordenes:", location.state.ordenId);
+      }
+    }
+  }, [location.state, ordenes, repuestosOrdenes]);
 
   const toggleComision = (comision) => {
     setComisiones((prevComisiones) => ({
@@ -87,18 +96,6 @@ const Presupuestos = () => {
     }));
   };
 
-/*   const toggleCaja = (caja) => {
-    setCajas({
-      ...cajas,
-      [caja]: !cajas[caja],
-    });
-  };
- */
-/*   const navigate = useNavigate(); */
-/*   const handleClickLiquidacion = () => {
-    navigate("/liquidacionPresupuestos");
-  };
- */
   const handleTecnicoSelect = (tecnico) => {
     const tecnicoCompleto = tecnicos.find((t) => t.id === tecnico.id);
 
@@ -115,11 +112,16 @@ const Presupuestos = () => {
   };
 
   const handleOrdenSelect = (orden) => {
+    console.log("handleOrdenSelect called with:", orden);
     const ordenCompleta = ordenes.find((o) => o.id === orden.id);
+    if (!ordenCompleta) {
+      console.log("Orden not found in ordenes:", orden.id);
+      return;
+    }
     const repuestosOrden = repuestosOrdenes.filter(
       (r) => r.id_orden === orden.id
     );
-    console.log("Orden seleccionada:", ordenCompleta);
+    console.log("Orden completa:", ordenCompleta);
     console.log("Repuestos de la orden:", repuestosOrden);
     setOrdenSeleccionada({ ...ordenCompleta, repuestos: repuestosOrden });
     setCajaSeleccionada(null);

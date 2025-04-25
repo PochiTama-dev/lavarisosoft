@@ -117,3 +117,22 @@
     padding: 0.25rem;
     color: #283959;
   }
+
+  .circle-indicator {
+    width: 20px;
+    height: 20px;
+    background-color: green;
+    border-radius: 50%;
+  }
+
+ 
+  .red-circle {
+    background-color: red;
+  }
+
+  .orange-circle {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: orange;
+  }

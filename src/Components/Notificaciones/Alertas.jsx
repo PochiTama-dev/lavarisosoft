@@ -21,8 +21,8 @@ const Alertas = () => {
         <div key={index}>
           <div className="row my-3">
             <div className="col-1 d-flex justify-content-center">
-              <div className="notification-badge">
-                {alerta.descripciones.length}
+              <div className="circle-indicator">
+        {/*         {alerta.descripciones.length} */}
               </div>
             </div>
             <div className="col-10 p-0">
