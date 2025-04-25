@@ -66,18 +66,13 @@ export const modificarFacturaCompra = async (id, facturaCompra) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(facturaCompra),
     });
-    const result = await response.json();
-    if (result[0] === 1) {
-      console.log("Factura de compra modificada con éxito!!!");
-      return true;
-    } else {
-      console.log(
-        "Se produjo un error, la factura de compra no pudo ser modificada..."
-      );
-      return false;
+    if (!response.ok) {
+      throw new Error("Error al modificar la factura de compra.");
     }
+    return true;
   } catch (error) {
-    console.error("Error al modificar la factura de compra.", error);
+    console.error("Error al modificar la factura de compra:", error);
+    return false; // Devuelve `false` si hubo un error
   }
 };
 
