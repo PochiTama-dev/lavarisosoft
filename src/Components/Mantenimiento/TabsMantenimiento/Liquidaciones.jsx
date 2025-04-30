@@ -1,6 +1,3 @@
-//import Adelantos from '../Adelantos';
-//import { listaCajas } from '../../../services/cajasService';
-//import { obtenerLiquidaciones } from '../../../services/liquidacionesService';
 import React, { useEffect, useState } from 'react';
 import Table from 'react-bootstrap/Table';
 import '../mantenimiento.css';
@@ -9,6 +6,8 @@ import Liquidacion from '../Liquidacion';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import Header from '../../Header/Header';
+import * as XLSX from 'xlsx'; // Import the xlsx library
+
 const Liquidaciones = () => {
   const { getLiquidacionesPendientes, getLiquidacionesHechas } = useCustomContext();
   const [expandedRow, setExpandedRow] = useState(null);
@@ -79,6 +78,37 @@ const Liquidaciones = () => {
     doc.save(`liquidaciones_${tecnico.Empleado.nombre}_${tecnico.Empleado.apellido}.pdf`);
   };
 
+  const handleExportToExcel = () => {
+    if (expandedRow === null) return;
+
+    const tecnico = datosLiquidaciones[expandedRow];
+    const tecnicoLiquidaciones = liquidacionesHechas[tecnico.Empleado.id]?.liquidaciones || [];
+    const filteredLiquidaciones = tecnicoLiquidaciones.filter((liq) => {
+      const fechaStr = new Date(liq.created_at).toLocaleDateString('en-CA');
+      return (!startDate || fechaStr >= startDate) && (!endDate || fechaStr <= endDate);
+    });
+
+    filteredLiquidaciones.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+    const worksheetData = [
+      { Técnico: `Técnico: ${tecnico.Empleado.nombre} ${tecnico.Empleado.apellido}` }, // Add technician's name as a header
+      {},
+      { Fecha: 'Fecha', Efectivo: 'Efectivo', Transferencia: 'Transferencia', Dólares: 'Dólares', Total: 'Total' }, // Header row
+      ...filteredLiquidaciones.map((liq) => ({
+        Fecha: new Date(liq.created_at).toLocaleDateString(),
+        Efectivo: liq.efectivo > 0 ? liq.efectivo : '-',
+        Transferencia: liq.transferencia > 0 ? liq.transferencia : '-',
+        Dólares: liq.dolares > 0 ? liq.dolares : '-',
+        Total: liq.monto,
+      })),
+    ];
+
+    const worksheet = XLSX.utils.json_to_sheet(worksheetData, { skipHeader: true });
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, `${tecnico.Empleado.nombre} ${tecnico.Empleado.apellido}`);
+    XLSX.writeFile(workbook, `liquidaciones_${tecnico.Empleado.nombre}_${tecnico.Empleado.apellido}.xlsx`);
+  };
+
   const handleClearFilter = () => {
     setStartDate('');
     setEndDate('');
@@ -135,7 +165,10 @@ const Liquidaciones = () => {
           </button>
         </div>
         <button onClick={handleExportToPDF} style={{ marginLeft: '10px' }}>
-          Exportar
+          Exportar a PDF
+        </button>
+        <button onClick={handleExportToExcel} style={{ marginLeft: '10px' }}>
+          Exportar a Excel
         </button>
       </div>
       <Table hover style={{ width: '100%' }}>
@@ -166,17 +199,15 @@ const Liquidaciones = () => {
                 </tr>
                 {expandedRow === index && (
                   <tr>
-                                        <td colSpan='3'>
+                    <td colSpan='3'>
                       <Table striped bordered hover>
                         <thead>
-                  {/*         <h4 className='text-left'>Liquidaciones realizadas</h4> */}
                           <tr>
                             <th>Fecha</th>
                             <th>Efectivo</th>
                             <th>Transferencia</th>
                             <th>Dólares</th>
                             <th>Total</th>
-                      
                           </tr>
                         </thead>
                         <tbody>
@@ -199,7 +230,6 @@ const Liquidaciones = () => {
                                     <td>$ {liq.transferencia > 0 ? liq.transferencia : '-'}</td>
                                     <td>$ {liq.dolares > 0 ? liq.dolares : '-'}</td>
                                     <td>$ {(liq.monto)}</td>
-                               
                                   </tr>
                                 ))}
                                 {currentData.length === 0 && (

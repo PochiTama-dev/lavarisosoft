@@ -133,7 +133,8 @@
 
 /* Saldos pendientes */
 .saldosPendientes {
-  width: 70vw;
+  width: 81vw;
+  border-radius: 15px;
 }
 .saldosItems {
   margin-left: 20px;

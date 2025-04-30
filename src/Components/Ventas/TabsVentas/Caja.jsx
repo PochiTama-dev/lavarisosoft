@@ -6,6 +6,7 @@ import { obtenerGastos } from "../../../services/gastoDeclaradoService";
 import { obtenerLiquidaciones } from "../../../services/liquidacionesService";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+import * as XLSX from "xlsx"; // Import the xlsx library
 import "./Caja.css";
 import Header from "../../Header/Header";
 
@@ -165,6 +166,25 @@ const Caja = () => {
     });
 
     doc.save("movimientos_caja.pdf");
+  };
+
+  const exportToExcel = () => {
+    const worksheetData = sortedData.map((item) => ({
+      Tipo: item.tipoMovimiento,
+      Fecha: formatDate(item.fecha),
+      Descripción: item.motivo || "-",
+      Efectivo: item.efectivo == 0 ? "-" : `$${item.efectivo}`,
+      Transferencia: item.transferencia == 0 ? "-" : `$${item.transferencia}`,
+      Dólares: item.dolares == 0 ? "-" : `US$${item.dolares}`,
+      Pagado: item.monto_pagado ? `$${item.monto_pagado}` : "-",
+      Total: `$${item.total}`,
+      Caja: getCajaName(item.id_caja),
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(worksheetData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Movimientos de Caja");
+    XLSX.writeFile(workbook, "movimientos_caja.xlsx");
   };
 
   return (
@@ -337,6 +357,9 @@ const Caja = () => {
           <div className="caja-export-button-container">
             <button className="caja-export-button" onClick={exportToPDF}>
               Exportar a PDF
+            </button>
+            <button className="caja-export-button" onClick={exportToExcel}>
+              Exportar a Excel
             </button>
           </div>
         </div>
