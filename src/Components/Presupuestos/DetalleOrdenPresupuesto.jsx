@@ -44,8 +44,11 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
   }, []);
 
   useEffect(() => {
-    setCajaSeleccionada(null);
-  }, [orden]);
+    const cajaPorDefecto = cajas.find((caja) => caja.id === 7);
+    if (cajaPorDefecto) {
+      setCajaSeleccionada(cajaPorDefecto);
+    }
+  }, [cajas]);
 
   useEffect(() => {
     const obtenerValorDolar = async () => {
@@ -126,69 +129,6 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
     }
   };
 
-  const handleConfirmConsolidarConPago = async () => {
-    try {
-      await handleConfirmConsolidarBase(true);
-    } catch (error) {
-      console.error("Error al consolidar con pago:", error);
-    }
-  };
-
-  const handleConfirmConsolidarSinPago = async () => {
-    try {
-      if (!cajaSeleccionada) {
-        alert("Debe seleccionar una caja antes de consolidar.");
-        return;
-      }
-
-      const totalFactura = parseFloat(orden.Presupuesto?.total || 0);
-
-      const porcentajeTecnico = parseFloat(
-        orden.Empleado?.porcentaje_arreglo || 0
-      );
-      const montoCalculado = (totalFactura * porcentajeTecnico) / 100;
-
-      const liquidaciones = await liquidacionesPendientesPorTecnico(
-        orden.id_empleado
-      );
-
-      if (liquidaciones && liquidaciones.length > 0) {
-        const liquidacionExistente = liquidaciones[0];
-        const nuevoTotal =
-          parseFloat(liquidacionExistente.total) + montoCalculado;
-
-        const response = await actualizarLiquidacionPendiente(
-          liquidacionExistente.id,
-          {
-            total: nuevoTotal,
-          }
-        );
-
-        if (!response) {
-          alert("Error al actualizar la liquidación pendiente.");
-          return;
-        }
-      } else {
-        const response = await guardarLiquidacionPendiente({
-          id_tecnico: orden.id_empleado,
-          total: montoCalculado,
-        });
-
-        if (!response) {
-          alert("Error al crear la liquidación pendiente.");
-          return;
-        }
-      }
-
-      await handleConfirmConsolidarBase(false);
-
-      alert("Liquidación pendiente actualizada con éxito.");
-    } catch (error) {
-      console.error("Error al consolidar sin pago al técnico:", error);
-      alert("Error al consolidar sin pago al técnico.");
-    }
-  };
-
   const handleConfirmConsolidarBase = async (conPago) => {
     try {
       if (!cajaSeleccionada) {
@@ -225,73 +165,231 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
       };
       await modificarOrden(orden.id, ordenActualizada);
 
-      const liquidacionResult = await guardarOActualizarLiquidacion();
-      if (!liquidacionResult) {
-        alert("Error al crear/actualizar la liquidación.");
-        return;
-      }
+      const montoTecnico = (totalFactura * porcentajePago) / 100;
+      const montoCajaSeleccionada = totalFactura - montoTecnico;
 
-      const montoActual = parseFloat(
+      const montoActualCaja = parseFloat(
         cajaSeleccionada.monto.replace(",", ".") || 0
       );
-      const nuevoMonto = montoActual + totalFactura;
+      const nuevoMontoCaja = montoActualCaja + montoCajaSeleccionada;
 
-      const efectivoActual = parseFloat(cajaSeleccionada.efectivo || 0);
-      const dolaresActual = parseFloat(cajaSeleccionada.dolares || 0);
-      const bancoActual = parseFloat(cajaSeleccionada.banco || 0);
+      const efectivoActualCaja = parseFloat(cajaSeleccionada.efectivo || 0);
+      const bancoActualCaja = parseFloat(cajaSeleccionada.banco || 0);
+      const dolaresActualCaja = parseFloat(cajaSeleccionada.dolares || 0);
 
-      const cajaActualizada = {
-        monto: nuevoMonto.toFixed(2),
-        efectivo: (efectivoActual + valoresPago.efectivo).toFixed(2),
-        dolares: (dolaresActual + parseFloat(valoresPago.dolares || 0)).toFixed(
-          2
-        ),
-        banco: (bancoActual + valoresPago.banco).toFixed(2),
+      const cajaSeleccionadaActualizada = {
+        monto: nuevoMontoCaja.toFixed(2),
+        efectivo: (efectivoActualCaja + valoresPago.efectivo).toFixed(2),
+        banco: (bancoActualCaja + valoresPago.banco).toFixed(2),
+        dolares: (
+          dolaresActualCaja + parseFloat(valoresPago.dolares || 0)
+        ).toFixed(2),
       };
 
-      const cajaResult = await modificarCaja(
+      const cajaSeleccionadaResult = await modificarCaja(
         cajaSeleccionada.id,
-        cajaActualizada
+        cajaSeleccionadaActualizada
       );
-      if (!cajaResult) {
-        alert("Error al actualizar el monto de la caja.");
+      if (!cajaSeleccionadaResult) {
+        alert("Error al actualizar el monto de la caja seleccionada.");
         return;
       }
 
-      if (conPago) {
-        const montoCalculado =
-          (parseFloat(orden.Presupuesto?.total || 0) * porcentajePago) / 100;
+      // Actualizar la caja 2
+      const cajaTecnico = cajas.find((caja) => caja.id === 8);
+      if (cajaTecnico) {
+        const montoActualTecnico = parseFloat(
+          cajaTecnico.monto.replace(",", ".") || 0
+        );
+        const nuevoMontoTecnico = montoActualTecnico + montoTecnico;
 
-        const response = await guardarLiquidacion({
-          id_tecnico: orden.id_empleado,
-          monto: montoCalculado,
-          id_caja: cajaSeleccionada.id,
-          codigo_imputacion: codigoImputacion,
-          efectivo: valoresPago.efectivo || 0,
-          dolares: valoresPago.dolares || 0,
-          transferencia: valoresPago.banco || 0,
-          created_at: new Date().toISOString(),
-        });
+        const efectivoActualTecnico = parseFloat(cajaTecnico.efectivo || 0);
+        const bancoActualTecnico = parseFloat(cajaTecnico.banco || 0);
+        const dolaresActualTecnico = parseFloat(cajaTecnico.dolares || 0);
 
-        if (!response) {
-          alert("Error al realizar el pago al técnico.");
+        const proporcion = montoTecnico / sumaMetodosPago;
+
+        const efectivoTecnico = (valoresPago.efectivo * proporcion).toFixed(2);
+        const bancoTecnico = (valoresPago.banco * proporcion).toFixed(2);
+        const dolaresTecnico = (valoresPago.dolares * proporcion).toFixed(2);
+
+        const cajaTecnicoActualizada = {
+          monto: nuevoMontoTecnico.toFixed(2),
+          efectivo: (
+            efectivoActualTecnico + parseFloat(efectivoTecnico)
+          ).toFixed(2),
+          banco: (bancoActualTecnico + parseFloat(bancoTecnico)).toFixed(2),
+          dolares: (dolaresActualTecnico + parseFloat(dolaresTecnico)).toFixed(
+            2
+          ),
+        };
+
+        const cajaTecnicoResult = await modificarCaja(
+          cajaTecnico.id,
+          cajaTecnicoActualizada
+        );
+        if (!cajaTecnicoResult) {
+          alert("Error al actualizar el monto de la caja del técnico.");
           return;
         }
-
-        alert(
-          `Pago al técnico realizado con éxito. Monto: $${montoCalculado.toFixed(
-            2
-          )}`
-        );
+      } else {
+        alert("No se encontró la caja con ID 8.");
+        return;
       }
-
-      alert("Factura, liquidación y caja actualizadas con éxito.");
-      setOrden(null);
     } catch (error) {
       console.error("Error al consolidar la orden:", error);
       alert("Error al consolidar la orden.");
-    } finally {
+    }
+  };
+
+  const handlePagoTecnico = async () => {
+    try {
+      const totalFactura = parseFloat(orden.Presupuesto?.total || 0);
+      const montoCalculado = (totalFactura * porcentajePago) / 100;
+
+      const sumaMetodosPago =
+        valoresPago.efectivo +
+        valoresPago.banco +
+        valoresPago.dolares * valorDolar;
+
+      if (sumaMetodosPago === 0) {
+        alert("Debe ingresar al menos un valor en los métodos de pago.");
+        return;
+      }
+
+      const proporcion = montoCalculado / sumaMetodosPago;
+
+      const efectivoAjustado = (valoresPago.efectivo * proporcion).toFixed(2);
+      const bancoAjustado = (valoresPago.banco * proporcion).toFixed(2);
+      const dolaresAjustados = (valoresPago.dolares * proporcion).toFixed(2);
+
+      const response = await guardarLiquidacion({
+        id_tecnico: orden.id_empleado,
+        monto: montoCalculado.toFixed(2),
+        id_caja: 8, // Caja 2
+        codigo_imputacion: codigoImputacion,
+        efectivo: parseFloat(efectivoAjustado),
+        dolares: parseFloat(dolaresAjustados),
+        transferencia: parseFloat(bancoAjustado),
+        created_at: new Date().toISOString(),
+      });
+
+      if (!response) {
+        alert("Error al realizar el pago al técnico.");
+        return;
+      }
+
+      // Actualizo la caja 2
+      const cajaTecnico = cajas.find((caja) => caja.id === 8);
+
+      if (cajaTecnico) {
+        const montoActualTecnico = parseFloat(
+          cajaTecnico.monto.replace(",", ".") || 0
+        );
+        const nuevoMontoTecnico = montoActualTecnico - montoCalculado;
+
+        const efectivoActualTecnico = parseFloat(cajaTecnico.efectivo || 0);
+        const bancoActualTecnico = parseFloat(cajaTecnico.banco || 0);
+        const dolaresActualTecnico = parseFloat(cajaTecnico.dolares || 0);
+
+        const cajaTecnicoActualizada = {
+          monto: nuevoMontoTecnico.toFixed(2),
+          efectivo: efectivoActualTecnico.toFixed(2),
+          banco: bancoActualTecnico.toFixed(2),
+          dolares: dolaresActualTecnico.toFixed(2),
+        };
+
+        if (
+          cajaTecnicoActualizada.monto < 0 ||
+          cajaTecnicoActualizada.efectivo < 0 ||
+          cajaTecnicoActualizada.banco < 0 ||
+          cajaTecnicoActualizada.dolares < 0
+        ) {
+          alert(
+            "Error: No se puede realizar el pago porque los valores de la caja quedarían en negativo."
+          );
+          return;
+        }
+
+        const cajaTecnicoResult = await modificarCaja(
+          cajaTecnico.id,
+          cajaTecnicoActualizada
+        );
+
+        if (!cajaTecnicoResult) {
+          alert("Error al actualizar el monto de la caja del técnico.");
+          return;
+        }
+      } else {
+        alert("No se encontró la caja con ID 8.");
+        return;
+      }
+
+      alert(
+        `Pago al técnico realizado con éxito. Monto: $${montoCalculado.toFixed(
+          2
+        )}`
+      );
       setShowModal(false);
+      window.location.reload();
+    } catch (error) {
+      console.error("Error al realizar el pago al técnico:", error);
+      alert("Error al realizar el pago al técnico.");
+    }
+  };
+
+  const handleLiquidacionPendiente = async () => {
+    try {
+      const totalFactura = parseFloat(orden.Presupuesto?.total || 0);
+
+      const montoTecnico = parseFloat(
+        ((totalFactura * porcentajePago) / 100).toFixed(2)
+      );
+
+      const liquidaciones = await liquidacionesPendientesPorTecnico(
+        orden.id_empleado
+      );
+
+      if (liquidaciones && liquidaciones.length > 0) {
+        const liquidacionExistente = liquidaciones[0];
+
+        const totalExistente = parseFloat(liquidacionExistente.total || 0);
+
+        const nuevoTotal = parseFloat(
+          (totalExistente + montoTecnico).toFixed(2)
+        );
+
+        const response = await actualizarLiquidacionPendiente(
+          liquidacionExistente.id,
+          {
+            total: nuevoTotal,
+          }
+        );
+
+        if (!response) {
+          console.error("Error al actualizar la liquidación pendiente.");
+          alert("Error al actualizar la liquidación pendiente.");
+          return;
+        }
+      } else {
+        const response = await guardarLiquidacionPendiente({
+          id_tecnico: orden.id_empleado,
+          total: montoTecnico,
+        });
+
+        if (!response) {
+          console.error("Error al crear la liquidación pendiente.");
+          alert("Error al crear la liquidación pendiente.");
+          return;
+        }
+      }
+
+      alert("Liquidación pendiente actualizada con éxito.");
+      setShowModal(false);
+      window.location.reload();
+    } catch (error) {
+      console.error("Error al manejar la liquidación pendiente:", error);
+      alert("Error al manejar la liquidación pendiente.");
     }
   };
 
@@ -696,6 +794,7 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
             !cajaSeleccionada ? "disabled" : ""
           }`}
           onClick={() => {
+            handleConfirmConsolidarBase();
             handleConsolidar();
           }}
           disabled={!cajaSeleccionada}
@@ -718,13 +817,13 @@ const DetalleOrdenPresupuesto = ({ orden, setOrden, comisiones }) => {
             <div className="modal-buttons">
               <button
                 className="bg-info text-white"
-                onClick={handleConfirmConsolidarConPago}
+                onClick={handlePagoTecnico}
               >
                 Confirmar CON Pago al Técnico
               </button>
               <button
                 className="bg-info text-white"
-                onClick={handleConfirmConsolidarSinPago}
+                onClick={handleLiquidacionPendiente}
               >
                 Confirmar SIN Pago al Técnico
               </button>
