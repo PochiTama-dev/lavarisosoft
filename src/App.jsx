@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
-import { NotificationProvider } from './hooks/NotificationContext';
-
+/* import { NotificationProvider } from './hooks/NotificationContext';
+ */
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import Login from './pages/Login/Login';
@@ -51,7 +51,7 @@ import CargarFacturaVenta from './Components/Ventas/TabsVentas/CargarFacturaVent
 
 function App() {
   return (
-    <NotificationProvider>
+/*     <NotificationProvider> */
       <Routes>
         <Route path='/' element={<Login />} />
         <Route path='/login' element={<Login />} />
@@ -114,7 +114,7 @@ function App() {
         {/* Rutas Notificaciones */}
         <Route path='/notificaciones' element={<Notificaciones />} />
       </Routes>
-    </NotificationProvider>
+/*     </NotificationProvider> */
   );
 }
 

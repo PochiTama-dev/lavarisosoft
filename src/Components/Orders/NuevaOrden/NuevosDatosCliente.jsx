@@ -21,19 +21,16 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
   };
   const handleInputChange = (e) => {
     const { id, value } = e.target;
-    console.log(id);
-    console.log(value);
-
     setCliente((prevState) => ({ ...prevState, [id]: value }));
-    setUbicacion(() => value);
-    console.log(ubicacion);
+    if (id === "ubicacion") {
+      setUbicacion(value);
+    }
   };
 
   const handleSelected = (client) => {
     setSelectedClient(client);
     setCliente(client);
     setClientOrNew(false);
-    setCliente(client)
   };
   const handleNew = () => {
     setClientOrNew(true);
@@ -49,7 +46,6 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
     if (query) {
       try {
         setTimeout(async () => {
-          //const response = await fetch(`https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(query)}&apiKey=${geoApiKey}&limit=10`);
           const response = await fetch(
             `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(
               query
@@ -72,7 +68,6 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
     }
   };
   const handleSuggestionClick = (coordinates, sugestion) => {
-    console.log(sugestion);
     const [lon, lat] = coordinates;
     cliente.latitud = lat;
     cliente.longitud = lon;
@@ -90,17 +85,21 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
             <select
               className="col-sm-3 text-left"
               style={{ marginBottom: "1%" }}
+              value={selectedClient?.id || ""}
+              onChange={(e) => {
+                const clientId = e.target.value;
+                const client = clientes.find((c) => c.id === parseInt(clientId, 10));
+                if (client) {
+                  handleSelected(client); // Actualiza el cliente seleccionado
+                }
+              }}
             >
-              <option value="" selected disabled>
+              <option value="" disabled>
                 Seleccione un cliente
               </option>
               {clientes &&
                 clientes.map((client) => (
-                  <option
-                    value={client.id}
-                    key={client.id}
-                    onClick={() => handleSelected(client)}
-                  >
+                  <option value={client.id} key={client.id}>
                     {client.nombre} #{client.numero_cliente}
                   </option>
                 ))}
@@ -131,7 +130,7 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
                     type="text"
                     id="numero_cliente"
                     className="form-control input-small"
-                    value={selectedClient.numero_cliente || ""}
+                    value={cliente.numero_cliente || ""}
                     required
                     disabled
                   />
@@ -146,7 +145,8 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
                     type="text"
                     id="nombre"
                     className="form-control input-small"
-                    value={selectedClient.nombre || ""}
+                    value={cliente.nombre || ""}
+                    onChange={handleInputChange}
                     required
                   />
                 </div>
@@ -160,7 +160,8 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
                     type="text"
                     id="apellido"
                     className="form-control input-small"
-                    value={selectedClient.apellido || ""}
+                    value={cliente.apellido || ""}
+                    onChange={handleInputChange}
                     required
                   />
                 </div>
@@ -174,7 +175,8 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
                     type="text"
                     id="cuil"
                     className="form-control input-small"
-                    value={selectedClient.cuil || ""}
+                    value={cliente.cuil || ""}
+                    onChange={handleInputChange}
                     required
                   />
                 </div>
@@ -191,7 +193,8 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
                     type="text"
                     id="telefono"
                     className="form-control input-small"
-                    value={selectedClient.telefono || ""}
+                    value={cliente.telefono || ""}
+                    onChange={handleInputChange}
                     required
                   />
                 </div>
@@ -205,7 +208,8 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
                     type="text"
                     id="direccion"
                     className="form-control input-small"
-                    value={selectedClient.direccion || ""}
+                    value={cliente.direccion || ""}
+                    onChange={handleInputChange}
                     required
                   />
                 </div>
@@ -219,7 +223,8 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
                     type="number"
                     id="piso"
                     className="form-control input-small"
-                    value={selectedClient?.piso || ""}
+                    value={cliente.piso || ""}
+                    onChange={handleInputChange}
                     required
                   />
                 </div>
@@ -233,7 +238,8 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
                     type="text"
                     id="departamento"
                     className="form-control input-small"
-                    value={selectedClient?.departamento || ""}
+                    value={cliente.departamento || ""}
+                    onChange={handleInputChange}
                     required
                   />
                 </div>
@@ -247,7 +253,8 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
                     type="text"
                     id="ubicacion"
                     className="form-control input-small"
-                    value={selectedClient.ubicacion || ""}
+                    value={ubicacion}
+                    onChange={handleSuggestions}
                     required
                   />
                 </div>
