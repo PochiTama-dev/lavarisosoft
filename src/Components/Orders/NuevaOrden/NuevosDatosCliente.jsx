@@ -56,7 +56,6 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
     if (query) {
       try {
         setTimeout(async () => {
-          //const response = await fetch(`https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(query)}&apiKey=${geoApiKey}&limit=10`);
           const response = await fetch(
             `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(query)}&apiKey=${geoApiKey}&bias=proximity:${defaultCenter.join(',')}&bbox=${ARGENTINA_BOUNDS.join(',')}&limit=5`
           );
@@ -75,7 +74,6 @@ const NuevosDatosCliente = ({ setCliente, cliente }) => {
     }
   };
   const handleSuggestionClick = (coordinates, sugestion) => {
-    console.log(sugestion);
     const [lon, lat] = coordinates;
     cliente.latitud = lat;
     cliente.longitud = lon;

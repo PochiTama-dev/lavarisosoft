@@ -1,20 +1,22 @@
 /* eslint-disable no-unused-vars */
 import { createContext, useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Importar useNavigate
+import NotificationPopup from './NotificationPopUp.jsx';  
 import socket from '../Components/services/socketService.tsx';
-import { useCustomContext } from './context'; // Import the custom context
-import { haversine } from '../Components/Ubicaciones/calcularDistancia'; // Assuming haversine is available for distance calculation
+import { useCustomContext } from './context';  
+import { haversine } from '../Components/Ubicaciones/calcularDistancia';  
 
 const NotificationContext = createContext();
 
 // eslint-disable-next-line react/prop-types
 export const NotificationProvider = ({ children }) => {
+  const navigate = useNavigate(); // Inicializar navigate
   const { listaClientes } = useCustomContext();  
   const [notifications, setNotifications] = useState(() => {
- 
     const savedNotifications = localStorage.getItem('notifications');
     return savedNotifications ? JSON.parse(savedNotifications) : [];
   });
-
+  const [popupNotification, setPopupNotification] = useState(null);
   const [nearbyTechnicians, setNearbyTechnicians] = useState({});
   const [clientes, setClientes] = useState([]);
   const [technicianData, setTechnicianData] = useState({});  
@@ -42,7 +44,9 @@ export const NotificationProvider = ({ children }) => {
       setNotifications((prevNotifi) => {
         const exists = prevNotifi.some((noti) => noti.message === data.message);
         if (!exists) {
-          return [...prevNotifi, data];
+          const updatedNotifications = [...prevNotifi, data];
+          localStorage.setItem('notifications', JSON.stringify(updatedNotifications)); // Sync localStorage
+          return updatedNotifications;
         }
         return prevNotifi;
       });
@@ -51,20 +55,26 @@ export const NotificationProvider = ({ children }) => {
     const handleEntregaCreated = (entrega) => {
       const newNotification = {
         message: `Nueva entrega creada: Orden #${entrega.id_orden} lista para liquidar`,
-        id:entrega.id_orden,
+        id: entrega.id_orden,
         timestamp: Date.now(),
       };
-      setNotifications((prevNotifi) => [...prevNotifi, newNotification]);
+      setNotifications((prevNotifi) => {
+        const updatedNotifications = [...prevNotifi, newNotification];
+        localStorage.setItem('notifications', JSON.stringify(updatedNotifications)); // Sync localStorage
+        return updatedNotifications;
+      });
     };
 
+    // Register socket listeners globally
     socket.on('todasNotificaciones', handleNotificacion);
     socket.on('entregaCreated', handleEntregaCreated);
 
     return () => {
+      // Ensure listeners are removed when the component unmounts
       socket.off('todasNotificaciones', handleNotificacion);
       socket.off('entregaCreated', handleEntregaCreated);
     };
-  }, []);
+  }, []); // Ensure this runs globally, not tied to specific components
 
   useEffect(() => {
     const handleBroadcastLocation = (tecnicoData) => {
@@ -77,7 +87,7 @@ export const NotificationProvider = ({ children }) => {
       setTechnicianData((prevData) => ({ ...prevData, [tecnicoId]: tecnicoInfo }));  
 
       const clienteCercano = clientes.find((cliente) => {
-        const distancia = haversine(latitude, longitude, cliente.latitud, cliente.longitud);
+        const distancia = haversine(latitude, longitude, cliente?.latitud, cliente?.longitud);
         return distancia <= 0.1; // 100 meters
       });
 
@@ -115,11 +125,11 @@ export const NotificationProvider = ({ children }) => {
     };
 
     socket.on('broadcastLocation', handleBroadcastLocation);
- 
+
     return () => {
       socket.off('broadcastLocation', handleBroadcastLocation);
     };
-  }, [clientes, nearbyTechnicians]);
+  }, [clientes, nearbyTechnicians]); // Ensure this runs globally
 
   useEffect(() => {
     Object.keys(nearbyTechnicians).forEach((tecnicoId) => {
@@ -132,18 +142,46 @@ export const NotificationProvider = ({ children }) => {
       setNotifications((prevNotifications) => {
         const exists = prevNotifications.some((noti) => noti.message === cercaMessage);
         if (!exists) {
+          const newNotification = { message: cercaMessage, tecnicoId, timestamp: Date.now() };
+          const updatedNotifications = [...prevNotifications, newNotification];
+          localStorage.setItem('notifications', JSON.stringify(updatedNotifications)); // Sync localStorage
           console.log(`Agregando notificación: ${cercaMessage}`);
-          return [...prevNotifications, { message: cercaMessage, tecnicoId, timestamp: Date.now() }];
+          return updatedNotifications;
         }
         return prevNotifications;
       });
     });
-  }, [nearbyTechnicians, setNotifications]);
+  }, [nearbyTechnicians, technicianData]);
+
+  useEffect(() => {
+    console.log('Notificaciones actualizadas:', notifications);
+  }, [notifications]);
+
+  // Este useEffect mostrará un popup con la última notificación de entrega recibida
+  useEffect(() => {
+    if (notifications.length > 0) {
+      const latest = notifications[notifications.length - 1];
+      if (latest.message.includes('entrega')) { // Mostrar solo notificaciones de entrega
+        console.log('Mostrando popup para la notificación de entrega:', latest); // Depuración
+        setPopupNotification(latest);
+        const timer = setTimeout(() => {
+          setPopupNotification(null);
+        }, 5000); // Popup se oculta a los 5 segundos
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [notifications]);
 
   return (
-    <NotificationContext.Provider value={{ notifications, setNotifications, nearbyTechnicians, setNearbyTechnicians }}>
-      {children}
-    </NotificationContext.Provider>
+    <>
+      <NotificationPopup
+        message={popupNotification?.message}
+        onClick={() => navigate('/notificaciones')} // Redirigir al hacer clic
+      />
+      <NotificationContext.Provider value={{ notifications, setNotifications, nearbyTechnicians, setNearbyTechnicians }}>
+        {children}
+      </NotificationContext.Provider>
+    </>
   );
 };
 

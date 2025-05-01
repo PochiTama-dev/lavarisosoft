@@ -160,8 +160,8 @@ const Map = ({
           const distancia = haversine(
             tecnico.latitud,
             tecnico.longitud,
-            cliente.latitud,
-            cliente.longitud
+            cliente?.latitud,
+            cliente?.longitud
           );
           return distancia <= 0.05; // 50 metros
         });
