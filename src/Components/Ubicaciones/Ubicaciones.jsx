@@ -245,7 +245,7 @@ const Ubicaciones = () => {
           } else {
             setSuggestions([]);
           }
-        }, "3000");
+        }, "500");
       } catch (error) {
         console.error("Error fetching geocode:", error);
       }
@@ -932,15 +932,15 @@ const handleSuggestionClick = (coordinates, formattedAddress) => {
       </div>
       {/* Modal */}
          {showModal && (
-        <div className="modal show d-block" tabIndex="-1" role="dialog">
-          <div className="modal-dialog modal-lg" role="document"> {/* Cambiado a modal-lg para hacerlo más grande */}
-            <div className="modal-content">
+        <div className="modal show " tabIndex="-1" role="dialog" >
+          <div    role="document">  
+            <div className="modal-content-carga-cliente">
               <div className="modal-header">
                 <h5 className="modal-title">Cargar cliente</h5>
              
               </div>
               <div className="modal-body">
-                <div className="container">
+                <div >
                   <div className="row">
                     {/* Primera fila */}
                     <div className="col-md-6 mb-3">
