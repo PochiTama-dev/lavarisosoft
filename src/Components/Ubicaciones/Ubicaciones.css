@@ -64,12 +64,20 @@
  cursor: pointer;
 }
 
- 
+  .modal-content-carga-cliente {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 80%;
+    height: 80%;
+    margin: 0 auto; 
+  
+  }
 .modal-dialog{
   margin-top: 150px;
 }
 .modal-lg {
-  max-width: 80%;  
+  max-width: 100%;  
 }
 
 .modal-body {
