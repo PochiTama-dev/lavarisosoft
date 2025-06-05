@@ -29,7 +29,7 @@ const guardarOrden = async (orden) => {
     const result = await response.json();
     if (result) {
       console.log('Orden guardada con éxito!!!');
-      return result; // Devuelve la orden guardada, incluyendo id
+      return result; 
     } else {
       console.log('Se produjo un error, la orden no pudo ser guardada...');
       return null;
@@ -127,10 +127,10 @@ const NuevaOrden = ({ clienteData }) => {
       const clienteId = await guardarCliente(cliente);
       if (clienteId) {
         const orden = {
-          numero_orden: incidente.numero_orden, // Use the numero_orden from incidente
+          numero_orden: incidente.numero_orden, 
           id_cliente: clienteId,
           id_empleado: idEmpleado || null,
-          id_tipo_estado: incidente.id_tipo_estado, // Use the id_tipo_estado from incidente
+          id_tipo_estado: incidente.id_tipo_estado, 
           equipo: incidente.equipo,
           modelo: incidente.modelo,
           marca: incidente.marca,
@@ -165,11 +165,15 @@ const NuevaOrden = ({ clienteData }) => {
         alert('Error al guardar el cliente...');
       }
     } else {
+      if (!incidente.equipo || incidente.equipo.trim() === '') {
+        alert('Por favor, agregue un equipo.');
+        return;
+      }
       const orden = {
-        numero_orden: incidente.numero_orden, // Use the numero_orden from incidente
+        numero_orden: incidente.numero_orden,  
         id_cliente: verify.id,
         id_empleado: idEmpleado || null,
-        id_tipo_estado: incidente.id_tipo_estado, // Use the id_tipo_estado from incidente
+        id_tipo_estado: incidente.id_tipo_estado,  
         equipo: incidente.equipo || '',
         modelo: incidente.modelo,
         marca: incidente.marca,
@@ -181,8 +185,8 @@ const NuevaOrden = ({ clienteData }) => {
       const ordenGuardada = await guardarOrden(orden);
       if (ordenGuardada) {
         const evento = {
-          id_cliente: verify.id, // Incluye id_cliente aquí
-          id_evento_agenda: 1, // Valor predeterminado para id_evento_agenda
+          id_cliente: verify.id,  
+          id_evento_agenda: 1,  
           fecha: incidente.fecha_visita,
           hora: `${incidente.hora_inicio_visita} - ${incidente.hora_fin_visita}`,
         };
