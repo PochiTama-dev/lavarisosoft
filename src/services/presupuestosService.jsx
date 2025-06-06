@@ -1,4 +1,4 @@
-const API_URL = "https://lv-back.online/";
+const API_URL = "https://lv-back.online";
 
 export const presupuestos = async () => {
   try {
@@ -85,15 +85,24 @@ export const modificarPresupuesto = async (id, presupuesto) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(presupuesto),
     });
+
+    if (!response.ok) {
+      console.error(`Error en la respuesta del servidor: ${response.status}`);
+      return false;
+    }
+
     const result = await response.json();
-    if (result[0] === 1) {
+
+ 
+    if (result) {
       console.log("Datos del presupuesto modificados con éxito");
       return true;
     } else {
-      console.log("Se produjo un error");
+      console.log("Se produjo un error en la modificación del presupuesto");
       return false;
     }
   } catch (error) {
     console.error("Error al modificar el presupuesto.", error);
+    return false;
   }
 };

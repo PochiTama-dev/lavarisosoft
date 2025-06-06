@@ -45,7 +45,7 @@ export const NotificationProvider = ({ children }) => {
         const exists = prevNotifi.some((noti) => noti.message === data.message);
         if (!exists) {
           const updatedNotifications = [...prevNotifi, data];
-          localStorage.setItem('notifications', JSON.stringify(updatedNotifications)); // Sync localStorage
+          localStorage.setItem('notifications', JSON.stringify(updatedNotifications)); 
           return updatedNotifications;
         }
         return prevNotifi;
@@ -60,30 +60,29 @@ export const NotificationProvider = ({ children }) => {
       };
       setNotifications((prevNotifi) => {
         const updatedNotifications = [...prevNotifi, newNotification];
-        localStorage.setItem('notifications', JSON.stringify(updatedNotifications)); // Sync localStorage
+        localStorage.setItem('notifications', JSON.stringify(updatedNotifications));  
         return updatedNotifications;
       });
     };
-
-    // Register socket listeners globally
+ 
     socket.on('todasNotificaciones', handleNotificacion);
     socket.on('entregaCreated', handleEntregaCreated);
 
     return () => {
-      // Ensure listeners are removed when the component unmounts
+ 
       socket.off('todasNotificaciones', handleNotificacion);
       socket.off('entregaCreated', handleEntregaCreated);
     };
-  }, []); // Ensure this runs globally, not tied to specific components
+  }, []);  
 
   useEffect(() => {
     const handleBroadcastLocation = (tecnicoData) => {
-      // Extract the first key-value pair from the object
+ 
       const [tecnicoId, tecnicoInfo] = Object.entries(tecnicoData)[0];
       const { nombre: tecnicoNombre, latitude, longitude } = tecnicoInfo;
 
-      console.log(`Ubicación recibida: Técnico ${tecnicoNombre}, Latitud: ${latitude}, Longitud: ${longitude}`);
-
+/*       console.log(`Ubicación recibida: Técnico ${tecnicoNombre}, Latitud: ${latitude}, Longitud: ${longitude}`);
+ */
       setTechnicianData((prevData) => ({ ...prevData, [tecnicoId]: tecnicoInfo }));  
 
       const clienteCercano = clientes.find((cliente) => {
@@ -136,8 +135,8 @@ export const NotificationProvider = ({ children }) => {
       const clienteNombre = nearbyTechnicians[tecnicoId];
       const tecnicoNombre = technicianData[tecnicoId]?.nombre; // Use technicianData to get the name
 
-      console.log(`Ubicación recibida: Técnico ${tecnicoNombre}, Cliente: ${clienteNombre}`);
-      const cercaMessage = `El técnico ${tecnicoNombre} está cerca del cliente ${clienteNombre}.`;
+/*       console.log(`Ubicación recibida: Técnico ${tecnicoNombre}, Cliente: ${clienteNombre}`);
+ */      const cercaMessage = `El técnico ${tecnicoNombre} está cerca del cliente ${clienteNombre}.`;
 
       setNotifications((prevNotifications) => {
         const exists = prevNotifications.some((noti) => noti.message === cercaMessage);
