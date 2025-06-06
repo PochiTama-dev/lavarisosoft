@@ -166,7 +166,7 @@ const AddPlanCuentasExcel = ({ columnas = ["Código", "Nombre"] }) => {
 
           {isModalOpen && (
             <div className="modal-overlay">
-              <div className="modal-content">
+              <div className="modal-content-plan">
                 <h2>¿Qué deseas hacer?</h2>
                 <div className="modal-buttons">
                   <button

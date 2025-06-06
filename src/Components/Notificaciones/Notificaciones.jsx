@@ -24,7 +24,7 @@ const Notificaciones = () => {
           <div className='toast-body'>Hello, world! This is a toast message.</div>
         </div>
         <div className='col-6'>
-          <Alertas />
+    {/*       <Alertas /> */}
         </div>
       </div>
     </div>

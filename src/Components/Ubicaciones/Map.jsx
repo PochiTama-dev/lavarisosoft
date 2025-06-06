@@ -55,40 +55,44 @@ const Map = ({
 
   const { latitude = 0, longitude = 0 } = position || {};
   const { user } = useCustomContext();
- 
-
-
-
+  
 
   const [updatedTechnicians, setUpdatedTechnicians] = useState(tecnicos || []); 
+  const technicianTimeouts = useRef({});  
 
   useEffect(() => {
     const handleBroadcastLocation = (data) => {
       console.log('Ubicaciones recibidas (broadcastLocation):', data);
-  
+
       // Extraer el técnico de los datos
       const [id, technicianData] = Object.entries(data)[0];
-  
-      // Actualizar la lista de técnicos solo si hay cambios
+      console.log('Datos del técnico:', technicianData);
+
+      // Actualizar la lista de técnicos
       setUpdatedTechnicians((prevTechnicians) => {
-        const existingTechnician = prevTechnicians.find((tecnico) => tecnico.id === parseInt(id));
-  
-        // Evitar actualizaciones innecesarias
-        if (
-          existingTechnician &&
-          existingTechnician.latitude === technicianData.latitude &&
-          existingTechnician.longitude === technicianData.longitude
-        ) {
-          return prevTechnicians;
-        }
-  
-        const updated = prevTechnicians.map((tecnico) =>
-          tecnico.id === parseInt(id)
-            ? { ...tecnico, ...technicianData, latitud: technicianData.latitude, longitud: technicianData.longitude }
-            : tecnico
+        const existingTechnicianIndex = prevTechnicians.findIndex(
+          (tecnico) => tecnico.id === parseInt(id)
         );
-  
-        if (!updated.find((tecnico) => tecnico.id === parseInt(id))) {
+
+        const updated = [...prevTechnicians];
+
+        if (existingTechnicianIndex !== -1) {
+          if (technicianData.status === 'desconectado') {
+        
+            updated.splice(existingTechnicianIndex, 1);
+            clearTimeout(technicianTimeouts.current[id]);  
+            delete technicianTimeouts.current[id];
+          } else {
+            // Actualizar técnico existente
+            updated[existingTechnicianIndex] = {
+              ...updated[existingTechnicianIndex],
+              ...technicianData,
+              latitud: technicianData.latitude,
+              longitud: technicianData.longitude,
+            };
+          }
+        } else if (technicianData.status !== 'desconectado') {
+          // Agregar nuevo técnico si no está desconectado
           updated.push({
             id: parseInt(id),
             nombre: technicianData.nombre,
@@ -97,7 +101,18 @@ const Map = ({
             status: technicianData.status,
           });
         }
-  
+
+        // Reiniciar temporizador para eliminar técnico si no se reciben datos en 5 segundos
+        if (technicianTimeouts.current[id]) {
+          clearTimeout(technicianTimeouts.current[id]);
+        }
+        technicianTimeouts.current[id] = setTimeout(() => {
+          setUpdatedTechnicians((prev) =>
+            prev.filter((tecnico) => tecnico.id !== parseInt(id))
+          );
+          delete technicianTimeouts.current[id];
+        }, 10000);
+
         return updated;
       });
     };
@@ -106,6 +121,8 @@ const Map = ({
   
     return () => {
       socket.off('broadcastLocation', handleBroadcastLocation);
+      // Limpiar todos los temporizadores al desmontar el componente
+      Object.values(technicianTimeouts.current).forEach(clearTimeout);
     };
   }, []);
   

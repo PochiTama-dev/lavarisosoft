@@ -318,12 +318,16 @@ const handleSuggestionClick = (coordinates, formattedAddress) => {
     const { latitud, longitud } = cliente;
     handlePosition(latitud, longitud);
   };
-
+ 
   const handleSelectTecnico = (tecnico) => {
-    setSelectedTecnico(tecnico);
-    setTecCoordinates([tecnico.latitud, tecnico.longitud]);
-  };
+    const updatedTechnician = updatedTechnicians.find((t) => t.id === tecnico.id);
+    const lat = updatedTechnician?.latitud || tecnico.latitud;
+    const lon = updatedTechnician?.longitud || tecnico.longitud;
 
+    setSelectedTecnico(tecnico);
+    setTecCoordinates([lat, lon]);
+  };
+ 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
