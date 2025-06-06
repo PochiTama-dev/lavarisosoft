@@ -126,8 +126,55 @@ const Map = ({
     };
   }, []);
   
- 
+  useEffect(() => {
+    // Solicitar ubicaciones iniciales de los técnicos al montar el componente
+    socket.emit('requestInitialLocations');
 
+    const handleInitialLocations = (initialData) => {
+      console.log('Ubicaciones iniciales recibidas:', initialData);
+
+      // Actualizar la lista de técnicos con las ubicaciones iniciales
+      setUpdatedTechnicians((prevTechnicians) => {
+        const updated = [...prevTechnicians];
+
+        Object.entries(initialData).forEach(([id, technicianData]) => {
+          if (technicianData.status !== 'desconectado') {
+            const existingTechnicianIndex = updated.findIndex(
+              (tecnico) => tecnico.id === parseInt(id)
+            );
+
+            if (existingTechnicianIndex !== -1) {
+              // Actualizar técnico existente
+              updated[existingTechnicianIndex] = {
+                ...updated[existingTechnicianIndex],
+                ...technicianData,
+                latitud: technicianData.latitude,
+                longitud: technicianData.longitude,
+              };
+            } else {
+              // Agregar nuevo técnico
+              updated.push({
+                id: parseInt(id),
+                nombre: technicianData.nombre,
+                latitud: technicianData.latitude,
+                longitud: technicianData.longitude,
+                status: technicianData.status,
+              });
+            }
+          }
+        });
+
+        return updated;
+      });
+    };
+
+    socket.on('initialLocations', handleInitialLocations);
+
+    return () => {
+      socket.off('initialLocations', handleInitialLocations);
+    };
+  }, []);
+ 
 
  
  
@@ -292,7 +339,11 @@ const Map = ({
             tecnico.longitud && (
               <TechnicianMarker
                 key={tecnico.id}
-                tecnico={tecnico}
+                tecnico={{
+                  ...tecnico,
+                  latitud: tecnico.latitud.toString(),
+                  longitud: tecnico.longitud.toString(),
+                }}
                 onTechnicianSelect={() => handleTechnicianSelect(tecnico)}
               />
             )
