@@ -38,12 +38,11 @@ const [query, setQuery] = useState("");
     direccion: prevState.direccion || ", Argentina",
   }));
  }, []);
-
- const handleSelected = (client) => {
+const handleSelected = (client) => {
   setSelectedClient(client);
   setCliente(client);
   setClientOrNew(false);
- };
+};
  const handleNew = () => {
   setClientOrNew(true);
   setSelectedClient(null);
@@ -92,39 +91,94 @@ const [query, setQuery] = useState("");
   setUbicacion(formattedAddress); // Update the displayed location
   setSuggestions([]); // Clear suggestions after selection
  };
+
+ 
+const [filteredClientes, setFilteredClientes] = useState(clientes);
+const [selectOpen, setSelectOpen] = useState(false);
  return (
   <div style={{ marginTop: "6%", marginLeft: "2%" }}>
    <h3 style={{ marginLeft: "5%" }}>{cliente ? "Cliente" : "Clientes"}</h3>
    <div className='row'>
     {selectedClient && (
      <>
-      <select
-       className='col-sm-3 text-left'
-       style={{ marginBottom: "1%" }}
-       value={selectedClient?.id || ""}
-       onChange={(e) => {
-        const clientId = e.target.value;
-        const client = clientes.find((c) => c.id === parseInt(clientId, 10));
-        if (client) {
-         handleSelected(client); // Actualiza el cliente seleccionado
-        }
-       }}
-      >
-       <option value='' disabled>
-        Seleccione un cliente
-       </option>
-       {clientes &&
-        clientes.map((client) => (
-         <option value={client.id} key={client.id}>
-          {client.nombre} #{client.numero_cliente}
-         </option>
-        ))}
-      </select>
+
+
+<div className='col-sm-3 text-left' style={{ marginBottom: "1%", position: "relative" }}>
+  <input
+    type='text'
+    className='form-control mb-2'
+    placeholder='Buscar cliente...'
+    value={query}
+    onFocus={() => {
+      setSelectOpen(true);
+      setFilteredClientes(clientes);
+    }}
+    onChange={(e) => {
+      const searchQuery = e.target.value.toLowerCase();
+      setQuery(searchQuery);
+      const filteredClients = searchQuery
+        ? clientes.filter((client) =>
+            client.nombre.toLowerCase().includes(searchQuery) ||
+            client.numero_cliente.toString().includes(searchQuery)
+          )
+        : clientes;
+      setFilteredClientes(filteredClients);
+    }}
+    onBlur={() => setTimeout(() => setSelectOpen(false), 200)} // Evita el cierre prematuro
+  />
+  {selectOpen && (
+    <div
+      className='form-control'
+      style={{
+        position: "absolute",
+        top: "100%",
+        marginLleft: "15px",
+        zIndex: 10,
+        maxHeight: "290px",
+        overflowY: "auto",
+        border: "1px solid #ced4da",
+        borderRadius: "4px",
+        padding: "5px",
+        backgroundColor: "#fff",
+      }}
+    >
+      {filteredClientes.length > 0 ? (
+        filteredClientes.map((client) => (
+      <div
+  key={client.id}
+ 
+  style={{
+    padding: "5px",
+    cursor: "pointer",
+ 
+  }}
+  onMouseEnter={(e) => (e.target.style.backgroundColor = "#f8f9fa")}  
+  onMouseLeave={(e) => (e.target.style.backgroundColor = "transparent")}  
+  onClick={() => {
+    console.log("Cliente seleccionado:", client);
+    setSelectedClient(client);  
+    setCliente(client);  
+    setSelectOpen(false);
+    setQuery(client.nombre);  
+  }}
+>
+            {client.nombre} #{client.numero_cliente}
+          </div>
+        ))
+      ) : (
+        <div style={{ padding: "5px", color: "#6c757d" }}>No se encontraron resultados</div>
+      )}
+    </div>
+  )}
+</div>
+
+
+
       <div className='col-sm-3 text-left' style={{ width: "2vw", paddingLeft: "5%" }}>
-       <h4>o</h4>
+ 
       </div>
       <div className='col-sm-3 text-left pointer' style={{ paddingLeft: "5%" }}>
-       <h4 onClick={handleNew}>Cargar nuevo cliente</h4>
+   
       </div>
      </>
     )}

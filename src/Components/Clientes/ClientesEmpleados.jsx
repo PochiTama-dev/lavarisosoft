@@ -43,14 +43,14 @@ const ClientesEmpleados = () => {
   };
   return (
     <div className='vw-100 p-3 '>
-      <Header text='Clientes y Colaboradores'></Header>
+      <Header text='Clientes y Empleados'></Header>
 
       <div className=' cye-ctn'>
         <Tabs active={active} onChange={handleChange} className='client-tabs'>
           <Tab title='Clientes'>
             <Clientes />
           </Tab>
-          <Tab title='Colaboradores'>
+          <Tab title='Empleados'>
             <Empleados />
           </Tab>
         </Tabs>

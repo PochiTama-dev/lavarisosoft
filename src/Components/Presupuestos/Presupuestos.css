@@ -24,7 +24,7 @@
 }
 
 .container-lists {
-  min-width: 375px;
+ 
   background-color: #f2f6fc;
   border-radius: 8px;
   padding: 15px;
@@ -39,7 +39,7 @@
 }
 
 .container-lists:last-child {
-  height: 350px;
+  height: 400px;
   margin: 0;
 }
 
@@ -236,7 +236,7 @@
 }
 
 .scrollable-container {
-  height: calc(100% - 60px);
+  height: calc(100% - 80px);
   overflow-y: auto;
   border-radius: 4px;
 }
